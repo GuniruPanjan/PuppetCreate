@@ -681,9 +681,9 @@ void Bear::Draw(UI& ui)
 		ui.BossHPDraw(m_status.s_hp, m_maxHP, m_bossName, m_subName);
 	}
 
-	DrawFormatString(200, 300, 0xffffff, "%d", a);
-	DrawFormatString(200, 400, 0xffffff, "âEë§ : %d", b);
-	DrawFormatString(200, 500, 0xffffff, "ç∂ë§ : %d", c);
+	//DrawFormatString(200, 300, 0xffffff, "%d", a);
+	//DrawFormatString(200, 400, 0xffffff, "âEë§ : %d", b);
+	//DrawFormatString(200, 500, 0xffffff, "ç∂ë§ : %d", c);
 
 #if false
 	DrawFormatString(200, 300, 0xffffff, "m_angle : %f", m_angle);
