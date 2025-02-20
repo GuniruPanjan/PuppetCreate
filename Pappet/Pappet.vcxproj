@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{d0841e68-e6a9-4bdd-8ab9-413bbc3f53e2}</ProjectGuid>
+    <RootNamespace>Pappet</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir);C:\Users\グニルパンジャン\Documents\GitHub\Pappet\Pappet\プロジェクトに追加すべきファイル_VC用;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir);C:\Users\グニルパンジャン\Documents\GitHub\Pappet\Pappet\プロジェクトに追加すべきファイル_VC用;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir);C:\Users\グニルパンジャン\Documents\GitHub\Pappet\Pappet\プロジェクトに追加すべきファイル_VC用;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir);C:\Users\グニルパンジャン\Documents\GitHub\Pappet\Pappet\プロジェクトに追加すべきファイル_VC用;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\プロジェクトに追加すべきファイル_VC用;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir);$(ProjectDir)\プロジェクトに追加すべきファイル_VC用;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\プロジェクトに追加すべきファイル_VC用;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir);$(ProjectDir)\プロジェクトに追加すべきファイル_VC用;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Camera\Camera.cpp" />
+    <ClCompile Include="Character\Bear.cpp" />
+    <ClCompile Include="Character\CharacterBase.cpp" />
+    <ClCompile Include="Character\CollidableNpc.cpp" />
+    <ClCompile Include="Character\EnemyBase.cpp" />
+    <ClCompile Include="Character\Immortal.cpp" />
+    <ClCompile Include="Character\Player.cpp" />
+    <ClCompile Include="External\CsvLoad.cpp" />
+    <ClCompile Include="Item\Armor.cpp" />
+    <ClCompile Include="Item\ItemBase.cpp" />
+    <ClCompile Include="Item\Shield.cpp" />
+    <ClCompile Include="Item\Tool.cpp" />
+    <ClCompile Include="Item\Weapon.cpp" />
+    <ClCompile Include="Library\Collidable.cpp" />
+    <ClCompile Include="Library\CollidableData.cpp" />
+    <ClCompile Include="Library\CollidableDataAttackCapsule.cpp" />
+    <ClCompile Include="Library\CollidableDataCapsule.cpp" />
+    <ClCompile Include="Library\CollidableDataRect.cpp" />
+    <ClCompile Include="Library\CollidableDataSphere.cpp" />
+    <ClCompile Include="Library\DebugDraw.cpp" />
+    <ClCompile Include="Library\Physics.cpp" />
+    <ClCompile Include="Library\Rigidbody.cpp" />
+    <ClCompile Include="Manager\BgmManager.cpp" />
+    <ClCompile Include="Manager\CoreManager.cpp" />
+    <ClCompile Include="Manager\EffectManager.cpp" />
+    <ClCompile Include="Manager\EnemyManager.cpp" />
+    <ClCompile Include="Manager\GameManager.cpp" />
+    <ClCompile Include="Manager\HandleManager.cpp" />
+    <ClCompile Include="Manager\ItemManager.cpp" />
+    <ClCompile Include="Manager\MapManager.cpp" />
+    <ClCompile Include="Manager\MessageManager.cpp" />
+    <ClCompile Include="Manager\SelectManager.cpp" />
+    <ClCompile Include="Manager\SEManager.cpp" />
+    <ClCompile Include="Map\Map.cpp" />
+    <ClCompile Include="Map\MapBase.cpp" />
+    <ClCompile Include="Map\MapFirst.cpp" />
+    <ClCompile Include="Map\MapRest.cpp" />
+    <ClCompile Include="Object\AttackObject.cpp" />
+    <ClCompile Include="Object\EnemyAttackObject.cpp" />
+    <ClCompile Include="Object\ItemObject.cpp" />
+    <ClCompile Include="Object\MessageObject.cpp" />
+    <ClCompile Include="Object\ObjectBase.cpp" />
+    <ClCompile Include="Object\PlayerSearchObject.cpp" />
+    <ClCompile Include="Object\RectObject.cpp" />
+    <ClCompile Include="Object\RectObjectTrigger.cpp" />
+    <ClCompile Include="Object\SearchObject.cpp" />
+    <ClCompile Include="Object\ShieldObject.cpp" />
+    <ClCompile Include="Scene\MenuScene.cpp" />
+    <ClCompile Include="Scene\SceneBase.cpp" />
+    <ClCompile Include="Scene\SceneGame.cpp" />
+    <ClCompile Include="Scene\SceneManager.cpp" />
+    <ClCompile Include="Scene\SceneTitle.cpp" />
+    <ClCompile Include="Ui\Message.cpp" />
+    <ClCompile Include="Ui\Setting.cpp" />
+    <ClCompile Include="Ui\UI.cpp" />
+    <ClCompile Include="Ui\UIBase.cpp" />
+    <ClCompile Include="WinMain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Camera\Camera.h" />
+    <ClInclude Include="Character\Bear.h" />
+    <ClInclude Include="Character\CharacterBase.h" />
+    <ClInclude Include="Character\CollidableNpc.h" />
+    <ClInclude Include="Character\EnemyBase.h" />
+    <ClInclude Include="Character\Immortal.h" />
+    <ClInclude Include="Character\Player.h" />
+    <ClInclude Include="External\CsvLoad.h" />
+    <ClInclude Include="Icon\Icon.h" />
+    <ClInclude Include="Item\Armor.h" />
+    <ClInclude Include="Item\ItemBase.h" />
+    <ClInclude Include="Item\Shield.h" />
+    <ClInclude Include="Item\Tool.h" />
+    <ClInclude Include="Item\Weapon.h" />
+    <ClInclude Include="Library\Collidable.h" />
+    <ClInclude Include="Library\CollidableData.h" />
+    <ClInclude Include="Library\CollidableDataAttackCapsule.h" />
+    <ClInclude Include="Library\CollidableDataCapsule.h" />
+    <ClInclude Include="Library\CollidableDataRect.h" />
+    <ClInclude Include="Library\CollidableDataSphere.h" />
+    <ClInclude Include="Library\DebugDraw.h" />
+    <ClInclude Include="Library\LibMatrix3.h" />
+    <ClInclude Include="Library\LibVec3.h" />
+    <ClInclude Include="Library\MyLibrary.h" />
+    <ClInclude Include="Library\ObjectTag.h" />
+    <ClInclude Include="Library\Physics.h" />
+    <ClInclude Include="Library\Rigidbody.h" />
+    <ClInclude Include="Manager\BgmManager.h" />
+    <ClInclude Include="Manager\CoreManager.h" />
+    <ClInclude Include="Manager\EffectManager.h" />
+    <ClInclude Include="Manager\EnemyManager.h" />
+    <ClInclude Include="Manager\GameManager.h" />
+    <ClInclude Include="Manager\HandleManager.h" />
+    <ClInclude Include="Manager\ItemManager.h" />
+    <ClInclude Include="Manager\MapManager.h" />
+    <ClInclude Include="Manager\MessageManager.h" />
+    <ClInclude Include="Manager\SelectManager.h" />
+    <ClInclude Include="Manager\SEManager.h" />
+    <ClInclude Include="Map\Map.h" />
+    <ClInclude Include="Map\MapBase.h" />
+    <ClInclude Include="Map\MapFirst.h" />
+    <ClInclude Include="Map\MapRest.h" />
+    <ClInclude Include="Object\AttackObject.h" />
+    <ClInclude Include="Object\EnemyAttackObject.h" />
+    <ClInclude Include="Object\ItemObject.h" />
+    <ClInclude Include="Object\MessageObject.h" />
+    <ClInclude Include="Object\ObjectBase.h" />
+    <ClInclude Include="Object\PlayerSearchObject.h" />
+    <ClInclude Include="Object\RectObject.h" />
+    <ClInclude Include="Object\RectObjectTrigger.h" />
+    <ClInclude Include="Object\SearchObject.h" />
+    <ClInclude Include="Object\ShieldObject.h" />
+    <ClInclude Include="Scene\MenuScene.h" />
+    <ClInclude Include="Scene\SceneBase.h" />
+    <ClInclude Include="Scene\SceneGame.h" />
+    <ClInclude Include="Scene\SceneManager.h" />
+    <ClInclude Include="Scene\SceneTitle.h" />
+    <ClInclude Include="Ui\Message.h" />
+    <ClInclude Include="Ui\Setting.h" />
+    <ClInclude Include="Ui\UI.h" />
+    <ClInclude Include="Ui\UIBase.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Icon\Icon.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Icon\PuppetNuclear.ico" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
