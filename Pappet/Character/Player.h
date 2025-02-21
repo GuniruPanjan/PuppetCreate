@@ -205,5 +205,6 @@ private:
 	MATRIX m_moveShieldFrameMatrix;
 	VECTOR m_rollMove;                  //‰ñ”ğ‚ÅˆÚ“®‚·‚é‹——£
 	VECTOR m_moveVector;                //ƒ‚[ƒVƒ‡ƒ“’†‚ÌˆÚ“®
+	VECTOR m_attackMove;                //UŒ‚‚ÅˆÚ“®‚·‚é‹——£
 };
 

@@ -41,6 +41,8 @@ namespace
 	float cAvoidanceMove = 0.0f;
 	//‰ñ”ğ‚Ì•ûŒü‚ğˆê‰ñ“ü‚ê‚é
 	bool cOneAvoidance = false;
+	//UŒ‚‚Å‚ÌˆÚ“®‹——£
+	float cAttackMove = 0.0f;
 	//UŒ‚‚Å‚Ì’Ç‰ÁUŒ‚ŠÔ
 	int cAddAttackTime = 0;
 	//s“®‚Å‚ÌˆÚ“®‹——£
@@ -459,7 +461,7 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	
 
 	//‰ñ”ğ‚µ‚Ä‚È‚¢‚Æ‚«
-	if (!m_animChange.sa_avoidance)
+	if (!m_animChange.sa_avoidance && !m_anim.s_attack)
 	{
 		MyLibrary::LibVec3 prevVelocity = rigidbody.GetVelocity();
 		MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(m_moveVec.x, prevVelocity.y, m_moveVec.z);
@@ -474,6 +476,16 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		//ƒAƒ“ƒOƒ‹‚Ì•ûŒü‚Éˆê’è‹——£ˆÚ“®‚³‚¹‚½‚¢
 		MyLibrary::LibVec3 prevVelocity = rigidbody.GetVelocity();
 		MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(-m_rollMove.x, prevVelocity.y, -m_rollMove.z);
+		rigidbody.SetVelocity(newVelocity);
+	}
+	//UŒ‚‚µ‚Ä‚é‚Æ‚«
+	else if (m_anim.s_attack)
+	{
+		m_attackMove = VScale(VGet(sinf(m_angle), 0.0f, cosf(m_angle)), cAttackMove);
+
+		//UŒ‚‚Ì•ûŒü‚Éˆê’è‹——£ˆÚ“®‚³‚¹‚½‚¢
+		MyLibrary::LibVec3 prevVelocity = rigidbody.GetVelocity();
+		MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(-m_attackMove.x, prevVelocity.y, -m_attackMove.z);
 		rigidbody.SetVelocity(newVelocity);
 	}
 
@@ -778,6 +790,8 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	//UŒ‚’†
 	if (!m_isAnimationFinish && m_anim.s_attack)
 	{
+		
+
 		//ˆê’iŠK–Ú‚ÌUŒ‚
 		if (m_nowFrame <= 40.0f)
 		{
@@ -790,6 +804,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			//UŒ‚”»’è”­¶ƒtƒŒ[ƒ€
 			if (m_nowFrame == 25.0f)
 			{
+				//UŒ‚‚ÌˆÚ“®‹——£
+				cAttackMove = 0.5f;
+
 				//UŒ‚SEÄ¶
 				PlaySoundMem(se.GetAttackSE(), DX_PLAYTYPE_BACK, true);
 
@@ -799,6 +816,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			}
 			else if (m_nowFrame >= 35.0f && m_nowFrame < 40.0f)
 			{
+				//UŒ‚‚ÌˆÚ“®‹——£
+				cAttackMove = 0.3f;
+
 				//”»’è‚ğƒŠƒZƒbƒg
 				m_pAttack->CollisionEnd();
 				//m_pPartAttack->CollisionEnd();
@@ -806,6 +826,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			//UŒ‚I—¹
 			else if (m_nowFrame >= 40.0f && m_attackNumber == 1)
 			{
+				//UŒ‚‚ÌˆÚ“®‹——£
+				cAttackMove = 0.0f;
+
 				cIsEndAttack = 1;
 			}
 
@@ -813,6 +836,8 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		//“ñ’iŠK–Ú‚ÌUŒ‚
 		else if (m_nowFrame <= 70.0f && cIsEndAttack == 1)
 		{
+			
+
 			//Œ»İ‚ÌƒAƒ^ƒbƒNƒiƒ“ƒo[
 			cNowAttackNumber = 2;
 
@@ -822,6 +847,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			//UŒ‚”»’è”­¶ƒtƒŒ[ƒ€
 			if (m_nowFrame == 55.0f)
 			{
+				//UŒ‚‚ÌˆÚ“®‹——£
+				cAttackMove = 0.5f;
+
 				//UŒ‚SEÄ¶
 				PlaySoundMem(se.GetAttackSE(), DX_PLAYTYPE_BACK, true);
 
@@ -831,6 +859,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			}
 			else if (m_nowFrame >= 65.0f && m_nowFrame < 70.0f)
 			{
+				//UŒ‚‚ÌˆÚ“®‹——£
+				cAttackMove = 0.2f;
+
 				//UŒ‚”»’èƒŠƒZƒbƒg
 				m_pAttack->CollisionEnd();
 				//m_pPartAttack->CollisionEnd();
@@ -839,12 +870,17 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			//UŒ‚I—¹
 			else if (m_nowFrame >= 70.0f && m_attackNumber == 2)
 			{
+				//UŒ‚‚ÌˆÚ“®‹——£
+				cAttackMove = 0.0f;
+
 				cIsEndAttack = 2;
 			}
 		}
 		//O’iŠK–Ú‚ÌUŒ‚
 		else if (m_nowFrame <= 110.0f && cIsEndAttack == 2)
 		{
+			
+
 			//Œ»İ‚ÌƒAƒ^ƒbƒNƒiƒ“ƒo[
 			cNowAttackNumber = 3;
 
@@ -854,6 +890,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			//UŒ‚”»’è”­¶ƒtƒŒ[ƒ€
 			if (m_nowFrame == 85.0f)
 			{
+				//UŒ‚‚ÌˆÚ“®‹——£
+				cAttackMove = 0.5f;
+
 				//UŒ‚SEÄ¶
 				PlaySoundMem(se.GetAttackSE(), DX_PLAYTYPE_BACK, true);
 
@@ -863,6 +902,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			}
 			else if (m_nowFrame >= 95.0f && m_nowFrame < 110.0f)
 			{
+				//UŒ‚‚ÌˆÚ“®‹——£
+				cAttackMove = 0.2f;
+
 				//UŒ‚”»’èƒŠƒZƒbƒg
 				m_pAttack->CollisionEnd();
 				//m_pPartAttack->CollisionEnd();
@@ -870,6 +912,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			//UŒ‚I—¹
 			else if (m_nowFrame >= 110.0f)
 			{
+				//UŒ‚‚ÌˆÚ“®‹——£
+				cAttackMove = 0.0f;
+
 				cIsEndAttack = 0;
 			}
 		}

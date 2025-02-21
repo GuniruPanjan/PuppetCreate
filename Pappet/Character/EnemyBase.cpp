@@ -526,13 +526,19 @@ bool EnemyBase::IsPlayerInView(MyLibrary::LibVec3& playerPos)
 {
 	//敵からプレイヤーのベクトル
 	MyLibrary::LibVec3 toPlayer = playerPos - m_modelPos;
-	toPlayer.Normalize();
+	float distanceToPlayer = toPlayer.Length();
+
+	//プレイヤーが視野の距離内にいるかどうかを判定
+	if (distanceToPlayer > m_viewDistance)
+	{
+		return false;
+	}
 
 	//敵の前方ベクトル
 	MyLibrary::LibVec3 forward = MyLibrary::LibVec3(sinf(m_angle), 0.0f, cosf(m_angle));
 
 	//敵の前方ベクトルとプレイヤーのベクトルの内積を計算
-	float dotProduct = forward.Dot(forward, toPlayer);
+	float dotProduct = forward.Dot(forward, toPlayer.Normalize());
 	
 	//内積の結果が視野角のコサイン値以上ならプレイヤーは正面にいる
 	float cosViewAngle = cosf(m_viewAngle / 2.0f);

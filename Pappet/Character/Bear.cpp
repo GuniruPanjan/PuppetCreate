@@ -29,6 +29,10 @@ namespace
 	constexpr float cAttackRadius2 = 60.0f;
 	//攻撃範囲3
 	constexpr float cAttackRadius3 = 130.0f;
+	//視野の角度
+	constexpr float cAngle = 30.0f;
+	//視野の距離
+	constexpr float cAngleDistance = 500.0f;
 
 	int a = 0;
 	int b = 0;
@@ -188,9 +192,9 @@ void Bear::GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLibrar
 void Bear::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos, bool isChase, SEManager& se, std::shared_ptr<MyLibrary::Physics> physics)
 {
 	//視野の角度を決める
-	m_viewAngle = 30.0f;
+	m_viewAngle = cAngle;
 	//視野の距離を決める
-	m_viewDistance = 500.0f;
+	m_viewDistance = cAngleDistance;
 
 	//アニメーションの更新
 	if (!cDead)
@@ -306,23 +310,14 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 	float Cz = m_modelPos.z - playerPos.z;
 
 	m_correctionAngle = atan2f(Cx, Cz);
-	//m_correctionAngle = NormalizeAngle(m_correctionAngle);
 
 	if (m_correctionAngle >= 3.0f)
 	{
-		if (m_enemyAnim.s_turnRight)
-		{
-			int a = 1;
-		}
 
 		cTurn = true;
 	}
 	else if (m_correctionAngle <= -3.0f)
 	{
-		if (m_enemyAnim.s_turnLeft)
-		{
-			int a = 1;
-		}
 
 		cTurn = true;
 	}
@@ -331,6 +326,7 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 		cTurn = false;
 		
 	}
+
 	//正面
 	if (!IsPlayerInView(playerPos))
 	{
@@ -344,7 +340,16 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 	//右側
 	if (IsPlayerOnRight(playerPos))
 	{
-		b = 1;
+		if (!cTurn)
+		{
+			//右に回転する
+			if (IsPlayerInView(playerPos))
+			{
+				m_enemyAnim.s_turnRight = true;
+				m_enemyAnim.s_turnLeft = false;
+				m_anim.s_moveflag = false;
+			}
+		}
 	}
 	else
 	{
@@ -354,7 +359,16 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 	//左側
 	if (IsPlayerOnLeft(playerPos))
 	{
-		c = 1;
+		if (!cTurn)
+		{
+			//左に回転する
+			if (IsPlayerInView(playerPos))
+			{
+				m_enemyAnim.s_turnLeft = true;
+				m_enemyAnim.s_turnRight = false;
+				m_anim.s_moveflag = false;
+			}
+		}
 	}
 	else
 	{
@@ -363,45 +377,56 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 
 	
 	//歩いている時は回転しなくなった
-	if (!cTurn)
-	{
-		//左に回転する
-		if (m_angle > m_correctionAngle + 0.8f)
-		{
-			m_enemyAnim.s_turnLeft = true;
-			m_enemyAnim.s_turnRight = false;
-			m_anim.s_moveflag = false;
-		}
-		//右に回転する
-		if (m_angle < m_correctionAngle - 0.8f)
-		{
-			m_enemyAnim.s_turnRight = true;
-			m_enemyAnim.s_turnLeft = false;
-			m_anim.s_moveflag = false;
-		}
-		
-	}
+	//if (!cTurn)
+	//{
+	//	//左に回転する
+	//	if (m_angle > m_correctionAngle + 0.8f)
+	//	{
+	//		m_enemyAnim.s_turnLeft = true;
+	//		m_enemyAnim.s_turnRight = false;
+	//		m_anim.s_moveflag = false;
+	//	}
+	//	//右に回転する
+	//	if (m_angle < m_correctionAngle - 0.8f)
+	//	{
+	//		m_enemyAnim.s_turnRight = true;
+	//		m_enemyAnim.s_turnLeft = false;
+	//		m_anim.s_moveflag = false;
+	//	}
+	//	
+	//}
 	
 
 	//左回りしているとき
 	if (m_enemyAnim.s_turnLeft)
 	{
 		//右回転させる
-		if (m_angle < m_correctionAngle - 0.5f)
+		if (IsPlayerOnRight(playerPos))
 		{
 			m_enemyAnim.s_turnRight = true;
 			m_enemyAnim.s_turnLeft = false;
 		}
+		//if (m_angle < m_correctionAngle - 0.5f)
+		//{
+		//	m_enemyAnim.s_turnRight = true;
+		//	m_enemyAnim.s_turnLeft = false;
+		//}
 	}
 	//右回りしているとき
 	else if (m_enemyAnim.s_turnRight)
 	{
 		//左回転させる
-		if (m_angle > m_correctionAngle + 0.5f)
+		if (IsPlayerOnLeft(playerPos))
 		{
 			m_enemyAnim.s_turnLeft = true;
 			m_enemyAnim.s_turnRight = false;
 		}
+
+		//if (m_angle > m_correctionAngle + 0.5f)
+		//{
+		//	m_enemyAnim.s_turnLeft = true;
+		//	m_enemyAnim.s_turnRight = false;
+		//}
 	}
 
 	//攻撃してない時
@@ -426,6 +451,7 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 			m_nowAnimIdx = m_animIdx["LeftWalk"];
 			ChangeAnim(m_nowAnimIdx, m_animOne[6], m_animOne);
 
+			//ここのアングル補正がうまくいってない
 			//左回り
 			if (m_angle > m_correctionAngle + 0.8f)
 			{
@@ -439,6 +465,7 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 			m_nowAnimIdx = m_animIdx["RightWalk"];
 			ChangeAnim(m_nowAnimIdx, m_animOne[7], m_animOne);
 
+			//ここのアングル補正が上手くいってない
 			//右回り
 			if (m_angle < m_correctionAngle - 0.8f)
 			{
@@ -680,10 +707,6 @@ void Bear::Draw(UI& ui)
 	{
 		ui.BossHPDraw(m_status.s_hp, m_maxHP, m_bossName, m_subName);
 	}
-
-	//DrawFormatString(200, 300, 0xffffff, "%d", a);
-	//DrawFormatString(200, 400, 0xffffff, "右側 : %d", b);
-	//DrawFormatString(200, 500, 0xffffff, "左側 : %d", c);
 
 #if false
 	DrawFormatString(200, 300, 0xffffff, "m_angle : %f", m_angle);
