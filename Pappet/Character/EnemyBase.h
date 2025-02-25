@@ -15,6 +15,7 @@ public:
 	{
 		bool s_turnRight;
 		bool s_turnLeft;
+		bool s_rool = false;
 	};
 
 public:
@@ -24,9 +25,9 @@ public:
 	virtual ~EnemyBase();
 
 	//初期化処理
-	virtual void Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics) {};
+	virtual void Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial) {};
 	//ゲームの仕様上での初期化
-	virtual void GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics) {};
+	virtual void GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial) {};
 	//終了
 	virtual void Finalize(std::shared_ptr<MyLibrary::Physics> physics);
 	//更新
@@ -178,6 +179,7 @@ protected:
 	bool m_isEnterHit = false;   //プレイヤーの攻撃が当たっているかどうか
 	bool m_isExitHit = false;    //プレイヤーの攻撃が外れたかどうか
 	bool m_bossjudg = false;     //ボスかの判断
+	bool m_tutorial = false;     //チュートリアルかの判断
 
 	MyLibrary::LibVec3 m_centerPos;     //中心座標
 	VECTOR m_move;

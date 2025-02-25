@@ -23,6 +23,8 @@ namespace
 	bool cGameBGMOne = false;
 	//ボスBGMを再生する
 	bool cBossBGMOne = false;
+	//チュートリアル
+	bool cTutorial = false;
 
 	//シングルトン
 	auto& cEffect = EffectManager::GetInstance();
@@ -32,7 +34,7 @@ namespace
 /// コンストラクタ
 /// </summary>
 GameManager::GameManager() :
-	m_nowMap(eMapName::FirstMap),
+	m_nowMap(eMapName::TutorialMap),
 	m_shadowMapHandle(0),
 	m_deadInit(false),
 	m_init(false),
@@ -63,7 +65,7 @@ void GameManager::Init()
 	cGameBGMOne = false;
 	cBossBGMOne = false;
 
-	m_pMap->DataInit(1);
+	m_pMap->DataInit(6);
 
 	m_pPhysics = std::make_shared<MyLibrary::Physics>(m_pMap->GetCollisionMap());
 
@@ -75,9 +77,9 @@ void GameManager::Init()
 	m_pPlayer->Init(m_pPhysics, this, *m_pWeapon, *m_pShield, *m_pArmor, true);
 	m_pPlayer->SetMapNow(FirstMap);
 	m_pEnemy = std::make_shared<EnemyManager>();
-	m_pEnemy->Init(m_pMap->GetStageName());
+	m_pEnemy->Init(m_nowMap);
 	m_pItem = std::make_shared<ItemManager>();
-	m_pItem->Init(m_pMap->GetStageName());
+	m_pItem->Init();
 	//m_pNpc->Init(m_pPhysics);
 	m_pSetting = std::make_shared<Setting>();
 	m_pSetting->Init();
@@ -87,7 +89,7 @@ void GameManager::Init()
 	m_pCore->Init();
 	m_pPlayer->ChangeStatus();
 	m_pMessage = std::make_shared<MessageManager>();
-	m_pMessage->Init(m_pMap->GetStageName());
+	m_pMessage->Init();
 	
 	m_pTool = std::make_shared<Tool>();
 	m_pTool->Init();
@@ -104,6 +106,15 @@ void GameManager::Init()
 	cWarp = false;
 
 	m_pBgm->GameOneInit();
+
+	if (m_pMap->GetStageName() == "stageTutorial")
+	{
+		cTutorial = true;
+	}
+	else
+	{
+		cTutorial = false;
+	}
 }
 
 /// <summary>
@@ -123,7 +134,7 @@ void GameManager::GameInit()
 	cEffect.Init();
 
 	m_pPlayer->Init(m_pPhysics, this, *m_pWeapon, *m_pShield, *m_pArmor, false);
-	m_pEnemy->Init(m_pMap->GetStageName());
+	m_pEnemy->Init(m_nowMap);
 	//m_pEnemy->GameInit(m_pPhysics, this, true);
 	//m_pItem->Init(m_pMap->GetStageName());
 	m_pItem->GameInit(m_pPhysics, this);
@@ -149,11 +160,20 @@ void GameManager::GameInit()
 	if (m_pMap->GetStageName() == "stage1")
 	{
 		m_pBgm->GameOneInit();
+		cTutorial = false;
+
 	}
 	//休息マップだった場合
 	else if (m_pMap->GetStageName() == "stageRest")
 	{
 		m_pBgm->GameRestInit();
+		cTutorial = false;
+
+	}
+	//チュートリアルステージだった場合
+	else if (m_pMap->GetStageName() == "stageTutorial")
+	{
+		cTutorial = true;
 	}
 }
 
@@ -181,7 +201,7 @@ void GameManager::Update()
 		//ロックオンしてない時
 		m_pCamera->Update(*m_pPlayer);
 		//ボス部屋に入ったらボスをロックオンするようにする
-		if (m_pMap->GetBossRoom() && m_pPlayer->GetLock() && !m_pEnemy->GetBossDead())
+		if (m_pMap->GetBossRoom() && m_pPlayer->GetLock() && !m_pEnemy->GetBossDead(GetThisMapName()))
 		{
 			m_pCamera->LockBossUpdate(*m_pPlayer, *m_pEnemy);
 		}
@@ -193,9 +213,9 @@ void GameManager::Update()
 
 		m_pItem->Update(m_pPhysics, this, m_pPlayer->GetTaking());
 		m_pMessage->Update(m_pPhysics, this, *m_pPlayer);
-		m_pEnemy->Update(m_pPhysics, this, *m_pCore, m_pPlayer->GetPos(), m_pCamera->GetDirection(), m_pPlayer->GetShieldPos(), !m_pPlayer->IsGetPlayerDead(), *m_pSe, m_init);
+		m_pEnemy->Update(m_pPhysics, this, *m_pCore, m_pPlayer->GetPos(), m_pCamera->GetDirection(), m_pPlayer->GetShieldPos(), !m_pPlayer->IsGetPlayerDead(), *m_pSe, m_init, cTutorial);
 
-		m_pPlayer->Update(*m_pWeapon, *m_pShield, *m_pArmor, *m_pEnemy, *m_pCore, m_pMap->GetRestPos(), *m_pTool, *m_pSe, m_pMap->GetBossRoom(), m_pEnemy->GetBossDead(), m_pPhysics);
+		m_pPlayer->Update(*m_pWeapon, *m_pShield, *m_pArmor, *m_pEnemy, *m_pCore, m_pMap->GetRestPos(), *m_pTool, *m_pSe, m_pMap->GetBossRoom(), m_pEnemy->GetBossDead(GetThisMapName()), m_pPhysics);
 
 
 		m_pMap->JudgeUpdate();
@@ -210,7 +230,7 @@ void GameManager::Update()
 		//メッセージを読めるかどうか
 		m_pPlayer->SetMessegePick(false);
 		//ボス部屋に入ったか
-		m_pEnemy->SetBossRoom(m_pMap->GetBossRoom());
+		m_pEnemy->SetBossRoom(m_pMap->GetBossRoom(), GetThisMapName());
 		//ボス部屋に入ったら
 		if (m_pMap->GetBossRoom())
 		{
@@ -226,7 +246,7 @@ void GameManager::Update()
 		}
 
 		//ボスが死んだ判定
-		if (m_pEnemy->GetBossDead())
+		if (m_pEnemy->GetBossDead(GetThisMapName()))
 		{
 			cWarp = true;
 			m_pMap->CoreUpdate();
@@ -247,7 +267,7 @@ void GameManager::Update()
 			}
 		}
 
-		m_pMap->Update(m_pPhysics, m_pPlayer->GetWarp(), m_pPlayer->GetBossStart(), m_pEnemy->GetBossDead());
+		m_pMap->Update(m_pPhysics, m_pPlayer->GetWarp(), m_pPlayer->GetBossStart(), m_pEnemy->GetBossDead(GetThisMapName()));
 
 		//メニューを開く
 		if (m_pPlayer->GetMenu() && !m_pSetting->GetEquipment() && !m_pSetting->GetItem())
@@ -298,7 +318,7 @@ void GameManager::Update()
 			{
 				//cEffect.End();
 				m_pPlayer->GameInit(m_pPhysics);
-				m_pEnemy->GameInit(m_pPhysics, this, m_deadInit);
+				m_pEnemy->GameInit(m_pPhysics, this, m_deadInit, cTutorial);
 				m_pMap->TriggerReset();
 				m_pUi->Init();
 				m_pPlayer->ChangeStatus();
@@ -337,7 +357,7 @@ void GameManager::Update()
 					//休息地点以外だと初期化
 					if (m_nowMap != 0)
 					{
-						m_pEnemy->GameInit(m_pPhysics, this, m_init);
+						m_pEnemy->GameInit(m_pPhysics, this, m_init, cTutorial);
 					}
 
 					m_pMap->TriggerReset();
@@ -508,6 +528,12 @@ void GameManager::ChangeStage(const char* stageName)
 	{
 		m_nowMap = eMapName::FirstMap;
 		m_pPlayer->SetMapNow(FirstMap);
+	}
+	//チュートリアルだった場合
+	if (stageName == "stageTutorial")
+	{
+		m_nowMap = eMapName::TutorialMap;
+		m_pPlayer->SetMapNow(TutorialMap);
 	}
 }
 

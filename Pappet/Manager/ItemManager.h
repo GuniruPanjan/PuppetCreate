@@ -67,7 +67,7 @@ public:
 	//デストラクタ
 	virtual ~ItemManager();
 	//初期化処理
-	void Init(const char* stageName);
+	void Init();
 	//ゲーム内での初期化処理
 	void GameInit(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager);
 	//更新処理
@@ -98,9 +98,6 @@ private:
 	std::shared_ptr<Shield> m_pshield;
 	std::shared_ptr<Weapon> m_pweapon;
 	std::shared_ptr<Tool> m_ptool;
-
-	//ステージ名
-	const char* m_stageName;
 
 	//ステージ毎のアイテムの生成数
 	std::unordered_map<int, int> m_itemGenerationCountPerOneMap;

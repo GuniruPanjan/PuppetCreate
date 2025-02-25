@@ -16,16 +16,16 @@ MessageManager::~MessageManager()
 {
 }
 
-void MessageManager::Init(const char* stageName)
+void MessageManager::Init()
 {
 	m_pGenerateInfo.clear();
 
-	m_stageName = stageName;
+	m_stageName = "Message";
 
 	cMessage = false;
 
 	//メッセージ生成情報を取得する
-	CsvLoad::GetInstance().MessageDataLoad(m_stageName, m_pGenerateInfo);
+	CsvLoad::GetInstance().MessageDataLoad(m_pGenerateInfo);
 
 	//csv側でマップを指定しているためマップの補正をする
 	for (auto& generate : m_pGenerateInfo)

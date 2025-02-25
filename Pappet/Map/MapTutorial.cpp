@@ -1,0 +1,227 @@
+#include "MapTutorial.h"
+#include "MapRest.h"
+#include "Manager/EffectManager.h"
+
+namespace
+{
+	//マップのコリジョンパス
+	constexpr const char* cMapCollisionName = "Data/Map/CollisionTutorialMap.mv1";
+	//床のパス
+	constexpr const char* cMapFloorName = "Data/Map/TutorialMapFloor.mv1";
+	//壁のパス
+	constexpr const char* cMapWallName = "Data/Map/TutorialMapWall.mv1";
+	//天井のパス
+	constexpr const char* cMapCeilingName = "Data/Map/TutorialMapCeiling.mv1";
+	//休息オブジェクトパス
+	constexpr const char* cMapRestObjectName = "Data/Map/RestObject.mv1";
+	//休息地点の半径
+	constexpr float  cRestRadius = 50.0f;
+	//ボス部屋入り口の半径
+	constexpr float cBossRommRadius = 60.0f;
+	//コアの半径
+	constexpr float cCoreRadius = 70.0f;
+	//コアのサイズ
+	constexpr float cCoreSize = 0.5f;
+	//ボス部屋の幅
+	constexpr float cBossWidth = 20.0f;
+	//ボス部屋の横
+	constexpr float cBossHight = 100.0f;
+	//ボス部屋の奥行
+	constexpr float cBossDepth = 30.0f;
+	//ボス部屋の入り口初期化
+	bool cOne = false;
+
+	//エフェクトの再生時間
+	int cEffectTime = 50;
+	//エフェクト再生
+	bool cEffectOne = false;
+	//エフェクトの再生位置
+	VECTOR cEffectPos = VGet(-10.0f, 50.0f, 0.0f);
+
+	//シングルトン
+	auto& cEffect = EffectManager::GetInstance();
+
+}
+
+MapTutorial::MapTutorial()
+{
+}
+
+MapTutorial::~MapTutorial()
+{
+	MV1DeleteModel(m_collisionHandle);
+	MV1DeleteModel(m_floorHandle);
+	MV1DeleteModel(m_wallHandle);
+	MV1DeleteModel(m_ceilingHandle);
+	MV1DeleteModel(m_restObjectHandle);
+	DeleteLightHandle(m_light);
+
+}
+
+void MapTutorial::DataInit()
+{
+	//データロード
+	LoadData("", cMapCollisionName, "");
+	//パーツロード
+	LoadPartsData(cMapFloorName, cMapWallName, cMapCeilingName, cMapRestObjectName);
+
+	m_stageName = "stageTutorial";
+}
+
+void MapTutorial::Init(std::shared_ptr<MyLibrary::Physics> physics)
+{
+	m_pPhysics = physics;
+
+	m_size = 0.15f;
+	m_width = 20.0f;
+	m_hight = 100.0f;
+	m_depth = 100.0f;
+
+	//モデルのサイズ変更
+	MV1SetScale(m_collisionHandle, VGet(m_size, m_size, m_size));
+
+	//ポジション設定
+	m_mapCollisionPos = VGet(0.0f, 20.0f, 0.0f);
+	m_mapRestPos = MyLibrary::LibVec3(0.0f, 100.0f, 0.0f);
+	m_mapBossRoomPos = MyLibrary::LibVec3(0.0f, 100.0f, 0.0f);
+	m_mapBossEnterPos = MyLibrary::LibVec3(0.0f, 100.0f, 0.0f);
+	m_mapCoreCollisionePos = MyLibrary::LibVec3(0.0f, 100.0f, 0.0f);
+	m_mapBossEnterTriggerPos = MyLibrary::LibVec3(0.0f, 100.0f, 0.0f);
+
+
+	//ライト関係
+	ChangeLightTypeDir(VGet(-1.0f, 0.0f, 0.0f));
+	m_light = CreateDirLightHandle(VGet(1.0f, 0.0f, 0.0f));
+
+	//索敵判定初期化
+	InitSearch(cRestRadius, m_mapRestPos);
+	//ボス部屋入り口
+	InitBossRoom(cBossRommRadius, m_mapBossEnterPos);
+	//ボス部屋入り口
+	InitRect(m_width, m_hight, m_depth, m_mapBossEnterPos);
+	//コアの判定初期化
+	InitCore(cCoreRadius, m_mapCoreCollisionePos);
+	//ボス部屋の判定初期化
+	InitBossEnter(cBossWidth, cBossHight, cBossDepth, m_mapBossEnterTriggerPos);
+
+	cOne = false;
+}
+
+std::shared_ptr<MapBase> MapTutorial::Update(bool warp, bool enter, bool Dead)
+{
+	MyLibrary::LibVec3::Size size = MyLibrary::LibVec3::Size(m_width, m_hight, m_depth);
+	MyLibrary::LibVec3::Size triggerSize = MyLibrary::LibVec3::Size(cBossWidth, cBossHight, cBossDepth);
+
+	m_pSearch->Update(m_mapRestPos);
+	m_pBossRoom->Update(m_mapBossRoomPos);
+	m_pRect->Update(m_mapBossEnterPos, size);
+	m_pRectTrigger->Update(m_mapBossEnterTriggerPos, triggerSize);
+
+	//ボスが死んだとき
+	if (Dead)
+	{
+		//m_mapBossRoomPos = MyLibrary::LibVec3(-80.0f, 400.0f, 0.0f);
+		//m_mapBossEnterTriggerPos = MyLibrary::LibVec3(10.0f, 400.0f, 0.0f);
+
+		m_pCore->Update(m_mapCoreCollisionePos);
+
+	}
+	else if (!Dead)
+	{
+		m_pCore->Update(MyLibrary::LibVec3(-1000.0f, -1000.0f, -1000.0f));
+	}
+
+	if (enter || Dead)
+	{
+		//一回だけ実行
+		if (!cOne)
+		{
+			//ボス部屋入り口のポジション
+			//m_mapBossEnterPos = MyLibrary::LibVec3(-10.0f, 400.0f, 0.0f);
+
+			cOne = true;
+		}
+	}
+	else
+	{
+		//一回だけ実行
+		if (cOne)
+		{
+			//ボス部屋入り口のポジション
+			//m_mapBossEnterPos = MyLibrary::LibVec3(-10.0f, 50.0f, 0.0f);
+
+			cOne = false;
+		}
+	}
+
+	//エフェクトの生成
+	if (cEffectTime >= 20 && !Dead)
+	{
+		cEffect.EffectCreate("Smoke", cEffectPos);
+
+		cEffectTime = 0;
+	}
+	else
+	{
+		cEffectTime++;
+	}
+	//エフェクト生成
+	if (!cEffectOne && enter && !Dead)
+	{
+		cEffect.EffectCreate("Distortion", cEffectPos);
+
+		cEffectOne = true;
+	}
+	else if (!enter)
+	{
+		cEffectOne = false;
+	}
+
+	return shared_from_this();   //自身のポインタ
+}
+
+std::shared_ptr<MapBase> MapTutorial::WarpUpdate(bool warp)
+{
+	if (warp)
+	{
+		return std::make_shared<MapRest>();
+	}
+
+	return shared_from_this();   //自身のポインタ
+}
+
+void MapTutorial::JudgeUpdate()
+{
+}
+
+void MapTutorial::CoreUpdate()
+{
+}
+
+void MapTutorial::Draw()
+{
+	//3Dモデルのポジション設定
+	MV1SetPosition(m_collisionHandle, m_mapCollisionPos);
+
+	//3Dモデル描画
+	MV1DrawModel(m_collisionHandle);
+}
+
+void MapTutorial::CoreDraw()
+{
+}
+
+void MapTutorial::End(std::shared_ptr<MyLibrary::Physics> physics, bool title)
+{
+	MV1DeleteModel(m_collisionHandle);
+	MV1DeleteModel(m_floorHandle);
+	MV1DeleteModel(m_wallHandle);
+	MV1DeleteModel(m_ceilingHandle);
+	MV1DeleteModel(m_restObjectHandle);
+	DeleteLightHandle(m_light);
+
+	if (!title)
+	{
+		Finalize(physics);
+	}
+}

@@ -68,7 +68,7 @@ Immortal::~Immortal()
 /// 初期化
 /// </summary>
 /// <param name="physics">物理クラスのポインタ</param>
-void Immortal::Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics)
+void Immortal::Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial)
 {
 	//代入
 	m_pPhysics = physics;
@@ -120,7 +120,7 @@ void Immortal::Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrar
 /// <param name="posY">Y座標</param>
 /// <param name="posZ">Z座標</param>
 /// <param name="physics">物理クラス</param>
-void Immortal::GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics)
+void Immortal::GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial)
 {
 	m_pPhysics = physics;
 

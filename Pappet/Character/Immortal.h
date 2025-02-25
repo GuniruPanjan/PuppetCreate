@@ -18,9 +18,9 @@ public:
 	virtual ~Immortal();
 
 	//初期化
-	void Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics) override;
+	void Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial) override;
 	//ゲームの仕様上での初期化処理
-	void GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics) override;
+	void GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial) override;
 	//更新
 	void Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos, bool isChase, SEManager& se, std::shared_ptr<MyLibrary::Physics> physics);
 	//怯んでないときにできる行動

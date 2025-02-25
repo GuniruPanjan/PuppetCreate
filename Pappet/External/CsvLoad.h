@@ -110,16 +110,16 @@ public:
 	void StatusLoad(CharacterBase::Status& data, const char* charaName);
 
 	//敵生成情報ロード
-	void EnemyDataLoad(const char* stageName, std::list<std::shared_ptr<EnemyManager::EnemyGenerateInfo>>& pGenerateInfo);
+	void EnemyDataLoad(std::list<std::shared_ptr<EnemyManager::EnemyGenerateInfo>>& pGenerateInfo);
 
 	//アニメーション情報ロード
 	void AnimDataLoad(std::string charaName, std::map<std::string, int>& anim);
 
 	//アイテム生成情報ロード
-	void ItemDataLoad(const char* stageName, std::list<std::shared_ptr<ItemManager::ItemGenerateInfo>>& pGenerateInfo);
+	void ItemDataLoad(std::list<std::shared_ptr<ItemManager::ItemGenerateInfo>>& pGenerateInfo);
 
 	//メッセージ生成情報ロード
-	void MessageDataLoad(const char* stageName, std::list<std::shared_ptr<MessageManager::MessageGenerateInfo>>& pGenerateInfo);
+	void MessageDataLoad(std::list<std::shared_ptr<MessageManager::MessageGenerateInfo>>& pGenerateInfo);
 
 private:
 	//Singletonのポインタがプログラム起動時に一つ作られるようにする

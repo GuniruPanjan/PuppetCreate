@@ -98,14 +98,14 @@ void CsvLoad::StatusLoad(CharacterBase::Status& data, const char* charaName)
 /// </summary>
 /// <param name="stageName">ステージの名前</param>
 /// <param name="pGenerateInfo">キャラクターの名前</param>
-void CsvLoad::EnemyDataLoad(const char* stageName, std::list<std::shared_ptr<EnemyManager::EnemyGenerateInfo>>& pGenerateInfo)
+void CsvLoad::EnemyDataLoad(std::list<std::shared_ptr<EnemyManager::EnemyGenerateInfo>>& pGenerateInfo)
 {
 	//一時保存用string
 	std::string strBuf;
 	//カンマ分け一時保存用string
 	std::vector<std::string> strConmaBuf;
 
-	std::string csvName = cFrontPathName + stageName + cBackPathName;
+	std::string csvName = cFrontPathName + "stage" + cBackPathName;
 
 	//ファイル読み込み
 	std::ifstream ifs(csvName);
@@ -213,14 +213,14 @@ void CsvLoad::AnimDataLoad(std::string charaName, std::map<std::string, int>& an
 /// </summary>
 /// <param name="stageName">ステージの名前</param>
 /// <param name="pItemInfo"></param>
-void CsvLoad::ItemDataLoad(const char* stageName, std::list<std::shared_ptr<ItemManager::ItemGenerateInfo>>& pGenerateInfo)
+void CsvLoad::ItemDataLoad(std::list<std::shared_ptr<ItemManager::ItemGenerateInfo>>& pGenerateInfo)
 {
 	//一時保存用string
 	std::string strBuf;
 	//カンマ分け一時保存用string
 	std::vector<std::string> strConmaBuf;
 
-	std::string csvName = cFrontPathName + stageName + "Item" + cBackPathName;
+	std::string csvName = cFrontPathName + "Item" + cBackPathName;
 
 	//ファイル読み込み
 	std::ifstream ifs(csvName);
@@ -274,7 +274,7 @@ void CsvLoad::ItemDataLoad(const char* stageName, std::list<std::shared_ptr<Item
 /// </summary>
 /// <param name="stageName"></param>
 /// <param name="pGenerateInfo"></param>
-void CsvLoad::MessageDataLoad(const char* stageName, std::list<std::shared_ptr<MessageManager::MessageGenerateInfo>>& pGenerateInfo)
+void CsvLoad::MessageDataLoad(std::list<std::shared_ptr<MessageManager::MessageGenerateInfo>>& pGenerateInfo)
 {
 	//一時保存用string
 	std::string strBuf;

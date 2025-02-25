@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera\Camera.cpp" />
+    <ClCompile Include="Character\Assassin.cpp" />
     <ClCompile Include="Character\Bear.cpp" />
     <ClCompile Include="Character\CharacterBase.cpp" />
     <ClCompile Include="Character\CollidableNpc.cpp" />
@@ -176,6 +177,7 @@
     <ClCompile Include="Map\MapBase.cpp" />
     <ClCompile Include="Map\MapFirst.cpp" />
     <ClCompile Include="Map\MapRest.cpp" />
+    <ClCompile Include="Map\MapTutorial.cpp" />
     <ClCompile Include="Object\AttackObject.cpp" />
     <ClCompile Include="Object\EnemyAttackObject.cpp" />
     <ClCompile Include="Object\ItemObject.cpp" />
@@ -199,6 +201,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera\Camera.h" />
+    <ClInclude Include="Character\Assassin.h" />
     <ClInclude Include="Character\Bear.h" />
     <ClInclude Include="Character\CharacterBase.h" />
     <ClInclude Include="Character\CollidableNpc.h" />
@@ -240,6 +243,7 @@
     <ClInclude Include="Map\MapBase.h" />
     <ClInclude Include="Map\MapFirst.h" />
     <ClInclude Include="Map\MapRest.h" />
+    <ClInclude Include="Map\MapTutorial.h" />
     <ClInclude Include="Object\AttackObject.h" />
     <ClInclude Include="Object\EnemyAttackObject.h" />
     <ClInclude Include="Object\ItemObject.h" />

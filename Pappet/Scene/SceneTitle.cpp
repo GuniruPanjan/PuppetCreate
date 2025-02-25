@@ -165,11 +165,11 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 
 	if (!cCameraTrun)
 	{
-		cCameraTargety -= 0.2f;
+		cCameraTargety -= 0.1f;
 	}
 	else if (cCameraTrun)
 	{
-		cCameraTargety += 0.2f;
+		cCameraTargety += 0.1f;
 	}
 
 	m_cameraTarget = VGet(cCameraTargetx, cCameraTargety, cCameraTargetz);

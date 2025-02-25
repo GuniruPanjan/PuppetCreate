@@ -1,4 +1,5 @@
-﻿キャラクター名,Idle,Walk,Run,LeftWalk,RightWalk,Hit,Attack1,Roll,Recovery,Death,Taking,Touch,ShieldWalk,ShieldRun,ShieldSideWalk,ShieldStart,ShieldIdle,ShieldImpact,ShieldTransition,Attack2,Attack3,BossEnter
-Player,4,17,11,6,9,3,7,10,8,2,5,16,20,19,18,14,12,13,15,0,-1,1
-Immortal,2,1,0,4,5,7,6,-1,-1,8,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1
-bear,7,0,-1,2,1,-1,3,-1,-1,6,-1,-1,-1,-1,-1,-1,-1,-1,-1,4,5,-1
+﻿キャラクター名,Idle,Walk,Run,LeftWalk,RightWalk,Hit,Attack1,Roll,Recovery,Death,Taking,Touch,ShieldWalk,ShieldRun,ShieldSideWalk,ShieldStart,ShieldIdle,ShieldImpact,ShieldTransition,Attack2,Attack3,BossEnter,Attack4,Attack5
+Player,4,17,11,6,9,3,7,10,8,2,5,16,20,19,18,14,12,13,15,0,-1,1,-1,-1
+Immortal,2,1,0,4,5,7,6,-1,-1,8,-1,-1,-1,-1,-1,-1,-1,0,-1,-1,-1,-1,-1,-1
+bear,7,0,-1,2,1,-1,3,-1,-1,6,-1,-1,-1,-1,-1,-1,-1,-1,-1,4,5,-1,-1,-1
+Assassin,0,8,-1,-1,-1,7,1,6,-1,9,-1,-1,-1,-1,-1,-1,-1,-1,-1,2,3,-1,4,5

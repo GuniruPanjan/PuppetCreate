@@ -1,6 +1,7 @@
 #include "MapManager.h"
 #include "Map/MapFirst.h"
 #include "Map/MapRest.h"
+#include "Map/MapTutorial.h"
 
 /// <summary>
 /// コンストラクタ
@@ -34,6 +35,13 @@ void MapManager::DataInit(int map)
 	{
 		//最初のシーンのメモリを解放する
 		m_pMap = std::make_shared<MapFirst>();
+
+		m_pMap->DataInit();
+	}
+	else if (map == 6)
+	{
+		//最初のシーンのメモリを解放する
+		m_pMap = std::make_shared<MapTutorial>();
 
 		m_pMap->DataInit();
 	}

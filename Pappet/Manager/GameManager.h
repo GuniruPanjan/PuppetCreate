@@ -30,12 +30,13 @@ class GameManager
 public:
 	enum eMapName : int
 	{
-		RestMap,         //休息ステージ
+		RestMap,        //休息ステージ
 		FirstMap,       //最初のステージ
 		SecondMap,      //2番目のステージ
 		ThreeMap,       //3番目のステージ
 		FourMap,        //4番目のステージ
-		LastMap        //最後のステージ
+		LastMap,        //最後のステージ
+		TutorialMap     //チュートリアルステージ
 	};
 
 	struct sBossEnd

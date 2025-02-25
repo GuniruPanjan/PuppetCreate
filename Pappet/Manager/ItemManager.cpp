@@ -20,7 +20,6 @@ namespace
 /// コンストラクタ
 /// </summary>
 ItemManager::ItemManager():
-	m_stageName(""),
 	m_itemPick(false)
 {
 }
@@ -37,15 +36,13 @@ ItemManager::~ItemManager()
 /// 初期化処理
 /// </summary>
 /// <param name="stageName">ステージ名</param>
-void ItemManager::Init(const char* stageName)
+void ItemManager::Init()
 {
 	m_pGenerateInfo.clear();
 	//m_pItems.clear();
 
-	m_stageName = stageName;
-
 	//アイテム生成情報を取得する
-	CsvLoad::GetInstance().ItemDataLoad(m_stageName, m_pGenerateInfo);
+	CsvLoad::GetInstance().ItemDataLoad(m_pGenerateInfo);
 
 	//csv側でマップを指定しているためマップの補正をする
 	for (auto& generate : m_pGenerateInfo)

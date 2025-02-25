@@ -15,6 +15,10 @@ MapBase::MapBase() :
 	m_handle(-1),
 	m_collisionHandle(-1),
 	m_coreHandle(-1),
+	m_floorHandle(-1),
+	m_wallHandle(-1),
+	m_ceilingHandle(-1),
+	m_restObjectHandle(-1),
 	m_size(0.0f),
 	m_width(0.0f),
 	m_hight(0.0f),
@@ -39,6 +43,10 @@ MapBase::~MapBase()
 	MV1DeleteModel(m_handle);
 	MV1DeleteModel(m_collisionHandle);
 	MV1DeleteModel(m_coreHandle);
+	MV1DeleteModel(m_floorHandle);
+	MV1DeleteModel(m_wallHandle);
+	MV1DeleteModel(m_ceilingHandle);
+	MV1DeleteModel(m_restObjectHandle);
 }
 
 void MapBase::Finalize(std::shared_ptr<MyLibrary::Physics> physics)
@@ -60,6 +68,21 @@ void MapBase::LoadData(std::string mapPath, std::string collisionPath, std::stri
 	m_handle = handle.GetModelHandle(mapPath);
 	m_collisionHandle = handle.GetModelHandle(collisionPath);
 	m_coreHandle = handle.GetModelHandle(corePath);
+}
+
+/// <summary>
+/// モデルのパーツを読み込む
+/// </summary>
+/// <param name="floorPath">床</param>
+/// <param name="wallPath">壁</param>
+/// <param name="ceilingPath">天井</param>
+/// <param name="restPath">休息</param>
+void MapBase::LoadPartsData(std::string floorPath, std::string wallPath, std::string ceilingPath, std::string restPath)
+{
+	m_floorHandle = handle.GetModelHandle(floorPath);
+	m_wallHandle = handle.GetModelHandle(wallPath);
+	m_ceilingHandle = handle.GetModelHandle(ceilingPath);
+	m_restObjectHandle = handle.GetModelHandle(restPath);
 }
 
 /// <summary>

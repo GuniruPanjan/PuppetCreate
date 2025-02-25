@@ -213,7 +213,7 @@ void Player::Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* mana
 		rigidbody.SetPos(MyLibrary::LibVec3(485.0f, 12.0f, -800.0f));
 	}
 	// ↓色々試すための初期化位置
-	//rigidbody.SetPos(MyLibrary::LibVec3(40.0f, 12.0f, 0.0f));
+	rigidbody.SetPos(MyLibrary::LibVec3(-1850.0f, 12.0f, 0.0f));
 	rigidbody.SetNextPos(rigidbody.GetPos());
 	rigidbody.SetVec(MyLibrary::LibVec3(0.0f, 40.0f, 0.0f));
 	m_collisionPos = rigidbody.GetPos();
@@ -294,7 +294,7 @@ void Player::GameInit(std::shared_ptr<MyLibrary::Physics> physics)
 	CsvLoad::GetInstance().StatusLoad(m_status, "Player");
 
 	//プレイヤーの初期位置設定
-	rigidbody.Init(true);
+	rigidbody.Init(false);
 	rigidbody.SetPos(MyLibrary::LibVec3(m_updateX, m_updateY, m_updateZ));
 	rigidbody.SetNextPos(rigidbody.GetPos());
 	rigidbody.SetVec(MyLibrary::LibVec3(0.0f, 40.0f, 0.0f));
@@ -1681,7 +1681,7 @@ void Player::Draw(Armor& armor)
 	DrawFormatString(1000, 550, 0xffffff, "taking : %d", m_animChange.sa_taking);
 	DrawFormatString(1000, 650, 0xffffff, "touch : %d", m_animChange.sa_touch);
 #endif
-#if false
+#if true
 	DrawFormatString(1000, 150, 0xffffff, "posx : %f", rigidbody.GetPos().x);   //15
 	DrawFormatString(1000, 200, 0xffffff, "posy : %f", rigidbody.GetPos().y);   //12
 	DrawFormatString(1000, 250, 0xffffff, "posz : %f", rigidbody.GetPos().z);   //0

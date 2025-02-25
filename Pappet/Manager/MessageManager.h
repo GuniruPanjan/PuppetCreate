@@ -38,7 +38,7 @@ public:
 	//デストラクタ
 	virtual ~MessageManager();
 	//初期化処理
-	void Init(const char* stageName);
+	void Init();
 	//ゲーム内での初期化処理
 	void GameInit(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager);
 	//更新処理

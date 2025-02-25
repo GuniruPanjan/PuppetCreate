@@ -9,6 +9,7 @@ class EnemyBase;
 class GameManager;
 class Immortal;
 class Bear;
+class Assassin;
 class CoreManager;
 class UI;
 class SEManager;
@@ -39,11 +40,11 @@ public:
 	virtual ~EnemyManager();
 
 	//初期化
-	void Init(const char* stageName);
+	void Init(int mapNumber);
 	//ゲームの仕様上での初期化
-	void GameInit(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, bool init = false);
+	void GameInit(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, bool init = false, bool tutorial = false);
 	//更新
-	void Update(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, CoreManager& core, MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 playerDir, MyLibrary::LibVec3 shieldPos, bool isPlayerChase, SEManager& se, bool init = false);
+	void Update(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, CoreManager& core, MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 playerDir, MyLibrary::LibVec3 shieldPos, bool isPlayerChase, SEManager& se, bool init = false, bool tutorial = false);
 	//描画
 	void Draw(UI& ui);
 	//終了処理
@@ -70,16 +71,16 @@ public:
 	const std::list<float> GetEnemyDamage() const { return m_damage; }
 	//コア取得
 	const std::list<int> GetDropCore() const { return m_dropCore; }
-	bool SetBossRoom(bool set);
+	bool SetBossRoom(bool set, int mapNumber);
 	//ボスが死んだかの判定
-	bool GetBossDead();
+	bool GetBossDead(int mapNumber);
 	//ボスかの判断
 	const std::list<bool> GetJudg() const { return m_bossJudg; }
 private:
 	//敵の生成
-	void CreateEnemy(float posX, float posY, float posZ, std::string name, std::shared_ptr<MyLibrary::Physics> physics);
+	void CreateEnemy(float posX, float posY, float posZ, std::string name, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial);
 	//敵のゲームの仕様上での初期化
-	void EnemyInit(float posX, float posY, float posZ, std::string name, std::shared_ptr<MyLibrary::Physics> physics);
+	void EnemyInit(float posX, float posY, float posZ, std::string name, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial);
 private:
 	//敵の管理
 	std::list<std::shared_ptr<EnemyBase>> m_pEnemys;
@@ -88,6 +89,7 @@ private:
 
 	std::shared_ptr<Immortal> immortal;
 	std::shared_ptr<Bear> bear;
+	std::shared_ptr<Assassin> assassin;
 
 	//ステージ名
 	const char* m_stageName;

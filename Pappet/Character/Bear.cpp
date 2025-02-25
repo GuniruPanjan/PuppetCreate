@@ -86,7 +86,7 @@ Bear::~Bear()
 /// <param name="posY"></param>
 /// <param name="posZ"></param>
 /// <param name="physics"></param>
-void Bear::Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics)
+void Bear::Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial)
 {
 	//代入
 	m_pPhysics = physics;
@@ -141,7 +141,7 @@ void Bear::Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::P
 /// <param name="posY">Y座標</param>
 /// <param name="posZ">Z座標</param>
 /// <param name="physics">物理クラス</param>
-void Bear::GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics)
+void Bear::GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial)
 {
 	m_pPhysics = physics;
 

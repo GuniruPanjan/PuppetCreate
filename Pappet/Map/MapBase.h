@@ -61,6 +61,8 @@ public:
 protected:
 	//モデルを読み込む
 	void LoadData(std::string mapPath, std::string collisionPath, std::string corePath);
+	//モデルパーツを読み込む
+	void LoadPartsData(std::string floorPath, std::string wallPath, std::string ceilingPath, std::string restPath);
 	//索敵判定をする当たり判定を作成
 	void InitSearch(float radius, MyLibrary::LibVec3 pos);
 	//ボス部屋の入り口
@@ -86,6 +88,10 @@ protected:
 	int m_handle;                           //モデルのハンドル
 	int m_collisionHandle;                  //モデルの当たり判定用のハンドル
 	int m_coreHandle;                       //コアのハンドル
+	int m_floorHandle;                      //床のハンドル
+	int m_wallHandle;                       //壁のハンドル
+	int m_ceilingHandle;                    //天井のハンドル
+	int m_restObjectHandle;                 //休息のハンドル
 	float m_size;                           //マップのサイズ
 	float m_width;                          //幅
 	float m_hight;                          //高さ
