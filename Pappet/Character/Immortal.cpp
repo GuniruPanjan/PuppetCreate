@@ -100,6 +100,13 @@ void Immortal::Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrar
 	m_nowAnimIdx = m_animIdx["Idle"];
 
 	float totalAnimFrame = MV1GetAttachAnimTotalTime(m_modelHandle, m_nowAnimNo);
+
+	//チュートリアル用HP
+	if (tutorial)
+	{
+		m_status.s_hp = 50.0f;
+	}
+
 	//最大HPを取得
 	m_maxHP = m_status.s_hp;
 
@@ -147,6 +154,13 @@ void Immortal::GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLi
 	//アニメーション設定
 	m_nowAnimNo = MV1AttachAnim(m_modelHandle, m_animIdx["Idle"]);
 	m_nowAnimIdx = m_animIdx["Idle"];
+
+	//チュートリアル用HP
+	if (tutorial)
+	{
+		m_status.s_hp = 50.0f;
+	}
+
 	//最大HPを取得
 	m_maxHP = m_status.s_hp;
 

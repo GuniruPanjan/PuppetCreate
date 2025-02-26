@@ -269,8 +269,6 @@ void MyLibrary::Physics::CheckEnemyUpdate()
 			continue;
 		}
 
-		//敵キャラだけ一番最初に作られたやつ以外は落ちて最後に作ったキャラは落ちない感じになっているバグ
-
 		//壁と床の当たり判定を行う
 		CheckWallAndFloorEnemy(item);
 		//壁との当たり判定処理

@@ -30,6 +30,14 @@ namespace
 	constexpr float cBossDepth = 30.0f;
 	//ボス部屋の入り口初期化
 	bool cOne = false;
+	//小さい床のサイズ
+	constexpr float cSmallFloor = 0.4f;
+	//大きい床のサイズ
+	constexpr float cBigFloor = 2.0f;
+	//普通の壁のサイズ
+	constexpr float cNormalWall = 2.5f;
+	//大きい壁のサイズ
+	constexpr float cBigWall = 5.0f;
 
 	//エフェクトの再生時間
 	int cEffectTime = 50;
@@ -81,7 +89,7 @@ void MapTutorial::Init(std::shared_ptr<MyLibrary::Physics> physics)
 	MV1SetScale(m_collisionHandle, VGet(m_size, m_size, m_size));
 
 	//ポジション設定
-	m_mapCollisionPos = VGet(0.0f, 20.0f, 0.0f);
+	m_mapCollisionPos = VGet(0.0f, 76.0f, 0.0f);
 	m_mapRestPos = MyLibrary::LibVec3(0.0f, 100.0f, 0.0f);
 	m_mapBossRoomPos = MyLibrary::LibVec3(0.0f, 100.0f, 0.0f);
 	m_mapBossEnterPos = MyLibrary::LibVec3(0.0f, 100.0f, 0.0f);
@@ -204,7 +212,165 @@ void MapTutorial::Draw()
 	MV1SetPosition(m_collisionHandle, m_mapCollisionPos);
 
 	//3Dモデル描画
-	MV1DrawModel(m_collisionHandle);
+	//MV1DrawModel(m_collisionHandle);
+
+	//普通の床描画
+	MV1SetScale(m_floorHandle, VGet(m_size, m_size, m_size));
+	MV1SetPosition(m_floorHandle, VGet(-1652.0f, -7.0f, 0.0f));
+	MV1DrawModel(m_floorHandle);
+	MV1SetPosition(m_floorHandle, VGet(-1352.0f, -7.0f, 0.0f));
+	MV1DrawModel(m_floorHandle);
+	MV1SetPosition(m_floorHandle, VGet(-1052.0f, -7.0f, 0.0f));
+	MV1DrawModel(m_floorHandle);
+	MV1SetPosition(m_floorHandle, VGet(-752.0f, -7.0f, 0.0f));
+	MV1DrawModel(m_floorHandle);
+	MV1SetPosition(m_floorHandle, VGet(-452.0f, -7.0f, 0.0f));
+	MV1DrawModel(m_floorHandle);
+	MV1SetPosition(m_floorHandle, VGet(-152.0f, -7.0f, 0.0f));
+	MV1DrawModel(m_floorHandle);
+
+	//大きい床描画
+	MV1SetScale(m_floorHandle, VGet(m_size * cBigFloor, m_size, m_size * cBigFloor));
+	MV1SetPosition(m_floorHandle, VGet(290.0f, -7.0f, 0.0f));
+	MV1DrawModel(m_floorHandle);
+
+	//小さい床描画
+	MV1SetScale(m_floorHandle, VGet(m_size * cSmallFloor, m_size, m_size * cSmallFloor));
+	MV1SetPosition(m_floorHandle, VGet(-1862.0f, -7.0f, 0.0f));
+	MV1DrawModel(m_floorHandle);
+
+	//壁の描画
+	MV1SetScale(m_wallHandle, VGet(m_size, m_size, m_size));
+	MV1SetPosition(m_wallHandle, VGet(-1929.0f, 90.0f, 0.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetPosition(m_wallHandle, VGet(-1862.0f, 90.0f, 67.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetPosition(m_wallHandle, VGet(-1862.0f, 90.0f, -67.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	
+	MV1SetPosition(m_wallHandle, VGet(-1809.0f, 90.0f, -120.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetPosition(m_wallHandle, VGet(-1809.0f, 90.0f, 120.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetPosition(m_wallHandle, VGet(-1500.0f, 90.0f, -120.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetPosition(m_wallHandle, VGet(-1500.0f, 90.0f, 120.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetPosition(m_wallHandle, VGet(-1200.0f, 90.0f, -120.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetPosition(m_wallHandle, VGet(-1200.0f, 90.0f, 120.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetPosition(m_wallHandle, VGet(-900.0f, 90.0f, -120.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetPosition(m_wallHandle, VGet(-900.0f, 90.0f, 120.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetPosition(m_wallHandle, VGet(-600.0f, 90.0f, -120.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetPosition(m_wallHandle, VGet(-600.0f, 90.0f, 120.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetPosition(m_wallHandle, VGet(-300.0f, 90.0f, -120.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetPosition(m_wallHandle, VGet(-300.0f, 90.0f, 120.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetPosition(m_wallHandle, VGet(-8.0f, 90.0f, -120.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetPosition(m_wallHandle, VGet(-8.0f, 90.0f, 120.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetPosition(m_wallHandle, VGet(-8.0f, 90.0f, -240.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetPosition(m_wallHandle, VGet(-8.0f, 90.0f, 240.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+
+
+	//普通の大きさの壁描画
+	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
+	MV1SetPosition(m_wallHandle, VGet(-1652.0f, 90.0f, -168.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
+	MV1SetPosition(m_wallHandle, VGet(-1352.0f, 90.0f, -168.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
+	MV1SetPosition(m_wallHandle, VGet(-1052.0f, 90.0f, -168.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
+	MV1SetPosition(m_wallHandle, VGet(-752.0f, 90.0f, -168.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
+	MV1SetPosition(m_wallHandle, VGet(-452.0f, 90.0f, -168.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
+	MV1SetPosition(m_wallHandle, VGet(-152.0f, 90.0f, -168.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+
+	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
+	MV1SetPosition(m_wallHandle, VGet(-1652.0f, 90.0f, 168.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
+	MV1SetPosition(m_wallHandle, VGet(-1352.0f, 90.0f, 168.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
+	MV1SetPosition(m_wallHandle, VGet(-1052.0f, 90.0f, 168.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
+	MV1SetPosition(m_wallHandle, VGet(-752.0f, 90.0f, 168.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
+	MV1SetPosition(m_wallHandle, VGet(-452.0f, 90.0f, 168.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
+	MV1SetPosition(m_wallHandle, VGet(-152.0f, 90.0f, 168.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+
+	//大きい壁描画
+	MV1SetScale(m_wallHandle, VGet(m_size* cBigWall, m_size, m_size* cBigWall));
+	MV1SetPosition(m_wallHandle, VGet(290.0f, 90.0f, 335.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetScale(m_wallHandle, VGet(m_size* cBigWall, m_size, m_size* cBigWall));
+	MV1SetPosition(m_wallHandle, VGet(290.0f, 90.0f, -335.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+	MV1SetScale(m_wallHandle, VGet(m_size* cBigWall, m_size, m_size* cBigWall));
+	MV1SetPosition(m_wallHandle, VGet(625.0f, 90.0f, 0.0f));
+	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
+	MV1DrawModel(m_wallHandle);
+
+	//天井描画
+	MV1SetScale(m_ceilingHandle, VGet(m_size, m_size, m_size));
+	MV1SetPosition(m_ceilingHandle, VGet(-450.0f, 190.0f, 0.0f));
+	MV1SetRotationXYZ(m_ceilingHandle, VGet(0.0f, 0.0f, 0.0f));
+	MV1DrawModel(m_ceilingHandle);
 }
 
 void MapTutorial::CoreDraw()

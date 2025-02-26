@@ -14,7 +14,7 @@ namespace
 	//モデルのサイズの拡大率
 	constexpr float cModelSize = 0.5f;
 	//モデルの長さ
-	constexpr float cCapsuleLen = 40.0f;
+	constexpr float cCapsuleLen = 50.0f;
 	//モデルの半径
 	constexpr float cCapsuleRadius = 14.0f;
 	//モデルの座標を合わせる

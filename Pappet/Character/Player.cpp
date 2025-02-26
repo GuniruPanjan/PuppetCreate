@@ -203,7 +203,7 @@ void Player::Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* mana
 	Collidable::Init(m_pPhysics);
 
 	//プレイヤーの初期位置設定
-	rigidbody.Init(false);
+	rigidbody.Init(true);
 	if (manager->GetThisMapName() == 0)
 	{
 		rigidbody.SetPos(MyLibrary::LibVec3(40.0f, 12.0f, 0.0f));
@@ -294,7 +294,7 @@ void Player::GameInit(std::shared_ptr<MyLibrary::Physics> physics)
 	CsvLoad::GetInstance().StatusLoad(m_status, "Player");
 
 	//プレイヤーの初期位置設定
-	rigidbody.Init(false);
+	rigidbody.Init(true);
 	rigidbody.SetPos(MyLibrary::LibVec3(m_updateX, m_updateY, m_updateZ));
 	rigidbody.SetNextPos(rigidbody.GetPos());
 	rigidbody.SetVec(MyLibrary::LibVec3(0.0f, 40.0f, 0.0f));
@@ -522,6 +522,10 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		{
 			m_animReverse = false;
 		}
+	}
+	else
+	{
+		m_animReverse = false;
 	}
 
 	//盾の索敵のポジション更新
@@ -1623,11 +1627,6 @@ void Player::WeaponAnimation(Shield& shield)
 						m_nowAnimIdx = m_animIdx["ShieldStart"];
 						ChangeAnim(m_nowAnimIdx, m_animOne[18], m_animOne, 1.0f);
 						NotInitAnim(true);
-					}
-					//キャラが動いているとき
-					else
-					{
-						
 					}
 					
 				}
