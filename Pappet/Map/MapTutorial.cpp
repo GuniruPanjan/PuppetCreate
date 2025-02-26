@@ -27,7 +27,7 @@ namespace
 	//ボス部屋の横
 	constexpr float cBossHight = 100.0f;
 	//ボス部屋の奥行
-	constexpr float cBossDepth = 30.0f;
+	constexpr float cBossDepth = 50.0f;
 	//ボス部屋の入り口初期化
 	bool cOne = false;
 	//小さい床のサイズ
@@ -83,18 +83,18 @@ void MapTutorial::Init(std::shared_ptr<MyLibrary::Physics> physics)
 	m_size = 0.15f;
 	m_width = 20.0f;
 	m_hight = 100.0f;
-	m_depth = 100.0f;
+	m_depth = 200.0f;
 
 	//モデルのサイズ変更
 	MV1SetScale(m_collisionHandle, VGet(m_size, m_size, m_size));
 
 	//ポジション設定
 	m_mapCollisionPos = VGet(0.0f, 76.0f, 0.0f);
-	m_mapRestPos = MyLibrary::LibVec3(0.0f, 100.0f, 0.0f);
-	m_mapBossRoomPos = MyLibrary::LibVec3(0.0f, 100.0f, 0.0f);
-	m_mapBossEnterPos = MyLibrary::LibVec3(0.0f, 100.0f, 0.0f);
+	m_mapRestPos = MyLibrary::LibVec3(-150.0f, 0.0f, 130.0f);
+	m_mapBossRoomPos = MyLibrary::LibVec3(70.0f, 0.0f, 0.0f);
+	m_mapBossEnterPos = MyLibrary::LibVec3(0.0f, 50.0f, 0.0f);
 	m_mapCoreCollisionePos = MyLibrary::LibVec3(0.0f, 100.0f, 0.0f);
-	m_mapBossEnterTriggerPos = MyLibrary::LibVec3(0.0f, 100.0f, 0.0f);
+	m_mapBossEnterTriggerPos = MyLibrary::LibVec3(-20.0f, 50.0f, 0.0f);
 
 
 	//ライト関係
@@ -128,8 +128,8 @@ std::shared_ptr<MapBase> MapTutorial::Update(bool warp, bool enter, bool Dead)
 	//ボスが死んだとき
 	if (Dead)
 	{
-		//m_mapBossRoomPos = MyLibrary::LibVec3(-80.0f, 400.0f, 0.0f);
-		//m_mapBossEnterTriggerPos = MyLibrary::LibVec3(10.0f, 400.0f, 0.0f);
+		m_mapBossRoomPos = MyLibrary::LibVec3(-80.0f, 400.0f, 0.0f);
+		m_mapBossEnterTriggerPos = MyLibrary::LibVec3(10.0f, 400.0f, 0.0f);
 
 		m_pCore->Update(m_mapCoreCollisionePos);
 
@@ -145,7 +145,7 @@ std::shared_ptr<MapBase> MapTutorial::Update(bool warp, bool enter, bool Dead)
 		if (!cOne)
 		{
 			//ボス部屋入り口のポジション
-			//m_mapBossEnterPos = MyLibrary::LibVec3(-10.0f, 400.0f, 0.0f);
+			m_mapBossEnterPos = MyLibrary::LibVec3(-10.0f, 400.0f, 0.0f);
 
 			cOne = true;
 		}
@@ -156,7 +156,7 @@ std::shared_ptr<MapBase> MapTutorial::Update(bool warp, bool enter, bool Dead)
 		if (cOne)
 		{
 			//ボス部屋入り口のポジション
-			//m_mapBossEnterPos = MyLibrary::LibVec3(-10.0f, 50.0f, 0.0f);
+			m_mapBossEnterPos = MyLibrary::LibVec3(-10.0f, 50.0f, 0.0f);
 
 			cOne = false;
 		}
@@ -215,162 +215,70 @@ void MapTutorial::Draw()
 	//MV1DrawModel(m_collisionHandle);
 
 	//普通の床描画
-	MV1SetScale(m_floorHandle, VGet(m_size, m_size, m_size));
-	MV1SetPosition(m_floorHandle, VGet(-1652.0f, -7.0f, 0.0f));
-	MV1DrawModel(m_floorHandle);
-	MV1SetPosition(m_floorHandle, VGet(-1352.0f, -7.0f, 0.0f));
-	MV1DrawModel(m_floorHandle);
-	MV1SetPosition(m_floorHandle, VGet(-1052.0f, -7.0f, 0.0f));
-	MV1DrawModel(m_floorHandle);
-	MV1SetPosition(m_floorHandle, VGet(-752.0f, -7.0f, 0.0f));
-	MV1DrawModel(m_floorHandle);
-	MV1SetPosition(m_floorHandle, VGet(-452.0f, -7.0f, 0.0f));
-	MV1DrawModel(m_floorHandle);
-	MV1SetPosition(m_floorHandle, VGet(-152.0f, -7.0f, 0.0f));
-	MV1DrawModel(m_floorHandle);
+	PartDrawSet(m_floorHandle, VGet(m_size, m_size, m_size), VGet(-1652.0f, -7.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_floorHandle, VGet(m_size, m_size, m_size), VGet(-1352.0f, -7.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_floorHandle, VGet(m_size, m_size, m_size), VGet(-1052.0f, -7.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_floorHandle, VGet(m_size, m_size, m_size), VGet(-752.0f, -7.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_floorHandle, VGet(m_size, m_size, m_size), VGet(-452.0f, -7.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_floorHandle, VGet(m_size, m_size, m_size), VGet(-152.0f, -7.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
 
 	//大きい床描画
-	MV1SetScale(m_floorHandle, VGet(m_size * cBigFloor, m_size, m_size * cBigFloor));
-	MV1SetPosition(m_floorHandle, VGet(290.0f, -7.0f, 0.0f));
-	MV1DrawModel(m_floorHandle);
+	PartDrawSet(m_floorHandle, VGet(m_size * cBigFloor, m_size, m_size * cBigFloor), VGet(290.0f, -7.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
 
 	//小さい床描画
-	MV1SetScale(m_floorHandle, VGet(m_size * cSmallFloor, m_size, m_size * cSmallFloor));
-	MV1SetPosition(m_floorHandle, VGet(-1862.0f, -7.0f, 0.0f));
-	MV1DrawModel(m_floorHandle);
+	PartDrawSet(m_floorHandle, VGet(m_size * cSmallFloor, m_size, m_size * cSmallFloor), VGet(-1862.0f, -7.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
 
 	//壁の描画
-	MV1SetScale(m_wallHandle, VGet(m_size, m_size, m_size));
-	MV1SetPosition(m_wallHandle, VGet(-1929.0f, 90.0f, 0.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetPosition(m_wallHandle, VGet(-1862.0f, 90.0f, 67.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetPosition(m_wallHandle, VGet(-1862.0f, 90.0f, -67.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	
-	MV1SetPosition(m_wallHandle, VGet(-1809.0f, 90.0f, -120.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetPosition(m_wallHandle, VGet(-1809.0f, 90.0f, 120.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetPosition(m_wallHandle, VGet(-1500.0f, 90.0f, -120.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetPosition(m_wallHandle, VGet(-1500.0f, 90.0f, 120.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetPosition(m_wallHandle, VGet(-1200.0f, 90.0f, -120.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetPosition(m_wallHandle, VGet(-1200.0f, 90.0f, 120.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetPosition(m_wallHandle, VGet(-900.0f, 90.0f, -120.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetPosition(m_wallHandle, VGet(-900.0f, 90.0f, 120.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetPosition(m_wallHandle, VGet(-600.0f, 90.0f, -120.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetPosition(m_wallHandle, VGet(-600.0f, 90.0f, 120.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetPosition(m_wallHandle, VGet(-300.0f, 90.0f, -120.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetPosition(m_wallHandle, VGet(-300.0f, 90.0f, 120.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetPosition(m_wallHandle, VGet(-8.0f, 90.0f, -120.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetPosition(m_wallHandle, VGet(-8.0f, 90.0f, 120.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetPosition(m_wallHandle, VGet(-8.0f, 90.0f, -240.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetPosition(m_wallHandle, VGet(-8.0f, 90.0f, 240.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
+	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-1929.0f, 90.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-1862.0f, 90.0f, 67.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-1862.0f, 90.0f, -67.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+
+
+	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-1809.0f, 90.0f, -120.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-1809.0f, 90.0f, 120.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-1500.0f, 90.0f, -120.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-1500.0f, 90.0f, 120.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-1200.0f, 90.0f, -120.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-1200.0f, 90.0f, 120.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-900.0f, 90.0f, -120.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-900.0f, 90.0f, 120.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-600.0f, 90.0f, -120.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-600.0f, 90.0f, 120.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-300.0f, 90.0f, -120.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-300.0f, 90.0f, 120.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-8.0f, 90.0f, -120.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-8.0f, 90.0f, 120.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-8.0f, 90.0f, -240.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-8.0f, 90.0f, 240.0f), VGet(0.0f, 0.0f, 0.0f));
 
 
 	//普通の大きさの壁描画
-	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
-	MV1SetPosition(m_wallHandle, VGet(-1652.0f, 90.0f, -168.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
-	MV1SetPosition(m_wallHandle, VGet(-1352.0f, 90.0f, -168.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
-	MV1SetPosition(m_wallHandle, VGet(-1052.0f, 90.0f, -168.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
-	MV1SetPosition(m_wallHandle, VGet(-752.0f, 90.0f, -168.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
-	MV1SetPosition(m_wallHandle, VGet(-452.0f, 90.0f, -168.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
-	MV1SetPosition(m_wallHandle, VGet(-152.0f, 90.0f, -168.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
+	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-1652.0f, 90.0f, -168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-1352.0f, 90.0f, -168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-1052.0f, 90.0f, -168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-752.0f, 90.0f, -168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-452.0f, 90.0f, -168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-152.0f, 90.0f, -168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
 
-	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
-	MV1SetPosition(m_wallHandle, VGet(-1652.0f, 90.0f, 168.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
-	MV1SetPosition(m_wallHandle, VGet(-1352.0f, 90.0f, 168.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
-	MV1SetPosition(m_wallHandle, VGet(-1052.0f, 90.0f, 168.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
-	MV1SetPosition(m_wallHandle, VGet(-752.0f, 90.0f, 168.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
-	MV1SetPosition(m_wallHandle, VGet(-452.0f, 90.0f, 168.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetScale(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall));
-	MV1SetPosition(m_wallHandle, VGet(-152.0f, 90.0f, 168.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
+
+	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-1652.0f, 90.0f, 168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-1352.0f, 90.0f, 168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-1052.0f, 90.0f, 168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-752.0f, 90.0f, 168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-452.0f, 90.0f, 168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-152.0f, 90.0f, 168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+
 
 	//大きい壁描画
-	MV1SetScale(m_wallHandle, VGet(m_size* cBigWall, m_size, m_size* cBigWall));
-	MV1SetPosition(m_wallHandle, VGet(290.0f, 90.0f, 335.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetScale(m_wallHandle, VGet(m_size* cBigWall, m_size, m_size* cBigWall));
-	MV1SetPosition(m_wallHandle, VGet(290.0f, 90.0f, -335.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
-	MV1SetScale(m_wallHandle, VGet(m_size* cBigWall, m_size, m_size* cBigWall));
-	MV1SetPosition(m_wallHandle, VGet(625.0f, 90.0f, 0.0f));
-	MV1SetRotationXYZ(m_wallHandle, VGet(0.0f, 0.0f, 0.0f));
-	MV1DrawModel(m_wallHandle);
+	PartDrawSet(m_wallHandle, VGet(m_size * cBigWall, m_size, m_size * cBigWall), VGet(290.0f, 90.0f, 335.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size * cBigWall, m_size, m_size * cBigWall), VGet(290.0f, 90.0f, -335.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	PartDrawSet(m_wallHandle, VGet(m_size * cBigWall, m_size, m_size * cBigWall), VGet(625.0f, 90.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
 
 	//天井描画
-	MV1SetScale(m_ceilingHandle, VGet(m_size, m_size, m_size));
-	MV1SetPosition(m_ceilingHandle, VGet(-450.0f, 190.0f, 0.0f));
-	MV1SetRotationXYZ(m_ceilingHandle, VGet(0.0f, 0.0f, 0.0f));
-	MV1DrawModel(m_ceilingHandle);
+	PartDrawSet(m_ceilingHandle, VGet(m_size, m_size, m_size), VGet(-450.0f, 190.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
+
+	//休息地点描画
+	PartDrawSet(m_restObjectHandle, VGet(0.5f, 0.5f, 0.5f), VGet(-150.0f, 0.0f, 130.0f), VGet(0.0f, 0.0f, 0.0f));
 }
 
 void MapTutorial::CoreDraw()

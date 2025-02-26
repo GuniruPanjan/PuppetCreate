@@ -1012,9 +1012,22 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		//一回実行
 		if (cEnterPos)
 		{
-			rigidbody.SetPos(MyLibrary::LibVec3(15.0f, 12.0f, 0.0f));
+			//最初のステージ
+			if (m_mapNow == 1)
+			{
+				rigidbody.SetPos(MyLibrary::LibVec3(15.0f, 12.0f, 0.0f));
 
-			m_angle = 1.5f;
+				m_angle = 1.5f;
+			}
+			//チュートリアルステージ
+			else if (m_mapNow == 6)
+			{
+				rigidbody.SetPos(MyLibrary::LibVec3(-30.0f, 12.0f, 0.0f));
+
+				m_angle = -1.5f;
+			}
+
+			
 
 			cEnterPos = false;
 		}

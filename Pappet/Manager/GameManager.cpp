@@ -75,7 +75,7 @@ void GameManager::Init()
 
 	m_pPlayer = std::make_shared<Player>();
 	m_pPlayer->Init(m_pPhysics, this, *m_pWeapon, *m_pShield, *m_pArmor, true);
-	m_pPlayer->SetMapNow(FirstMap);
+	m_pPlayer->SetMapNow(GetThisMapName());
 	m_pEnemy = std::make_shared<EnemyManager>();
 	m_pEnemy->Init(m_nowMap);
 	m_pItem = std::make_shared<ItemManager>();

@@ -1,5 +1,7 @@
 #pragma once
 #include "ObjectBase.h"
+
+
 class AttackObject : public ObjectBase
 {
 public:

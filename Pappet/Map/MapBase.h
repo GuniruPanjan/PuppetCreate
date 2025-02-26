@@ -73,6 +73,8 @@ protected:
 	void InitCore(float radius, MyLibrary::LibVec3 pos);
 	//ボス部屋に入るための判定
 	void InitBossEnter(float width, float hight, float depth, MyLibrary::LibVec3 pos);
+	//モデルパーツ毎に描画する時に使う関数
+	void PartDrawSet(int handle, VECTOR scale, VECTOR position, VECTOR rotation);
 protected:
 	//物理クラスのポインタ
 	std::shared_ptr<MyLibrary::Physics> m_pPhysics;

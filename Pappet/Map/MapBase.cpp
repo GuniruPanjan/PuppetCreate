@@ -146,6 +146,21 @@ void MapBase::InitBossEnter(float width, float hight, float depth, MyLibrary::Li
 }
 
 /// <summary>
+/// モデルのパーツ毎に描画するときに使う
+/// </summary>
+/// <param name="handle"></param>
+/// <param name="scale"></param>
+/// <param name="position"></param>
+/// <param name="rotation"></param>
+void MapBase::PartDrawSet(int handle, VECTOR scale, VECTOR position, VECTOR rotation)
+{
+	MV1SetScale(handle, scale);
+	MV1SetPosition(handle, position);
+	MV1SetRotationXYZ(handle, rotation);
+	MV1DrawModel(handle);
+}
+
+/// <summary>
 /// 終了処理
 /// </summary>
 /// <param name="physics"></param>
