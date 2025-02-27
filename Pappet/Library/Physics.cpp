@@ -100,6 +100,8 @@ void MyLibrary::Physics::Update()
 		auto pos = item->rigidbody.GetPos();
 		auto size = item->rigidbody.GetSize();
 		auto velocity = item->rigidbody.GetVelocity();
+		auto pos1 = item->rigidbody.GetAttackPos1();
+		auto pos2 = item->rigidbody.GetAttackPos2();
 
 		//重力を利用する設定なら、重力を追加
 		if (item->rigidbody.GetUseGravity())
@@ -137,7 +139,9 @@ void MyLibrary::Physics::Update()
 			else if (kind == CollidableData::Kind::AttackCapsule)
 			{
 				auto attackCapsuleData = dynamic_cast<MyLibrary::CollidableDataAttackCapsule*> (collider.get());
+				attackCapsuleData->m_pos1 = item->rigidbody.GetAttackPos1();
 				auto pos1 = attackCapsuleData->m_pos1;
+				attackCapsuleData->m_pos2 = item->rigidbody.GetAttackPos2();
 				auto pos2 = attackCapsuleData->m_pos2;
 				auto radius = attackCapsuleData->m_radius;
 				MyLibrary::DebugDraw::AddDrawAttackCapsule(pos1, pos2, radius, kBeforeColor);
@@ -169,6 +173,7 @@ void MyLibrary::Physics::Update()
 	CheckCollide1();
 	CheckCollide2();
 	CheckCollide3();
+	CheckCollide4();
 
 	CheckUpdate();
 
@@ -604,6 +609,86 @@ void MyLibrary::Physics::CheckCollide3()
 	}
 }
 
+void MyLibrary::Physics::CheckCollide4()
+{
+	std::vector<OnCollideInfoData> onCollideInfo;
+	//衝突通知、ポジション補正
+	bool doCheck = true;
+	int checkCount = 0;     //チャック回数
+	while (doCheck)
+	{
+		doCheck = false;
+		checkCount++;
+
+		//2重ループで全オブジェクト当たり判定
+		//FIXME : 重いので近いオブジェクト同士のみ当たり判定するなど工夫がいる
+		for (const auto& objA : m_collidables)
+		{
+			for (const auto& objB : m_collidables)
+			{
+				//同一オブジェクトなら早期リターン
+				if (objA == objB)
+					continue;
+
+				for (const auto& colA : objA->m_colliders)
+				{
+					for (const auto& colB : objB->m_colliders)
+					{
+						if (!IsCollide4(objA->rigidbody, objB->rigidbody, colA.get(), colB.get())) continue;
+
+						bool isTrigger = colA->IsTrigger() || colB->IsTrigger();
+
+						if (isTrigger)
+						{
+							AddNewCollideInfo(objA, objB, m_newTriggerInfo);
+						}
+						else
+						{
+							AddNewCollideInfo(objA, objB, m_newCollideInfo);
+						}
+
+						//Triggerの場合は位置補正はしない
+						if (isTrigger) continue;
+
+						auto primary = objA;
+						auto secondary = objB;
+
+						if (primary == secondary)
+						{
+							break;
+						}
+
+						auto primaryCollider = colA;
+						auto secondaryCollider = colB;
+						if (objA->priority < objB->priority)
+						{
+							primary = objB;
+							secondary = objA;
+							primaryCollider = colB;
+							secondaryCollider = colA;
+						}
+
+						FixNextPosition(primary->rigidbody, secondary->rigidbody, primaryCollider.get(), secondaryCollider.get());
+						//位置補正をしたらもう一度初めから行う
+						doCheck = true;
+						break;
+					}
+					if (doCheck) break;
+				}
+				if (doCheck) break;
+			}
+			if (doCheck) break;
+		}
+		if (doCheck && checkCount > 800)
+		{
+#if _DEBUG
+			printfDx("規定回数を超えました");
+#endif
+			break;
+		}
+	}
+}
+
 /// <summary>
 /// 二つのオブジェクトが接触しているかどうか
 /// </summary>
@@ -815,6 +900,41 @@ bool MyLibrary::Physics::IsCollide3(const Rigidbody& rigidA, const Rigidbody& ri
 
 		//判定
 		isCollide = isHitX && isHitY && isHitZ;
+	}
+
+	return isCollide;
+}
+
+bool MyLibrary::Physics::IsCollide4(const Rigidbody& rigidA, const Rigidbody& rigidB, CollidableData* colliderA, CollidableData* colliderB) const
+{
+	bool isCollide = false;
+
+	auto kindA = colliderA->GetKind();
+	auto kindB = colliderB->GetKind();
+
+	//カプセルとアタックカプセルの当たり判定
+	if (kindA == MyLibrary::CollidableData::Kind::Capsule && kindB == MyLibrary::CollidableData::Kind::AttackCapsule)
+	{
+		auto colA = dynamic_cast<MyLibrary::CollidableDataCapsule*>(colliderA);
+		auto colB = dynamic_cast<MyLibrary::CollidableDataAttackCapsule*>(colliderB);
+
+		//自身の向いてる方向に伸びているベクトルを作成
+		LibVec3 sDirVec = colA->m_vec.GetNormalized() * colA->m_len * 0.5f;
+		//対象の向いてる方向に伸びているベクトルを作成
+		LibVec3 tDirVec = colB->m_pos2 - colB->m_pos1;
+
+		//カプセルの中心線の中点を計算
+		LibVec3 capsuleMidA = rigidA.GetPos() + sDirVec;
+		LibVec3 capsuleMidB = colB->m_pos1 + tDirVec * 0.5f;
+
+		//カプセルの中心線の中点間の距離を計算
+		float distance = (capsuleMidA - capsuleMidB).Length();
+
+		//カプセルの半径の合計
+		float combineRadius = colA->m_radius + colB->m_radius;
+
+		//当たり判定
+		isCollide = distance < combineRadius;
 	}
 
 	return isCollide;
@@ -1032,6 +1152,19 @@ void MyLibrary::Physics::FixPosition()
 
 		//位置確定
 		item->rigidbody.SetPos(item->rigidbody.GetNextPos());
+
+		for (auto& kind : item->m_colliders)
+		{
+			if (kind->GetKind() == CollidableData::Kind::AttackCapsule)
+			{
+				//Posを更新するので、velocityもそこに移動する
+				auto attackCapsuleData = dynamic_cast<MyLibrary::CollidableDataAttackCapsule*> (kind.get());
+
+				//位置決定
+				attackCapsuleData->m_pos1 = item->rigidbody.GetAttackPos1();
+				attackCapsuleData->m_pos2 = item->rigidbody.GetAttackPos2();
+			}
+		}
 	}
 }
 

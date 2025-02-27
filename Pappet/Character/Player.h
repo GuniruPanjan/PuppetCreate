@@ -151,8 +151,9 @@ public:
 private:
 	void SetModelPos();
 private:
-	std::shared_ptr<AttackObject> m_pAttack;               //攻撃判定
+	//std::shared_ptr<AttackObject> m_pAttack;               //攻撃判定
 	std::shared_ptr<AttackObject> m_pStrengthAttack;       //強攻撃判定
+	std::shared_ptr<AttackLigObject> m_pLigAttack;         //リグ毎の攻撃判定
 	std::shared_ptr<PlayerSearchObject> m_pSearch;         //索敵判定
 	std::shared_ptr<PlayerSearchObject> m_pShieldSearch;   //盾で防げるかの索敵判定
 	std::shared_ptr<ShieldObject> m_pShield;               //盾の判定
@@ -198,11 +199,15 @@ private:
 	//フレーム用変数
 	int m_moveAnimFrameIndex;           //アニメーションで移動しているフレームの番号を検索する変数
 	int m_moveAnimFrameRight;
+	int m_attackLig1;                   //攻撃判定のリグ1
+	int m_attackLig2;                   //攻撃判定のリグ2
 	int m_moveAnimShieldFrameIndex;     //盾を構えるときのアニメーションのフレーム取得
 	int m_moveAnimShieldFrameHandIndex;
 	int m_notRoll;                      //ローリングできないようにする
 	MATRIX m_moveWeaponFrameMatrix;     //武器をアタッチするフレームのローカル座標をワールド変換行列を取得する
 	MATRIX m_moveShieldFrameMatrix;
+	VECTOR m_attackLigPos1;             //攻撃判定リグのポジション1
+	VECTOR m_attackLigPos2;             //攻撃判定リグのポジション2
 	VECTOR m_rollMove;                  //回避で移動する距離
 	VECTOR m_moveVector;                //モーション中の移動
 	VECTOR m_attackMove;                //攻撃で移動する距離

@@ -14,14 +14,20 @@ public:
 
 	//初期化
 	void Init();
+	//敵初期化
+	void EnemyInit(std::string path, VECTOR pos, float x, float y, float z);
 	//アイテムの初期化処理
 	void ItemInit(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics);
 	//更新処理
 	void Update(MATRIX mat);
+	//敵の更新処理
+	void EnemyUpdate(MATRIX mat, const char* frame);
 	//マップアイテムとしての更新処理
 	void ItemUpdate(bool taking);
 	//描画処理
 	void Draw();
+	//敵の描画処理
+	void EnemyDraw(float size);
 	//終了処理
 	void End();
 
@@ -41,5 +47,9 @@ private:
 	//剣の構造体
 	sWeapon m_fist;      //素手
 	sWeapon m_black;     //黒い剣
+
+	float m_weaponMatrixX = 0.0f;
+	float m_weaponMatrixY = 0.0f;
+	float m_weaponMatrixZ = 0.0f;
 };
 

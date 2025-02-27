@@ -178,7 +178,9 @@
     <ClCompile Include="Map\MapFirst.cpp" />
     <ClCompile Include="Map\MapRest.cpp" />
     <ClCompile Include="Map\MapTutorial.cpp" />
+    <ClCompile Include="Object\AttackLigObject.cpp" />
     <ClCompile Include="Object\AttackObject.cpp" />
+    <ClCompile Include="Object\EnemyAttackLigObject.cpp" />
     <ClCompile Include="Object\EnemyAttackObject.cpp" />
     <ClCompile Include="Object\ItemObject.cpp" />
     <ClCompile Include="Object\MessageObject.cpp" />
@@ -244,7 +246,9 @@
     <ClInclude Include="Map\MapFirst.h" />
     <ClInclude Include="Map\MapRest.h" />
     <ClInclude Include="Map\MapTutorial.h" />
+    <ClInclude Include="Object\AttackLigObject.h" />
     <ClInclude Include="Object\AttackObject.h" />
+    <ClInclude Include="Object\EnemyAttackLigObject.h" />
     <ClInclude Include="Object\EnemyAttackObject.h" />
     <ClInclude Include="Object\ItemObject.h" />
     <ClInclude Include="Object\MessageObject.h" />

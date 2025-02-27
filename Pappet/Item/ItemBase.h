@@ -113,6 +113,8 @@ protected:
 	int m_itemUse;
 	//アイテムのハンドル
 	int m_itemHandle;
+	//敵のハンドル
+	int m_enemyItemHandle;
 	//フレーム検索
 	int m_frameIndex;
 	//アイテムを取れるかの判定

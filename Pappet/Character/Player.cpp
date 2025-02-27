@@ -50,7 +50,7 @@ namespace
 	//拳の攻撃範囲
 	constexpr float cFistAttackRadius = 30.0f;
 	//攻撃の判定範囲
-	constexpr float cPartAttackRadius = 8.0f;
+	constexpr float cPartAttackRadius = 16.0f;
 	//強攻撃の攻撃範囲
 	constexpr float cStrengthAttackRadius = 100.0f;
 	//盾の幅
@@ -112,6 +112,8 @@ Player::Player() :
 	m_bossStart(false),
 	m_moveAnimFrameIndex(0),
 	m_moveAnimFrameRight(0),
+	m_attackLig1(0),
+	m_attackLig2(0),
 	m_moveAnimShieldFrameIndex(0),
 	m_moveAnimShieldFrameHandIndex(0),
 	m_cameraAngle(0.0f),
@@ -127,6 +129,8 @@ Player::Player() :
 	m_moveShieldFrameMatrix(),
 	m_rollMove(VGet(0.0f,0.0f,0.0f)),
 	m_moveVector(VGet(0.0f,0.0f,0.0f)),
+	m_attackLigPos1(VGet(0.0f,0.0f,0.0f)),
+	m_attackLigPos2(VGet(0.0f, 0.0f, 0.0f)),
 	m_shieldPos(),
 	m_shieldSize(),
 	m_shieldSearchPos(),
@@ -232,9 +236,10 @@ void Player::Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* mana
 	//拳だった場合
 	m_attackRadius = cFistAttackRadius;
 
-	m_pAttack = std::make_shared<AttackObject>(m_attackRadius);
+	//m_pAttack = std::make_shared<AttackObject>(m_attackRadius);
 	//m_pPartAttack = std::make_shared<AttackObjectPart>(cPartAttackRadius, 0.0f, 0.0f);
 	m_pStrengthAttack = std::make_shared<AttackObject>(cStrengthAttackRadius);
+	m_pLigAttack = std::make_shared<AttackLigObject>(MyLibrary::LibVec3(m_attackLigPos1.x, m_attackLigPos1.y, m_attackLigPos1.z), MyLibrary::LibVec3(m_attackLigPos2.x, m_attackLigPos2.y, m_attackLigPos2.z), cPartAttackRadius);
 
 	m_pSearch = std::make_shared<PlayerSearchObject>(m_searchRadius);
 	m_pSearch->Init(m_pPhysics, rigidbody.GetPos());
@@ -326,6 +331,13 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	m_moveAnimFrameIndex = MV1SearchFrame(m_modelHandle, "mixamorig:Hips");
 	m_moveAnimFrameRight = MV1SearchFrame(m_modelHandle, "mixamorig:RightHandThumb2");
 
+	//装備をしていないときのリグ
+	if (weapon.GetFist())
+	{
+		m_attackLig1 = MV1SearchFrame(m_modelHandle, "mixamorig:RightForeArm");
+		m_attackLig2 = MV1SearchFrame(m_modelHandle, "mixamorig:RightHandThumb4_end_end_end");
+	}
+
 	//盾を構える時のアニメーションフレーム取得
 	m_moveAnimShieldFrameIndex = MV1SearchFrame(m_modelHandle, "mixamorig:LeftShoulder");
 	m_moveAnimShieldFrameHandIndex = MV1SearchFrame(m_modelHandle, "mixamorig:LeftHand");
@@ -333,6 +345,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	//武器や盾をアタッチするフレームのローカル→ワールド変換行列を取得する
 	m_moveWeaponFrameMatrix = MV1GetFrameLocalWorldMatrix(m_modelHandle, m_moveAnimFrameRight);
 	m_moveShieldFrameMatrix = MV1GetFrameLocalWorldMatrix(m_modelHandle, m_moveAnimShieldFrameHandIndex);
+
+	m_attackLigPos1 = MV1GetFramePosition(m_modelHandle, m_attackLig1);
+	m_attackLigPos2 = MV1GetFramePosition(m_modelHandle, m_attackLig2);
 
 
 	//パッド入力取得
@@ -701,6 +716,8 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	//判定のポジション更新
 	MyLibrary::LibVec3 centerPos = rigidbody.GetPos();
 	MyLibrary::LibVec3 attackPos = MyLibrary::LibVec3(rigidbody.GetPos().x + sinf(m_angle) * -25.0f, rigidbody.GetPos().y + 15.0f, rigidbody.GetPos().z - cosf(m_angle) * 25.0f);
+	MyLibrary::LibVec3 ligAttackPos1 = MyLibrary::LibVec3(m_attackLigPos1.x, m_attackLigPos1.y, m_attackLigPos1.z);
+	MyLibrary::LibVec3 ligAttackPos2 = MyLibrary::LibVec3(m_attackLigPos2.x, m_attackLigPos2.y, m_attackLigPos2.z);
 	MyLibrary::LibVec3 StrengthAttackPos = MyLibrary::LibVec3(rigidbody.GetPos().x, rigidbody.GetPos().y, rigidbody.GetPos().z);
 	m_shieldPos = MyLibrary::LibVec3(rigidbody.GetPos().x + sinf(m_angle) * -15.0f, rigidbody.GetPos().y + 25.0f, rigidbody.GetPos().z - cosf(m_angle) * 15.0f);
 
@@ -733,8 +750,8 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 
 	//判定の更新
 	m_pSearch->Update(centerPos);
-	m_pAttack->Update(attackPos);
-	//m_pPartAttack->Update(attackPos);
+	//m_pAttack->Update(attackPos);
+	m_pLigAttack->Update(ligAttackPos1, ligAttackPos2);
 	m_pStrengthAttack->Update(StrengthAttackPos);
 	m_pShield->Update(m_shieldPos, m_shieldSize);
 	m_pShieldSearch->Update(m_shieldSearchPos);
@@ -743,8 +760,8 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	if (m_anim.s_hit)
 	{
 		//攻撃判定リセット
-		m_pAttack->CollisionEnd();
-		//m_pPartAttack->CollisionEnd();
+		//m_pAttack->CollisionEnd();
+		m_pLigAttack->CollisionEnd();
 	}
 
 	//怯みを終わらせる
@@ -802,8 +819,8 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			//現在のアタックナンバー
 			cNowAttackNumber = 1;
 
-			m_pAttack->SetAttack(m_attackDamage);
-			//m_pPartAttack->SetAttack(m_status.s_attack + cEquipmentAttack);
+			//m_pAttack->SetAttack(m_attackDamage);
+			m_pLigAttack->SetAttack(m_attackDamage);
 
 			//攻撃判定発生フレーム
 			if (m_nowFrame == 25.0f)
@@ -815,8 +832,8 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 				PlaySoundMem(se.GetAttackSE(), DX_PLAYTYPE_BACK, true);
 
 				m_status.s_stamina -= 25.0f;
-				m_pAttack->Init(m_pPhysics);
-				//m_pPartAttack->Init(m_pPhysics);
+				//m_pAttack->Init(m_pPhysics);
+				m_pLigAttack->Init(m_pPhysics);
 			}
 			else if (m_nowFrame >= 35.0f && m_nowFrame < 40.0f)
 			{
@@ -824,8 +841,8 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 				cAttackMove = 0.3f;
 
 				//判定をリセット
-				m_pAttack->CollisionEnd();
-				//m_pPartAttack->CollisionEnd();
+				//m_pAttack->CollisionEnd();
+				m_pLigAttack->CollisionEnd();
 			}
 			//攻撃終了
 			else if (m_nowFrame >= 40.0f && m_attackNumber == 1)
@@ -845,8 +862,8 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			//現在のアタックナンバー
 			cNowAttackNumber = 2;
 
-			m_pAttack->SetAttack((m_attackDamage) * 1.1);
-			//m_pPartAttack->SetAttack(m_status.s_attack + cEquipmentAttack * 1.1);
+			//m_pAttack->SetAttack((m_attackDamage) * 1.1);
+			m_pLigAttack->SetAttack((m_attackDamage) * 1.1);
 
 			//攻撃判定発生フレーム
 			if (m_nowFrame == 55.0f)
@@ -858,8 +875,8 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 				PlaySoundMem(se.GetAttackSE(), DX_PLAYTYPE_BACK, true);
 
 				m_status.s_stamina -= 25.0f;
-				m_pAttack->Init(m_pPhysics);
-				//m_pPartAttack->Init(m_pPhysics);
+				//m_pAttack->Init(m_pPhysics);
+				m_pLigAttack->Init(m_pPhysics);
 			}
 			else if (m_nowFrame >= 65.0f && m_nowFrame < 70.0f)
 			{
@@ -867,8 +884,8 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 				cAttackMove = 0.2f;
 
 				//攻撃判定リセット
-				m_pAttack->CollisionEnd();
-				//m_pPartAttack->CollisionEnd();
+				//m_pAttack->CollisionEnd();
+				m_pLigAttack->CollisionEnd();
 
 			}
 			//攻撃終了
@@ -888,8 +905,8 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			//現在のアタックナンバー
 			cNowAttackNumber = 3;
 
-			m_pAttack->SetAttack((m_attackDamage) * 1.2);
-			//m_pPartAttack->SetAttack(m_status.s_attack + cEquipmentAttack * 1.2);
+			//m_pAttack->SetAttack((m_attackDamage) * 1.2);
+			m_pLigAttack->SetAttack((m_attackDamage) * 1.2);
 
 			//攻撃判定発生フレーム
 			if (m_nowFrame == 85.0f)
@@ -901,8 +918,8 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 				PlaySoundMem(se.GetAttackSE(), DX_PLAYTYPE_BACK, true);
 
 				m_status.s_stamina -= 25.0f;
-				m_pAttack->Init(m_pPhysics);
-				//m_pPartAttack->Init(m_pPhysics);
+				//m_pAttack->Init(m_pPhysics);
+				m_pLigAttack->Init(m_pPhysics);
 			}
 			else if (m_nowFrame >= 95.0f && m_nowFrame < 110.0f)
 			{
@@ -910,8 +927,8 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 				cAttackMove = 0.2f;
 
 				//攻撃判定リセット
-				m_pAttack->CollisionEnd();
-				//m_pPartAttack->CollisionEnd();
+				//m_pAttack->CollisionEnd();
+				m_pLigAttack->CollisionEnd();
 			}
 			//攻撃終了
 			else if (m_nowFrame >= 110.0f)
@@ -931,8 +948,8 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			//攻撃終了
 			cIsEndAttack = 0;
 			//攻撃判定リセット
-			m_pAttack->CollisionEnd();
-			//m_pPartAttack->CollisionEnd();
+			//m_pAttack->CollisionEnd();
+			m_pLigAttack->CollisionEnd();
 		}
 	}
 	//攻撃終了
@@ -1693,7 +1710,7 @@ void Player::Draw(Armor& armor)
 	DrawFormatString(1000, 550, 0xffffff, "taking : %d", m_animChange.sa_taking);
 	DrawFormatString(1000, 650, 0xffffff, "touch : %d", m_animChange.sa_touch);
 #endif
-#if true
+#if false
 	DrawFormatString(1000, 150, 0xffffff, "posx : %f", rigidbody.GetPos().x);   //15
 	DrawFormatString(1000, 200, 0xffffff, "posy : %f", rigidbody.GetPos().y);   //12
 	DrawFormatString(1000, 250, 0xffffff, "posz : %f", rigidbody.GetPos().z);   //0
@@ -1719,7 +1736,7 @@ void Player::Draw(Armor& armor)
 #endif
 
 #if false
-	DrawFormatString(200, 300, 0xffffff, "pickup : %d", m_itemPick);
+	DrawFormatString(200, 300, 0xffffff, "pos1 : %f");
 #endif
 
 	MV1SetPosition(m_modelHandle, VSub(m_modelPos.ConversionToVECTOR(), VGet(0.0f, 12.0f, 0.0f)));

@@ -90,6 +90,7 @@ void Immortal::Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrar
 	//索敵判定をする当たり判定を作成
 	InitSearch(cSearchRadius, 0.0f);
 	InitAttack(0.0f);
+	InitLigAttack(MyLibrary::LibVec3(0.0f,0.0f,0.0f), MyLibrary::LibVec3(0.0f,0.0f,0.0f), 0.0f);
 	InitAttackDamage(0.0f);
 
 	//モデルのサイズ設定
@@ -136,6 +137,7 @@ void Immortal::GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLi
 	//索敵判定をする当たり判定を作成
 	InitSearch(cSearchRadius, 0.0f);
 	InitAttack(0.0f);
+	InitLigAttack(MyLibrary::LibVec3(0.0f, 0.0f, 0.0f), MyLibrary::LibVec3(0.0f, 0.0f, 0.0f), 0.0f);
 	InitAttackDamage(0.0f);
 
 	//中心座標の設定

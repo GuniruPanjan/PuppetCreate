@@ -106,10 +106,14 @@ protected:
 	void InitSearch(float radius, float y);
 	//攻撃判定の初期化
 	void InitAttack(float radius);
+	//リグ毎の攻撃判定初期化
+	void InitLigAttack(MyLibrary::LibVec3 pos1, MyLibrary::LibVec3 pos2, float radius);
 	//攻撃力の初期化
 	void InitAttackDamage(float attack);
 	//攻撃判定をする当たり判定を作成
 	void InitAttackUpdate(float attack);
+	//リグ毎の攻撃判定をする当たり判定を作成
+	void InitAttackLigUpdate(MyLibrary::LibVec3 pos1, MyLibrary::LibVec3 pos2);
 	//索敵の更新処理
 	void TriggerUpdate();
 	//プレイヤーとの距離を測る処理と盾との距離を測る処理
@@ -149,10 +153,12 @@ protected:
 protected:
 	std::shared_ptr<EnemyAttackObject> m_pAttack;    //攻撃判定
 	std::shared_ptr<SearchObject> m_pSearch;    //索敵判定
+	std::shared_ptr<EnemyAttackLigObject> m_pLigAttack;   //リグ毎の攻撃判定
+
 
 	EnemyAnimation m_enemyAnim;   //アニメーション
 
-	AttackObject* m_col;
+	AttackLigObject* m_col;
 
 	int m_randomAction;       //ランダムに行動するための変数
 	int m_maxHP;              //最大HP

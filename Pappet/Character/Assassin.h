@@ -1,6 +1,8 @@
 #pragma once
 #include "EnemyBase.h"
 
+class Weapon;
+
 /// <summary>
 /// アサシンクラス
 /// </summary>
@@ -26,14 +28,20 @@ public:
 	void Draw(UI& ui);
 
 private:
-	MyLibrary::LibVec3 m_attackPos;   //攻撃判定の座標
+	std::shared_ptr<Weapon> m_pWeapon;
 
-	int m_moveFrameRightHand;         //右手のフレーム
-	int m_moveFrameLeftLeg;           //左足のフレーム
-	int m_moveFrameRightLeg;          //右足のフレーム
+	MyLibrary::LibVec3 m_attackPos;       //攻撃判定の座標
 
-	VECTOR m_frameRightHand;          //右手のベクター
-	VECTOR m_frameLeftLeg;            //左足のベクター
-	VECTOR m_frameRightLeg;           //右足のベクター
+	int m_moveFrameRightHand;             //右手のフレーム
+	int m_daggerFrame[2];                 //ダガーの当たり判定
+	int m_ligLeftLegFrame[2];             //左足のフレーム
+	int m_ligRightLegFrame[2];            //右足のフレーム
+
+	VECTOR m_frameRightHand;              //右手のベクター
+	VECTOR m_daggerPos[2];                //ダガーの当たり判定
+	VECTOR m_ligLeftLegPos[2];            //左足のベクター
+	VECTOR m_ligRightLegPos[2];           //右足のベクター
+
+	MATRIX m_weaponFrameMatrix;
 };
 

@@ -5,6 +5,8 @@
 #include "Object/PlayerSearchObject.h"
 #include "Object/EnemyAttackObject.h"
 #include "Object/ShieldObject.h"
+#include "Object/AttackLigObject.h"
+#include "Object/EnemyAttackLigObject.h"
 #include <map>
 #include <string>
 #define ANIMATION_MAX   30

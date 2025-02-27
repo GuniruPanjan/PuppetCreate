@@ -22,6 +22,8 @@ MyLibrary::Rigidbody::Rigidbody():
 void MyLibrary::Rigidbody::Init(bool gravity)
 {
 	m_pos = LibVec3();
+	m_pos1 = LibVec3();
+	m_pos2 = LibVec3();
 	m_dir = LibVec3();
 	m_velocity = LibVec3();
 	this->m_useGravity = gravity;

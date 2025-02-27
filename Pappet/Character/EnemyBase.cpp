@@ -143,7 +143,7 @@ void EnemyBase::OnTriggerEnter(const std::shared_ptr<Collidable>& collidable)
 #if _DEBUG
 		message += "UŒ‚";
 #endif
-		m_col = dynamic_cast<AttackObject*>(collidable.get());
+		m_col = dynamic_cast<AttackLigObject*>(collidable.get());
 		m_isEnterHit = true;
 		break;
 	case ObjectTag::Search:
@@ -364,12 +364,24 @@ void EnemyBase::InitAttack(float radius)
 }
 
 /// <summary>
+/// UŒ‚‚ğ‰Šú‰»‚·‚é
+/// </summary>
+/// <param name="pos1"></param>
+/// <param name="pos2"></param>
+/// <param name="radius"></param>
+void EnemyBase::InitLigAttack(MyLibrary::LibVec3 pos1, MyLibrary::LibVec3 pos2, float radius)
+{
+	m_pLigAttack = std::make_shared<EnemyAttackLigObject>(pos1, pos2, radius);
+}
+
+/// <summary>
 /// ƒ_ƒ[ƒW‚Ì‰Šú‰»
 /// </summary>
 /// <param name="attack"></param>
 void EnemyBase::InitAttackDamage(float attack)
 {
 	m_pAttack->SetAttack(attack);
+	m_pLigAttack->SetAttack(attack);
 }
 
 /// <summary>
@@ -379,6 +391,12 @@ void EnemyBase::InitAttackDamage(float attack)
 void EnemyBase::InitAttackUpdate(float attack)
 {
 	m_pAttack->Init(m_pPhysics);
+	m_pLigAttack->Init(m_pPhysics);
+}
+
+void EnemyBase::InitAttackLigUpdate(MyLibrary::LibVec3 pos1, MyLibrary::LibVec3 pos2)
+{
+	m_pLigAttack->Update(pos1, pos2);
 }
 
 void EnemyBase::TriggerUpdate()

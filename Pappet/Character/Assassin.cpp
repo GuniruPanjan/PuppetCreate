@@ -2,6 +2,7 @@
 #include "Ui/UI.h"
 #include "Manager/EffectManager.h"
 #include "Manager/SEManager.h"
+#include "Item/Weapon.h"
 
 namespace
 {
@@ -9,6 +10,8 @@ namespace
 	constexpr const char* cCharacterName = "Assassin";
 	//モデルパス
 	constexpr const char* cModelPath = "Data/Enemy/Assassin.mv1";
+	//武器のパス
+	constexpr const char* cWeaponPath = "Data/Weapon/Dagger.mv1";
 	//チュートリアル判定
 	bool cTutorial;
 	//モデルのサイズの拡大率
@@ -30,13 +33,22 @@ namespace
 	//攻撃範囲(ナイフ)
 	constexpr float cAttackRadiusKnife = 10.0f;
 	//攻撃範囲(蹴り)
-	constexpr float cAttackRadiusKick = 15.0f;
+	constexpr float cAttackRadiusKick = 25.0f;
 	//視野の角度
 	constexpr float cAngle = 30.0f;
 	//視野の距離
 	constexpr float cAngleDistance = 400.0f;
 	//プレイヤーを発見したとき
 	bool cPlayerLook = false;
+
+	//武器のポジション
+	const VECTOR cWeaponPosition = VGet(24.482f, 4.896f, 6.528f);
+	//武器のX回転
+	constexpr float cWeaponX = 6.193f;
+	//武器のY回転
+	constexpr float cWeaponY = 6.238f;
+	//武器のZ回転
+	constexpr float cWeaponZ = 0.808f;
 
 	//シングルトン
 	EffectManager& cEffect = EffectManager::GetInstance();
@@ -51,11 +63,8 @@ Assassin::Assassin():
 	EnemyBase(Collidable::Priority::High),
 	m_attackPos(),
 	m_moveFrameRightHand(0),
-	m_moveFrameLeftLeg(0),
-	m_moveFrameRightLeg(0),
 	m_frameRightHand(VGet(0.0f,0.0f,0.0f)),
-	m_frameLeftLeg(VGet(0.0f,0.0f,0.0f)),
-	m_frameRightLeg(VGet(0.0f,0.0f,0.0f))
+	m_weaponFrameMatrix()
 {
 	//当たり判定の設定
 	InitCollision(MyLibrary::LibVec3(0.0f, 2.0f, 0.0f), cCapsuleLen, cCapsuleRadius);
@@ -65,6 +74,18 @@ Assassin::Assassin():
 	LoadData(cCharacterName);
 	//索敵範囲の設定
 	m_searchRadius = cSearchRadius;
+
+	m_pWeapon = std::make_shared<Weapon>();
+
+	for (int i = 0; i < 2; i++)
+	{
+		m_daggerFrame[i] = 0;
+		m_ligLeftLegFrame[i] = 0;
+		m_ligRightLegFrame[i] = 0;
+		m_daggerPos[i] = VGet(0.0f, 0.0f, 0.0f);
+		m_ligLeftLegPos[i] = VGet(0.0f, 0.0f, 0.0f);
+		m_ligRightLegPos[i] = VGet(0.0f, 0.0f, 0.0f);
+	}
 
 	//アニメーションの判定初期化
 	m_anim.s_attack = false;
@@ -118,6 +139,8 @@ void Assassin::Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrar
 	//アニメーション設定
 	m_nowAnimNo = MV1AttachAnim(m_modelHandle, m_animIdx["Idle"]);
 	m_nowAnimIdx = m_animIdx["Idle"];
+
+	m_pWeapon->EnemyInit(cWeaponPath, cWeaponPosition, cWeaponX, cWeaponY, cWeaponZ);
 
 	float totalAnimFrame = MV1GetAttachAnimTotalTime(m_modelHandle, m_nowAnimNo);
 
@@ -179,6 +202,8 @@ void Assassin::GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLi
 	m_nowAnimNo = MV1AttachAnim(m_modelHandle, m_animIdx["Idle"]);
 	m_nowAnimIdx = m_animIdx["Idle"];
 
+	m_pWeapon->EnemyInit(cWeaponPath, cWeaponPosition, cWeaponX, cWeaponY, cWeaponZ);
+
 	m_anim.s_isDead = false;
 	cDead = false;
 
@@ -213,8 +238,26 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 {
 	//アニメーションで移動しているフレームの番号を検索する
 	m_moveFrameRightHand = MV1SearchFrame(m_modelHandle, "mixamorig:RightHandThumb2");
-	m_moveFrameLeftLeg = MV1SearchFrame(m_modelHandle, "mixamorig:LeftToeBase");
-	m_moveFrameRightLeg = MV1SearchFrame(m_modelHandle, "mixamorig:RightToeBase");
+	m_ligLeftLegFrame[0] = MV1SearchFrame(m_modelHandle, "mixamorig:LeftLeg");
+	m_ligLeftLegFrame[1] = MV1SearchFrame(m_modelHandle, "mixamorig:LeftToe_End_end");
+	m_ligRightLegFrame[0] = MV1SearchFrame(m_modelHandle, "mixamorig:RightLeg");
+	m_ligRightLegFrame[1] = MV1SearchFrame(m_modelHandle, "mixamorig:RightToe_End_end");
+
+	m_frameRightHand = MV1GetFramePosition(m_modelHandle, m_moveFrameRightHand);
+	m_ligLeftLegPos[0] = MV1GetFramePosition(m_modelHandle, m_ligLeftLegFrame[0]);
+	m_ligLeftLegPos[1] = MV1GetFramePosition(m_modelHandle, m_ligLeftLegFrame[1]);
+	m_ligRightLegPos[0] = MV1GetFramePosition(m_modelHandle, m_ligRightLegFrame[0]);
+	m_ligRightLegPos[1] = MV1GetFramePosition(m_modelHandle, m_ligRightLegFrame[1]);
+
+	//判定の更新
+	MyLibrary::LibVec3 attackKnifePos = MyLibrary::LibVec3(m_frameRightHand.x, m_frameRightHand.y, m_frameRightHand.z);
+	MyLibrary::LibVec3 attackLeftKickPos1 = MyLibrary::LibVec3(m_ligLeftLegPos[0].x, m_ligLeftLegPos[0].y, m_ligLeftLegPos[0].z);
+	MyLibrary::LibVec3 attackLeftKickPos2 = MyLibrary::LibVec3(m_ligLeftLegPos[1].x, m_ligLeftLegPos[1].y, m_ligLeftLegPos[1].z);
+	MyLibrary::LibVec3 attackRightKickPos1 = MyLibrary::LibVec3(m_ligRightLegPos[0].x, m_ligRightLegPos[0].y, m_ligRightLegPos[0].z);
+	MyLibrary::LibVec3 attackRightKickPos2 = MyLibrary::LibVec3(m_ligRightLegPos[1].x, m_ligRightLegPos[1].y, m_ligRightLegPos[1].z);
+
+	//ローカル→ワールド変換行列を取得する
+	m_weaponFrameMatrix = MV1GetFrameLocalWorldMatrix(m_modelHandle, m_moveFrameRightHand);
 
 	//視野の角度を決める
 	m_viewAngle = cAngle;
@@ -271,6 +314,7 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 		if (!cOne)
 		{
 			InitAttack(0.0f);
+			InitLigAttack(attackLeftKickPos1, attackLeftKickPos2, cAttackRadiusKick);
 			InitAttackDamage(0.0f);
 
 			cOne = true;
@@ -369,19 +413,19 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 			cDead = true;
 		}
 	}
+
+	m_pWeapon->EnemyUpdate(m_weaponFrameMatrix, "3:Tip");
 	
 }
 
 void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 {
-	m_frameRightHand = MV1GetFramePosition(m_modelHandle, m_moveFrameRightHand);
-	m_frameLeftLeg = MV1GetFramePosition(m_modelHandle, m_moveFrameLeftLeg);
-	m_frameRightLeg = MV1GetFramePosition(m_modelHandle, m_moveFrameRightLeg);
-
 	//判定の更新
 	MyLibrary::LibVec3 attackKnifePos = MyLibrary::LibVec3(m_frameRightHand.x, m_frameRightHand.y, m_frameRightHand.z);
-	MyLibrary::LibVec3 attackLeftKickPos = MyLibrary::LibVec3(m_frameLeftLeg.x, m_frameLeftLeg.y, m_frameLeftLeg.z);
-	MyLibrary::LibVec3 attackRightKickPos = MyLibrary::LibVec3(m_frameRightLeg.x, m_frameRightLeg.y, m_frameRightLeg.z);
+	MyLibrary::LibVec3 attackLeftKickPos1 = MyLibrary::LibVec3(m_ligLeftLegPos[0].x, m_ligLeftLegPos[0].y, m_ligLeftLegPos[0].z);
+	MyLibrary::LibVec3 attackLeftKickPos2 = MyLibrary::LibVec3(m_ligLeftLegPos[1].x, m_ligLeftLegPos[1].y, m_ligLeftLegPos[1].z);
+	MyLibrary::LibVec3 attackRightKickPos1 = MyLibrary::LibVec3(m_ligRightLegPos[0].x, m_ligRightLegPos[0].y, m_ligRightLegPos[0].z);
+	MyLibrary::LibVec3 attackRightKickPos2 = MyLibrary::LibVec3(m_ligRightLegPos[1].x, m_ligRightLegPos[1].y, m_ligRightLegPos[1].z);
 
 	//正面
 	if (!IsPlayerInView(playerPos))
@@ -454,6 +498,7 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 					InitAttackDamage(0.0f);
 					//判定をリセット
 					m_pAttack->CollisionEnd();
+					m_pLigAttack->CollisionEnd();
 				}
 				//アニメーションフレーム中に攻撃判定を出す
 				if (m_nowFrame == 40)
@@ -465,6 +510,7 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 					InitAttackDamage(0.0f);
 					//判定をリセット
 					m_pAttack->CollisionEnd();
+					m_pLigAttack->CollisionEnd();
 				}
 
 				m_enemyAnim.s_rool = false;
@@ -500,6 +546,7 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 					InitAttackDamage(0.0f);
 					//判定をリセット
 					m_pAttack->CollisionEnd();
+					m_pLigAttack->CollisionEnd();
 				}
 
 				m_enemyAnim.s_rool = false;
@@ -534,6 +581,7 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 					InitAttackDamage(0.0f);
 					//判定をリセット
 					m_pAttack->CollisionEnd();
+					m_pLigAttack->CollisionEnd();
 				}
 
 				m_enemyAnim.s_rool = false;
@@ -544,7 +592,8 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 			else if (m_randomAction == 3)
 			{
 				//攻撃判定のポジション
-				m_pAttack->Update(attackLeftKickPos);
+				//m_pAttack->Update(attackLeftKickPos);
+				InitAttackLigUpdate(attackLeftKickPos1, attackLeftKickPos2);
 
 				//攻撃モーションさせる
 				m_anim.s_attack = true;
@@ -555,12 +604,14 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 
 				if (m_nowFrame == 5)
 				{
-					InitAttack(cAttackRadiusKick);
+					//InitAttack(cAttackRadiusKick);
+					InitLigAttack(attackLeftKickPos1, attackLeftKickPos2, cAttackRadiusKick);
 					InitAttackDamage(m_status.s_attack);
 				}
 				//アニメーションフレーム中に攻撃判定を出す
 				if (m_nowFrame == 62)
 				{
+					//InitAttackUpdate(m_status.s_attack);
 					InitAttackUpdate(m_status.s_attack);
 				}
 				if (m_nowFrame >= 70)
@@ -568,6 +619,7 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 					InitAttackDamage(0.0f);
 					//判定をリセット
 					m_pAttack->CollisionEnd();
+					m_pLigAttack->CollisionEnd();
 				}
 
 				m_enemyAnim.s_rool = false;
@@ -578,7 +630,8 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 			else if (m_randomAction == 4)
 			{
 				//攻撃判定のポジション
-				m_pAttack->Update(attackRightKickPos);
+				//m_pAttack->Update(attackRightKickPos);
+				InitAttackLigUpdate(attackRightKickPos1, attackRightKickPos2);
 
 				//攻撃モーションさせる
 				m_anim.s_attack = true;
@@ -589,7 +642,8 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 
 				if (m_nowFrame == 5)
 				{
-					InitAttack(cAttackRadiusKick);
+					//InitAttack(cAttackRadiusKick);
+					InitLigAttack(attackRightKickPos1, attackRightKickPos2, cAttackRadiusKick);
 					InitAttackDamage(m_status.s_attack);
 				}
 				//アニメーションフレーム中に攻撃判定を出す
@@ -601,7 +655,9 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 				{
 					InitAttackDamage(0.0f);
 					//判定をリセット
+					//判定をリセット
 					m_pAttack->CollisionEnd();
+					m_pLigAttack->CollisionEnd();
 				}
 
 				m_enemyAnim.s_rool = false;
@@ -659,14 +715,12 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 /// <param name="se"></param>
 void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 {
-	m_frameRightHand = MV1GetFramePosition(m_modelHandle, m_moveFrameRightHand);
-	m_frameLeftLeg = MV1GetFramePosition(m_modelHandle, m_moveFrameLeftLeg);
-	m_frameRightLeg = MV1GetFramePosition(m_modelHandle, m_moveFrameRightLeg);
-
 	//判定の更新
 	MyLibrary::LibVec3 attackKnifePos = MyLibrary::LibVec3(m_frameRightHand.x, m_frameRightHand.y, m_frameRightHand.z);
-	MyLibrary::LibVec3 attackLeftKickPos = MyLibrary::LibVec3(m_frameLeftLeg.x, m_frameLeftLeg.y, m_frameLeftLeg.z);
-	MyLibrary::LibVec3 attackRightKickPos = MyLibrary::LibVec3(m_frameRightLeg.x, m_frameRightLeg.y, m_frameRightLeg.z);
+	MyLibrary::LibVec3 attackLeftKickPos1 = MyLibrary::LibVec3(m_ligLeftLegPos[0].x, m_ligLeftLegPos[0].y, m_ligLeftLegPos[0].z);
+	MyLibrary::LibVec3 attackLeftKickPos2 = MyLibrary::LibVec3(m_ligLeftLegPos[1].x, m_ligLeftLegPos[1].y, m_ligLeftLegPos[1].z);
+	MyLibrary::LibVec3 attackRightKickPos1 = MyLibrary::LibVec3(m_ligRightLegPos[0].x, m_ligRightLegPos[0].y, m_ligRightLegPos[0].z);
+	MyLibrary::LibVec3 attackRightKickPos2 = MyLibrary::LibVec3(m_ligRightLegPos[1].x, m_ligRightLegPos[1].y, m_ligRightLegPos[1].z);
 
 	//正面
 	if (!IsPlayerInView(playerPos))
@@ -736,6 +790,7 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 				InitAttackDamage(0.0f);
 				//判定をリセット
 				m_pAttack->CollisionEnd();
+				m_pLigAttack->CollisionEnd();
 			}
 			//アニメーションフレーム中に攻撃判定を出す
 			if (m_nowFrame == 40)
@@ -747,6 +802,7 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 				InitAttackDamage(0.0f);
 				//判定をリセット
 				m_pAttack->CollisionEnd();
+				m_pLigAttack->CollisionEnd();
 			}
 
 			m_enemyAnim.s_rool = false;
@@ -782,6 +838,7 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 				InitAttackDamage(0.0f);
 				//判定をリセット
 				m_pAttack->CollisionEnd();
+				m_pLigAttack->CollisionEnd();
 			}
 
 			m_enemyAnim.s_rool = false;
@@ -816,6 +873,7 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 				InitAttackDamage(0.0f);
 				//判定をリセット
 				m_pAttack->CollisionEnd();
+				m_pLigAttack->CollisionEnd();
 			}
 
 			m_enemyAnim.s_rool = false;
@@ -826,7 +884,8 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 		else if (m_randomAction == 3)
 		{
 			//攻撃判定のポジション
-			m_pAttack->Update(attackLeftKickPos);
+			//m_pAttack->Update(attackLeftKickPos);
+			InitAttackLigUpdate(attackLeftKickPos1, attackLeftKickPos2);
 
 			//攻撃モーションさせる
 			m_anim.s_attack = true;
@@ -837,12 +896,14 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 
 			if (m_nowFrame == 5)
 			{
-				InitAttack(cAttackRadiusKick);
+				//InitAttack(cAttackRadiusKick);
+				InitLigAttack(attackLeftKickPos1, attackLeftKickPos2, cAttackRadiusKick);
 				InitAttackDamage(m_status.s_attack);
 			}
 			//アニメーションフレーム中に攻撃判定を出す
 			if (m_nowFrame == 62)
 			{
+				//InitAttackUpdate(m_status.s_attack);
 				InitAttackUpdate(m_status.s_attack);
 			}
 			if (m_nowFrame >= 70)
@@ -850,6 +911,7 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 				InitAttackDamage(0.0f);
 				//判定をリセット
 				m_pAttack->CollisionEnd();
+				m_pLigAttack->CollisionEnd();
 			}
 
 			m_enemyAnim.s_rool = false;
@@ -860,7 +922,8 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 		else if (m_randomAction == 4)
 		{
 			//攻撃判定のポジション
-			m_pAttack->Update(attackRightKickPos);
+			//m_pAttack->Update(attackRightKickPos);
+			InitAttackLigUpdate(attackRightKickPos1, attackRightKickPos2);
 
 			//攻撃モーションさせる
 			m_anim.s_attack = true;
@@ -871,7 +934,8 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 
 			if (m_nowFrame == 5)
 			{
-				InitAttack(cAttackRadiusKick);
+				//InitAttack(cAttackRadiusKick);
+				InitLigAttack(attackRightKickPos1, attackRightKickPos2, cAttackRadiusKick);
 				InitAttackDamage(m_status.s_attack);
 			}
 			//アニメーションフレーム中に攻撃判定を出す
@@ -884,6 +948,7 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 				InitAttackDamage(0.0f);
 				//判定をリセット
 				m_pAttack->CollisionEnd();
+				m_pLigAttack->CollisionEnd();
 			}
 
 			m_anim.s_moveflag = false;
@@ -923,6 +988,8 @@ void Assassin::Draw(UI& ui)
 	MV1SetRotationXYZ(m_modelHandle, VGet(0.0f, m_angle, 0.0f));
 	//モデルの描画
 	MV1DrawModel(m_modelHandle);
+
+	m_pWeapon->EnemyDraw(cModelSize * 0.15f);
 
 	if (m_isBossDiscovery && !cDead)
 	{
