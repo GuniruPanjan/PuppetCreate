@@ -53,20 +53,6 @@ void Weapon::Init()
 }
 
 /// <summary>
-/// 敵の装備初期化処理
-/// </summary>
-void Weapon::EnemyInit(std::string path, VECTOR pos, float x, float y, float z)
-{
-	m_enemyItemHandle = handle.GetModelHandle(path);
-
-	m_pos = pos;
-
-	m_weaponMatrixX = x;
-	m_weaponMatrixY = y;
-	m_weaponMatrixZ = z;
-}
-
-/// <summary>
 /// マップアイテムとしての初期化処理
 /// </summary>
 /// <param name="posX"></param>
@@ -107,32 +93,6 @@ void Weapon::Update(MATRIX mat)
 	MV1SetMatrix(m_itemHandle, m_mixMatrix);
 }
 
-/// <summary>
-/// 敵の装備更新処理
-/// </summary>
-/// <param name="mat"></param>
-void Weapon::EnemyUpdate(MATRIX mat, const char* frame)
-{
-	MV1SetMatrix(m_enemyItemHandle, MGetIdent());
-	//フレーム検索
-	m_frameIndex = MV1SearchFrame(m_enemyItemHandle, frame);
-	//フレームのポジション
-	m_framePos = MV1GetFramePosition(m_enemyItemHandle, m_frameIndex);
-
-	m_pos = VAdd(m_framePos, m_pos);
-	//アタッチするモデルをフレームの座標を原点にするための平行移動行列を作成
-	m_transMatrix = MGetTranslate(VScale(m_pos, -1.0f));
-
-	m_transMatrix = MMult(m_transMatrix, MGetRotX(m_weaponMatrixX));
-	m_transMatrix = MMult(m_transMatrix, MGetRotY(m_weaponMatrixY));
-	m_transMatrix = MMult(m_transMatrix, MGetRotZ(m_weaponMatrixZ));
-
-	m_mixMatrix = MMult(m_transMatrix, mat);
-
-	MV1SetMatrix(m_enemyItemHandle, m_mixMatrix);
-	//MV1SetPosition(m_enemyItemHandle, m_pos);
-}
-
 void Weapon::ItemUpdate(bool taking)
 {
 	//アイテムがまだ取られてない時の処理
@@ -171,16 +131,6 @@ void Weapon::Draw()
 {
 	//モデル描画
 	MV1DrawModel(m_itemHandle);
-}
-
-/// <summary>
-/// 敵の描画処理
-/// </summary>
-void Weapon::EnemyDraw(float size)
-{
-	MV1SetScale(m_enemyItemHandle, VGet(size, size, size));
-	//モデル描画
-	MV1DrawModel(m_enemyItemHandle);
 }
 
 /// <summary>

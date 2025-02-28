@@ -5,6 +5,7 @@
 #include "Item/Weapon.h"
 #include "Item/Shield.h"
 #include "Item/Armor.h"
+#include "Item/EnemyWeapon.h"
 #include "Manager/CoreManager.h"
 #include "Manager/MessageManager.h"
 #include "ItemManager.h"
@@ -83,6 +84,7 @@ private:
 	std::shared_ptr<Weapon> m_pWeapon;
 	std::shared_ptr<Shield> m_pShield;
 	std::shared_ptr<Armor> m_pArmor;
+	std::shared_ptr<EnemyWeapon> m_pEnemyWeapon;
 	std::shared_ptr<CoreManager> m_pCore;
 	std::shared_ptr<ItemManager> m_pItem;
 	std::shared_ptr<BgmManager> m_pBgm;

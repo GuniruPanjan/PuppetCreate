@@ -68,7 +68,7 @@ Immortal::~Immortal()
 /// 初期化
 /// </summary>
 /// <param name="physics">物理クラスのポインタ</param>
-void Immortal::Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial)
+void Immortal::Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial, EnemyWeapon& weapon)
 {
 	//代入
 	m_pPhysics = physics;
@@ -128,7 +128,7 @@ void Immortal::Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrar
 /// <param name="posY">Y座標</param>
 /// <param name="posZ">Z座標</param>
 /// <param name="physics">物理クラス</param>
-void Immortal::GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial)
+void Immortal::GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial, EnemyWeapon& weapon)
 {
 	m_pPhysics = physics;
 
@@ -179,7 +179,7 @@ void Immortal::GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLi
 /// </summary>
 /// <param name="playerPos">プレイヤー座標</param>
 /// <param name="isChase">プレイヤーと戦えるかどうか</param>
-void Immortal::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos, bool isChase, SEManager& se, std::shared_ptr<MyLibrary::Physics> physics)
+void Immortal::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos, bool isChase, SEManager& se, std::shared_ptr<MyLibrary::Physics> physics, EnemyWeapon& weapon)
 {
 
 	float totalAnimFrame = MV1GetAttachAnimTotalTime(m_modelHandle, m_nowAnimNo);

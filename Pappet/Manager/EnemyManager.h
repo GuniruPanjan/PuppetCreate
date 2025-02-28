@@ -13,6 +13,7 @@ class Assassin;
 class CoreManager;
 class UI;
 class SEManager;
+class EnemyWeapon;
 
 /// <summary>
 /// “G‚ğŠÇ—‚·‚éƒNƒ‰ƒX
@@ -42,9 +43,10 @@ public:
 	//‰Šú‰»
 	void Init(int mapNumber);
 	//ƒQ[ƒ€‚Ìd—lã‚Å‚Ì‰Šú‰»
-	void GameInit(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, bool init = false, bool tutorial = false);
+	void GameInit(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, EnemyWeapon& weapon, bool init = false, bool tutorial = false);
 	//XV
-	void Update(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, CoreManager& core, MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 playerDir, MyLibrary::LibVec3 shieldPos, bool isPlayerChase, SEManager& se, bool init = false, bool tutorial = false);
+	void Update(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, CoreManager& core, MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 playerDir, MyLibrary::LibVec3 shieldPos, bool isPlayerChase, SEManager& se, EnemyWeapon& weapon,
+		        bool init = false, bool tutorial = false);
 	//•`‰æ
 	void Draw(UI& ui);
 	//I—¹ˆ—
@@ -78,9 +80,9 @@ public:
 	const std::list<bool> GetJudg() const { return m_bossJudg; }
 private:
 	//“G‚Ì¶¬
-	void CreateEnemy(float posX, float posY, float posZ, std::string name, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial);
+	void CreateEnemy(float posX, float posY, float posZ, std::string name, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial, EnemyWeapon& weapon);
 	//“G‚ÌƒQ[ƒ€‚Ìd—lã‚Å‚Ì‰Šú‰»
-	void EnemyInit(float posX, float posY, float posZ, std::string name, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial);
+	void EnemyInit(float posX, float posY, float posZ, std::string name, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial, EnemyWeapon& weapon);
 private:
 	//“G‚ÌŠÇ—
 	std::list<std::shared_ptr<EnemyBase>> m_pEnemys;

@@ -44,6 +44,7 @@ GameManager::GameManager() :
 	m_pWeapon = std::make_shared<Weapon>();
 	m_pShield = std::make_shared<Shield>();
 	m_pArmor = std::make_shared<Armor>();
+	m_pEnemyWeapon = std::make_shared<EnemyWeapon>();
 	m_pCore = std::make_shared<CoreManager>();
 	m_pBgm = std::make_shared<BgmManager>();
 	m_pMap = std::make_shared<MapManager>();
@@ -213,7 +214,7 @@ void GameManager::Update()
 
 		m_pItem->Update(m_pPhysics, this, m_pPlayer->GetTaking());
 		m_pMessage->Update(m_pPhysics, this, *m_pPlayer);
-		m_pEnemy->Update(m_pPhysics, this, *m_pCore, m_pPlayer->GetPos(), m_pCamera->GetDirection(), m_pPlayer->GetShieldPos(), !m_pPlayer->IsGetPlayerDead(), *m_pSe, m_init, cTutorial);
+		m_pEnemy->Update(m_pPhysics, this, *m_pCore, m_pPlayer->GetPos(), m_pCamera->GetDirection(), m_pPlayer->GetShieldPos(), !m_pPlayer->IsGetPlayerDead(), *m_pSe, *m_pEnemyWeapon, m_init, cTutorial);
 
 		m_pPlayer->Update(*m_pWeapon, *m_pShield, *m_pArmor, *m_pEnemy, *m_pCore, m_pMap->GetRestPos(), *m_pTool, *m_pSe, m_pMap->GetBossRoom(), m_pEnemy->GetBossDead(GetThisMapName()), m_pPhysics);
 
@@ -318,7 +319,7 @@ void GameManager::Update()
 			{
 				//cEffect.End();
 				m_pPlayer->GameInit(m_pPhysics);
-				m_pEnemy->GameInit(m_pPhysics, this, m_deadInit, cTutorial);
+				m_pEnemy->GameInit(m_pPhysics, this, *m_pEnemyWeapon, m_deadInit, cTutorial);
 				m_pMap->TriggerReset();
 				m_pUi->Init();
 				m_pPlayer->ChangeStatus();
@@ -357,7 +358,7 @@ void GameManager::Update()
 					//‹x‘§’n“_ˆÈŠO‚¾‚Æ‰Šú‰»
 					if (m_nowMap != 0)
 					{
-						m_pEnemy->GameInit(m_pPhysics, this, m_init, cTutorial);
+						m_pEnemy->GameInit(m_pPhysics, this, *m_pEnemyWeapon, m_init, cTutorial);
 					}
 
 					m_pMap->TriggerReset();
@@ -429,6 +430,7 @@ void GameManager::Draw()
 	m_pMap->Draw();
 	m_pPlayer->Draw(*m_pArmor);
 	m_pWeapon->Draw();
+	m_pEnemyWeapon->Draw();
 	m_pShield->Draw();
 	m_pEnemy->Draw(*m_pUi);
 	//m_pNpc->Draw();

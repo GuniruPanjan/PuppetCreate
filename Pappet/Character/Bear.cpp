@@ -68,6 +68,15 @@ Bear::Bear() :
 	m_anim.s_attack = false;
 	m_anim.s_moveflag = false;
 	m_anim.s_hit = false;
+
+	for (int i = 0; i < 2; i++)
+	{
+		m_frameLiftHand[i] = 0;
+		m_frameRightHand[i] = 0;
+
+		m_ligLeftPos[i] = VGet(0.0f, 0.0f, 0.0f);
+		m_ligRightPos[i] = VGet(0.0f, 0.0f, 0.0f);
+	}
 }
 
 /// <summary>
@@ -86,7 +95,7 @@ Bear::~Bear()
 /// <param name="posY"></param>
 /// <param name="posZ"></param>
 /// <param name="physics"></param>
-void Bear::Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial)
+void Bear::Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial, EnemyWeapon& weapon)
 {
 	//代入
 	m_pPhysics = physics;
@@ -141,7 +150,7 @@ void Bear::Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::P
 /// <param name="posY">Y座標</param>
 /// <param name="posZ">Z座標</param>
 /// <param name="physics">物理クラス</param>
-void Bear::GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial)
+void Bear::GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial, EnemyWeapon& weapon)
 {
 	m_pPhysics = physics;
 
@@ -189,8 +198,24 @@ void Bear::GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLibrar
 /// </summary>
 /// <param name="playerPos"></param>
 /// <param name="isChase"></param>
-void Bear::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos, bool isChase, SEManager& se, std::shared_ptr<MyLibrary::Physics> physics)
+void Bear::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos, bool isChase, SEManager& se, std::shared_ptr<MyLibrary::Physics> physics, EnemyWeapon& weapon)
 {
+	//アニメーションで移動しているフレームの番号を検索する
+	m_frameRightHand[0] = MV1SearchFrame(m_modelHandle, "mixamorig:RightForeArm");
+	m_frameRightHand[1] = MV1SearchFrame(m_modelHandle, "mixamorig:RightHandThumb4");
+	m_frameLiftHand[0] = MV1SearchFrame(m_modelHandle, "mixamorig:LeftForeArm");
+	m_frameLiftHand[1] = MV1SearchFrame(m_modelHandle, "mixamorig:LeftHandThumb4");
+
+	m_ligRightPos[0] = MV1GetFramePosition(m_modelHandle, m_frameRightHand[0]);
+	m_ligRightPos[1] = MV1GetFramePosition(m_modelHandle, m_frameRightHand[1]);
+	m_ligLeftPos[0] = MV1GetFramePosition(m_modelHandle, m_frameLiftHand[0]);
+	m_ligLeftPos[1] = MV1GetFramePosition(m_modelHandle, m_frameLiftHand[1]);
+
+	MyLibrary::LibVec3 attackRightHandPos1 = MyLibrary::LibVec3(m_ligRightPos[0].x, m_ligRightPos[0].y, m_ligRightPos[0].z);
+	MyLibrary::LibVec3 attackRightHandPos2 = MyLibrary::LibVec3(m_ligRightPos[1].x, m_ligRightPos[1].y, m_ligRightPos[1].z);
+	MyLibrary::LibVec3 attackLeftHandPos1 = MyLibrary::LibVec3(m_ligLeftPos[0].x, m_ligLeftPos[0].y, m_ligLeftPos[0].z);
+	MyLibrary::LibVec3 attackLeftHandPos2 = MyLibrary::LibVec3(m_ligLeftPos[1].x, m_ligLeftPos[1].y, m_ligLeftPos[1].z);
+
 	//視野の角度を決める
 	m_viewAngle = cAngle;
 	//視野の距離を決める
@@ -224,6 +249,7 @@ void Bear::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos, bo
 		if (!cOne)
 		{
 			InitAttack(0.0f);
+			InitLigAttack(attackRightHandPos1, attackRightHandPos2, cAttackRadius1);
 			InitAttackDamage(0.0f);
 
 			cOne = true;
@@ -305,6 +331,11 @@ void Bear::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos, bo
 /// <param name="isChase">プレイヤー</param>
 void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 {
+	MyLibrary::LibVec3 attackRightHandPos1 = MyLibrary::LibVec3(m_ligRightPos[0].x, m_ligRightPos[0].y, m_ligRightPos[0].z);
+	MyLibrary::LibVec3 attackRightHandPos2 = MyLibrary::LibVec3(m_ligRightPos[1].x, m_ligRightPos[1].y, m_ligRightPos[1].z);
+	MyLibrary::LibVec3 attackLeftHandPos1 = MyLibrary::LibVec3(m_ligLeftPos[0].x, m_ligLeftPos[0].y, m_ligLeftPos[0].z);
+	MyLibrary::LibVec3 attackLeftHandPos2 = MyLibrary::LibVec3(m_ligLeftPos[1].x, m_ligLeftPos[1].y, m_ligLeftPos[1].z);
+
 	//敵がプレイヤーの位置によって方向を補正する
 	float Cx = m_modelPos.x - playerPos.x;
 	float Cz = m_modelPos.z - playerPos.z;
@@ -539,19 +570,24 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 		//ランダムで0が出たら
 		if (m_randomAction == 0)
 		{
+			InitAttackLigUpdate(attackRightHandPos1, attackRightHandPos2);
+
 			//攻撃の初期化
 			if (m_nowFrame == 5.0f)
 			{
 				//攻撃の初期化
-				InitAttack(cAttackRadius1);
+				//InitAttack(cAttackRadius1);
+				InitLigAttack(attackRightHandPos1, attackRightHandPos2, cAttackRadius1);
 
 				InitAttackDamage(m_status.s_attack);
 			}
 			else if (m_nowFrame > 5.0f)
 			{
 				//攻撃判定の更新
-				m_attackPos = MyLibrary::LibVec3(rigidbody.GetPos().x + sinf(m_angle) * -75.0f, rigidbody.GetPos().y, rigidbody.GetPos().z - cosf(m_angle) * 75.0f);
-				m_pAttack->Update(m_attackPos);
+				//m_attackPos = MyLibrary::LibVec3(rigidbody.GetPos().x + sinf(m_angle) * -75.0f, rigidbody.GetPos().y, rigidbody.GetPos().z - cosf(m_angle) * 75.0f);
+				//m_pAttack->Update(m_attackPos);
+
+
 			}
 
 			//アニメーションフレーム中に攻撃判定を出す
@@ -564,27 +600,33 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 			}
 			else if (m_nowFrame >= 12.0f)
 			{
+				InitAttackDamage(0.0f);
+
 				//判定をリセット
 				m_pAttack->CollisionEnd();
+				m_pLigAttack->CollisionEnd();
 			}
 
 		}
 		//ランダムで1が出たら
 		else if (m_randomAction == 1)
 		{
+			InitAttackLigUpdate(attackLeftHandPos1, attackLeftHandPos2);
+
 			//攻撃の初期化
 			if (m_nowFrame == 5.0f)
 			{
 				//攻撃の初期化
-				InitAttack(cAttackRadius2);
+				//InitAttack(cAttackRadius2);
+				InitLigAttack(attackLeftHandPos1, attackLeftHandPos2, cAttackRadius2);
 
 				InitAttackDamage(m_status.s_attack1);
 			}
 			else if (m_nowFrame > 5.0f)
 			{
 				//攻撃判定の更新
-				m_attackPos = MyLibrary::LibVec3(rigidbody.GetPos().x + sinf(m_angle) * -75.0f, rigidbody.GetPos().y, rigidbody.GetPos().z - cosf(m_angle) * 75.0f);
-				m_pAttack->Update(m_attackPos);
+				//m_attackPos = MyLibrary::LibVec3(rigidbody.GetPos().x + sinf(m_angle) * -75.0f, rigidbody.GetPos().y, rigidbody.GetPos().z - cosf(m_angle) * 75.0f);
+				//m_pAttack->Update(m_attackPos);
 			}
 
 			//攻撃発生まではプレイヤーを向く
@@ -599,11 +641,13 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 				PlaySoundMem(se.GetBossAttackSE2(), DX_PLAYTYPE_BACK, true);
 
 				InitAttackUpdate(m_status.s_attack1);
+				
 			}
 			else if (m_nowFrame >= 45.0f)
 			{
 				//判定をリセット
 				m_pAttack->CollisionEnd();
+				m_pLigAttack->CollisionEnd();
 			}
 		}
 		//ランダムで2が出たら
@@ -645,6 +689,7 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 			{
 				//判定をリセット
 				m_pAttack->CollisionEnd();
+				m_pLigAttack->CollisionEnd();
 			}
 		}
 	}

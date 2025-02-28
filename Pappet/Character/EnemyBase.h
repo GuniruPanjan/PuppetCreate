@@ -3,6 +3,7 @@
 
 class UI;
 class SEManager;
+class EnemyWeapon;
 
 /// <summary>
 /// エネミーの基盤となるクラス
@@ -25,13 +26,13 @@ public:
 	virtual ~EnemyBase();
 
 	//初期化処理
-	virtual void Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial) {};
+	virtual void Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial, EnemyWeapon& weapon) {};
 	//ゲームの仕様上での初期化
-	virtual void GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial) {};
+	virtual void GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial, EnemyWeapon& weapon) {};
 	//終了
 	virtual void Finalize(std::shared_ptr<MyLibrary::Physics> physics);
 	//更新
-	virtual void Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos, bool isChange, SEManager& se, std::shared_ptr<MyLibrary::Physics> physics) {};
+	virtual void Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos, bool isChange, SEManager& se, std::shared_ptr<MyLibrary::Physics> physics, EnemyWeapon& weapon) {};
 	//描画
 	virtual void Draw(UI& ui) {};
 	//終了処理

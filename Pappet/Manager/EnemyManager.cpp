@@ -6,6 +6,7 @@
 #include "GameManager.h"
 #include "Manager/CoreManager.h"
 #include "Manager/SEManager.h"
+#include "Item/EnemyWeapon.h"
 
 namespace
 {
@@ -73,7 +74,7 @@ void EnemyManager::Init(int mapNumber)
 /// <param name="physics">物理クラス</param>
 /// <param name="gameManager">ゲームマネジャー</param>
 /// <param name="init">初期化するかどうか</param>
-void EnemyManager::GameInit(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, bool init, bool tutorial)
+void EnemyManager::GameInit(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, EnemyWeapon& weapon, bool init, bool tutorial)
 {
 	//敵の当たり判定とモデル削除
 	for (auto& enemy : m_pEnemys)
@@ -108,7 +109,7 @@ void EnemyManager::GameInit(std::shared_ptr<MyLibrary::Physics> physics, GameMan
 				//生成済みのキャラを初期化する
 				if (generate->isCreated)
 				{
-					EnemyInit(generate->posX, generate->posY, generate->posZ, generate->enemyName, physics, tutorial);
+					EnemyInit(generate->posX, generate->posY, generate->posZ, generate->enemyName, physics, tutorial, weapon);
 				}
 			}
 		}
@@ -123,7 +124,7 @@ void EnemyManager::GameInit(std::shared_ptr<MyLibrary::Physics> physics, GameMan
 /// <param name="playerPos">プレイヤーポジション</param>
 /// <param name="playerDir">プレイヤーの方向</param>
 /// <param name="isPlayerChase">プレイヤーを発見したかどうか</param>
-void EnemyManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, CoreManager& core, MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 playerDir, MyLibrary::LibVec3 shieldPos, bool isPlayerChase, SEManager& se, bool init, bool tutorial)
+void EnemyManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, CoreManager& core, MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 playerDir, MyLibrary::LibVec3 shieldPos, bool isPlayerChase, SEManager& se, EnemyWeapon& weapon, bool init, bool tutorial)
 {
 	m_enemyPos.clear();
 	m_enemyTarget.clear();
@@ -154,13 +155,13 @@ void EnemyManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManag
 					{
 						//生成済みにして敵を生成する
 						generate->isCreated = true;
-						CreateEnemy(generate->posX, generate->posY, generate->posZ, generate->enemyName, physics, tutorial);
+						CreateEnemy(generate->posX, generate->posY, generate->posZ, generate->enemyName, physics, tutorial, weapon);
 					}
 					else if (!gameManager->GetEndBoss().sBear)
 					{
 						//生成済みにしてボスを生成する
 						generate->isCreated = true;
-						CreateEnemy(generate->posX, generate->posY, generate->posZ, generate->enemyName, physics, tutorial);
+						CreateEnemy(generate->posX, generate->posY, generate->posZ, generate->enemyName, physics, tutorial, weapon);
 					}
 					
 				}
@@ -177,7 +178,7 @@ void EnemyManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManag
 			//物理判定更新
 			physics->CheckEnemyUpdate();
 
-			enemy->Update(playerPos, shieldPos, isPlayerChase, se, physics);
+			enemy->Update(playerPos, shieldPos, isPlayerChase, se, physics, weapon);
 
 			m_enemyPos.emplace_back(enemy->GetPos());
 			m_enemyTarget.emplace_back(enemy->GetTarget());
@@ -297,24 +298,24 @@ bool EnemyManager::GetBossDead(int mapNumber)
 /// <param name="posZ">Z座標</param>
 /// <param name="name">キャラクター名</param>
 /// <param name="physics">物理ポインタ</param>
-void EnemyManager::CreateEnemy(float posX, float posY, float posZ, std::string name, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial)
+void EnemyManager::CreateEnemy(float posX, float posY, float posZ, std::string name, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial, EnemyWeapon& weapon)
 {
 	if (name == "Immortal")
 	{
 		immortal = std::make_shared<Immortal>();
-		immortal->Init(posX, posY, posZ, physics, tutorial);
+		immortal->Init(posX, posY, posZ, physics, tutorial, weapon);
 		m_pEnemys.emplace_back(immortal);
 	}
 	if (name == "bear")
 	{
 		bear = std::make_shared<Bear>();
-		bear->Init(posX, posY, posZ, physics, tutorial);
+		bear->Init(posX, posY, posZ, physics, tutorial, weapon);
 		m_pEnemys.emplace_back(bear);
 	}
 	if (name == "Assassin")
 	{
 		assassin = std::make_shared<Assassin>();
-		assassin->Init(posX, posY, posZ, physics, tutorial);
+		assassin->Init(posX, posY, posZ, physics, tutorial, weapon);
 		m_pEnemys.emplace_back(assassin);
 
 	}
@@ -328,25 +329,25 @@ void EnemyManager::CreateEnemy(float posX, float posY, float posZ, std::string n
 /// <param name="posZ">Z座標</param>
 /// <param name="name">キャラクター名</param>
 /// <param name="physics">物理ポインタ</param>
-void EnemyManager::EnemyInit(float posX, float posY, float posZ, std::string name, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial)
+void EnemyManager::EnemyInit(float posX, float posY, float posZ, std::string name, std::shared_ptr<MyLibrary::Physics> physics, bool tutorial, EnemyWeapon& weapon)
 {
 	if (name == "Immortal")
 	{
 		immortal = std::make_shared<Immortal>();
-		immortal->GameInit(posX, posY, posZ, physics, tutorial);
+		immortal->GameInit(posX, posY, posZ, physics, tutorial, weapon);
 		m_pEnemys.emplace_back(immortal);
 
 	}
 	if (name == "bear")
 	{
 		bear = std::make_shared<Bear>();
-		bear->GameInit(posX, posY, posZ, physics, tutorial);
+		bear->GameInit(posX, posY, posZ, physics, tutorial, weapon);
 		m_pEnemys.emplace_back(bear);
 	}
 	if (name == "Assassin")
 	{
 		assassin = std::make_shared<Assassin>();
-		assassin->GameInit(posX, posY, posZ, physics, tutorial);
+		assassin->GameInit(posX, posY, posZ, physics, tutorial, weapon);
 		m_pEnemys.emplace_back(assassin);
 	}
 }

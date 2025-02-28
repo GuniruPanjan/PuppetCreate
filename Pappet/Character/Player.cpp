@@ -1710,7 +1710,7 @@ void Player::Draw(Armor& armor)
 	DrawFormatString(1000, 550, 0xffffff, "taking : %d", m_animChange.sa_taking);
 	DrawFormatString(1000, 650, 0xffffff, "touch : %d", m_animChange.sa_touch);
 #endif
-#if false
+#if true
 	DrawFormatString(1000, 150, 0xffffff, "posx : %f", rigidbody.GetPos().x);   //15
 	DrawFormatString(1000, 200, 0xffffff, "posy : %f", rigidbody.GetPos().y);   //12
 	DrawFormatString(1000, 250, 0xffffff, "posz : %f", rigidbody.GetPos().z);   //0
