@@ -14,7 +14,7 @@ namespace
 
 Message::Message() :
 	m_xpad(),
-	m_official(false),
+	m_official(0),
 	m_one(0),
 	m_two(0),
 	m_three(0),
@@ -33,7 +33,7 @@ void Message::DataInit()
 	
 }
 
-void Message::Init(float posX, float posY, float posZ, bool official, int one, int two, int three, std::shared_ptr<MyLibrary::Physics> physics)
+void Message::Init(float posX, float posY, float posZ, int official, int one, int two, int three, std::shared_ptr<MyLibrary::Physics> physics)
 {
 	m_messageUI = MyLoadGraph("Data/UI/操作説明ウィンドウ.png", 3, 3);
 
@@ -86,14 +86,47 @@ void Message::Draw()
 	{
 		cEffectTime++;
 	}
+}
 
+void Message::DrawString()
+{
 	//説明描画
 	if (m_draw)
 	{
 		//公式メッセージ描画
-		if (m_official)
+		if (m_official == 1)
 		{
 			DrawGraph(130, 100, m_messageUI, false);
+		}
+		//移動チュートリアル
+		else if (m_official == 2)
+		{
+			
+		}
+		//カメラチュートリアル
+		else if (m_official == 3)
+		{
+
+		}
+		//攻撃チュートリアル
+		else if (m_official == 4)
+		{
+
+		}
+		//アイテム関係チュートリアル
+		else if (m_official == 5)
+		{
+
+		}
+		//防御チュートリアル
+		else if (m_official == 6)
+		{
+
+		}
+		//休息チュートリアル
+		else if (m_official == 7)
+		{
+
 		}
 		else
 		{

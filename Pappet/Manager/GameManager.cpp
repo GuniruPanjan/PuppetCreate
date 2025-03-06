@@ -509,6 +509,7 @@ void GameManager::Draw()
 
 	m_pItem->Draw();
 
+	m_pMessage->DrawString();
 	m_pMessage->Draw();
 
 }

@@ -23,7 +23,7 @@ public:
 		int posy;           //y座標
 		int posz;           //z座標
 
-		bool official;      //公式メッセージか
+		int official;      //公式メッセージか
 
 		int one;            //一つ目の言葉
 		int two;            //二つ目の言葉
@@ -46,6 +46,8 @@ public:
 
 	//描画処理
 	void Draw();
+	//文字描画処理
+	void DrawString();
 
 	//終了処理
 	void End();
@@ -57,10 +59,10 @@ public:
 
 private:
 	//メッセージ生成
-	void CreateMessage(float posx, float posy, float posz, bool official, int one, int two, int three, std::shared_ptr<MyLibrary::Physics> physics);
+	void CreateMessage(float posx, float posy, float posz, int official, int one, int two, int three, std::shared_ptr<MyLibrary::Physics> physics);
 private:
 	//メッセージの管理
-	std::shared_ptr<Message> m_pMessage;
+	std::list<std::shared_ptr<Message>> m_pMessage;
 	//メッセージの生成情報
 	std::list<std::shared_ptr<MessageGenerateInfo>> m_pGenerateInfo;
 

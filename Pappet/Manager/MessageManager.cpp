@@ -90,30 +90,66 @@ void MessageManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameMan
 		}
 	}
 
-	//マップのメッセージとして更新する
-	m_pMessage->Update(player);
+	for (auto& up : m_pMessage)
+	{
+		//マップのメッセージとして更新する
+		up->Update(player);
+	}
 }
 
 void MessageManager::Draw()
 {
 	if (cMessage)
 	{
+		for (auto& up : m_pMessage)
+		{
+			//生成される前にここが動く事で例外スローされる
+			up->Draw();
+		}
+		
+	}
+}
 
-		//生成される前にここが動く事で例外スローされる
-		m_pMessage->Draw();
+void MessageManager::DrawString()
+{
+	if (cMessage)
+	{
+		for (auto& up : m_pMessage)
+		{
+			if (up->GetDraw())
+			{
+				for (auto& generate : m_pGenerateInfo)
+				{
+					if (generate->posx == up->GetPos().x && generate->posy == up->GetPos().y && generate->posz == generate->posz)
+					{
+						up->DrawString();
+					}
+				}
+			}
+		}
 	}
 }
 
 void MessageManager::End()
 {
-	m_pMessage->End();
+	for (auto& up : m_pMessage)
+	{
+		up->End();
+	}
 }
 
 bool MessageManager::GetDraw()
 {
 	if (cMessage)
 	{
-		return m_pMessage->GetDraw();
+		for (auto& up : m_pMessage)
+		{
+			if (up->GetDraw())
+			{
+				return up->GetDraw();
+			}
+		}
+		
 	}
 	else
 	{
@@ -121,10 +157,11 @@ bool MessageManager::GetDraw()
 	}
 }
 
-void MessageManager::CreateMessage(float posx, float posy, float posz, bool official, int one, int two, int three, std::shared_ptr<MyLibrary::Physics> physics)
+void MessageManager::CreateMessage(float posx, float posy, float posz, int official, int one, int two, int three, std::shared_ptr<MyLibrary::Physics> physics)
 {
-	m_pMessage = std::make_shared<Message>();
-	m_pMessage->Init(posx, posy, posz, official, one, two, three, physics);
+	message = std::make_shared<Message>();
+	message->Init(posx, posy, posz, official, one, two, three, physics);
 	//m_pMessage->SetCan(true);
+	m_pMessage.emplace_back(message);
 	cMessage = true;
 }

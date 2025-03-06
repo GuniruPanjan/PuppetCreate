@@ -24,7 +24,7 @@ public:
 	/// <summary>
 	/// 初期化処理
 	/// </summary>
-	void Init(float posX, float posY, float posZ, bool official, int one, int two, int three, std::shared_ptr<MyLibrary::Physics> physics);
+	void Init(float posX, float posY, float posZ, int official, int one, int two, int three, std::shared_ptr<MyLibrary::Physics> physics);
 
 	/// <summary>
 	/// 更新処理
@@ -37,6 +37,11 @@ public:
 	void Draw();
 
 	/// <summary>
+	/// 文字描画処理
+	/// </summary>
+	void DrawString();
+
+	/// <summary>
 	/// 終了処理
 	/// </summary>
 	void End();
@@ -44,6 +49,9 @@ public:
 	//処理ができるのかの判断
 	bool GetCan() { return m_can; }
 	bool SetCan(bool set) { return m_can = set; }
+
+	//ポジションを返す
+	VECTOR GetPos() { return m_centerPos.ConversionToVECTOR(); }
 
 	//メッセージを表示できるかの判断
 	bool GetDraw() { return m_draw; }
@@ -54,7 +62,7 @@ private:
 
 	MyLibrary::LibVec3 m_centerPos;
 
-	bool m_official;       //公式
+	int m_official;       //公式
 
 	int m_one;             //一つ目
 	int m_two;             //二つ目
