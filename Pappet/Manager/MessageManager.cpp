@@ -98,6 +98,7 @@ void MessageManager::Draw()
 {
 	if (cMessage)
 	{
+
 		//生成される前にここが動く事で例外スローされる
 		m_pMessage->Draw();
 	}

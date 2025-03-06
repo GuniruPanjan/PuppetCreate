@@ -64,6 +64,9 @@ private:
 	//メッセージの生成情報
 	std::list<std::shared_ptr<MessageGenerateInfo>> m_pGenerateInfo;
 
+	//メッセージ
+	std::shared_ptr<Message> message;
+
 	//ステージ名
 	const char* m_stageName;
 
