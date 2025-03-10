@@ -5,6 +5,7 @@
 #include "Map/Map.h"
 #include "Manager/MapManager.h"
 #include "Manager/EffectManager.h"
+#include "External/Font.h"
 
 namespace
 {
@@ -17,6 +18,8 @@ namespace
 	float cCameraTargetx = -250.0f;
 	float cCameraTargety = 115.0f;
 	float cCameraTargetz = -270.0f;
+
+	constexpr int cFontSize = 35;
 
 	bool cCameraTrun = false;
 
@@ -57,6 +60,8 @@ SceneTitle::SceneTitle() :
 		m_select[i] = 0;
 		m_pal[i] = 0;
 	}
+
+	m_pFont = std::make_shared<Font>();
 }
 
 /// <summary>
@@ -92,8 +97,8 @@ void SceneTitle::Init()
 	m_setting = m_pUi->MyLoadGraph("Data/UI/SettingButtonMini.png", 1, 1);                     //29.4 KB (30,170 バイト)
 	m_end = m_pUi->MyLoadGraph("Data/UI/EndButtonMini.png", 1, 1);                             //22.5 KB (23,109 バイト)
 	m_hand = m_pUi->MyLoadGraph("Data/UI/PuppetHand.png", 2, 2);                         
-	m_BButton = m_pUi->MyLoadGraph("Data/UI/BButton.png", 1, 1);
-	m_AButton = m_pUi->MyLoadGraph("Data/UI/AButton.png", 1, 1);
+	m_BButton = m_pUi->MyLoadGraph("Data/UI/BButton.png", 3, 3);
+	m_AButton = m_pUi->MyLoadGraph("Data/UI/AButton.png", 3, 3);
 
 	m_playerHandle = handle.GetModelHandle("Data/Player/PuppetPlayerModel.mv1");
 	m_anim = handle.GetModelHandle("Data/PlayerAnimation/JumpingDown.mv1");
@@ -133,6 +138,9 @@ void SceneTitle::Init()
 	//m_cameraPos = VGet(550.0f, 20.0f, -450.0f);
 	m_cameraPos = VGet(-80.0f, 35.0f, 80.0f);
 	m_cameraTarget = VGet(cCameraTargetx, cCameraTargety, cCameraTargetz);
+
+	//フォント初期化
+	m_pFont->FontInit(cFontSize);
 
 	//設定関係
 	m_pSetting->Init();
@@ -366,9 +374,9 @@ void SceneTitle::Draw()
 	SetFontSize(35);
 
 	DrawGraph(1150, 900, m_AButton, true);
-	DrawFormatString(1210, 910, 0xffffff, "決定");
+	DrawStringToHandle(1210, 910, "決定", 0xffffff, m_pFont->GetHandle());
 	DrawGraph(1350, 900, m_BButton, true);
-	DrawFormatString(1410, 910, 0xffffff, "キャンセル");
+	DrawStringToHandle(1410, 910,"キャンセル", 0xffffff, m_pFont->GetHandle());
 
 	SetFontSize(40);
 

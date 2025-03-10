@@ -63,8 +63,8 @@ void UI::Init()
 	m_equipmentFrame = MyLoadGraph("Data/UI/Frame.png", 1, 1);
 	m_actionUI = MyLoadGraph("Data/UI/Action.png", 1, 1);
 	m_itemTaking = MyLoadGraph("Data/UI/ƒAƒCƒeƒ€Žæ“¾ˆÍ‚¢.png", 1, 1);
-	m_yButton = MyLoadGraph("Data/UI/YButton.png", 1, 1);
-	m_bButton = MyLoadGraph("Data/UI/BButton.png", 1, 1);
+	m_yButton = MyLoadGraph("Data/UI/YButton.png", 3, 3);
+	m_bButton = MyLoadGraph("Data/UI/BButton.png", 3, 3);
 }
 
 /// <summary>

@@ -819,7 +819,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			//現在のアタックナンバー
 			cNowAttackNumber = 1;
 
-			//m_pAttack->SetAttack(m_attackDamage);
 			m_pLigAttack->SetAttack(m_attackDamage);
 
 			//攻撃判定発生フレーム
@@ -832,7 +831,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 				PlaySoundMem(se.GetAttackSE(), DX_PLAYTYPE_BACK, true);
 
 				m_status.s_stamina -= 25.0f;
-				//m_pAttack->Init(m_pPhysics);
 				m_pLigAttack->Init(m_pPhysics);
 			}
 			else if (m_nowFrame >= 35.0f && m_nowFrame < 40.0f)
@@ -841,7 +839,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 				cAttackMove = 0.3f;
 
 				//判定をリセット
-				//m_pAttack->CollisionEnd();
 				m_pLigAttack->CollisionEnd();
 			}
 			//攻撃終了
@@ -857,12 +854,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		//二段階目の攻撃
 		else if (m_nowFrame <= 70.0f && cIsEndAttack == 1)
 		{
-			
-
 			//現在のアタックナンバー
 			cNowAttackNumber = 2;
 
-			//m_pAttack->SetAttack((m_attackDamage) * 1.1);
 			m_pLigAttack->SetAttack((m_attackDamage) * 1.1);
 
 			//攻撃判定発生フレーム
@@ -875,7 +869,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 				PlaySoundMem(se.GetAttackSE(), DX_PLAYTYPE_BACK, true);
 
 				m_status.s_stamina -= 25.0f;
-				//m_pAttack->Init(m_pPhysics);
 				m_pLigAttack->Init(m_pPhysics);
 			}
 			else if (m_nowFrame >= 65.0f && m_nowFrame < 70.0f)
@@ -884,7 +877,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 				cAttackMove = 0.2f;
 
 				//攻撃判定リセット
-				//m_pAttack->CollisionEnd();
 				m_pLigAttack->CollisionEnd();
 
 			}
@@ -900,12 +892,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		//三段階目の攻撃
 		else if (m_nowFrame <= 110.0f && cIsEndAttack == 2)
 		{
-			
-
 			//現在のアタックナンバー
 			cNowAttackNumber = 3;
 
-			//m_pAttack->SetAttack((m_attackDamage) * 1.2);
 			m_pLigAttack->SetAttack((m_attackDamage) * 1.2);
 
 			//攻撃判定発生フレーム
@@ -918,7 +907,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 				PlaySoundMem(se.GetAttackSE(), DX_PLAYTYPE_BACK, true);
 
 				m_status.s_stamina -= 25.0f;
-				//m_pAttack->Init(m_pPhysics);
 				m_pLigAttack->Init(m_pPhysics);
 			}
 			else if (m_nowFrame >= 95.0f && m_nowFrame < 110.0f)
@@ -927,7 +915,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 				cAttackMove = 0.2f;
 
 				//攻撃判定リセット
-				//m_pAttack->CollisionEnd();
 				m_pLigAttack->CollisionEnd();
 			}
 			//攻撃終了
@@ -1689,7 +1676,7 @@ void Player::WeaponAnimation(Shield& shield)
 /// <summary>
 /// 描画処理
 /// </summary>
-void Player::Draw(Armor& armor)
+void Player::Draw(Armor& armor, int font)
 {
 	rigidbody.SetPos(rigidbody.GetNextPos());
 	m_collisionPos = rigidbody.GetPos();

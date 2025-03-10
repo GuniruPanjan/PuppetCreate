@@ -2,6 +2,7 @@
 #include "Object/MessageObject.h"
 #include "Manager/EffectManager.h"
 #include "Character/Player.h"
+#include "External/Font.h"
 
 namespace
 {
@@ -21,7 +22,7 @@ Message::Message() :
 	m_draw(false),
 	m_can(false)
 {
-	
+	m_pFont = std::make_shared<Font>();
 }
 
 Message::~Message()
@@ -35,7 +36,15 @@ void Message::DataInit()
 
 void Message::Init(float posX, float posY, float posZ, int official, int one, int two, int three, std::shared_ptr<MyLibrary::Physics> physics)
 {
-	m_messageUI = MyLoadGraph("Data/UI/操作説明ウィンドウ.png", 3, 3);
+	m_messageUI = MyLoadGraph("Data/UI/Operation.png", 3, 3);
+	m_lStick = MyLoadGraph("Data/UI/LStick.png", 1, 1);
+	m_rStick = MyLoadGraph("Data/UI/RStick.png", 1, 1);
+	m_aButton = MyLoadGraph("Data/UI/AButton.png", 1, 1);
+	m_yButton = MyLoadGraph("Data/UI/YButton.png", 1, 1);
+	m_staminaBar = MyLoadGraph("Data/UI/StaminaBar.png", 1, 2);
+	m_rbButton = MyLoadGraph("Data/UI/RBButton.png", 2, 2);
+	m_rtButton = MyLoadGraph("Data/UI/RTButton.png", 2, 2);
+	m_startButton = MyLoadGraph("Data/UI/START.png", 2, 2);
 
 	m_pMessage = std::make_shared<MessageObject>(50.0f);
 
@@ -47,6 +56,8 @@ void Message::Init(float posX, float posY, float posZ, int official, int one, in
 	m_one = one;
 	m_two = two;
 	m_three = three;
+
+	m_pFont->FontInit(50);
 }
 
 void Message::Update(Player& player)
@@ -61,7 +72,6 @@ void Message::Update(Player& player)
 	{
 		m_draw = true;
 	}
-
 	if (m_draw)
 	{
 		//Bボタンを押すと戻る
@@ -96,46 +106,117 @@ void Message::DrawString()
 		//公式メッセージ描画
 		if (m_official == 1)
 		{
-			DrawGraph(130, 100, m_messageUI, false);
+			
 		}
 		//移動チュートリアル
 		else if (m_official == 2)
 		{
+			//背景描画
+			DrawGraph(130, 100, m_messageUI, false);
+
+			//左スティック描画
+			DrawGraph(200, 150, m_lStick, true);
+			DrawStringToHandle(400, 180, "Lスティック　：　移動", 0xffffff, m_pFont->GetHandle());
 			
+			//Bボタン描画
+			DrawGraph(180, 340, m_aButton, true);
+			DrawStringToHandle(400, 350, "Aボタン単押し　：　回避", 0xffffff, m_pFont->GetHandle());
+			DrawStringToHandle(400, 450, "Aボタン長押し　：　走る", 0xffffff, m_pFont->GetHandle());
+
+			//スタミナ描画
+			DrawGraph(370, 660, m_staminaBar, true);
+			DrawStringToHandle(350, 600, "回避と走る行動にはスタミナを消費する", 0xffffff, m_pFont->GetHandle());
 		}
 		//カメラチュートリアル
 		else if (m_official == 3)
 		{
+			//背景描画
+			DrawGraph(130, 100, m_messageUI, false);
+
+			//右スティック描画
+			DrawGraph(180, 270, m_rStick, true);
+			DrawStringToHandle(400, 250, "Rスティック　：　カメラ移動", 0xffffff, m_pFont->GetHandle());
+			DrawStringToHandle(400, 400, "Rスティック押し込み　：　ターゲット集中", 0xffffff, m_pFont->GetHandle());
+
+			DrawStringToHandle(250, 600, "ターゲット集中の間にRスティックを動かすと\n　　　　　　　ターゲット変更", 0xffffff, m_pFont->GetHandle());
 
 		}
 		//攻撃チュートリアル
 		else if (m_official == 4)
 		{
+			//背景描画
+			DrawGraph(130, 100, m_messageUI, false);
 
+			//RBボタン描画
+			DrawGraph(180, 200, m_rbButton, true);
+			DrawStringToHandle(600, 200, "RBボタン　：　攻撃", 0xffffff, m_pFont->GetHandle());
+			DrawStringToHandle(500, 270, "攻撃中にもう一度攻撃を押すと\n　　最大３回コンボできる", 0xffffff, m_pFont->GetHandle());
+
+			//RTボタン描画
+			DrawGraph(180, 450, m_rtButton, true);
+			DrawStringToHandle(600, 450, "RTボタン　：　強攻撃", 0xffffff, m_pFont->GetHandle());
+
+			//スタミナ描画
+			DrawGraph(370, 660, m_staminaBar, true);
+			DrawStringToHandle(400, 600, "攻撃行動ではスタミナを消費する", 0xffffff, m_pFont->GetHandle());
 		}
 		//アイテム関係チュートリアル
 		else if (m_official == 5)
 		{
+			//背景描画
+			DrawGraph(130, 100, m_messageUI, false);
+
+			//Yボタン描画
+			DrawGraph(180, 200, m_yButton, true);
+			DrawStringToHandle(400, 200, "マップで光る物はアイテムとして入手できる", 0xffffff, m_pFont->GetHandle());
+			DrawStringToHandle(600, 300, "Yボタン　：　アイテム入手", 0xffffff, m_pFont->GetHandle());
+
+			//STARTボタン描画
+			DrawGraph(180, 450, m_startButton, true);
+			DrawStringToHandle(500, 480, "STARTボタン　：　メニューを開く", 0xffffff, m_pFont->GetHandle());
 
 		}
 		//防御チュートリアル
 		else if (m_official == 6)
 		{
+			//背景描画
+			DrawGraph(130, 100, m_messageUI, false);
 
+			//LBボタン描画
 		}
 		//休息チュートリアル
 		else if (m_official == 7)
 		{
+			//背景描画
+			DrawGraph(130, 100, m_messageUI, false);
+
+			//Yボタン描画
+			DrawGraph(380, 200, m_yButton, true);
+			DrawStringToHandle(400, 400, "マップで光る物はアイテムとして入手できる", 0xffffff, m_pFont->GetHandle());
 
 		}
 		else
 		{
 
 		}
+
+		
 	}
 }
 
 void Message::End()
 {
 	DeleteGraph(m_messageUI);
+	DeleteGraph(m_lStick);
+	DeleteGraph(m_aButton);
+	DeleteGraph(m_yButton);
+	DeleteGraph(m_staminaBar);
+	DeleteGraph(m_rbButton);
+	DeleteGraph(m_rtButton);
+	DeleteGraph(m_startButton);
+}
+
+bool Message::GetMessageStay()
+{
+	return m_pMessage->GetIsStay();
 }

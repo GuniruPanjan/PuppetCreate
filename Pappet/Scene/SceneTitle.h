@@ -5,6 +5,7 @@
 class Map;
 class SelectManager;
 class MapManager;
+class Font;
 
 //シーンタイトルのクラス
 class SceneTitle : public SceneBase
@@ -66,6 +67,7 @@ private:
 	std::shared_ptr<SEManager> pse = std::make_shared<SEManager>();
 	std::shared_ptr<SelectManager> pselect = std::make_shared<SelectManager>();
 	std::shared_ptr<MapManager> m_pMap = std::make_shared<MapManager>();
+	std::shared_ptr<Font> m_pFont;
 
 };
 

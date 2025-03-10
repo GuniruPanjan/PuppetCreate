@@ -112,18 +112,15 @@ void MessageManager::Draw()
 
 void MessageManager::DrawString()
 {
-	if (cMessage)
+	for (auto& generate : m_pGenerateInfo)
 	{
 		for (auto& up : m_pMessage)
 		{
-			if (up->GetDraw())
+			if (generate->posx == up->GetPos().x && generate->posy == up->GetPos().y && generate->posz == up->GetPos().z)
 			{
-				for (auto& generate : m_pGenerateInfo)
+				if (up->GetDraw() && up->GetMessageStay())
 				{
-					if (generate->posx == up->GetPos().x && generate->posy == up->GetPos().y && generate->posz == generate->posz)
-					{
-						up->DrawString();
-					}
+					up->DrawString();
 				}
 			}
 		}

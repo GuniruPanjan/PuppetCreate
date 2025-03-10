@@ -9,6 +9,7 @@
 #include "EffectManager.h"
 #include "Manager/SEManager.h"
 #include "Item/Tool.h"
+#include "External/Font.h"
 
 //カメラの初期化で描画バグが発生する
 //カメラのせいでマップとモデルの描画がバグる
@@ -49,6 +50,7 @@ GameManager::GameManager() :
 	m_pBgm = std::make_shared<BgmManager>();
 	m_pMap = std::make_shared<MapManager>();
 	m_pSe = std::make_shared<SEManager>();
+	m_pFont = std::make_shared<Font>();
 }
 
 /// <summary>
@@ -91,6 +93,9 @@ void GameManager::Init()
 	m_pPlayer->ChangeStatus();
 	m_pMessage = std::make_shared<MessageManager>();
 	m_pMessage->Init();
+
+	//フォントの初期化
+	m_pFont->FontInit(32);
 	
 	m_pTool = std::make_shared<Tool>();
 	m_pTool->Init();
@@ -416,7 +421,7 @@ void GameManager::Draw()
 	//シャドウマップへの描画の準備
 	ShadowMap_DrawSetup(m_shadowMapHandle);
 
-	m_pPlayer->Draw(*m_pArmor);
+	m_pPlayer->Draw(*m_pArmor, m_pFont->GetHandle());
 	m_pEnemy->Draw(*m_pUi);
 	m_pWeapon->Draw();
 	m_pShield->Draw();
@@ -428,7 +433,7 @@ void GameManager::Draw()
 	SetUseShadowMap(0, m_shadowMapHandle);
 
 	m_pMap->Draw();
-	m_pPlayer->Draw(*m_pArmor);
+	m_pPlayer->Draw(*m_pArmor, m_pFont->GetHandle());
 	m_pWeapon->Draw();
 	m_pEnemyWeapon->Draw();
 	m_pShield->Draw();

@@ -264,6 +264,9 @@
     <ClCompile Include="Item\EnemyWeapon.cpp">
       <Filter>ソース ファイル\Item</Filter>
     </ClCompile>
+    <ClCompile Include="External\Font.cpp">
+      <Filter>ソース ファイル\External</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Icon\Icon.h">
@@ -463,6 +466,9 @@
     </ClInclude>
     <ClInclude Include="Item\EnemyWeapon.h">
       <Filter>ヘッダー ファイル\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="External\Font.h">
+      <Filter>ヘッダー ファイル\External</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

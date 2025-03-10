@@ -67,6 +67,12 @@ protected:
 	int m_itemTaking;     //アイテムを取得した変数
 	int m_yButton;        //Yボタン画像格納変数
 	int m_bButton;        //Bボタン画像格納変数
+	int m_aButton;        //Aボタン画像格納変数
+	int m_rbButton;       //RBボタン画像格納変数
+	int m_rtButton;       //RTボタン画像格納変数
+	int m_startButton;    //スタートボタン画像格納変数
+	int m_lStick;         //左スティック画像格納変数
+	int m_rStick;         //右スティック画像格納変数
 	int m_messageUI;      //メッセージ画像格納変数
 
 	//スマートポインタ

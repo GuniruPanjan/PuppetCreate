@@ -4,6 +4,7 @@
 
 class MessageObject;
 class Player;
+class Font;
 
 class Message : public UIBase
 {
@@ -50,6 +51,9 @@ public:
 	bool GetCan() { return m_can; }
 	bool SetCan(bool set) { return m_can = set; }
 
+	//メッセージに当たっているかどうか
+	bool GetMessageStay();
+
 	//ポジションを返す
 	VECTOR GetPos() { return m_centerPos.ConversionToVECTOR(); }
 
@@ -59,6 +63,7 @@ public:
 private:
 	XINPUT_STATE m_xpad;                           //パッド入力
 	std::shared_ptr<MessageObject> m_pMessage;     //メッセージの判定
+	std::shared_ptr<Font> m_pFont;                 //フォント
 
 	MyLibrary::LibVec3 m_centerPos;
 

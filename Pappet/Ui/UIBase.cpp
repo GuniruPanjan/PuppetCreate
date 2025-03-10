@@ -34,6 +34,12 @@ UIBase::UIBase() :
 	m_itemTaking(0),
 	m_yButton(0),
 	m_bButton(0),
+	m_aButton(0),
+	m_lStick(0),
+	m_rStick(0),
+	m_rbButton(0),
+	m_rtButton(0),
+	m_startButton(0),
 	m_messageUI(0)
 {
 	//âÊëúì«Ç›çûÇ›
@@ -97,6 +103,10 @@ UIBase::~UIBase()
 	DeleteGraph(m_equipmentFrame);
 	DeleteGraph(m_hpBar);
 	DeleteGraph(m_backOutBar);
+	DeleteGraph(m_yButton);
+	DeleteGraph(m_bButton);
+	DeleteGraph(m_lStick);
+	DeleteGraph(m_messageUI);
 }
 
 /// <summary>
