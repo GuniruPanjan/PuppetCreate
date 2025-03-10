@@ -13,7 +13,7 @@ namespace
 	//天井のパス
 	constexpr const char* cMapCeilingName = "Data/Map/TutorialMapCeiling.mv1";
 	//休息オブジェクトパス
-	constexpr const char* cMapRestObjectName = "Data/Map/RestObject.mv1";
+	constexpr const char* cMapRestObjectName = "Data/Object/RestObject.mv1";
 	//休息地点の半径
 	constexpr float  cRestRadius = 50.0f;
 	//ボス部屋入り口の半径
@@ -278,7 +278,7 @@ void MapTutorial::Draw()
 	PartDrawSet(m_ceilingHandle, VGet(m_size, m_size, m_size), VGet(-450.0f, 190.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
 
 	//休息地点描画
-	PartDrawSet(m_restObjectHandle, VGet(0.5f, 0.5f, 0.5f), VGet(-150.0f, 0.0f, 130.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_restObjectHandle, VGet(0.1f, 0.1f, 0.1f), VGet(-150.0f, 40.0f, 130.0f), VGet(0.0f, 0.0f, 0.0f));
 }
 
 void MapTutorial::CoreDraw()

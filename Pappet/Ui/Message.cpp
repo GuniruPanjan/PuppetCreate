@@ -41,9 +41,11 @@ void Message::Init(float posX, float posY, float posZ, int official, int one, in
 	m_rStick = MyLoadGraph("Data/UI/RStick.png", 1, 1);
 	m_aButton = MyLoadGraph("Data/UI/AButton.png", 1, 1);
 	m_yButton = MyLoadGraph("Data/UI/YButton.png", 1, 1);
+	m_xButton = MyLoadGraph("Data/UI/XButton.png", 1, 1);
 	m_staminaBar = MyLoadGraph("Data/UI/StaminaBar.png", 1, 2);
 	m_rbButton = MyLoadGraph("Data/UI/RBButton.png", 2, 2);
 	m_rtButton = MyLoadGraph("Data/UI/RTButton.png", 2, 2);
+	m_lbButton = MyLoadGraph("Data/UI/LBButton.png", 2, 2);
 	m_startButton = MyLoadGraph("Data/UI/START.png", 2, 2);
 
 	m_pMessage = std::make_shared<MessageObject>(50.0f);
@@ -174,6 +176,7 @@ void Message::DrawString()
 			//STARTボタン描画
 			DrawGraph(180, 450, m_startButton, true);
 			DrawStringToHandle(500, 480, "STARTボタン　：　メニューを開く", 0xffffff, m_pFont->GetHandle());
+			DrawStringToHandle(400, 580, "メニューでは装備の変更やタイトルに戻れる", 0xffffff, m_pFont->GetHandle());
 
 		}
 		//防御チュートリアル
@@ -183,6 +186,13 @@ void Message::DrawString()
 			DrawGraph(130, 100, m_messageUI, false);
 
 			//LBボタン描画
+			DrawGraph(180, 300, m_lbButton, true);
+			DrawStringToHandle(400, 150, "盾を装備しているときは\n敵の攻撃を防ぐことができる", 0xffffff, m_pFont->GetHandle());
+			DrawStringToHandle(600, 320, "LBボタン　：　ガード", 0xffffff, m_pFont->GetHandle());
+
+			//スタミナ描画
+			DrawGraph(370, 660, m_staminaBar, true);
+			DrawStringToHandle(400, 550, "防御行動ではスタミナを消費する\n防御中はスタミナの回復が遅くなる", 0xffffff, m_pFont->GetHandle());
 		}
 		//休息チュートリアル
 		else if (m_official == 7)
@@ -191,8 +201,14 @@ void Message::DrawString()
 			DrawGraph(130, 100, m_messageUI, false);
 
 			//Yボタン描画
-			DrawGraph(380, 200, m_yButton, true);
-			DrawStringToHandle(400, 400, "マップで光る物はアイテムとして入手できる", 0xffffff, m_pFont->GetHandle());
+			DrawGraph(200, 250, m_yButton, true);
+			DrawStringToHandle(400, 150, "石に剣が刺さっているオブジェクトは\n　　　　　　　休息が可能、\n休息をするとリスポーン地点を固定する", 0xffffff, m_pFont->GetHandle());
+			DrawStringToHandle(600, 320, "Yボタン　：　休息", 0xffffff, m_pFont->GetHandle());
+
+			//アイテム描画
+			DrawGraph(200, 500, m_xButton, true);
+			DrawStringToHandle(600, 520, "Xボタン　：　アイテム使用", 0xffffff, m_pFont->GetHandle());
+			DrawStringToHandle(600, 600, "アイテムは使用すると消費する", 0xffffff, m_pFont->GetHandle());
 
 		}
 		else
@@ -210,9 +226,11 @@ void Message::End()
 	DeleteGraph(m_lStick);
 	DeleteGraph(m_aButton);
 	DeleteGraph(m_yButton);
+	DeleteGraph(m_xButton);
 	DeleteGraph(m_staminaBar);
 	DeleteGraph(m_rbButton);
 	DeleteGraph(m_rtButton);
+	DeleteGraph(m_lbButton);
 	DeleteGraph(m_startButton);
 }
 

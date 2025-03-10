@@ -35,10 +35,12 @@ UIBase::UIBase() :
 	m_yButton(0),
 	m_bButton(0),
 	m_aButton(0),
+	m_xButton(0),
 	m_lStick(0),
 	m_rStick(0),
 	m_rbButton(0),
 	m_rtButton(0),
+	m_lbButton(0),
 	m_startButton(0),
 	m_messageUI(0)
 {
