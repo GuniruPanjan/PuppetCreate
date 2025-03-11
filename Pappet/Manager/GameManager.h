@@ -43,7 +43,8 @@ public:
 
 	struct sBossEnd
 	{
-		bool sBear = false;
+		bool sBear = false;     //ŒF
+		bool sAssassin = false; //ƒAƒTƒVƒ“
 	};
 
 public:

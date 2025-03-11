@@ -26,6 +26,8 @@ namespace
 	bool cBossBGMOne = false;
 	//チュートリアル
 	bool cTutorial = false;
+	//チュートリアルをクリアした時の判定
+	bool cClearTutorial = false;
 
 	//シングルトン
 	auto& cEffect = EffectManager::GetInstance();
@@ -189,7 +191,7 @@ void GameManager::GameInit()
 void GameManager::Update()
 {
 	//ワープしてない時
-	if (!m_pPlayer->GetWarp())
+	if (!m_pPlayer->GetWarp() && !cClearTutorial)
 	{
 		m_pBgm->Update(m_pSetting->GetVolume());
 
@@ -264,6 +266,14 @@ void GameManager::Update()
 			{
 				//クマ
 				m_bossEnd.sBear = true;
+			}
+			//ステージチュートリアルだった場合
+			else if (m_pMap->GetStageName() == "stageTutorial")
+			{
+				//アサシン
+				m_bossEnd.sAssassin = true;
+
+				cClearTutorial = true;
 			}
 
 			//ワープする
@@ -386,8 +396,14 @@ void GameManager::Update()
 		m_pPhysics->Update();
 	}
 	//ワープしたとき
-	else if (m_pPlayer->GetWarp())
+	else if (m_pPlayer->GetWarp() || cClearTutorial)
 	{
+		//チュートリアルをクリアしたら強制ワープ
+		if (cClearTutorial)
+		{
+			m_pPlayer->SetWarp(true);
+		}
+
 		m_pMap->WarpUpdate(m_pPhysics, m_pPlayer->GetWarp(), false);
 
 		//一回だけ実行
@@ -407,6 +423,8 @@ void GameManager::Update()
 
 			cOne = true;
 		}
+
+		cClearTutorial = false;
 	}
 
 	cEffect.Update();

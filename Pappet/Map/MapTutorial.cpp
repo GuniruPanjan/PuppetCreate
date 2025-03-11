@@ -188,6 +188,11 @@ std::shared_ptr<MapBase> MapTutorial::Update(bool warp, bool enter, bool Dead)
 	return shared_from_this();   //自身のポインタ
 }
 
+/// <summary>
+/// ワープの更新処理
+/// </summary>
+/// <param name="warp"></param>
+/// <returns></returns>
 std::shared_ptr<MapBase> MapTutorial::WarpUpdate(bool warp)
 {
 	if (warp)

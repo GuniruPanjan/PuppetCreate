@@ -210,23 +210,29 @@ void Player::Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* mana
 	rigidbody.Init(true);
 	if (manager->GetThisMapName() == 0)
 	{
-		rigidbody.SetPos(MyLibrary::LibVec3(40.0f, 12.0f, 0.0f));
+		m_updateX = 40.0f;
+		m_updateY = 12.0f;
+		m_updateZ = 0.0f;
 	}
 	else if (manager->GetThisMapName() == 1)
 	{
-		rigidbody.SetPos(MyLibrary::LibVec3(485.0f, 12.0f, -800.0f));
+		m_updateX = 485.0f;
+		m_updateY = 12.0f;
+		m_updateZ = -800.0f;
 	}
-	// «FXŽŽ‚·‚½‚ß‚Ì‰Šú‰»ˆÊ’u
-	rigidbody.SetPos(MyLibrary::LibVec3(-1850.0f, 12.0f, 0.0f));
+	else if (manager->GetThisMapName() == 6)
+	{
+		m_updateX = -1850.0f;
+		m_updateY = 12.0f;
+		m_updateZ = 0.0f;
+	}
+	
+	rigidbody.SetPos(MyLibrary::LibVec3(m_updateX, m_updateY, m_updateZ));
 	rigidbody.SetNextPos(rigidbody.GetPos());
 	rigidbody.SetVec(MyLibrary::LibVec3(0.0f, 40.0f, 0.0f));
 	m_collisionPos = rigidbody.GetPos();
 	SetModelPos();
 	MV1SetPosition(m_modelHandle, m_modelPos.ConversionToVECTOR());
-
-	m_updateX = 485.0f;
-	m_updateY = 12.0f;
-	m_updateZ = -800.0f;
 
 	m_searchRadius = 200.0f;
 
@@ -1697,7 +1703,7 @@ void Player::Draw(Armor& armor, int font)
 	DrawFormatString(1000, 550, 0xffffff, "taking : %d", m_animChange.sa_taking);
 	DrawFormatString(1000, 650, 0xffffff, "touch : %d", m_animChange.sa_touch);
 #endif
-#if true
+#if false
 	DrawFormatString(1000, 150, 0xffffff, "posx : %f", rigidbody.GetPos().x);   //15
 	DrawFormatString(1000, 200, 0xffffff, "posy : %f", rigidbody.GetPos().y);   //12
 	DrawFormatString(1000, 250, 0xffffff, "posz : %f", rigidbody.GetPos().z);   //0

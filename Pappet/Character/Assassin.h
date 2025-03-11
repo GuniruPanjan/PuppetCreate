@@ -40,6 +40,10 @@ private:
 	VECTOR m_ligLeftLegPos[2];            //左足のベクター
 	VECTOR m_ligRightLegPos[2];           //右足のベクター
 
+	VECTOR m_attackMove;                  //攻撃時の移動
+	VECTOR m_avoidanceMove;               //回避時の移動
+	VECTOR m_hitMove;                     //攻撃ヒット時の移動
+
 	MATRIX m_weaponFrameMatrix;
 };
 

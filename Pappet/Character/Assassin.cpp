@@ -29,7 +29,7 @@ namespace
 	//死亡終了
 	bool cDead = false;
 	//死亡したときのアニメーション
-	constexpr float cDeadFrame = 68.0f;
+	constexpr float cDeadFrame = 65.0f;
 	//索敵範囲
 	constexpr float cSearchRadius = 120.0f;
 	//近距離の行動に移る距離
@@ -42,6 +42,15 @@ namespace
 	constexpr float cAngle = 30.0f;
 	//視野の距離
 	constexpr float cAngleDistance = 400.0f;
+	//攻撃時の移動距離
+	float cAttackMove = 0.0f;
+	//回避時の移動距離
+	float cAvoidanceMove = 0.0f;
+	//攻撃ヒット時の移動距離
+	float cHitMove = 0.0f;
+
+	bool cA[4];
+
 	//プレイヤーを発見したとき
 	bool cPlayerLook = false;
 
@@ -69,6 +78,9 @@ Assassin::Assassin():
 	m_attackPos(),
 	m_moveFrameRightHand(0),
 	m_frameRightHand(VGet(0.0f,0.0f,0.0f)),
+	m_attackMove(VGet(0.0f,0.0f,0.0f)),
+	m_avoidanceMove(VGet(0.0f,0.0f,0.0f)),
+	m_hitMove(VGet(0.0f, 0.0f, 0.0f)),
 	m_weaponFrameMatrix()
 {
 	//当たり判定の設定
@@ -150,13 +162,15 @@ void Assassin::Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrar
 	m_anim.s_isDead = false;
 	cDead = false;
 
+	m_status.s_hp = 10;
+
 	//最大HPを取得
 	m_maxHP = m_status.s_hp;
 
 	if (cTutorial)
 	{
-		m_bossName = " ? ? ? ";
-		m_subName = " ? ? ? ";
+		m_bossName = " 混沌の影 ";
+		m_subName = " P E P U S I [チュートリアル] ";
 
 		m_bossjudg = true;
 	}
@@ -300,6 +314,31 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 		//動かないようにする
 		m_move = VGet(0.0f, 0.0f, 0.0f);
 		m_moveVec = MyLibrary::LibVec3(0.0f, 0.0f, 0.0f);
+
+		
+		m_enemyAnim.s_rool = false;
+		m_anim.s_moveflag = false;
+
+		if (m_anim.s_attack)
+		{
+			//判定をリセット
+			m_pAttack->CollisionEnd();
+			m_pLigAttack->CollisionEnd();
+
+			m_anim.s_attack = false;
+		}
+
+		
+
+		//怯み移動処理
+		if (m_nowFrame > 5.0f && m_nowFrame <= 25.0f)
+		{
+			cHitMove = -1.0f;
+		}
+		else
+		{
+			cHitMove = 0.0f;
+		}
 	}
 
 	//攻撃終了
@@ -313,28 +352,102 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 		m_enemyAnim.s_rool = false;
 	}
 
-	//移動処理
-	MoveUpdate();
+	//回避時の行動
+	if (m_enemyAnim.s_rool)
+	{
+		if (m_nowFrame <= 30.0f)
+		{
+			cAvoidanceMove = -1.0f;
+
+			m_avoidnaceNow = true;
+		}
+		else
+		{
+			cAvoidanceMove = 0.0f;
+
+			m_avoidnaceNow = false;
+		}
+	}
+
 
 	if (!m_anim.s_attack && !m_enemyAnim.s_rool && !m_anim.s_hit)
 	{
+		cAttackMove = 0.0f;
+		cAvoidanceMove = 0.0f;
+		cHitMove = 0.0f;
+
 		//移動処理
-		//MoveUpdate();
+		MoveUpdate();
+
+		cA[0] = true;
+
+		for (int i = 0; i < 4; i++)
+		{
+			if (i != 0)
+			{
+				cA[i] = false;
+			}
+		}
 	}
-	else if (m_anim.s_attack)
+	else if (m_anim.s_attack && !m_enemyAnim.s_rool && !m_anim.s_hit)
 	{
+		cAvoidanceMove = 0.0f;
+		cHitMove = 0.0f;
+
+		m_attackMove = VScale(VGet(sinf(m_angle), 0.0f, cosf(m_angle)), cAttackMove);
+
 		//攻撃移動処理
-		//MoveAnimUpdate();
+		MoveAnimUpdate(m_attackMove);
+
+		cA[1] = true;
+
+		for (int i = 0; i < 4; i++)
+		{
+			if (i != 1)
+			{
+				cA[i] = false;
+			}
+		}
 	}
-	else if (m_enemyAnim.s_rool)
+	else if (m_enemyAnim.s_rool && !m_anim.s_attack && !m_anim.s_hit)
 	{
+		cAttackMove = 0.0f;
+		cHitMove = 0.0f;
+
+		m_avoidanceMove = VScale(VGet(sinf(m_angle), 0.0f, cosf(m_angle)), cAvoidanceMove);
+
 		//回避移動処理
-		//MoveAnimUpdate();
+		MoveAnimUpdate(m_avoidanceMove);
+
+		cA[2] = true;
+
+		for (int i = 0; i < 4; i++)
+		{
+			if (i != 2)
+			{
+				cA[i] = false;
+			}
+		}
 	}
-	else if (m_anim.s_hit)
+	else if (m_anim.s_hit && !m_enemyAnim.s_rool && !m_anim.s_attack)
 	{
+		cAttackMove = 0.0f;
+		cAvoidanceMove = 0.0f;
+
+		m_hitMove = VScale(VGet(sinf(m_angle), 0.0f, cosf(m_angle)), cHitMove);
+
 		//怯み移動処理
-		//MoveAnimUpdate();
+		MoveAnimUpdate(m_hitMove);
+
+		cA[3] = true;
+
+		for (int i = 0; i < 4; i++)
+		{
+			if (i != 3)
+			{
+				cA[i] = false;
+			}
+		}
 	}
 	
 
@@ -386,6 +499,7 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 		//怯んでない時
 		if (!m_anim.s_hit)
 		{
+			//まだできていないため後でボスアクションの中身を写す
 			Action(playerPos, isChase, se, weapon);
 		}
 	}
@@ -506,16 +620,93 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se,
 			//攻撃1
 			if (m_randomAction == 0)
 			{
-				//攻撃判定のポジション
-				//m_pAttack->Update(attackLeftKickPos);
-				InitAttackLigUpdate(attackKnifePos1, attackKnifePos2);
-
 				//攻撃モーションさせる
 				m_anim.s_attack = true;
 
 				m_move = VGet(0.0f, 0.0f, 0.0f);
 
 				AttackUpdate("Attack1", 3);
+
+				m_enemyAnim.s_rool = false;
+				m_anim.s_moveflag = false;
+
+			}
+			//ランダム行動で1が出た場合
+			//攻撃2
+			else if (m_randomAction == 1)
+			{
+				//攻撃モーションさせる
+				m_anim.s_attack = true;
+
+				m_move = VGet(0.0f, 0.0f, 0.0f);
+
+				AttackUpdate("Attack2", 4);
+
+				m_enemyAnim.s_rool = false;
+				m_anim.s_moveflag = false;
+			}
+			//ランダム行動で2が出た場合
+			//攻撃3
+			else if (m_randomAction == 2)
+			{
+
+				//攻撃モーションさせる
+				m_anim.s_attack = true;
+
+				m_move = VGet(0.0f, 0.0f, 0.0f);
+
+				AttackUpdate("Attack3", 5);
+
+				m_enemyAnim.s_rool = false;
+				m_anim.s_moveflag = false;
+			}
+			//ランダム行動で3が出た場合
+			//攻撃4
+			else if (m_randomAction == 3)
+			{
+				//攻撃モーションさせる
+				m_anim.s_attack = true;
+
+				m_move = VGet(0.0f, 0.0f, 0.0f);
+
+				AttackUpdate("Attack4", 6);
+
+				m_enemyAnim.s_rool = false;
+				m_anim.s_moveflag = false;
+			}
+			//ランダム行動で4が出た場合
+			//攻撃5
+			else if (m_randomAction == 4)
+			{
+				//攻撃モーションさせる
+				m_anim.s_attack = true;
+
+				m_move = VGet(0.0f, 0.0f, 0.0f);
+
+				AttackUpdate("Attack5", 7);
+
+				m_enemyAnim.s_rool = false;
+				m_anim.s_moveflag = false;
+			}
+			//ランダム行動で5が出た場合
+			//回避
+			else if (m_randomAction == 5)
+			{
+				m_enemyAnim.s_rool = true;
+
+				m_nowAnimIdx = m_animIdx["Roll"];
+				ChangeAnim(m_nowAnimIdx, m_animOne[8], m_animOne);
+			}
+		}
+
+		//攻撃時の行動
+		if (m_anim.s_attack)
+		{
+			if (m_randomAction == 0)
+			{
+				//攻撃判定のポジション
+				//m_pAttack->Update(attackLeftKickPos);
+				InitAttackLigUpdate(attackKnifePos1, attackKnifePos2);
 
 				if (m_nowFrame == 5)
 				{
@@ -547,25 +738,12 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se,
 					m_pAttack->CollisionEnd();
 					m_pLigAttack->CollisionEnd();
 				}
-
-				m_enemyAnim.s_rool = false;
-				m_anim.s_moveflag = false;
-
 			}
-			//ランダム行動で1が出た場合
-			//攻撃2
 			else if (m_randomAction == 1)
 			{
 				//攻撃判定のポジション
 				//m_pAttack->Update(attackLeftKickPos);
 				InitAttackLigUpdate(attackKnifePos1, attackKnifePos2);
-
-				//攻撃モーションさせる
-				m_anim.s_attack = true;
-
-				m_move = VGet(0.0f, 0.0f, 0.0f);
-
-				AttackUpdate("Attack2", 4);
 
 				if (m_nowFrame == 5)
 				{
@@ -585,24 +763,12 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se,
 					m_pAttack->CollisionEnd();
 					m_pLigAttack->CollisionEnd();
 				}
-
-				m_enemyAnim.s_rool = false;
-				m_anim.s_moveflag = false;
 			}
-			//ランダム行動で2が出た場合
-			//攻撃3
 			else if (m_randomAction == 2)
 			{
 				//攻撃判定のポジション
 				//m_pAttack->Update(attackLeftKickPos);
 				InitAttackLigUpdate(attackKnifePos1, attackKnifePos2);
-
-				//攻撃モーションさせる
-				m_anim.s_attack = true;
-
-				m_move = VGet(0.0f, 0.0f, 0.0f);
-
-				AttackUpdate("Attack3", 5);
 
 				if (m_nowFrame == 5)
 				{
@@ -622,24 +788,12 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se,
 					m_pAttack->CollisionEnd();
 					m_pLigAttack->CollisionEnd();
 				}
-
-				m_enemyAnim.s_rool = false;
-				m_anim.s_moveflag = false;
 			}
-			//ランダム行動で3が出た場合
-			//攻撃4
 			else if (m_randomAction == 3)
 			{
 				//攻撃判定のポジション
 				//m_pAttack->Update(attackLeftKickPos);
 				InitAttackLigUpdate(attackLeftKickPos1, attackLeftKickPos2);
-
-				//攻撃モーションさせる
-				m_anim.s_attack = true;
-
-				m_move = VGet(0.0f, 0.0f, 0.0f);
-
-				AttackUpdate("Attack4", 6);
 
 				if (m_nowFrame == 5)
 				{
@@ -660,24 +814,12 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se,
 					m_pAttack->CollisionEnd();
 					m_pLigAttack->CollisionEnd();
 				}
-
-				m_enemyAnim.s_rool = false;
-				m_anim.s_moveflag = false;
 			}
-			//ランダム行動で4が出た場合
-			//攻撃5
 			else if (m_randomAction == 4)
 			{
 				//攻撃判定のポジション
 				//m_pAttack->Update(attackRightKickPos);
 				InitAttackLigUpdate(attackRightKickPos1, attackRightKickPos2);
-
-				//攻撃モーションさせる
-				m_anim.s_attack = true;
-
-				m_move = VGet(0.0f, 0.0f, 0.0f);
-
-				AttackUpdate("Attack5", 7);
 
 				if (m_nowFrame == 5)
 				{
@@ -696,30 +838,6 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se,
 					//判定をリセット
 					m_pAttack->CollisionEnd();
 					m_pLigAttack->CollisionEnd();
-				}
-
-				m_enemyAnim.s_rool = false;
-				m_anim.s_moveflag = false;
-			}
-			//ランダム行動で5が出た場合
-			//回避
-			else if (m_randomAction == 5)
-			{
-				m_enemyAnim.s_rool = true;
-
-				if (m_enemyAnim.s_rool)
-				{
-					m_nowAnimIdx = m_animIdx["Roll"];
-					ChangeAnim(m_nowAnimIdx, m_animOne[8], m_animOne);
-
-					if (m_nowFrame <= 30.0f)
-					{
-						m_avoidnaceNow = true;
-					}
-					else
-					{
-						m_avoidnaceNow = false;
-					}
 				}
 			}
 		}
@@ -795,7 +913,7 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 	}
 
 	//近くじゃない時の行動
-	if (m_difPSize > cNear && !m_enemyAnim.s_rool)
+	if (m_difPSize > cNear && !m_enemyAnim.s_rool && m_randomAction != 6)
 	{
 		WalkUpdate("Walk", 2);
 
@@ -820,15 +938,116 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 		//攻撃1
 		if (m_randomAction == 0)
 		{
-			//InitAttack(cAttackRadiusKick);
-			InitAttackLigUpdate(attackKnifePos1, attackKnifePos2);
-
 			//攻撃モーションさせる
 			m_anim.s_attack = true;
 
 			m_move = VGet(0.0f, 0.0f, 0.0f);
 
 			AttackUpdate("Attack1", 3);
+
+			m_enemyAnim.s_rool = false;
+			m_anim.s_moveflag = false;
+
+		}
+		//ランダム行動で1が出た場合
+		//攻撃2
+		else if (m_randomAction == 1)
+		{
+
+			//攻撃モーションさせる
+			m_anim.s_attack = true;
+
+			m_move = VGet(0.0f, 0.0f, 0.0f);
+
+			AttackUpdate("Attack2", 4);
+
+			m_enemyAnim.s_rool = false;
+			m_anim.s_moveflag = false;
+		}
+		//ランダム行動で2が出た場合
+		//攻撃3
+		else if (m_randomAction == 2)
+		{
+
+			//攻撃モーションさせる
+			m_anim.s_attack = true;
+
+			m_move = VGet(0.0f, 0.0f, 0.0f);
+
+			AttackUpdate("Attack3", 5);
+
+			m_enemyAnim.s_rool = false;
+			m_anim.s_moveflag = false;
+		}
+		//ランダム行動で3が出た場合
+		//攻撃4
+		else if (m_randomAction == 3)
+		{
+
+			//攻撃モーションさせる
+			m_anim.s_attack = true;
+
+			m_move = VGet(0.0f, 0.0f, 0.0f);
+
+			AttackUpdate("Attack4", 6);
+
+			m_enemyAnim.s_rool = false;
+			m_anim.s_moveflag = false;
+		}
+		//ランダム行動で4が出た場合
+		//攻撃5
+		else if (m_randomAction == 4)
+		{
+
+			//攻撃モーションさせる
+			m_anim.s_attack = true;
+
+			m_move = VGet(0.0f, 0.0f, 0.0f);
+
+			AttackUpdate("Attack5", 7);
+
+			m_anim.s_moveflag = false;
+			m_enemyAnim.s_rool = false;
+		}
+		//ランダム行動で5が出た場合
+		//回避
+		else if (m_randomAction == 5)
+		{
+			m_enemyAnim.s_rool = true;
+
+			m_nowAnimIdx = m_animIdx["Roll"];
+			ChangeAnim(m_nowAnimIdx, m_animOne[8], m_animOne);
+
+			m_anim.s_moveflag = false;
+			m_anim.s_attack = false;
+		}
+		//ランダム行動で6は出た場合
+		else if (m_randomAction == 6)
+		{
+			m_enemyAnim.s_rool = false;
+			m_anim.s_moveflag = false;
+			m_anim.s_attack = false;
+		}
+	}
+
+	//攻撃時の行動
+	if (m_anim.s_attack)
+	{
+		if (m_randomAction == 0)
+		{
+			//攻撃判定のポジション
+			//m_pAttack->Update(attackLeftKickPos);
+			InitAttackLigUpdate(attackKnifePos1, attackKnifePos2);
+
+			//攻撃時の移動する距離
+			if (m_nowFrame <= 25)
+			{
+				cAttackMove = 0.5f;
+			}
+			else
+			{
+				cAttackMove = 0.0f;
+			}
 
 			if (m_nowFrame == 5)
 			{
@@ -843,7 +1062,7 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 			}
 			if (m_nowFrame == 30)
 			{
-				InitAttackDamage(0.0f);
+				InitAttackDamage(m_status.s_attack);
 				//判定をリセット
 				m_pAttack->CollisionEnd();
 				m_pLigAttack->CollisionEnd();
@@ -860,25 +1079,15 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 				m_pAttack->CollisionEnd();
 				m_pLigAttack->CollisionEnd();
 			}
-
-			m_enemyAnim.s_rool = false;
-			m_anim.s_moveflag = false;
-
 		}
-		//ランダム行動で1が出た場合
-		//攻撃2
 		else if (m_randomAction == 1)
 		{
 			//攻撃判定のポジション
 			//m_pAttack->Update(attackLeftKickPos);
 			InitAttackLigUpdate(attackKnifePos1, attackKnifePos2);
 
-			//攻撃モーションさせる
-			m_anim.s_attack = true;
-
-			m_move = VGet(0.0f, 0.0f, 0.0f);
-
-			AttackUpdate("Attack2", 4);
+			//攻撃時の移動する距離
+			cAttackMove = 0.0f;
 
 			if (m_nowFrame == 5)
 			{
@@ -898,24 +1107,15 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 				m_pAttack->CollisionEnd();
 				m_pLigAttack->CollisionEnd();
 			}
-
-			m_enemyAnim.s_rool = false;
-			m_anim.s_moveflag = false;
 		}
-		//ランダム行動で2が出た場合
-		//攻撃3
 		else if (m_randomAction == 2)
 		{
 			//攻撃判定のポジション
 			//m_pAttack->Update(attackLeftKickPos);
 			InitAttackLigUpdate(attackKnifePos1, attackKnifePos2);
 
-			//攻撃モーションさせる
-			m_anim.s_attack = true;
-
-			m_move = VGet(0.0f, 0.0f, 0.0f);
-
-			AttackUpdate("Attack3", 5);
+			//攻撃時の移動する距離
+			cAttackMove = 0.0f;
 
 			if (m_nowFrame == 5)
 			{
@@ -935,24 +1135,34 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 				m_pAttack->CollisionEnd();
 				m_pLigAttack->CollisionEnd();
 			}
-
-			m_enemyAnim.s_rool = false;
-			m_anim.s_moveflag = false;
 		}
-		//ランダム行動で3が出た場合
-		//攻撃4
 		else if (m_randomAction == 3)
 		{
 			//攻撃判定のポジション
 			//m_pAttack->Update(attackLeftKickPos);
 			InitAttackLigUpdate(attackLeftKickPos1, attackLeftKickPos2);
 
-			//攻撃モーションさせる
-			m_anim.s_attack = true;
-
-			m_move = VGet(0.0f, 0.0f, 0.0f);
-
-			AttackUpdate("Attack4", 6);
+			//攻撃時の移動する距離
+			if (m_nowFrame <= 20.0f)
+			{
+				cAttackMove = 0.0f;
+			}
+			else if(m_nowFrame > 20.0f && m_nowFrame <= 40.0f)
+			{
+				cAttackMove = 0.8f;
+			}
+			else if (m_nowFrame > 40.0f && m_nowFrame <= 50.0f)
+			{
+				cAttackMove = 0.5f;
+			}
+			else if (m_nowFrame > 50.0f && m_nowFrame <= 65.0f)
+			{
+				cAttackMove = 0.8f;
+			}
+			else
+			{
+				cAttackMove = 0.0f;
+			}
 
 			if (m_nowFrame == 5)
 			{
@@ -973,24 +1183,30 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 				m_pAttack->CollisionEnd();
 				m_pLigAttack->CollisionEnd();
 			}
-
-			m_enemyAnim.s_rool = false;
-			m_anim.s_moveflag = false;
 		}
-		//ランダム行動で4が出た場合
-		//攻撃5
 		else if (m_randomAction == 4)
 		{
 			//攻撃判定のポジション
 			//m_pAttack->Update(attackRightKickPos);
 			InitAttackLigUpdate(attackRightKickPos1, attackRightKickPos2);
 
-			//攻撃モーションさせる
-			m_anim.s_attack = true;
-
-			m_move = VGet(0.0f, 0.0f, 0.0f);
-
-			AttackUpdate("Attack5", 7);
+			//攻撃時の移動する距離
+			if (m_nowFrame <= 10.0f)
+			{
+				cAttackMove = 0.0f;
+			}
+			else if (m_nowFrame > 10.0f && m_nowFrame <= 25.0f)
+			{
+				cAttackMove = 0.8f;
+			}
+			else if(m_nowFrame > 35.0f && m_nowFrame <= 55.0f)
+			{
+				cAttackMove = -0.4f;
+			}
+			else
+			{
+				cAttackMove = 0.0f;
+			}
 
 			if (m_nowFrame == 5)
 			{
@@ -1010,36 +1226,28 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 				m_pAttack->CollisionEnd();
 				m_pLigAttack->CollisionEnd();
 			}
-
-			m_anim.s_moveflag = false;
-			m_enemyAnim.s_rool = false;
 		}
-		//ランダム行動で5が出た場合
-		//回避
-		else if (m_randomAction == 5)
+	}
+
+	if (m_randomAction == 6)
+	{
+		m_nowAnimIdx = m_animIdx["Idle"];
+		ChangeAnim(m_nowAnimIdx, m_animOne[9], m_animOne);
+
+		cAttackMove = 0.0f;
+		m_move = VGet(0.0f, 0.0f, 0.0f);
+		cAvoidanceMove = 0.0f;
+
+		if (m_nowFrame >= 40.0f)
 		{
-			m_enemyAnim.s_rool = true;
-
-			if (m_enemyAnim.s_rool)
-			{
-				m_nowAnimIdx = m_animIdx["Roll"];
-				ChangeAnim(m_nowAnimIdx, m_animOne[8], m_animOne);
-
-				if (m_nowFrame <= 30.0f)
-				{
-					m_avoidnaceNow = true;
-				}
-				else
-				{
-					m_avoidnaceNow = false;
-				}
-			}
+			m_isAnimationFinish = true;
 		}
 	}
 
 	//アニメーションが終わる度にランダムな行動を行う
 	if (m_isAnimationFinish)
 	{
+
 		if (cPlayerLook)
 		{
 			m_randomAction = GetRand(6);
@@ -1068,4 +1276,11 @@ void Assassin::Draw(UI& ui)
 	{
 		ui.BossHPDraw(m_status.s_hp, m_maxHP, m_bossName, m_subName);
 	}
+#if false
+	DrawFormatString(1000, 500, 0xffffff, "move : %d", cA[0]);
+	DrawFormatString(1000, 550, 0xffffff, "attack : %d", cA[1]);
+	DrawFormatString(1000, 600, 0xffffff, "avoidance : %d", cA[2]);
+	DrawFormatString(1000, 650, 0xffffff, "hit : %d", cA[3]);
+	DrawFormatString(1000, 700, 0xffffff, "random : %d", m_randomAction);
+#endif
 }

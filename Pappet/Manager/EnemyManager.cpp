@@ -151,15 +151,30 @@ void EnemyManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManag
 				//生成済みでなければ
 				if (!generate->isCreated)
 				{
-					if (generate->enemyName != "bear")
+					if (generate->enemyName != "bear" && generate->enemyName != "Assassin")
 					{
 						//生成済みにして敵を生成する
 						generate->isCreated = true;
 						CreateEnemy(generate->posX, generate->posY, generate->posZ, generate->enemyName, physics, tutorial, weapon);
 					}
+					//熊生成
 					else if (!gameManager->GetEndBoss().sBear)
 					{
 						//生成済みにしてボスを生成する
+						generate->isCreated = true;
+						CreateEnemy(generate->posX, generate->posY, generate->posZ, generate->enemyName, physics, tutorial, weapon);
+					}
+					//アサシン(ボス)生成
+					else if (!gameManager->GetEndBoss().sAssassin && thisMapName == 6 && generate->enemyName == "Assassin")
+					{
+						//生成済みにして敵を生成する
+						generate->isCreated = true;
+						CreateEnemy(generate->posX, generate->posY, generate->posZ, generate->enemyName, physics, tutorial, weapon);
+					}
+					//アサシン生成
+					else if (generate->enemyName == "Assassin" && thisMapName != 6)
+					{
+						//生成済みにして敵を生成する
 						generate->isCreated = true;
 						CreateEnemy(generate->posX, generate->posY, generate->posZ, generate->enemyName, physics, tutorial, weapon);
 					}
