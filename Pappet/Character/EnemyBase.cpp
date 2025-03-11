@@ -42,6 +42,7 @@ EnemyBase::EnemyBase(Priority priority) :
 	m_isTarget(false),
 	m_isBossDead(false),
 	m_deadOne(false),
+	m_avoidnaceNow(false),
 	m_isPlayerHit(false),
 	m_isStayTarget(false),
 	m_isExitTarget(false),
@@ -144,7 +145,13 @@ void EnemyBase::OnTriggerEnter(const std::shared_ptr<Collidable>& collidable)
 		message += "攻撃";
 #endif
 		m_col = dynamic_cast<AttackLigObject*>(collidable.get());
-		m_isEnterHit = true;
+
+		//回避中でなければ当たり判定を受ける
+		if (!m_avoidnaceNow)
+		{
+			m_isEnterHit = true;
+		}
+		
 		break;
 	case ObjectTag::Search:
 #if _DEBUG
@@ -464,6 +471,17 @@ void EnemyBase::MoveUpdate()
 {
 	MyLibrary::LibVec3 prevVelocity = rigidbody.GetVelocity();
 	MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(m_moveVec.x, prevVelocity.y, m_moveVec.z);
+	rigidbody.SetVelocity(newVelocity);
+}
+
+/// <summary>
+/// アニメーションで移動する処理
+/// </summary>
+/// <param name="move"></param>
+void EnemyBase::MoveAnimUpdate(VECTOR move)
+{
+	MyLibrary::LibVec3 prevVelocity = rigidbody.GetVelocity();
+	MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(-move.x, prevVelocity.y, -move.z);
 	rigidbody.SetVelocity(newVelocity);
 }
 

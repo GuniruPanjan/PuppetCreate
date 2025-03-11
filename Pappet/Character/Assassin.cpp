@@ -33,7 +33,7 @@ namespace
 	//õ“G”ÍˆÍ
 	constexpr float cSearchRadius = 120.0f;
 	//‹ß‹——£‚Ìs“®‚ÉˆÚ‚é‹——£
-	constexpr float cNear = 100.0f;
+	constexpr float cNear = 80.0f;
 	//UŒ‚”ÍˆÍ(ƒiƒCƒt)
 	constexpr float cAttackRadiusKnife = 30.0f;
 	//UŒ‚”ÍˆÍ(R‚è)
@@ -307,9 +307,36 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 	{
 		m_anim.s_attack = false;
 	}
+	//‰ñ”ðI—¹
+	if (m_enemyAnim.s_rool && m_isAnimationFinish)
+	{
+		m_enemyAnim.s_rool = false;
+	}
 
 	//ˆÚ“®ˆ—
 	MoveUpdate();
+
+	if (!m_anim.s_attack && !m_enemyAnim.s_rool && !m_anim.s_hit)
+	{
+		//ˆÚ“®ˆ—
+		//MoveUpdate();
+	}
+	else if (m_anim.s_attack)
+	{
+		//UŒ‚ˆÚ“®ˆ—
+		//MoveAnimUpdate();
+	}
+	else if (m_enemyAnim.s_rool)
+	{
+		//‰ñ”ðˆÚ“®ˆ—
+		//MoveAnimUpdate();
+	}
+	else if (m_anim.s_hit)
+	{
+		//‹¯‚ÝˆÚ“®ˆ—
+		//MoveAnimUpdate();
+	}
+	
 
 	//ƒ^[ƒQƒbƒgó‘Ô
 	TargetNow();
@@ -454,7 +481,7 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se,
 		}
 
 		//‹ß‚­‚¶‚á‚È‚¢Žž‚Ìs“®
-		if (m_difPSize > cNear)
+		if (m_difPSize > cNear && !m_enemyAnim.s_rool)
 		{
 			WalkUpdate("Walk", 2);
 
@@ -679,6 +706,21 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se,
 			else if (m_randomAction == 5)
 			{
 				m_enemyAnim.s_rool = true;
+
+				if (m_enemyAnim.s_rool)
+				{
+					m_nowAnimIdx = m_animIdx["Roll"];
+					ChangeAnim(m_nowAnimIdx, m_animOne[8], m_animOne);
+
+					if (m_nowFrame <= 30.0f)
+					{
+						m_avoidnaceNow = true;
+					}
+					else
+					{
+						m_avoidnaceNow = false;
+					}
+				}
 			}
 		}
 
@@ -753,7 +795,7 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 	}
 
 	//‹ß‚­‚¶‚á‚È‚¢Žž‚Ìs“®
-	if (m_difPSize > cNear)
+	if (m_difPSize > cNear && !m_enemyAnim.s_rool)
 	{
 		WalkUpdate("Walk", 2);
 
@@ -977,6 +1019,21 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 		else if (m_randomAction == 5)
 		{
 			m_enemyAnim.s_rool = true;
+
+			if (m_enemyAnim.s_rool)
+			{
+				m_nowAnimIdx = m_animIdx["Roll"];
+				ChangeAnim(m_nowAnimIdx, m_animOne[8], m_animOne);
+
+				if (m_nowFrame <= 30.0f)
+				{
+					m_avoidnaceNow = true;
+				}
+				else
+				{
+					m_avoidnaceNow = false;
+				}
+			}
 		}
 	}
 

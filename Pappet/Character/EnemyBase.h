@@ -125,6 +125,8 @@ protected:
 	void AngleUpdate(MyLibrary::LibVec3 playerPos);
 	//移動をする処理
 	void MoveUpdate();
+	//アニメーションで移動する処理
+	void MoveAnimUpdate(VECTOR move);
 	//アイドル状態にする
 	void IdleUpdate();
 	//歩く状態にする
@@ -180,6 +182,7 @@ protected:
 	bool m_isTarget;             //プレイヤーにターゲットされるかどうか
 	bool m_isBossDead;           //ボスが死んだ判定
 	bool m_deadOne;              //死亡したら一回だけ行う判定
+	bool m_avoidnaceNow;         //回避中かどうか
 	bool m_isPlayerHit;          //プレイヤーに攻撃ができるか
 	bool m_isStayTarget = false; //プレイヤーの索敵に当たってるかどうか
 	bool m_isExitTarget = false; //プレイヤーの索敵から外れたかどうか
