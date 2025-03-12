@@ -243,3 +243,14 @@ void ItemManager::CheckItem(std::string name, int SmallCore, int MediumCore, int
 		//m_pItems.emplace_back(m_pweapon);
 	}
 }
+
+void ItemManager::AddItem(const std::string itemName)
+{
+	m_itemOrder.push_back(itemName);
+	//ƒAƒCƒeƒ€‚Ì”‚ğ‘‚â‚·ˆ—
+	if (itemName == "BlackSword") m_item.BlackSword++;
+	else if (itemName == "Distorted") m_item.Distorted++;
+	else if (itemName == "ArmorNormal") m_item.ArmorNormal++;
+	else if (itemName == "But") m_item.But++;
+	else if (itemName == "WoodShield") m_item.WoodShield++;
+}

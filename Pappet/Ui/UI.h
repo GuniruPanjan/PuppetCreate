@@ -66,6 +66,8 @@ public:
 	/// </summary>
 	void ArmorDraw(Armor& armor, ItemManager& item);
 
+
+
 	//‘•”õ‚Ì•`‰æ
 	void EquipmentUIDraw(Weapon& weapon, Shield& shield, Armor& armor, Tool& tool);
 
