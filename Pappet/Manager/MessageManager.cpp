@@ -8,7 +8,8 @@ namespace
 }
 
 MessageManager::MessageManager() :
-	m_stageName("")
+	m_stageName(""),
+	m_messagePick(false)
 {
 }
 
@@ -18,6 +19,7 @@ MessageManager::~MessageManager()
 
 void MessageManager::Init()
 {
+	m_pMessage.clear();
 	m_pGenerateInfo.clear();
 
 	m_stageName = "Message";
@@ -37,30 +39,6 @@ void MessageManager::Init()
 			int num = m_MessageGenerationCountPerOneMap[generate->mapNumber];
 			num++;
 			m_MessageGenerationCountPerOneMap[generate->mapNumber];
-		}
-	}
-}
-
-/// <summary>
-/// ゲームの仕様上での初期化処理
-/// </summary>
-/// <param name="physics"></param>
-/// <param name="gameManager"></param>
-void MessageManager::GameInit(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager)
-{
-	auto thisMapName = gameManager->GetThisMapName();
-
-	//メッセージ生成情報をまわして
-	for (auto& generate : m_pGenerateInfo)
-	{
-		//今のマップが一致しているとき
-		if (generate->mapNumber == thisMapName)
-		{
-			//生成済みのメッセージを初期化する
-			if (generate->isCreated)
-			{
-				CreateMessage(generate->posx, generate->posy, generate->posz, generate->official, generate->one, generate->two, generate->three, physics);
-			}
 		}
 	}
 }
@@ -158,7 +136,6 @@ void MessageManager::CreateMessage(float posx, float posy, float posz, int offic
 {
 	message = std::make_shared<Message>();
 	message->Init(posx, posy, posz, official, one, two, three, physics);
-	//m_pMessage->SetCan(true);
 	m_pMessage.emplace_back(message);
 	cMessage = true;
 }

@@ -29,6 +29,9 @@ namespace
 	//チュートリアルをクリアした時の判定
 	bool cClearTutorial = false;
 
+	//チュートリアルをクリアして跳ぶまでの時間
+	float cTutorialTime = 0.0f;
+
 	//シングルトン
 	auto& cEffect = EffectManager::GetInstance();
 }
@@ -38,7 +41,6 @@ namespace
 /// </summary>
 GameManager::GameManager() :
 	m_nowMap(eMapName::TutorialMap),
-	m_shadowMapHandle(0),
 	m_deadInit(false),
 	m_init(false),
 	m_title(false)
@@ -102,15 +104,6 @@ void GameManager::Init()
 	m_pTool = std::make_shared<Tool>();
 	m_pTool->Init();
 
-	//シャドウマップハンドルの作成
-	m_shadowMapHandle = MakeShadowMap(2048, 2048);
-
-	//シャドウマップが想定するライトの方向もセット
-	SetShadowMapLightDirection(m_pMap->GetMap(), VGet(0.5f, -0.5f, 0.5f));
-
-	//シャドウマップに描画する範囲を設定
-	SetShadowMapDrawArea(m_pMap->GetMap(), VGet(-1000.0f, -1.0f, -1000.0f), VGet(1000.0f, 1000.0f, 1000.0f));
-
 	cWarp = false;
 
 	m_pBgm->GameOneInit();
@@ -143,25 +136,14 @@ void GameManager::GameInit()
 
 	m_pPlayer->Init(m_pPhysics, this, *m_pWeapon, *m_pShield, *m_pArmor, false);
 	m_pEnemy->Init(m_nowMap);
-	//m_pEnemy->GameInit(m_pPhysics, this, true);
-	//m_pItem->Init(m_pMap->GetStageName());
 	m_pItem->GameInit(m_pPhysics, this);
-	m_pMessage->GameInit(m_pPhysics, this);
+	m_pMessage->Init();
 	//m_pNpc->Init(m_pPhysics);
 	m_pSetting->Init();
 	m_pUi->Init();
 	m_pPlayer->ChangeStatus();
 
 	m_pTool->Init();
-
-	//シャドウマップハンドルの作成
-	m_shadowMapHandle = MakeShadowMap(512, 512);
-
-	//シャドウマップが想定するライトの方向もセット
-	SetShadowMapLightDirection(m_shadowMapHandle, VGet(0.5f, -0.5f, 0.5f));
-
-	//シャドウマップに描画する範囲を設定
-	SetShadowMapDrawArea(m_shadowMapHandle, VGet(-1000.0f, -1.0f, -1000.0f), VGet(1000.0f, 1000.0f, 1000.0f));
 
 
 	//ステージ１だった場合
@@ -273,7 +255,16 @@ void GameManager::Update()
 				//アサシン
 				m_bossEnd.sAssassin = true;
 
-				cClearTutorial = true;
+				if (cTutorialTime >= 90.0f)
+				{
+					cClearTutorial = true;
+				}
+				else
+				{
+					cTutorialTime++;
+				}
+
+				
 			}
 
 			//ワープする
@@ -415,8 +406,6 @@ void GameManager::Update()
 			m_pBgm->GameEnd();
 			m_pSetting->End();
 			m_pUi->End();
-			//シャドウマップの削除
-			DeleteShadowMap(m_shadowMapHandle);
 			GameInit();
 
 			m_pPlayer->SetWarp(false);
@@ -436,30 +425,12 @@ void GameManager::Update()
 /// </summary>
 void GameManager::Draw()
 {
-	//シャドウマップへの描画の準備
-	ShadowMap_DrawSetup(m_shadowMapHandle);
-
-	m_pPlayer->Draw(*m_pArmor, m_pFont->GetHandle());
-	m_pEnemy->Draw(*m_pUi);
-	m_pWeapon->Draw();
-	m_pShield->Draw();
-
-	//シャドウマップへの描画終了
-	ShadowMap_DrawEnd();
-
-	//描画に使用するシャドウマップを設定
-	SetUseShadowMap(0, m_shadowMapHandle);
-
 	m_pMap->Draw();
 	m_pPlayer->Draw(*m_pArmor, m_pFont->GetHandle());
 	m_pWeapon->Draw();
-	m_pEnemyWeapon->Draw();
 	m_pShield->Draw();
-	m_pEnemy->Draw(*m_pUi);
+	m_pEnemy->Draw(*m_pUi, *m_pEnemyWeapon);
 	//m_pNpc->Draw();
-
-	//描画に使用するシャドウマップの設定を解除
-	SetUseShadowMap(0, -1);
 
 	//ボスが死んだ判定
 	if (cWarp)
@@ -574,9 +545,6 @@ void GameManager::End()
 	m_pSetting->End();
 	m_pEnemy->End();
 	m_pMessage->End();
-
-	//シャドウマップの削除
-	DeleteShadowMap(m_shadowMapHandle);
 }
 
 /// <summary>

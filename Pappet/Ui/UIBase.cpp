@@ -17,6 +17,8 @@ UIBase::UIBase() :
 	m_body(0),
 	m_uglyShield(0),
 	m_commonArmor(0),
+	m_but(0),
+	m_woodShield(0),
 	m_rest(0),
 	m_dead(0),
 	m_selectUi(0),
@@ -44,37 +46,7 @@ UIBase::UIBase() :
 	m_startButton(0),
 	m_messageUI(0)
 {
-	//画像読み込み
-	//m_heelStone = MyLoadGraph("Data/UI/HeelStoneMini.png", 6, 6);
-	//m_eqFist = MyLoadGraph("Data/UI/FistUi.png", 7, 7);
-	//m_sword = MyLoadGraph("Data/UI/SwordUI.png", 3, 3);
-	//m_eqSword = MyLoadGraph("Data/UI/SwordUI.png", 7, 7);
-	//m_eqShield = MyLoadGraph("Data/UI/Shield.png", 7, 7);
-
-	////装備関係
-	//m_equipment = MyLoadGraph("Data/UI/装備画面UI.png", 1, 1);
-	//m_itemBox = MyLoadGraph("Data/UI/アイテム画面UI.png", 1, 1);
-	//m_selectEquipment = MyLoadGraph("Data/UI/装備選択画面UI.png", 1, 1);
-	//m_blackSword = MyLoadGraph("Data/UI/黒い剣UI.png", 3, 3);
-	//m_fist = MyLoadGraph("Data/UI/拳UI.png", 3, 3);
-	//m_body = MyLoadGraph("Data/UI/裸体UI.png", 3, 3);
-	//m_uglyShield = MyLoadGraph("Data/UI/醜い盾UI.png", 4, 4);
-	//m_commonArmor = MyLoadGraph("Data/UI/平凡な鎧UI.png", 3, 3);
-
-	////UI関係
-	//m_rest = MyLoadGraph("Data/UI/四角の白い長方形の囲い.png", 1, 1);
-	//m_dead = MyLoadGraph("Data/UI/YOUDIEDGraph.png", 1, 1);
-	//m_selectUi = MyLoadGraph("Data/UI/選択UI.png", 2, 2);
-	//m_levelUp = MyLoadGraph("Data/UI/レベルステータスUI.png", 1, 1);
-	//m_backRightBar = MyLoadGraph("Data/UI/StatusBar右端.png", 2, 2);
-	//m_backLeftBar = MyLoadGraph("Data/UI/StatusBar左端.png", 2, 2);
-	//m_backCenterBar = MyLoadGraph("Data/UI/StatusBar中央.png", 2, 2);
-	//m_backOutBar = MyLoadGraph("Data/UI/StatusBar外枠.png", 2, 2);
-	//m_hpBar = MyLoadGraph("Data/UI/HPBarRed.png", 2, 2);
-	//m_staminaBar = MyLoadGraph("Data/UI/StaminaBar.png", 2, 2);
-	//m_coreBackBar = MyLoadGraph("Data/UI/CoreBar.png", 1, 1);
-	//m_statusIcon = MyLoadGraph("Data/UI/StatusIcon.png", 1, 1);
-	//m_equipmentFrame = MyLoadGraph("Data/UI/Frame.png", 1, 1);
+	
 }
 
 /// <summary>

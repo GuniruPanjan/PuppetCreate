@@ -69,6 +69,7 @@ private:
 
 	int m_official;       //公式
 
+	int m_effectTime;      //エフェクトの再生時間
 	int m_one;             //一つ目
 	int m_two;             //二つ目
 	int m_three;           //三つ目

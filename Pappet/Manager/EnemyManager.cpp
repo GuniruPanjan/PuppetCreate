@@ -225,12 +225,12 @@ void EnemyManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManag
 /// <summary>
 /// •`‰æ
 /// </summary>
-void EnemyManager::Draw(UI& ui)
+void EnemyManager::Draw(UI& ui, EnemyWeapon& weapon)
 {
 	//“G‚ð•`‰æ‚·‚é
 	for (auto& enemy : m_pEnemys)
 	{
-		enemy->Draw(ui);
+		enemy->Draw(ui, weapon);
 	}
 
 	//DrawFormatString(200, 500, 0xffffff, "%d", cEnemy);
@@ -293,7 +293,7 @@ bool EnemyManager::GetBossDead(int mapNumber)
 {
 	if (mapNumber == 0)
 	{
-		return false;
+		return true;
 	}
 	else if (mapNumber == 1)
 	{

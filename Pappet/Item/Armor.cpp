@@ -1,9 +1,12 @@
 #include "Armor.h"
+#include "Manager/EffectManager.h"
 
 namespace
 {
 	//アイテム名
 	constexpr const char* cItemName = "Armor";
+
+	auto& effect = EffectManager::GetInstance();
 }
 
 Armor::Armor()
@@ -81,6 +84,23 @@ void Armor::ItemUpdate(bool taking)
 
 void Armor::Draw()
 {
+}
+
+/// <summary>
+/// マップアイテムとしての描画処理
+/// </summary>
+void Armor::ItemDraw()
+{
+	if (m_effectTime <= 30)
+	{
+		m_effectTime++;
+	}
+	else
+	{
+		effect.EffectCreate("Item", m_centerPos.ConversionToVECTOR());
+
+		m_effectTime = 0;
+	}
 }
 
 void Armor::End()

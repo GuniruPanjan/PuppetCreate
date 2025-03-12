@@ -24,9 +24,9 @@ namespace
 	//õ“G”ÍˆÍ
 	constexpr float cSearchRadius = 120.0f;
 	//UŒ‚”ÍˆÍ1
-	constexpr float cAttackRadius1 = 40.0f;
+	constexpr float cAttackRadius1 = 35.0f;
 	//UŒ‚”ÍˆÍ2
-	constexpr float cAttackRadius2 = 60.0f;
+	constexpr float cAttackRadius2 = 50.0f;
 	//UŒ‚”ÍˆÍ3
 	constexpr float cAttackRadius3 = 130.0f;
 	//‹–ì‚ÌŠp“x
@@ -737,7 +737,7 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 /// <summary>
 /// •`‰æˆ—
 /// </summary>
-void Bear::Draw(UI& ui)
+void Bear::Draw(UI& ui, EnemyWeapon& weapon)
 {
 	//“–‚½‚è”»’èÀ•W‚ğæ“¾‚µ‚Äƒ‚ƒfƒ‹‚Ì•`‰æÀ•W‚ğİ’è‚·‚é
 	SetDrawModelPos(cModelPosY);

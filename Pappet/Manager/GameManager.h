@@ -103,8 +103,6 @@ private:
 	//
 	sBossEnd m_bossEnd;
 
-	//シャドウマップ
-	int m_shadowMapHandle;
 	//死亡で初期化する
 	bool m_deadInit;
 	//初期化する

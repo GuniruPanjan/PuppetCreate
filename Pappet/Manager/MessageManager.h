@@ -39,8 +39,6 @@ public:
 	virtual ~MessageManager();
 	//‰Šú‰»ˆ—
 	void Init();
-	//ƒQ[ƒ€“à‚Å‚Ì‰Šú‰»ˆ—
-	void GameInit(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager);
 	//XVˆ—
 	void Update(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, Player& player);
 

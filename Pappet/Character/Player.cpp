@@ -210,9 +210,9 @@ void Player::Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* mana
 	rigidbody.Init(true);
 	if (manager->GetThisMapName() == 0)
 	{
-		m_updateX = 40.0f;
+		m_updateX = -200.0f;
 		m_updateY = 12.0f;
-		m_updateZ = 0.0f;
+		m_updateZ = 350.0f;
 	}
 	else if (manager->GetThisMapName() == 1)
 	{
@@ -1703,7 +1703,7 @@ void Player::Draw(Armor& armor, int font)
 	DrawFormatString(1000, 550, 0xffffff, "taking : %d", m_animChange.sa_taking);
 	DrawFormatString(1000, 650, 0xffffff, "touch : %d", m_animChange.sa_touch);
 #endif
-#if false
+#if true
 	DrawFormatString(1000, 150, 0xffffff, "posx : %f", rigidbody.GetPos().x);   //15
 	DrawFormatString(1000, 200, 0xffffff, "posy : %f", rigidbody.GetPos().y);   //12
 	DrawFormatString(1000, 250, 0xffffff, "posz : %f", rigidbody.GetPos().z);   //0

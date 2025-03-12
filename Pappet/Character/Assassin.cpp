@@ -162,8 +162,6 @@ void Assassin::Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrar
 	m_anim.s_isDead = false;
 	cDead = false;
 
-	m_status.s_hp = 10;
-
 	//最大HPを取得
 	m_maxHP = m_status.s_hp;
 
@@ -229,8 +227,8 @@ void Assassin::GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLi
 
 	if (cTutorial)
 	{
-		m_bossName = " ? ? ? ";
-		m_subName = " ? ? ? ";
+		m_bossName = " 混沌の影 ";
+		m_subName = " P E P U S I [チュートリアル] ";
 
 		m_bossjudg = true;
 	}
@@ -1247,11 +1245,12 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 	//アニメーションが終わる度にランダムな行動を行う
 	if (m_isAnimationFinish)
 	{
-
+		//プレイヤーが見えている時
 		if (cPlayerLook)
 		{
 			m_randomAction = GetRand(6);
 		}
+		//プレイヤーが見えていない時
 		else
 		{
 			//回避するようにする
@@ -1263,14 +1262,16 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 	m_moveVec = MyLibrary::LibVec3(m_move.x, m_move.y, m_move.z);
 }
 
-void Assassin::Draw(UI& ui)
+void Assassin::Draw(UI& ui, EnemyWeapon& weapon)
 {
 	//当たり判定座標を取得してモデルの描画座標を設定する
 	SetDrawModelPos(cModelPosY);
 	//3Dモデルの回転地をセットする
 	MV1SetRotationXYZ(m_modelHandle, VGet(0.0f, m_angle, 0.0f));
+	weapon.Draw();
 	//モデルの描画
 	MV1DrawModel(m_modelHandle);
+
 
 	if (m_isBossDiscovery && !cDead)
 	{

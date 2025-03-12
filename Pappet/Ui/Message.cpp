@@ -6,15 +6,13 @@
 
 namespace
 {
-	//エフェクト再生時間
-	int cEffectTime = 40;
-
 	//シングルトン
 	auto& cEffect = EffectManager::GetInstance();
 }
 
 Message::Message() :
 	m_xpad(),
+	m_effectTime(50),
 	m_official(0),
 	m_one(0),
 	m_two(0),
@@ -88,15 +86,15 @@ void Message::Update(Player& player)
 
 void Message::Draw()
 {
-	if (cEffectTime >= 50)
+	if (m_effectTime >= 50)
 	{
 		cEffect.EffectCreate("Message", m_centerPos.ConversionToVECTOR());
 
-		cEffectTime = 0;
+		m_effectTime = 0;
 	}
 	else
 	{
-		cEffectTime++;
+		m_effectTime++;
 	}
 }
 
@@ -108,7 +106,8 @@ void Message::DrawString()
 		//公式メッセージ描画
 		if (m_official == 1)
 		{
-			
+			//背景描画
+			DrawGraph(130, 100, m_messageUI, false);
 		}
 		//移動チュートリアル
 		else if (m_official == 2)

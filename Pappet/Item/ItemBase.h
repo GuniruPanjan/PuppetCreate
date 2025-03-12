@@ -21,6 +21,8 @@ public:
 		int BlackSword = 0;      //黒い剣
 		int Distorted = 0;       //歪んだ盾
 		int ArmorNormal = 0;     //普通の鎧
+		int But = 0;             //バット
+		int WoodShield = 0;      //木の盾
 	};
 
 	//武器の構造体
@@ -59,6 +61,7 @@ public:
 		m_itemUse(0),
 		m_itemHandle(-1),
 		m_frameIndex(0),
+		m_effectTime(30),
 		m_itemPick(false),
 		m_isTaking(false),
 		m_itemBox(false),
@@ -77,9 +80,11 @@ public:
 	//マップアイテムとしての削除処理
 	void ItemFinalize(std::shared_ptr<MyLibrary::Physics> physics);
 	//マップアイテムとしての判断処理
-	void ItemGudgment(int SmallCore, int MediumCore, int Rubbish, int BlackSword, int Distorted, int ArmorNormal);
+	void ItemGudgment(int SmallCore, int MediumCore, int Rubbish, int BlackSword, int Distorted, int ArmorNormal, int But, int WoodShield);
 	//マップアイテムとしての更新処理
 	virtual void ItemUpdate(bool taking) {};
+	//マップアイテムとしての描画処理
+	virtual void ItemDraw() {};
 	//マップアイテムとしての終了処理
 	void ItemEnd();
 
@@ -137,4 +142,6 @@ protected:
 	std::shared_ptr<MyLibrary::Physics> m_pPhysics;
 
 	MyLibrary::LibVec3 m_centerPos;              //中心座標
+
+	int m_effectTime;     //エフェクトの再生時間
 };

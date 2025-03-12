@@ -9,7 +9,7 @@ void ItemBase::ItemFinalize(std::shared_ptr<MyLibrary::Physics> physics)
 	m_pSearch->Finalize(physics);
 }
 
-void ItemBase::ItemGudgment(int SmallCore, int MediumCore, int Rubbish, int BlackSword, int Distorted, int ArmorNormal)
+void ItemBase::ItemGudgment(int SmallCore, int MediumCore, int Rubbish, int BlackSword, int Distorted, int ArmorNormal, int But, int WoodShield)
 {
 	m_item.SmallCore = SmallCore;
 	m_item.MediumCore = MediumCore;
@@ -17,6 +17,8 @@ void ItemBase::ItemGudgment(int SmallCore, int MediumCore, int Rubbish, int Blac
 	m_item.BlackSword = BlackSword;
 	m_item.Distorted = Distorted;
 	m_item.ArmorNormal = ArmorNormal;
+	m_item.But = But;
+	m_item.WoodShield = WoodShield;
 }
 
 /// <summary>

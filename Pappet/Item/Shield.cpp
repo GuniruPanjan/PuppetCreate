@@ -1,5 +1,6 @@
 #include "Shield.h"
 #include "Manager/HandleManager.h"
+#include "Manager/EffectManager.h"
 
 namespace
 {
@@ -12,6 +13,7 @@ namespace
 
 	//シングルトン
 	auto& handle = HandleManager::GetInstance();
+	auto& effect = EffectManager::GetInstance();
 }
 
 /// <summary>
@@ -39,7 +41,7 @@ void Shield::Init()
 {
 	if (m_ugly.ss_equipment)
 	{
-		m_itemHandle = handle.GetModelHandle("Data/Weapon/Shield.mv1");
+		m_itemHandle = handle.GetModelHandle("Data/Shield/Shield.mv1");
 		m_ugly.ss_cut = 90.0f;
 		m_ugly.ss_strength = 20.0f;
 
@@ -128,6 +130,23 @@ void Shield::Draw()
 {
 	//モデル描画
 	MV1DrawModel(m_itemHandle);
+}
+
+/// <summary>
+/// マップアイテムとしての描画処理
+/// </summary>
+void Shield::ItemDraw()
+{
+	if (m_effectTime <= 30)
+	{
+		m_effectTime++;
+	}
+	else
+	{
+		effect.EffectCreate("Item", m_centerPos.ConversionToVECTOR());
+
+		m_effectTime = 0;
+	}
 }
 
 void Shield::End()

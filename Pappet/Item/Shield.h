@@ -22,6 +22,8 @@ public:
 	void ItemUpdate(bool taking);
 	//描画処理
 	void Draw();
+	//マップアイテムとしての描画処理
+	void ItemDraw();
 	//描画処理
 	void End();
 

@@ -25,7 +25,7 @@ public:
 	//ボスの時の行動
 	void BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se, EnemyWeapon& weapon);
 	//描画
-	void Draw(UI& ui);
+	void Draw(UI& ui, EnemyWeapon& weapon);
 
 private:
 	MyLibrary::LibVec3 m_attackPos;       //攻撃判定の座標

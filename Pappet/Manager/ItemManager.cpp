@@ -5,16 +5,7 @@
 #include "Item/Shield.h"
 #include "Item/Armor.h"
 #include "Item/Tool.h"
-#include "EffectManager.h"
 
-namespace
-{
-	//エフェクトの再生時間
-	int effectPlayerBack = 0;
-
-	//シングルトン
-	auto& effect = EffectManager::GetInstance();
-}
 
 /// <summary>
 /// コンストラクタ
@@ -65,38 +56,24 @@ void ItemManager::Init()
 /// <param name="gameManager">ゲームマネジャー</param>
 void ItemManager::GameInit(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager)
 {
-	//アイテムの当たり判定を消す
-	//for (auto& item : m_pItems)
-	//{
-	//	//マップに現存しているやつ
-	//	if (!item->GetItemTaking())
-	//	{
-	//		item->ItemFinalize(physics);
-	//	}
-	//}
-
 	auto thisMapName = gameManager->GetThisMapName();
 
-	if (thisMapName == 1 || thisMapName == 2 || thisMapName == 3 ||
-		thisMapName == 4 || thisMapName == 5)
+	//アイテム生成情報をまわして
+	for (auto& generate : m_pGenerateInfo)
 	{
-		//アイテム生成情報をまわして
-		for (auto& generate : m_pGenerateInfo)
+		//今のマップが一致しているとき
+		if (generate->mapNumber == thisMapName)
 		{
-			//今のマップが一致しているとき
-			if (generate->mapNumber == thisMapName)
+			//生成済みのアイテムを初期化する
+			if (generate->isCreated && !generate->isPickUp)
 			{
-				//生成済みのアイテムを初期化する
-				if (generate->isCreated && !generate->isPickUp)
-				{
-					CreateItem(generate->posX, generate->posY, generate->posZ, generate->itemName, physics);
+				CreateItem(generate->posX, generate->posY, generate->posZ, generate->itemName, physics);
 
-					//何のアイテムかを判断する
-					CheckItem(generate->itemName, generate->SmallCore, generate->MediumCore, generate->Rubbish, generate->BlackSword, generate->Distorted, generate->ArmorNormal);
-				}
+				//何のアイテムかを判断する
+				CheckItem(generate->itemName, generate->SmallCore, generate->MediumCore, generate->Rubbish, generate->BlackSword, generate->Distorted, generate->ArmorNormal, generate->But, generate->WoodShield);
 			}
-			
 		}
+
 	}
 }
 
@@ -110,24 +87,20 @@ void ItemManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManage
 	//今のマップがどのマップか取得する
 	auto thisMapName = gameManager->GetThisMapName();
 
-	if (thisMapName == 1 || thisMapName == 2 || thisMapName == 3 ||
-		thisMapName == 4 || thisMapName == 5)
+	//アイテム生成情報をまわして
+	for (auto& generate : m_pGenerateInfo)
 	{
-		//アイテム生成情報をまわして
-		for (auto& generate : m_pGenerateInfo)
+		//今のマップが一致しているとき
+		if (generate->mapNumber == thisMapName)
 		{
-			//今のマップが一致しているとき
-			if (generate->mapNumber == thisMapName)
+			//生成済みでなければ
+			if (!generate->isCreated)
 			{
-				//生成済みでなければ
-				if (!generate->isCreated)
-				{
-					generate->isCreated = true;
-					CreateItem(generate->posX, generate->posY, generate->posZ, generate->itemName, physics);
+				generate->isCreated = true;
+				CreateItem(generate->posX, generate->posY, generate->posZ, generate->itemName, physics);
 
-					//何のアイテムかを判断する
-					CheckItem(generate->itemName, generate->SmallCore, generate->MediumCore, generate->Rubbish, generate->BlackSword, generate->Distorted, generate->ArmorNormal);
-				}
+				//何のアイテムかを判断する
+				CheckItem(generate->itemName, generate->SmallCore, generate->MediumCore, generate->Rubbish, generate->BlackSword, generate->Distorted, generate->ArmorNormal, generate->But, generate->WoodShield);
 			}
 		}
 	}
@@ -136,51 +109,29 @@ void ItemManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManage
 	//マップのアイテムとして更新する
 	for (auto& item : m_pItems)
 	{
-		//アイテムを取ってないとき
-		if (!item->GetItemTaking())
-		{
-			if (effectPlayerBack <= 30)
-			{
-				effectPlayerBack++;
-			}
-			else
-			{
-				effect.EffectCreate("Item", item->GetPos().ConversionToVECTOR());
-
-				effectPlayerBack = 0;
-			}
-		}
-
 		item->ItemUpdate(taking);
-
-		//力技を使う
-		//アイテムが取れるかの範囲
-		//ここが問題になっている
-		if (!m_itemPick)
-		{
-			//m_itemPick = item->GetItemPick();
-		}
-		//else if(!item->GetIsOut())
-		//{
-		//	m_itemPick = item->GetItemPick();
-		//}
 
 		//とった場合
 		if (taking && item->GetItemBox())
 		{
+			//データとしてのアイテム更新
 			m_item.SmallCore += item->GetItemKinds().SmallCore;
 			m_item.MediumCore += item->GetItemKinds().MediumCore;
 			m_item.Rubbish += item->GetItemKinds().Rubbish;
 			m_item.BlackSword += item->GetItemKinds().BlackSword;
 			m_item.Distorted += item->GetItemKinds().Distorted;
 			m_item.ArmorNormal += item->GetItemKinds().ArmorNormal;
-
+			m_item.But += item->GetItemKinds().But;
+			m_item.WoodShield += item->GetItemKinds().WoodShield;
+			//UIとしてのアイテム更新
 			m_uiItem.u_SmallCore += item->GetItemKinds().SmallCore;
 			m_uiItem.u_MediumCore += item->GetItemKinds().MediumCore;
 			m_uiItem.u_Rubbish += item->GetItemKinds().Rubbish;
 			m_uiItem.u_BlackSword += item->GetItemKinds().BlackSword;
 			m_uiItem.u_Distorted += item->GetItemKinds().Distorted;
 			m_uiItem.u_ArmorNormal += item->GetItemKinds().ArmorNormal;
+			m_uiItem.u_But += item->GetItemKinds().But;
+			m_uiItem.u_WoodShield += item->GetItemKinds().WoodShield;
 
 			item->SetItemBox(false);
 
@@ -193,14 +144,9 @@ void ItemManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManage
 					break;
 				}
 			}
-
-			//エフェクトを削除
-			//effect.RemoveEffect("Item", item->GetPos().ConversionToVECTOR());
 		}
 
 	}
-
-	//m_pItems.clear();
 }
 
 /// <summary>
@@ -216,6 +162,16 @@ void ItemManager::Draw()
 	DrawFormatString(200, 150, 0xffffff, "Distorted : %d", m_item.Distorted);
 	DrawFormatString(200, 200, 0xffffff, "ArmorNormal : %d", m_item.ArmorNormal);
 #endif
+
+	//マップのアイテムとして更新する
+	for (auto& item : m_pItems)
+	{
+		//アイテムを取ってないとき
+		if (!item->GetItemTaking())
+		{
+			item->ItemDraw();
+		}
+	}
 }
 
 /// <summary>
@@ -266,19 +222,19 @@ void ItemManager::CreateItem(float posX, float posY, float posZ, std::string nam
 /// 何のアイテムか判断する
 /// </summary>
 /// <param name="item"></param>
-void ItemManager::CheckItem(std::string name, int SmallCore, int MediumCore, int Rubbish, int BlackSword, int Distorted, int ArmorNormal)
+void ItemManager::CheckItem(std::string name, int SmallCore, int MediumCore, int Rubbish, int BlackSword, int Distorted, int ArmorNormal, int But, int WoodShield)
 {
 	if (name == "Weapon")
 	{
-		m_pweapon->ItemGudgment(SmallCore, MediumCore, Rubbish, BlackSword, Distorted, ArmorNormal);
+		m_pweapon->ItemGudgment(SmallCore, MediumCore, Rubbish, BlackSword, Distorted, ArmorNormal, But, WoodShield);
 	}
 	if (name == "Shield")
 	{
-		m_pshield->ItemGudgment(SmallCore, MediumCore, Rubbish, BlackSword, Distorted, ArmorNormal);
+		m_pshield->ItemGudgment(SmallCore, MediumCore, Rubbish, BlackSword, Distorted, ArmorNormal, But, WoodShield);
 	}
 	if (name == "Armor")
 	{
-		m_parmor->ItemGudgment(SmallCore, MediumCore, Rubbish, BlackSword, Distorted, ArmorNormal);
+		m_parmor->ItemGudgment(SmallCore, MediumCore, Rubbish, BlackSword, Distorted, ArmorNormal, But, WoodShield);
 	}
 	if (name == "Tool")
 	{

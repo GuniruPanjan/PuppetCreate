@@ -419,7 +419,7 @@ void Immortal::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 /// <summary>
 /// •`‰æ
 /// </summary>
-void Immortal::Draw(UI& ui)
+void Immortal::Draw(UI& ui, EnemyWeapon& weapon)
 {
 	//“–‚½‚è”»’èÀ•W‚ğæ“¾‚µ‚Äƒ‚ƒfƒ‹‚Ì•`‰æÀ•W‚ğİ’è‚·‚é
 	SetDrawModelPos(cModelPosY);

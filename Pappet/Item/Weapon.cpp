@@ -1,5 +1,6 @@
 #include "Weapon.h"
 #include "Manager/HandleManager.h"
+#include "Manager/EffectManager.h"
 
 namespace
 {
@@ -13,6 +14,7 @@ namespace
 
 	//シングルトン
 	auto& handle = HandleManager::GetInstance();
+	auto& effect = EffectManager::GetInstance();
 }
 
 /// <summary>
@@ -131,6 +133,23 @@ void Weapon::Draw()
 {
 	//モデル描画
 	MV1DrawModel(m_itemHandle);
+}
+
+/// <summary>
+/// マップアイテムとしての描画処理
+/// </summary>
+void Weapon::ItemDraw()
+{
+	if (m_effectTime <= 30)
+	{
+		m_effectTime++;
+	}
+	else
+	{
+		effect.EffectCreate("Item", m_centerPos.ConversionToVECTOR());
+
+		m_effectTime = 0;
+	}
 }
 
 /// <summary>

@@ -50,6 +50,8 @@ namespace DataLoad
 		ItemBlackSword,  //黒い剣
 		ItemDistorted,   //歪んだ盾
 		ItemArmorNormal, //普通の鎧
+		ItemBut,         //木のバット
+		ItemWoodShield,  //木の盾
 	};
 
 	//メッセージの生成場所の列挙型

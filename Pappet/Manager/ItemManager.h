@@ -27,6 +27,9 @@ public:
 		int BlackSword = 0;      //黒い剣
 		int Distorted = 0;       //歪んだ盾
 		int ArmorNormal = 0;     //普通の鎧
+		int But = 0;             //バット
+		int WoodShield = 0;      //木の盾
+
 	}m_item;
 
 	//UI表示用の構造体
@@ -38,6 +41,9 @@ public:
 		int u_BlackSword = 0;    //黒い剣
 		int u_Distorted = 0;     //歪んだ盾
 		int u_ArmorNormal = 0;   //普通の鎧
+		int u_But = 0;           //バット
+		int u_WoodShield = 0;    //木の盾
+
 	}m_uiItem;
 
 	//アイテム生成情報
@@ -56,6 +62,8 @@ public:
 		int BlackSword = 0;      //黒い剣
 		int Distorted = 0;       //歪んだ盾
 		int ArmorNormal = 0;     //普通の鎧
+		int But = 0;             //バット
+		int WoodShield = 0;      //木の盾
 
 		bool isCreated = false;    //生成済みかどうか
 		bool isPickUp = false;     //拾われたかどうか
@@ -87,7 +95,7 @@ private:
 	//アイテムの生成
 	void CreateItem(float posX, float posY, float posZ, std::string name, std::shared_ptr<MyLibrary::Physics> physics);
 	//何のアイテムかの判断
-	void CheckItem(std::string name, int SmallCore, int MediumCore, int Rubbish, int BlackSword, int Distorted, int ArmorNormal);
+	void CheckItem(std::string name, int SmallCore, int MediumCore, int Rubbish, int BlackSword, int Distorted, int ArmorNormal, int But, int WoodShield);
 private:
 	//アイテムの管理
 	std::list<std::shared_ptr<ItemBase>> m_pItems;

@@ -51,6 +51,9 @@ void UI::Init()
 	m_body = MyLoadGraph("Data/UI/—‡‘ÌUI.png", 3, 3);
 	m_uglyShield = MyLoadGraph("Data/UI/X‚¢‚UI.png", 4, 4);
 	m_commonArmor = MyLoadGraph("Data/UI/•½–}‚ÈŠZUI.png", 3, 3);
+	m_but = MyLoadGraph("Data/UI/But.png", 3, 3);
+	m_woodShield = MyLoadGraph("Data/UI/WoodShield.png", 4, 4);
+
 	m_dead = MyLoadGraph("Data/UI/YOUDIEDGraph.png", 1, 1);
 	m_backRightBar = MyLoadGraph("Data/UI/StatusBar‰E’[.png", 2, 2);
 	m_backLeftBar = MyLoadGraph("Data/UI/StatusBar¶’[.png", 2, 2);
@@ -155,6 +158,8 @@ void UI::Draw(Player& player, EnemyManager& enemy, Setting& eq, MapManager& map,
 		ItemTakingUI(item.m_uiItem.u_BlackSword, m_blackSword, 500, 625, 800, 675, "•‚¢Œ•");
 		ItemTakingUI(item.m_uiItem.u_Distorted, m_uglyShield, 500, 645, 800, 675, "˜c‚ñ‚¾‚");
 		ItemTakingUI(item.m_uiItem.u_ArmorNormal, m_commonArmor, 500, 635, 800, 675, "•’Ê‚ÌŠZ");
+		ItemTakingUI(item.m_uiItem.u_But, m_but, 500, 635, 800, 675, "–Ø‚Ìƒoƒbƒg");
+		ItemTakingUI(item.m_uiItem.u_WoodShield, m_woodShield, 500, 635, 800, 675, "–Ø‚Ì‚");
 
 		//Bbutton‚ğ‰Ÿ‚·‚Æ•Â‚¶‚é
 		if (m_xpad.Buttons[13] == 1)
@@ -165,6 +170,8 @@ void UI::Draw(Player& player, EnemyManager& enemy, Setting& eq, MapManager& map,
 			item.m_uiItem.u_BlackSword = 0;
 			item.m_uiItem.u_Distorted = 0;
 			item.m_uiItem.u_ArmorNormal = 0;
+			item.m_uiItem.u_But = 0;
+			item.m_uiItem.u_WoodShield = 0;
 
 			c_itemTakingUI = false;
 		}
@@ -527,6 +534,8 @@ void UI::End()
 	DeleteGraph(m_body);
 	DeleteGraph(m_uglyShield);
 	DeleteGraph(m_commonArmor);
+	DeleteGraph(m_but);
+	DeleteGraph(m_woodShield);
 	DeleteGraph(m_dead);
 	DeleteGraph(m_backRightBar);
 	DeleteGraph(m_backLeftBar);
