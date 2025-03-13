@@ -132,8 +132,19 @@ void ItemManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManage
 			m_uiItem.u_ArmorNormal += item->GetItemKinds().ArmorNormal;
 			m_uiItem.u_But += item->GetItemKinds().But;
 			m_uiItem.u_WoodShield += item->GetItemKinds().WoodShield;
+			//アイテムを取得した順に記録更新
+			m_orderItem.o_SmallCore += item->GetItemKinds().SmallCore;
+			m_orderItem.o_MediumCore += item->GetItemKinds().MediumCore;
+			m_orderItem.o_Rubbish += item->GetItemKinds().Rubbish;
+			m_orderItem.o_BlackSword += item->GetItemKinds().BlackSword;
+			m_orderItem.o_Distorted += item->GetItemKinds().Distorted;
+			m_orderItem.o_ArmorNormal += item->GetItemKinds().ArmorNormal;
+			m_orderItem.o_But += item->GetItemKinds().But;
+			m_orderItem.o_WoodShield += item->GetItemKinds().WoodShield;
 
 			item->SetItemBox(false);
+
+			AddItem(m_orderItem);
 
 			//アイテムが取得されたことを記録
 			for (auto& generate : m_pGenerateInfo)
@@ -244,13 +255,22 @@ void ItemManager::CheckItem(std::string name, int SmallCore, int MediumCore, int
 	}
 }
 
-void ItemManager::AddItem(const std::string itemName)
+void ItemManager::AddItem(ItemOrder& item)
 {
-	m_itemOrder.push_back(itemName);
-	//アイテムの数を増やす処理
-	if (itemName == "BlackSword") m_item.BlackSword++;
-	else if (itemName == "Distorted") m_item.Distorted++;
-	else if (itemName == "ArmorNormal") m_item.ArmorNormal++;
-	else if (itemName == "But") m_item.But++;
-	else if (itemName == "WoodShield") m_item.WoodShield++;
+	if (item.o_BlackSword >= 1) m_itemOrder.push_back("BlackSword");
+	else if (item.o_But >= 1) m_itemOrder.push_back("But");
+	else if (item.o_Distorted >= 1) m_itemOrder.push_back("Distorted");
+	else if (item.o_WoodShield >= 1) m_itemOrder.push_back("WoodShield");
+	else if (item.o_ArmorNormal >= 1) m_itemOrder.push_back("ArmorNormal");
+
+
+	//初期化する
+	item.o_SmallCore = 0;
+	item.o_MediumCore = 0;
+	item.o_Rubbish = 0;
+	item.o_BlackSword = 0;
+	item.o_Distorted = 0;
+	item.o_ArmorNormal = 0;
+	item.o_But = 0;
+	item.o_WoodShield = 0;
 }

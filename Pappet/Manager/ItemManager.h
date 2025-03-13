@@ -46,6 +46,19 @@ public:
 
 	}m_uiItem;
 
+	//アイテムを順に取得した用の構造体
+	struct ItemOrder
+	{
+		int o_SmallCore = 0;     //小型コア
+		int o_MediumCore = 0;    //中型コア
+		int o_Rubbish = 0;       //ゴミ
+		int o_BlackSword = 0;    //黒い剣
+		int o_Distorted = 0;     //歪んだ盾
+		int o_ArmorNormal = 0;   //普通の鎧
+		int o_But = 0;           //バット
+		int o_WoodShield = 0;    //木の盾
+	}m_orderItem;
+
 	//アイテム生成情報
 	struct ItemGenerateInfo
 	{
@@ -91,14 +104,15 @@ public:
 	bool GetItemPick() { return m_itemPick; }
 	//アイテム所得状態を返す
 	Item GetItem() { return m_item; }
+	//アイテム所得順を返す
+	std::list<std::string> GetItemOrder() { return m_itemOrder; }
 private:
 	//アイテムの生成
 	void CreateItem(float posX, float posY, float posZ, std::string name, std::shared_ptr<MyLibrary::Physics> physics);
 	//何のアイテムかの判断
 	void CheckItem(std::string name, int SmallCore, int MediumCore, int Rubbish, int BlackSword, int Distorted, int ArmorNormal, int But, int WoodShield);
 	//アイテムの順序を入れる
-	void AddItem(const std::string itemName);
-
+	void AddItem(ItemOrder& item);
 private:
 	//アイテムの管理
 	std::list<std::shared_ptr<ItemBase>> m_pItems;

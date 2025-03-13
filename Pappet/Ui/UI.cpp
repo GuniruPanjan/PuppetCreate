@@ -238,13 +238,32 @@ void UI::EquipmentDraw(Weapon& weapon, Shield& shield, Armor& armor)
 /// </summary>
 void UI::RightDraw(Weapon& weapon, ItemManager& item)
 {
+	int x = 100;
+	int y = 210;
+	int offset = 160;
 	//Œ
 	DrawGraph(70, 56, m_fist, true);
 
-	if (item.GetItem().BlackSword >= 1)
+	//ƒAƒCƒeƒ€‚ğæ“¾‚µ‚½‡‚É•`‰æ‚·‚é
+	for (const auto& itemName : item.GetItemOrder())
 	{
-		//•‚¢Œ•
-		DrawGraph(100, 210, m_blackSword, true);
+		//•‚¢Œ••`‰æ
+		if (itemName == "BlackSword")
+		{
+			DrawGraph(x, y, m_blackSword, true);
+
+			y += offset;
+
+		}
+		//–Ø‚Ìƒoƒbƒg•`‰æ
+		else if (itemName == "But")
+		{
+			DrawGraph(x, y, m_but, true);
+
+			y += offset;
+
+		}
+
 	}
 }
 
@@ -253,15 +272,34 @@ void UI::RightDraw(Weapon& weapon, ItemManager& item)
 /// </summary>
 void UI::LeftDraw(Shield& shield, ItemManager& item)
 {
+	int x = 85;
+	int y = 230;
+	int offset = 180;
+
 	//Œ
 	DrawGraph(70, 56, m_fist, true);
 
-	if (item.GetItem().Distorted >= 1)
+	//ƒAƒCƒeƒ€‚ğæ“¾‚µ‚½‡‚É•`‰æ
+	for (const auto& itemName : item.GetItemOrder())
 	{
-		//X‚¢‚
-		DrawGraph(85, 230, m_uglyShield, true);
+		//X‚¢‚•`‰æ
+		if (itemName == "Distorted")
+		{	
+			DrawGraph(x, y, m_uglyShield, true);
+
+			y += offset;
+
+		}
+		//–Ø‚Ì‚•`‰æ
+		else if (itemName == "WoodShield")
+		{
+			DrawGraph(x, y, m_woodShield, true);
+
+			y += offset;
+
+		}
+		
 	}
-	
 }
 
 /// <summary>
@@ -269,13 +307,24 @@ void UI::LeftDraw(Shield& shield, ItemManager& item)
 /// </summary>
 void UI::ArmorDraw(Armor& armor, ItemManager& item)
 {
+	int x = 85;
+	int y = 220;
+	int offset = 180;
+
 	//—‡
 	DrawGraph(120, 66, m_body, true);
 
-	if (item.GetItem().ArmorNormal >= 1)
+	//ƒAƒCƒeƒ€‚ğæ“¾‚µ‚½‡‚É•`‰æ
+	for (const auto& itemName : item.GetItemOrder())
 	{
-		//•½–}‚ÈŠZ
-		DrawGraph(85, 220, m_commonArmor, true);
+		if (itemName == "ArmorNormal")
+		{
+			//•½–}‚ÈŠZ
+			DrawGraph(x, y, m_commonArmor, true);
+
+			y += offset;
+
+		}
 	}
 }
 
