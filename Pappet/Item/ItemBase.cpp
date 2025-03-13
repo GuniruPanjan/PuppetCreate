@@ -17,7 +17,7 @@ void ItemBase::ItemGudgment(int SmallCore, int MediumCore, int Rubbish, int Blac
 	m_item.BlackSword = BlackSword;
 	m_item.Distorted = Distorted;
 	m_item.ArmorNormal = ArmorNormal;
-	m_item.But = But;
+	m_item.Bat = But;
 	m_item.WoodShield = WoodShield;
 }
 

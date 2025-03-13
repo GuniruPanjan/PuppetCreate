@@ -342,7 +342,17 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	{
 		m_attackLig1 = MV1SearchFrame(m_modelHandle, "mixamorig:RightForeArm");
 		m_attackLig2 = MV1SearchFrame(m_modelHandle, "mixamorig:RightHandThumb4_end_end_end");
+
+		m_attackLigPos1 = MV1GetFramePosition(m_modelHandle, m_attackLig1);
+		m_attackLigPos2 = MV1GetFramePosition(m_modelHandle, m_attackLig2);
 	}
+	//木の棒を装備したときのリグ
+	else if (weapon.GetBat())
+	{
+		m_attackLigPos1 = weapon.WeaponPattern();
+		m_attackLigPos2 = weapon.WeaponTip();
+	}
+
 
 	//盾を構える時のアニメーションフレーム取得
 	m_moveAnimShieldFrameIndex = MV1SearchFrame(m_modelHandle, "mixamorig:LeftShoulder");
@@ -352,8 +362,7 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	m_moveWeaponFrameMatrix = MV1GetFrameLocalWorldMatrix(m_modelHandle, m_moveAnimFrameRight);
 	m_moveShieldFrameMatrix = MV1GetFrameLocalWorldMatrix(m_modelHandle, m_moveAnimShieldFrameHandIndex);
 
-	m_attackLigPos1 = MV1GetFramePosition(m_modelHandle, m_attackLig1);
-	m_attackLigPos2 = MV1GetFramePosition(m_modelHandle, m_attackLig2);
+	
 
 
 	//パッド入力取得
@@ -680,11 +689,19 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		m_equipmentMuscle = 0.0f;
 		m_equipmentSkill = 0.0f;
 	}
+	//黒い剣ステータス
 	else if (weapon.GetBlack())
 	{
 		cEquipmentAttack = weapon.GetBlackAttack();
 		m_equipmentMuscle = weapon.GetBlackMuscle();
 		m_equipmentSkill = weapon.GetBlackSkill();
+	}
+	//木のバットステータス
+	else if (weapon.GetBat())
+	{
+		cEquipmentAttack = weapon.GetBatAttack();
+		m_equipmentMuscle = weapon.GetBatMuscle();
+		m_equipmentSkill = weapon.GetBatSkill();
 	}
 
 	if (armor.GetBody())

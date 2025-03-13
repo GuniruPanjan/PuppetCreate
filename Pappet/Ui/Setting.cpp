@@ -77,6 +77,9 @@ Setting::Setting() :
 	m_brightnessColor(0),
 	m_bgmColor(0),
 	m_returnColor(0),
+	m_right(0),
+	m_left(0),
+	m_armor(0),
 	m_one(false),
 	m_settingScene(false),
 	m_brightness(false),
@@ -755,6 +758,10 @@ void Setting::EquipmentDecisionUpdate(Weapon& weapon, Shield& shield, Armor& arm
 	int Left = 0;
 	int Armor = 0;
 
+	m_weaponList.clear();
+	m_shieldList.clear();
+	m_armorList.clear();
+
 	//パッド入力所得
 	GetJoypadXInputState(DX_INPUT_KEY_PAD1, &m_xpad);
 
@@ -779,28 +786,19 @@ void Setting::EquipmentDecisionUpdate(Weapon& weapon, Shield& shield, Armor& arm
 	//右装備だった場合
 	if (m_select.right)
 	{
-		//if (item.GetItem().BlackSword >= 1)
-		//{
-		//	pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Nine);
-
-		//	cNo = true;
-		//}
-		//else if (item.GetItem().BlackSword <= 0)
-		//{
-		//	pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Ten);
-
-		//	cNo = false;
-		//}
-
 		for (const auto& itemName : item.GetItemOrder())
 		{
 			if (itemName == "BlackSword")
 			{
 				Right++;
+
+				m_weaponList.push_back("BlackSword");
 			}
-			else if (itemName == "But")
+			else if (itemName == "Bat")
 			{
 				Right++;
+
+				m_weaponList.push_back("Bat");
 			}
 
 		}
@@ -825,28 +823,20 @@ void Setting::EquipmentDecisionUpdate(Weapon& weapon, Shield& shield, Armor& arm
 	//左装備だった場合
 	else if (m_select.left)
 	{
-		//if (item.GetItem().Distorted >= 1)
-		//{
-		//	pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Nine);
-
-		//	cNo = true;
-		//}
-		//else if (item.GetItem().Distorted <= 0)
-		//{
-		//	pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Ten);
-
-		//	cNo = false;
-		//}
-
 		for (const auto& itemName : item.GetItemOrder())
 		{
 			if (itemName == "Distorted")
 			{
 				Left++;
+
+				m_shieldList.push_back("Distorted");
 			}
 			else if (itemName == "WoodShield")
 			{
 				Left++;
+
+				m_shieldList.push_back("WoodShield");
+
 			}
 
 		}
@@ -870,24 +860,13 @@ void Setting::EquipmentDecisionUpdate(Weapon& weapon, Shield& shield, Armor& arm
 	//防具だった場合
 	else if (m_select.armor)
 	{
-		//if (item.GetItem().ArmorNormal >= 1)
-		//{
-		//	pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Nine);
-
-		//	cNo = true;
-		//}
-		//else if (item.GetItem().ArmorNormal <= 0)
-		//{
-		//	pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Ten);
-
-		//	cNo = false;
-		//}
-
 		for (const auto& itemName : item.GetItemOrder())
 		{
 			if (itemName == "ArmorNormal")
 			{
 				Armor++;
+
+				m_armorList.push_back("ArmorNormal");
 			}
 
 		}
@@ -919,108 +898,20 @@ void Setting::EquipmentDecisionUpdate(Weapon& weapon, Shield& shield, Armor& arm
 		//Aボタンを押したら
 		if (m_xpad.Buttons[12] == 1)
 		{
-			if (selectDecision == 8)
+			//右装備だった場合
+			if (m_select.right)
 			{
-				
+				WeaponUpdate(m_weaponList, weapon, m_right);
 			}
-			else if (selectDecision == 9)
+			//左装備だった場合
+			else if (m_select.left)
 			{
-				//右装備だった場合
-				if (m_select.right)
-				{
-					weapon.End();
-
-					weapon.SetFist(true);
-					weapon.SetBlack(false);
-
-					weapon.Init();
-				}
-				//左装備だった場合
-				else if (m_select.left)
-				{
-					shield.End();
-
-					shield.SetFist(true);
-					shield.SetUgly(false);
-
-					shield.Init();
-				}
-				//防具だった場合
-				else if (m_select.armor)
-				{
-					armor.SetBody(true);
-					armor.SetCommon(false);
-
-					armor.Init();
-				}
+				ShieldUpdate(m_shieldList, shield, m_left);
 			}
-			else if (selectDecision == 10)
+			//防具だった場合
+			else if (m_select.armor)
 			{
-				//力技
-				if (cNo)
-				{
-					//右装備だった場合
-					if (m_select.right)
-					{
-						weapon.End();
-
-						weapon.SetBlack(true);
-						weapon.SetFist(false);
-
-						weapon.Init();
-					}
-					//左装備だった場合
-					else if (m_select.left)
-					{
-						shield.End();
-
-						shield.SetUgly(true);
-						shield.SetFist(false);
-
-						shield.Init();
-					}
-					//防具だった場合
-					else if (m_select.armor)
-					{
-						armor.SetCommon(true);
-						armor.SetBody(false);
-
-						armor.Init();
-					}
-				}
-				//力技
-				else if (!cNo)
-				{
-					//右装備だった場合
-					if (m_select.right)
-					{
-						weapon.End();
-
-						weapon.SetFist(true);
-						weapon.SetBlack(false);
-
-						weapon.Init();
-					}
-					//左装備だった場合
-					else if (m_select.left)
-					{
-						shield.End();
-
-						shield.SetFist(true);
-						shield.SetUgly(false);
-
-						shield.Init();
-					}
-					//防具だった場合
-					else if (m_select.armor)
-					{
-						armor.SetBody(true);
-						armor.SetCommon(false);
-
-						armor.Init();
-					}
-				}
-				
+				ArmorUpdate(m_armorList, armor, m_armor);
 			}
 
 			//装備を開く
@@ -1546,27 +1437,29 @@ void Setting::ItemBoxDraw()
 /// </summary>
 void Setting::EquipmentDecisionDraw(ItemManager& item)
 {
+	int Right = 0;
+	int Left = 0;
+	int Armor = 0;
+
 	DrawGraph(0, 0, m_selectEquipment, true);
 
 	//右装備だった場合
 	if (m_select.right)
 	{
-		if (item.GetItem().BlackSword >= 1)
+		//アイテム取得順
+		for (const auto& itemName : item.GetItemOrder())
 		{
-			if (pselect->NowSelect == pselect->Nine)
+			if (itemName == "BlackSword")
 			{
-				m_selectObject.oneX = cOneX;
-				m_selectObject.oneY = cOneY;
-				m_selectObject.secondX = cSecondX;
-				m_selectObject.secondY = cSecondY;
+				Right++;
 			}
-			else if (pselect->NowSelect == pselect->Ten)
+			else if (itemName == "Bat")
 			{
-				m_selectObject.oneY = cOneY + cDifferenceY;
-				m_selectObject.secondY = cSecondY + cDifferenceY;
+				Right++;
 			}
 		}
-		else if (item.GetItem().BlackSword <= 0)
+
+		if (Right == 0)
 		{
 			if (pselect->NowSelect == pselect->Ten)
 			{
@@ -1574,34 +1467,79 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 				m_selectObject.oneY = cOneY;
 				m_selectObject.secondX = cSecondX;
 				m_selectObject.secondY = cSecondY;
+
+				//何を選択しているかの変数
+				m_right = 0;
 			}
 		}
-
-		//アイテム取得順
-		for (const auto& itemName : item.GetItemOrder())
+		else if (Right == 1)
 		{
-			if()
+			if (pselect->NowSelect == pselect->Nine)
+			{
+				m_selectObject.oneX = cOneX;
+				m_selectObject.oneY = cOneY;
+				m_selectObject.secondX = cSecondX;
+				m_selectObject.secondY = cSecondY;
+
+				//何を選択しているかの変数
+				m_right = 0;
+			}
+			else if (pselect->NowSelect == pselect->Ten)
+			{
+				m_selectObject.oneY = cOneY + cDifferenceY;
+				m_selectObject.secondY = cSecondY + cDifferenceY;
+
+				//何を選択しているかの変数
+				m_right = 1;
+			}
+		}
+		else if (Right == 2)
+		{
+			if (pselect->NowSelect == pselect->Eight)
+			{
+				m_selectObject.oneX = cOneX;
+				m_selectObject.oneY = cOneY;
+				m_selectObject.secondX = cSecondX;
+				m_selectObject.secondY = cSecondY;
+
+				//何を選択しているかの変数
+				m_right = 0;
+			}
+			else if (pselect->NowSelect == pselect->Nine)
+			{
+				m_selectObject.oneY = cOneY + cDifferenceY;
+				m_selectObject.secondY = cSecondY + cDifferenceY;
+
+				//何を選択しているかの変数
+				m_right = 1;
+			}
+			else if (pselect->NowSelect == pselect->Ten)
+			{
+				m_selectObject.oneY = cOneY + (cDifferenceY * 2);
+				m_selectObject.secondY = cSecondY + (cDifferenceY * 2);
+
+				//何を選択しているかの変数
+				m_right = 2;
+			}
 		}
 	}
 	//左装備だった場合
 	else if (m_select.left)
 	{
-		if (item.GetItem().Distorted >= 1)
+		//アイテム取得順
+		for (const auto& itemName : item.GetItemOrder())
 		{
-			if (pselect->NowSelect == pselect->Nine)
+			if (itemName == "Distorted")
 			{
-				m_selectObject.oneX = cOneX;
-				m_selectObject.oneY = cOneY;
-				m_selectObject.secondX = cSecondX;
-				m_selectObject.secondY = cSecondY;
+				Left++;
 			}
-			else if (pselect->NowSelect == pselect->Ten)
+			else if (itemName == "WoodShield")
 			{
-				m_selectObject.oneY = cOneY + cDifferenceY;
-				m_selectObject.secondY = cSecondY + cDifferenceY;
+				Left++;
 			}
 		}
-		else if (item.GetItem().Distorted <= 0)
+
+		if (Left == 0)
 		{
 			if (pselect->NowSelect == pselect->Ten)
 			{
@@ -1609,28 +1547,75 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 				m_selectObject.oneY = cOneY;
 				m_selectObject.secondX = cSecondX;
 				m_selectObject.secondY = cSecondY;
+
+				//何を選択しているかの変数
+				m_left = 0;
+			}
+		}
+		else if (Left == 1)
+		{
+			if (pselect->NowSelect == pselect->Nine)
+			{
+				m_selectObject.oneX = cOneX;
+				m_selectObject.oneY = cOneY;
+				m_selectObject.secondX = cSecondX;
+				m_selectObject.secondY = cSecondY;
+
+				//何を選択しているかの変数
+				m_left = 0;
+			}
+			else if (pselect->NowSelect == pselect->Ten)
+			{
+				m_selectObject.oneY = cOneY + cDifferenceY;
+				m_selectObject.secondY = cSecondY + cDifferenceY;
+
+				//何を選択しているかの変数
+				m_left = 1;
+			}
+		}
+		else if (Left == 2)
+		{
+			if (pselect->NowSelect == pselect->Eight)
+			{
+				m_selectObject.oneX = cOneX;
+				m_selectObject.oneY = cOneY;
+				m_selectObject.secondX = cSecondX;
+				m_selectObject.secondY = cSecondY;
+
+				//何を選択しているかの変数
+				m_left = 0;
+			}
+			else if (pselect->NowSelect == pselect->Nine)
+			{
+				m_selectObject.oneY = cOneY + cDifferenceY;
+				m_selectObject.secondY = cSecondY + cDifferenceY;
+
+				//何を選択しているかの変数
+				m_left = 1;
+			}
+			else if (pselect->NowSelect == pselect->Ten)
+			{
+				m_selectObject.oneY = cOneY + (cDifferenceY * 2);
+				m_selectObject.secondY = cSecondY + (cDifferenceY * 2);
+
+				//何を選択しているかの変数
+				m_left = 2;
 			}
 		}
 	}
 	//防具だった場合
 	else if (m_select.armor)
 	{
-		if (item.GetItem().ArmorNormal >= 1)
+		//アイテム取得順
+		for (const auto& itemName : item.GetItemOrder())
 		{
-			if (pselect->NowSelect == pselect->Nine)
+			if (itemName == "ArmorNormal")
 			{
-				m_selectObject.oneX = cOneX;
-				m_selectObject.oneY = cOneY;
-				m_selectObject.secondX = cSecondX;
-				m_selectObject.secondY = cSecondY;
-			}
-			else if (pselect->NowSelect == pselect->Ten)
-			{
-				m_selectObject.oneY = cOneY + cDifferenceY;
-				m_selectObject.secondY = cSecondY + cDifferenceY;
+				Armor++;
 			}
 		}
-		else if (item.GetItem().ArmorNormal <= 0)
+
+		if (Armor == 0)
 		{
 			if (pselect->NowSelect == pselect->Ten)
 			{
@@ -1638,6 +1623,30 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 				m_selectObject.oneY = cOneY;
 				m_selectObject.secondX = cSecondX;
 				m_selectObject.secondY = cSecondY;
+
+				//何を選択しているか判断するための変数
+				m_armor = 0;
+			}
+		}
+		else if (Armor == 1)
+		{
+			if (pselect->NowSelect == pselect->Nine)
+			{
+				m_selectObject.oneX = cOneX;
+				m_selectObject.oneY = cOneY;
+				m_selectObject.secondX = cSecondX;
+				m_selectObject.secondY = cSecondY;
+
+				//何を選択しているか判断するための変数
+				m_armor = 0;
+			}
+			else if (pselect->NowSelect == pselect->Ten)
+			{
+				m_selectObject.oneY = cOneY + cDifferenceY;
+				m_selectObject.secondY = cSecondY + cDifferenceY;
+
+				//何を選択しているか判断するための変数
+				m_armor = 1;
 			}
 		}
 	}
@@ -1663,4 +1672,140 @@ void Setting::End()
 	DeleteGraph(m_selectUi);
 	DeleteGraph(m_levelUp);
 	pse->End();
+}
+
+void Setting::WeaponUpdate(std::list<std::string> list, Weapon& weapon, int right)
+{
+	int select = 1;
+
+	//素手選択
+	if (right == 0)
+	{
+		weapon.End();
+
+		weapon.SetFist(true);
+		weapon.SetBlack(false);
+		weapon.SetBat(false);
+
+		weapon.Init();
+	}
+	//武器選択
+	else if (right >= 1)
+	{
+		for (const auto& item : list)
+		{
+			if (right == select)
+			{
+				//黒い剣選択
+				if (item == "BlackSword")
+				{
+					weapon.End();
+
+					weapon.SetBlack(true);
+					weapon.SetFist(false);
+					weapon.SetBat(false);
+
+					weapon.Init();
+				}
+				//木のバット選択
+				else if (item == "Bat")
+				{
+					weapon.End();
+
+					weapon.SetBat(true);
+					weapon.SetBlack(false);
+					weapon.SetFist(false);
+
+					weapon.Init();
+				}
+			}
+
+			select++;
+		}
+	}
+}
+
+void Setting::ShieldUpdate(std::list<std::string> list, Shield& shield, int left)
+{
+	int select = 1;
+
+	//素手選択
+	if (left == 0)
+	{
+		shield.End();
+
+		shield.SetFist(true);
+		shield.SetUgly(false);
+		shield.SetWood(false);
+
+		shield.Init();
+	}
+	//盾選択
+	else if (left >= 1)
+	{
+		for (const auto& item : list)
+		{
+			if (left == select)
+			{
+				//醜い盾選択
+				if (item == "Distorted")
+				{
+					shield.End();
+
+					shield.SetUgly(true);
+					shield.SetFist(false);
+					shield.SetWood(false);
+
+					shield.Init();
+				}
+				//木の盾選択
+				else if (item == "WoodShield")
+				{
+					shield.End();
+
+					shield.SetWood(true);
+					shield.SetUgly(false);
+					shield.SetFist(false);
+
+					shield.Init();
+				}
+			}
+
+			select++;
+		}
+	}
+}
+
+void Setting::ArmorUpdate(std::list<std::string> list, Armor& armor, int body)
+{
+	int select = 1;
+
+	//素手選択
+	if (body == 0)
+	{
+		armor.SetBody(true);
+		armor.SetCommon(false);
+
+		armor.Init();
+	}
+	//防具選択
+	else if (body >= 1)
+	{
+		for (const auto& item : list)
+		{
+			if (body == select)
+			{
+				//普通の鎧選択
+				if (item == "ArmorNormal")
+				{
+					armor.SetCommon(true);
+					armor.SetBody(false);
+
+					armor.Init();
+				}
+			}
+
+			select++;
+		}
+	}
 }

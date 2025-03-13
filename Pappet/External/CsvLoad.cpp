@@ -264,7 +264,7 @@ void CsvLoad::ItemDataLoad(std::list<std::shared_ptr<ItemManager::ItemGenerateIn
 		add->BlackSword = std::stoi(strConmaBuf[DataLoad::CsvItemStage::ItemBlackSword]);
 		add->Distorted = std::stoi(strConmaBuf[DataLoad::CsvItemStage::ItemDistorted]);
 		add->ArmorNormal = std::stoi(strConmaBuf[DataLoad::CsvItemStage::ItemArmorNormal]);
-		add->But = std::stoi(strConmaBuf[DataLoad::CsvItemStage::ItemBut]);
+		add->Bat = std::stoi(strConmaBuf[DataLoad::CsvItemStage::ItemBat]);
 		add->WoodShield = std::stoi(strConmaBuf[DataLoad::CsvItemStage::ItemWoodShield]);
 
 		pGenerateInfo.emplace_back(add);

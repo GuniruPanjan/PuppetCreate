@@ -30,15 +30,21 @@ public:
 	//‘•”õ‚µ‚½‚©‚Ì”»’è
 	bool GetFist() { return m_fist.ss_equipment; }
 	bool SetFist(bool set) { return m_fist.ss_equipment = set; }
+
 	bool GetUgly() { return m_ugly.ss_equipment; }
 	bool SetUgly(bool set) { return m_ugly.ss_equipment = set; }
 
+	bool GetWood() { return m_wood.ss_equipment; }
+	bool SetWood(bool set) { return m_wood.ss_equipment = set; }
+
 	//‚‚Ì‹­“x
 	int GetStrengthUgly() { return m_ugly.ss_strength; }
+	int GetStrengthWood() { return m_wood.ss_strength; }
 	
 private:
 	//‚‚Ì\‘¢‘Ì
 	sShield m_fist;    //‘fè
 	sShield m_ugly;    //X‚¢‚
+	sShield m_wood;    //–Ø‚Ì‚
 };
 

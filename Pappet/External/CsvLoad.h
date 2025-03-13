@@ -50,7 +50,7 @@ namespace DataLoad
 		ItemBlackSword,  //黒い剣
 		ItemDistorted,   //歪んだ盾
 		ItemArmorNormal, //普通の鎧
-		ItemBut,         //木のバット
+		ItemBat,         //木のバット
 		ItemWoodShield,  //木の盾
 	};
 

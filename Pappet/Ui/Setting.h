@@ -2,7 +2,10 @@
 #include "Manager/SEManager.h"
 #include "DxLib.h"
 #include "Ui/UIBase.h"
-#include<memory>
+#include <memory>
+#include <map>
+#include <string>
+#include <List>
 
 class SelectManager;
 class Shield;
@@ -267,6 +270,12 @@ public:
 	bool GetTitle() { return m_titleMenu; }
 
 private:
+
+	void WeaponUpdate(std::list<std::string> list, Weapon& weapon, int right);
+	void ShieldUpdate(std::list<std::string> list, Shield& shield, int left);
+	void ArmorUpdate(std::list<std::string> list, Armor& armor, int body);
+
+private:
 	int m_black;              //黒い画像格納変数
 	int m_white;              //白い画像格納変数
 	int m_back;               //黒い画像格納変数
@@ -286,6 +295,10 @@ private:
 	int m_volumeColor[5];     //音量選択の色
 	int m_menuColor[5];       //メニューの色
 	int m_core;               //表記用にコアを取得する
+	int m_right;              //右装備の選んでるところを格納する変数
+	int m_left;               //左装備の選んでるところを格納する変数
+	int m_armor;              //鎧装備の選んでるところを格納する変数
+
 	bool m_one;               //単発入力
 	bool m_settingScene;      //設定するための画面を呼ぶ変数
 	bool m_brightness;        //明るさ設定
@@ -307,6 +320,10 @@ private:
 	SelectXY m_change;
 	SelectXY m_equipmentColorPos;
 	SelectXY m_selectObject;
+
+	std::list<std::string> m_weaponList;      //武器の入手順に入れるリスト
+	std::list<std::string> m_shieldList;      //盾の入手順に入れるリスト
+	std::list<std::string> m_armorList;       //鎧の入手順に入れるリスト
 
 	//スマートポインタ
 	std::shared_ptr<SEManager> pse = std::make_shared<SEManager>();

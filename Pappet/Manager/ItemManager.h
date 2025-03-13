@@ -27,7 +27,7 @@ public:
 		int BlackSword = 0;      //黒い剣
 		int Distorted = 0;       //歪んだ盾
 		int ArmorNormal = 0;     //普通の鎧
-		int But = 0;             //バット
+		int Bat = 0;             //バット
 		int WoodShield = 0;      //木の盾
 
 	}m_item;
@@ -41,7 +41,7 @@ public:
 		int u_BlackSword = 0;    //黒い剣
 		int u_Distorted = 0;     //歪んだ盾
 		int u_ArmorNormal = 0;   //普通の鎧
-		int u_But = 0;           //バット
+		int u_Bat = 0;           //バット
 		int u_WoodShield = 0;    //木の盾
 
 	}m_uiItem;
@@ -55,7 +55,7 @@ public:
 		int o_BlackSword = 0;    //黒い剣
 		int o_Distorted = 0;     //歪んだ盾
 		int o_ArmorNormal = 0;   //普通の鎧
-		int o_But = 0;           //バット
+		int o_Bat = 0;           //バット
 		int o_WoodShield = 0;    //木の盾
 	}m_orderItem;
 
@@ -75,7 +75,7 @@ public:
 		int BlackSword = 0;      //黒い剣
 		int Distorted = 0;       //歪んだ盾
 		int ArmorNormal = 0;     //普通の鎧
-		int But = 0;             //バット
+		int Bat = 0;             //バット
 		int WoodShield = 0;      //木の盾
 
 		bool isCreated = false;    //生成済みかどうか
@@ -110,7 +110,7 @@ private:
 	//アイテムの生成
 	void CreateItem(float posX, float posY, float posZ, std::string name, std::shared_ptr<MyLibrary::Physics> physics);
 	//何のアイテムかの判断
-	void CheckItem(std::string name, int SmallCore, int MediumCore, int Rubbish, int BlackSword, int Distorted, int ArmorNormal, int But, int WoodShield);
+	void CheckItem(std::string name, int SmallCore, int MediumCore, int Rubbish, int BlackSword, int Distorted, int ArmorNormal, int Bat, int WoodShield);
 	//アイテムの順序を入れる
 	void AddItem(ItemOrder& item);
 private:

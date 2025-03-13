@@ -21,7 +21,7 @@ public:
 		int BlackSword = 0;      //黒い剣
 		int Distorted = 0;       //歪んだ盾
 		int ArmorNormal = 0;     //普通の鎧
-		int But = 0;             //バット
+		int Bat = 0;             //バット
 		int WoodShield = 0;      //木の盾
 	};
 

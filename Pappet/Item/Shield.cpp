@@ -47,7 +47,12 @@ void Shield::Init()
 
 		m_pos = VGet(0.0f, 0.0f, 7.787f);
 	}
-	
+	else if (m_wood.ss_equipment)
+	{
+		m_itemHandle = handle.GetModelHandle("Data/Shield/WoodenShield.mv1");
+		m_wood.ss_cut = 60.0f;
+		m_wood.ss_strength = 5.0f;
+	}
 }
 
 /// <summary>

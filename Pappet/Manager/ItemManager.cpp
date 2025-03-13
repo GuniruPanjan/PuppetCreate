@@ -70,7 +70,7 @@ void ItemManager::GameInit(std::shared_ptr<MyLibrary::Physics> physics, GameMana
 				CreateItem(generate->posX, generate->posY, generate->posZ, generate->itemName, physics);
 
 				//何のアイテムかを判断する
-				CheckItem(generate->itemName, generate->SmallCore, generate->MediumCore, generate->Rubbish, generate->BlackSword, generate->Distorted, generate->ArmorNormal, generate->But, generate->WoodShield);
+				CheckItem(generate->itemName, generate->SmallCore, generate->MediumCore, generate->Rubbish, generate->BlackSword, generate->Distorted, generate->ArmorNormal, generate->Bat, generate->WoodShield);
 			}
 		}
 
@@ -100,7 +100,7 @@ void ItemManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManage
 				CreateItem(generate->posX, generate->posY, generate->posZ, generate->itemName, physics);
 
 				//何のアイテムかを判断する
-				CheckItem(generate->itemName, generate->SmallCore, generate->MediumCore, generate->Rubbish, generate->BlackSword, generate->Distorted, generate->ArmorNormal, generate->But, generate->WoodShield);
+				CheckItem(generate->itemName, generate->SmallCore, generate->MediumCore, generate->Rubbish, generate->BlackSword, generate->Distorted, generate->ArmorNormal, generate->Bat, generate->WoodShield);
 			}
 		}
 	}
@@ -121,7 +121,7 @@ void ItemManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManage
 			m_item.BlackSword += item->GetItemKinds().BlackSword;
 			m_item.Distorted += item->GetItemKinds().Distorted;
 			m_item.ArmorNormal += item->GetItemKinds().ArmorNormal;
-			m_item.But += item->GetItemKinds().But;
+			m_item.Bat += item->GetItemKinds().Bat;
 			m_item.WoodShield += item->GetItemKinds().WoodShield;
 			//UIとしてのアイテム更新
 			m_uiItem.u_SmallCore += item->GetItemKinds().SmallCore;
@@ -130,7 +130,7 @@ void ItemManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManage
 			m_uiItem.u_BlackSword += item->GetItemKinds().BlackSword;
 			m_uiItem.u_Distorted += item->GetItemKinds().Distorted;
 			m_uiItem.u_ArmorNormal += item->GetItemKinds().ArmorNormal;
-			m_uiItem.u_But += item->GetItemKinds().But;
+			m_uiItem.u_Bat += item->GetItemKinds().Bat;
 			m_uiItem.u_WoodShield += item->GetItemKinds().WoodShield;
 			//アイテムを取得した順に記録更新
 			m_orderItem.o_SmallCore += item->GetItemKinds().SmallCore;
@@ -139,7 +139,7 @@ void ItemManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManage
 			m_orderItem.o_BlackSword += item->GetItemKinds().BlackSword;
 			m_orderItem.o_Distorted += item->GetItemKinds().Distorted;
 			m_orderItem.o_ArmorNormal += item->GetItemKinds().ArmorNormal;
-			m_orderItem.o_But += item->GetItemKinds().But;
+			m_orderItem.o_Bat += item->GetItemKinds().Bat;
 			m_orderItem.o_WoodShield += item->GetItemKinds().WoodShield;
 
 			item->SetItemBox(false);
@@ -233,19 +233,19 @@ void ItemManager::CreateItem(float posX, float posY, float posZ, std::string nam
 /// 何のアイテムか判断する
 /// </summary>
 /// <param name="item"></param>
-void ItemManager::CheckItem(std::string name, int SmallCore, int MediumCore, int Rubbish, int BlackSword, int Distorted, int ArmorNormal, int But, int WoodShield)
+void ItemManager::CheckItem(std::string name, int SmallCore, int MediumCore, int Rubbish, int BlackSword, int Distorted, int ArmorNormal, int Bat, int WoodShield)
 {
 	if (name == "Weapon")
 	{
-		m_pweapon->ItemGudgment(SmallCore, MediumCore, Rubbish, BlackSword, Distorted, ArmorNormal, But, WoodShield);
+		m_pweapon->ItemGudgment(SmallCore, MediumCore, Rubbish, BlackSword, Distorted, ArmorNormal, Bat, WoodShield);
 	}
 	if (name == "Shield")
 	{
-		m_pshield->ItemGudgment(SmallCore, MediumCore, Rubbish, BlackSword, Distorted, ArmorNormal, But, WoodShield);
+		m_pshield->ItemGudgment(SmallCore, MediumCore, Rubbish, BlackSword, Distorted, ArmorNormal, Bat, WoodShield);
 	}
 	if (name == "Armor")
 	{
-		m_parmor->ItemGudgment(SmallCore, MediumCore, Rubbish, BlackSword, Distorted, ArmorNormal, But, WoodShield);
+		m_parmor->ItemGudgment(SmallCore, MediumCore, Rubbish, BlackSword, Distorted, ArmorNormal, Bat, WoodShield);
 	}
 	if (name == "Tool")
 	{
@@ -258,7 +258,7 @@ void ItemManager::CheckItem(std::string name, int SmallCore, int MediumCore, int
 void ItemManager::AddItem(ItemOrder& item)
 {
 	if (item.o_BlackSword >= 1) m_itemOrder.push_back("BlackSword");
-	else if (item.o_But >= 1) m_itemOrder.push_back("But");
+	else if (item.o_Bat >= 1) m_itemOrder.push_back("Bat");
 	else if (item.o_Distorted >= 1) m_itemOrder.push_back("Distorted");
 	else if (item.o_WoodShield >= 1) m_itemOrder.push_back("WoodShield");
 	else if (item.o_ArmorNormal >= 1) m_itemOrder.push_back("ArmorNormal");
@@ -271,6 +271,6 @@ void ItemManager::AddItem(ItemOrder& item)
 	item.o_BlackSword = 0;
 	item.o_Distorted = 0;
 	item.o_ArmorNormal = 0;
-	item.o_But = 0;
+	item.o_Bat = 0;
 	item.o_WoodShield = 0;
 }

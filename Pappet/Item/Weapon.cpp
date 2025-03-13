@@ -8,9 +8,9 @@ namespace
 	constexpr const char* cItemName = "Weapon";
 
 	//行列
-	constexpr float cWeaponMatrixX = 0.0f;
-	constexpr float cWeaponMatrixY = 5.655f;
-	constexpr float cWeaponMatrixZ = 1.795f;
+	//constexpr float cWeaponMatrixX = 0.0f;
+	//constexpr float cWeaponMatrixY = 5.655f;
+	//constexpr float cWeaponMatrixZ = 1.795f;
 
 	//シングルトン
 	auto& handle = HandleManager::GetInstance();
@@ -20,7 +20,11 @@ namespace
 /// <summary>
 /// コンストラクタ
 /// </summary>
-Weapon::Weapon()
+Weapon::Weapon() :
+	m_weaponPatternFrame(0),
+	m_weaponTipFrame(0),
+	m_weaponPatternName(),
+	m_weaponTipName()
 {
 }
 
@@ -42,6 +46,7 @@ Weapon::~Weapon()
 /// </summary>
 void Weapon::Init()
 {
+	//黒い剣装備
 	if (m_black.sw_equipment)
 	{
 		m_black.sw_attack = 30.0f;
@@ -51,6 +56,28 @@ void Weapon::Init()
 		m_itemHandle = handle.GetModelHandle("Data/Weapon/Sword.mv1");
 
 		m_pos = VGet(-5.0f, 1.947f, -1.947f);
+
+		m_weaponMatrixX = 0.0f;
+		m_weaponMatrixY = 5.655f;
+		m_weaponMatrixZ = 1.795f;
+	}
+	//バット装備
+	else if (m_bat.sw_equipment)
+	{
+		m_bat.sw_attack = 20.0f;
+		m_bat.sw_muscle = 2.5f;    //補正A
+		m_bat.sw_skill = 0.5f;     //補正E
+		m_bat.sw_radius = 25.0f;
+		m_itemHandle = handle.GetModelHandle("Data/Weapon/Bat.mv1");
+
+		m_pos = VGet(4.884f, 1.628f, -1.628f);
+
+		m_weaponMatrixX = 0.314f;
+		m_weaponMatrixY = 0.180f;
+		m_weaponMatrixZ = 4.892f;
+
+		m_weaponPatternName = "Sphere";
+		m_weaponTipName = "Tip";
 	}
 }
 
@@ -78,21 +105,44 @@ void Weapon::ItemInit(float posX, float posY, float posZ, std::shared_ptr<MyLibr
 void Weapon::Update(MATRIX mat)
 {
 	MV1SetMatrix(m_itemHandle, MGetIdent());
-	//フレーム検索
-	m_frameIndex = MV1SearchFrame(m_itemHandle, "2:Sphere");
-	//フレームのポジション
-	m_framePos = MV1GetFramePosition(m_itemHandle, m_frameIndex);
+	////フレーム検索
+	//m_frameIndex = MV1SearchFrame(m_itemHandle, "2:Sphere");
+	////フレームのポジション
+	//m_framePos = MV1GetFramePosition(m_itemHandle, m_frameIndex);
 
-	m_pos = VAdd(m_framePos, m_pos);
+	//m_pos = VAdd(m_framePos, m_pos);
 	//アタッチするモデルをフレームの座標を原点にするための平行移動行列を作成
 	m_transMatrix = MGetTranslate(VScale(m_pos, -1.0f));
 
-	m_transMatrix = MMult(m_transMatrix, MGetRotY(cWeaponMatrixY));
-	m_transMatrix = MMult(m_transMatrix, MGetRotZ(cWeaponMatrixZ));
+	m_transMatrix = MMult(m_transMatrix, MGetRotX(m_weaponMatrixX));
+	m_transMatrix = MMult(m_transMatrix, MGetRotY(m_weaponMatrixY));
+	m_transMatrix = MMult(m_transMatrix, MGetRotZ(m_weaponMatrixZ));
 
 	m_mixMatrix = MMult(m_transMatrix, mat);
 
 	MV1SetMatrix(m_itemHandle, m_mixMatrix);
+}
+
+/// <summary>
+/// 武器の持ちて検索
+/// </summary>
+/// <returns></returns>
+VECTOR Weapon::WeaponPattern()
+{
+	m_weaponPatternFrame = MV1SearchFrame(m_itemHandle, m_weaponPatternName);
+
+	return MV1GetFramePosition(m_itemHandle, m_weaponPatternFrame);
+}
+
+/// <summary>
+/// 武器の先端を検索
+/// </summary>
+/// <returns></returns>
+VECTOR Weapon::WeaponTip()
+{
+	m_weaponTipFrame = MV1SearchFrame(m_itemHandle, m_weaponTipName);
+
+	return MV1GetFramePosition(m_itemHandle, m_weaponTipFrame);
 }
 
 void Weapon::ItemUpdate(bool taking)

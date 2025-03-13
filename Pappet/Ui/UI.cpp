@@ -158,7 +158,7 @@ void UI::Draw(Player& player, EnemyManager& enemy, Setting& eq, MapManager& map,
 		ItemTakingUI(item.m_uiItem.u_BlackSword, m_blackSword, 500, 625, 800, 675, "黒い剣");
 		ItemTakingUI(item.m_uiItem.u_Distorted, m_uglyShield, 500, 645, 800, 675, "歪んだ盾");
 		ItemTakingUI(item.m_uiItem.u_ArmorNormal, m_commonArmor, 500, 635, 800, 675, "普通の鎧");
-		ItemTakingUI(item.m_uiItem.u_But, m_but, 500, 635, 800, 675, "木のバット");
+		ItemTakingUI(item.m_uiItem.u_Bat, m_but, 500, 635, 800, 675, "木のバット");
 		ItemTakingUI(item.m_uiItem.u_WoodShield, m_woodShield, 500, 635, 800, 675, "木の盾");
 
 		//Bbuttonを押すと閉じる
@@ -170,7 +170,7 @@ void UI::Draw(Player& player, EnemyManager& enemy, Setting& eq, MapManager& map,
 			item.m_uiItem.u_BlackSword = 0;
 			item.m_uiItem.u_Distorted = 0;
 			item.m_uiItem.u_ArmorNormal = 0;
-			item.m_uiItem.u_But = 0;
+			item.m_uiItem.u_Bat = 0;
 			item.m_uiItem.u_WoodShield = 0;
 
 			c_itemTakingUI = false;
@@ -256,7 +256,7 @@ void UI::RightDraw(Weapon& weapon, ItemManager& item)
 
 		}
 		//木のバット描画
-		else if (itemName == "But")
+		else if (itemName == "Bat")
 		{
 			DrawGraph(x, y, m_but, true);
 
