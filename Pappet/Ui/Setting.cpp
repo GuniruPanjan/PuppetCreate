@@ -751,6 +751,10 @@ void Setting::ItemBoxUpdate()
 /// </summary>
 void Setting::EquipmentDecisionUpdate(Weapon& weapon, Shield& shield, Armor& armor, ItemManager& item)
 {
+	int Right = 0;
+	int Left = 0;
+	int Armor = 0;
+
 	//パッド入力所得
 	GetJoypadXInputState(DX_INPUT_KEY_PAD1, &m_xpad);
 
@@ -775,49 +779,128 @@ void Setting::EquipmentDecisionUpdate(Weapon& weapon, Shield& shield, Armor& arm
 	//右装備だった場合
 	if (m_select.right)
 	{
-		if (item.GetItem().BlackSword >= 1)
-		{
-			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Nine);
+		//if (item.GetItem().BlackSword >= 1)
+		//{
+		//	pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Nine);
 
-			cNo = true;
-		}
-		else if (item.GetItem().BlackSword <= 0)
+		//	cNo = true;
+		//}
+		//else if (item.GetItem().BlackSword <= 0)
+		//{
+		//	pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Ten);
+
+		//	cNo = false;
+		//}
+
+		for (const auto& itemName : item.GetItemOrder())
 		{
+			if (itemName == "BlackSword")
+			{
+				Right++;
+			}
+			else if (itemName == "But")
+			{
+				Right++;
+			}
+
+		}
+
+		if (Right == 0)
+		{
+			//武器が0だった場合
 			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Ten);
-
-			cNo = false;
 		}
+		else if (Right == 1)
+		{
+			//武器が1つだった場合
+			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Nine);
+		}
+		else if (Right == 2)
+		{
+			//武器が2つだった場合
+			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Eight);
+		}
+
 	}
 	//左装備だった場合
 	else if (m_select.left)
 	{
-		if (item.GetItem().Distorted >= 1)
-		{
-			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Nine);
+		//if (item.GetItem().Distorted >= 1)
+		//{
+		//	pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Nine);
 
-			cNo = true;
+		//	cNo = true;
+		//}
+		//else if (item.GetItem().Distorted <= 0)
+		//{
+		//	pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Ten);
+
+		//	cNo = false;
+		//}
+
+		for (const auto& itemName : item.GetItemOrder())
+		{
+			if (itemName == "Distorted")
+			{
+				Left++;
+			}
+			else if (itemName == "WoodShield")
+			{
+				Left++;
+			}
+
 		}
-		else if (item.GetItem().Distorted <= 0)
-		{
-			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Ten);
 
-			cNo = false;
+		if (Left == 0)
+		{
+			//盾が0だった場合
+			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Ten);
+		}
+		else if (Left == 1)
+		{
+			//盾が1つだった場合
+			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Nine);
+		}
+		else if (Left == 2)
+		{
+			//盾が2つだった場合
+			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Eight);
 		}
 	}
 	//防具だった場合
 	else if (m_select.armor)
 	{
-		if (item.GetItem().ArmorNormal >= 1)
-		{
-			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Nine);
+		//if (item.GetItem().ArmorNormal >= 1)
+		//{
+		//	pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Nine);
 
-			cNo = true;
+		//	cNo = true;
+		//}
+		//else if (item.GetItem().ArmorNormal <= 0)
+		//{
+		//	pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Ten);
+
+		//	cNo = false;
+		//}
+
+		for (const auto& itemName : item.GetItemOrder())
+		{
+			if (itemName == "ArmorNormal")
+			{
+				Armor++;
+			}
+
 		}
-		else if (item.GetItem().ArmorNormal <= 0)
-		{
-			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Ten);
 
-			cNo = false;
+		if (Armor == 0)
+		{
+			//防具が0だった場合
+			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Ten);
+		}
+		else if (Armor == 1)
+		{
+			//防具が1つだった場合
+			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Nine);
 		}
 	}
 
@@ -1492,6 +1575,12 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 				m_selectObject.secondX = cSecondX;
 				m_selectObject.secondY = cSecondY;
 			}
+		}
+
+		//アイテム取得順
+		for (const auto& itemName : item.GetItemOrder())
+		{
+			if()
 		}
 	}
 	//左装備だった場合
