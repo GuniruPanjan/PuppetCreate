@@ -51,7 +51,7 @@ void UI::Init()
 	m_body = MyLoadGraph("Data/UI/—‡‘ÌUI.png", 3, 3);
 	m_uglyShield = MyLoadGraph("Data/UI/X‚¢‚UI.png", 4, 4);
 	m_commonArmor = MyLoadGraph("Data/UI/•½–}‚ÈŠZUI.png", 3, 3);
-	m_but = MyLoadGraph("Data/UI/But.png", 3, 3);
+	m_bat = MyLoadGraph("Data/UI/But.png", 3, 3);
 	m_woodShield = MyLoadGraph("Data/UI/WoodShield.png", 4, 4);
 
 	m_dead = MyLoadGraph("Data/UI/YOUDIEDGraph.png", 1, 1);
@@ -158,7 +158,7 @@ void UI::Draw(Player& player, EnemyManager& enemy, Setting& eq, MapManager& map,
 		ItemTakingUI(item.m_uiItem.u_BlackSword, m_blackSword, 500, 625, 800, 675, "•‚¢Œ•");
 		ItemTakingUI(item.m_uiItem.u_Distorted, m_uglyShield, 500, 645, 800, 675, "˜c‚ñ‚¾‚");
 		ItemTakingUI(item.m_uiItem.u_ArmorNormal, m_commonArmor, 500, 635, 800, 675, "•’Ê‚ÌŠZ");
-		ItemTakingUI(item.m_uiItem.u_Bat, m_but, 500, 635, 800, 675, "–Ø‚Ìƒoƒbƒg");
+		ItemTakingUI(item.m_uiItem.u_Bat, m_bat, 500, 635, 800, 675, "–Ø‚Ìƒoƒbƒg");
 		ItemTakingUI(item.m_uiItem.u_WoodShield, m_woodShield, 500, 635, 800, 675, "–Ø‚Ì‚");
 
 		//Bbutton‚ğ‰Ÿ‚·‚Æ•Â‚¶‚é
@@ -208,6 +208,13 @@ void UI::EquipmentDraw(Weapon& weapon, Shield& shield, Armor& armor)
 		//•‚¢Œ•
 		DrawGraph(140, 310, m_blackSword, true);
 	}
+	else if (weapon.GetBat())
+	{
+		//–Ø‚Ì–_
+		DrawGraph(140, 310, m_bat, true);
+	}
+
+
 	//¶•Ší
 	if (shield.GetFist())
 	{
@@ -219,6 +226,12 @@ void UI::EquipmentDraw(Weapon& weapon, Shield& shield, Armor& armor)
 		//X‚¢‚
 		DrawGraph(335, 330, m_uglyShield, true);
 	}
+	else if (shield.GetWood())
+	{
+		//–Ø‚Ì‚
+		DrawGraph(335, 330, m_woodShield, true);
+	}
+
 	//–h‹ï
 	if (armor.GetBody())
 	{
@@ -258,7 +271,7 @@ void UI::RightDraw(Weapon& weapon, ItemManager& item)
 		//–Ø‚Ìƒoƒbƒg•`‰æ
 		else if (itemName == "Bat")
 		{
-			DrawGraph(x, y, m_but, true);
+			DrawGraph(x, y, m_bat, true);
 
 			y += offset;
 
@@ -347,6 +360,12 @@ void UI::EquipmentUIDraw(Weapon& weapon, Shield& shield, Armor& armor, Tool& too
 		//•‚¢Œ•
 		DrawGraph(317, 700, m_blackSword, true);
 	}
+	else if (weapon.GetBat())
+	{
+		//–Ø‚Ì–_
+		DrawGraph(317, 700, m_bat, true);
+	}
+
 	//¶•Ší
 	if (shield.GetFist())
 	{
@@ -358,6 +377,12 @@ void UI::EquipmentUIDraw(Weapon& weapon, Shield& shield, Armor& armor, Tool& too
 		//X‚¢‚
 		DrawGraph(20, 720, m_uglyShield, true);
 	}
+	else if (shield.GetWood())
+	{
+		//–Ø‚Ì‚
+		DrawGraph(20, 720, m_woodShield, true);
+	}
+
 	//–h‹ï
 	if (armor.GetBody())
 	{
@@ -583,7 +608,7 @@ void UI::End()
 	DeleteGraph(m_body);
 	DeleteGraph(m_uglyShield);
 	DeleteGraph(m_commonArmor);
-	DeleteGraph(m_but);
+	DeleteGraph(m_bat);
 	DeleteGraph(m_woodShield);
 	DeleteGraph(m_dead);
 	DeleteGraph(m_backRightBar);

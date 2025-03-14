@@ -9,8 +9,8 @@ ShieldObject::ShieldObject(float width, float hight, float depth) :
     m_isCollisionOn(false)
 {
     //“–‚½‚è”»’è‚Ìİ’è
-    auto collider = Collidable::AddCollider(MyLibrary::CollidableData::Kind::Rect, true);
-    auto rectCol = dynamic_cast<MyLibrary::CollidableDataRect*>(collider.get());
+    auto collider = Collidable::AddCollider(MyLibrary::CollidableData::Kind::ShieldRect, true);
+    auto rectCol = dynamic_cast<MyLibrary::CollidableDataShield*>(collider.get());
     rectCol->m_size = MyLibrary::LibVec3::Size(width, hight, depth);
 }
 

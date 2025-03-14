@@ -160,6 +160,11 @@ void MyLibrary::Physics::Update()
 				MyLibrary::DebugDraw::AddDrawRect(pos, size, kBeforeColor);
 				MyLibrary::DebugDraw::AddDrawRect(pos, size, kBeforePlanColor);
 			}
+			else if (kind == CollidableData::Kind::ShieldRect)
+			{
+				auto rectData = dynamic_cast<MyLibrary::CollidableDataShield*> (collider.get());
+				MyLibrary::DebugDraw::AddDrawRect(pos, size, kBeforeColor);
+			}
 
 		}
 #endif
@@ -174,6 +179,7 @@ void MyLibrary::Physics::Update()
 	CheckCollide2();
 	CheckCollide3();
 	CheckCollide4();
+	CheckCollide5();
 
 	CheckUpdate();
 
@@ -689,6 +695,86 @@ void MyLibrary::Physics::CheckCollide4()
 	}
 }
 
+void MyLibrary::Physics::CheckCollide5()
+{
+	std::vector<OnCollideInfoData> onCollideInfo;
+	//衝突通知、ポジション補正
+	bool doCheck = true;
+	int checkCount = 0;     //チャック回数
+	while (doCheck)
+	{
+		doCheck = false;
+		checkCount++;
+
+		//2重ループで全オブジェクト当たり判定
+		//FIXME : 重いので近いオブジェクト同士のみ当たり判定するなど工夫がいる
+		for (const auto& objA : m_collidables)
+		{
+			for (const auto& objB : m_collidables)
+			{
+				//同一オブジェクトなら早期リターン
+				if (objA == objB)
+					continue;
+
+				for (const auto& colA : objA->m_colliders)
+				{
+					for (const auto& colB : objB->m_colliders)
+					{
+						if (!IsCollide5(objA->rigidbody, objB->rigidbody, colA.get(), colB.get())) continue;
+
+						bool isTrigger = colA->IsTrigger() || colB->IsTrigger();
+
+						if (isTrigger)
+						{
+							AddNewCollideInfo(objA, objB, m_newTriggerInfo);
+						}
+						else
+						{
+							AddNewCollideInfo(objA, objB, m_newCollideInfo);
+						}
+
+						//Triggerの場合は位置補正はしない
+						if (isTrigger) continue;
+
+						auto primary = objA;
+						auto secondary = objB;
+
+						if (primary == secondary)
+						{
+							break;
+						}
+
+						auto primaryCollider = colA;
+						auto secondaryCollider = colB;
+						if (objA->priority < objB->priority)
+						{
+							primary = objB;
+							secondary = objA;
+							primaryCollider = colB;
+							secondaryCollider = colA;
+						}
+
+						FixNextPosition(primary->rigidbody, secondary->rigidbody, primaryCollider.get(), secondaryCollider.get());
+						//位置補正をしたらもう一度初めから行う
+						doCheck = true;
+						break;
+					}
+					if (doCheck) break;
+				}
+				if (doCheck) break;
+			}
+			if (doCheck) break;
+		}
+		if (doCheck && checkCount > 800)
+		{
+#if _DEBUG
+			printfDx("規定回数を超えました");
+#endif
+			break;
+		}
+	}
+}
+
 /// <summary>
 /// 二つのオブジェクトが接触しているかどうか
 /// </summary>
@@ -872,9 +958,9 @@ bool MyLibrary::Physics::IsCollide3(const Rigidbody& rigidA, const Rigidbody& ri
 	auto kindB = colliderB->GetKind();
 
 	//矩形と球体の当たり判定
-	if (kindA == MyLibrary::CollidableData::Kind::Rect && kindB == MyLibrary::CollidableData::Kind::Sphere)
+	if (kindA == MyLibrary::CollidableData::Kind::ShieldRect && kindB == MyLibrary::CollidableData::Kind::Sphere)
 	{
-		auto colA = dynamic_cast<MyLibrary::CollidableDataRect*>(colliderA);
+		auto colA = dynamic_cast<MyLibrary::CollidableDataShield*>(colliderA);
 		auto colB = dynamic_cast<MyLibrary::CollidableDataSphere*>(colliderB);
 
 		//相対ベクトル
@@ -935,6 +1021,72 @@ bool MyLibrary::Physics::IsCollide4(const Rigidbody& rigidA, const Rigidbody& ri
 
 		//当たり判定
 		isCollide = distance < combineRadius;
+	}
+
+	return isCollide;
+}
+
+bool MyLibrary::Physics::IsCollide5(const Rigidbody& rigidA, const Rigidbody& rigidB, CollidableData* colliderA, CollidableData* colliderB) const
+{
+	bool isCollide = false;
+
+	auto kindA = colliderA->GetKind();
+	auto kindB = colliderB->GetKind();
+
+	//矩形とカプセルの当たり判定
+	if (kindA == MyLibrary::CollidableData::Kind::ShieldRect && kindB == MyLibrary::CollidableData::Kind::AttackCapsule)
+	{
+		auto colA = dynamic_cast<MyLibrary::CollidableDataShield*>(colliderA);
+		auto colB = dynamic_cast<MyLibrary::CollidableDataAttackCapsule*>(colliderB);
+
+		//矩形の中心とアタックカプセルの中心相対位置を計算
+		auto rectCenter = rigidA.GetNextPos();
+		auto capsuleCenter = (colB->m_pos1 + colB->m_pos2) * 0.5f;
+		auto relativePos = capsuleCenter - rectCenter;
+
+		//矩形の半分のサイズを取得
+		auto halfSize = rigidA.GetSize() * 0.5f;
+
+		//アタックカプセルの半径を取得
+		float capsuleRadius = colB->m_radius;
+
+		LibVec3 vec;
+
+		vec.x = fabs(relativePos.x);
+		vec.y = fabs(relativePos.y);
+		vec.z = fabs(relativePos.z);
+
+		float trw = colB->m_radius + (rigidA.GetSize().width * 0.5f);
+		float trh = colB->m_radius + (rigidA.GetSize().height * 0.5f);
+		float trd = colB->m_radius + (rigidA.GetSize().depth * 0.5f);
+
+		//各成分の判定
+		bool isHitX = vec.x < trw;
+		bool isHitY = vec.y < trh;
+		bool isHitZ = vec.z < trd;
+
+		//判定
+		isCollide = isHitX && isHitY && isHitZ;
+
+		////相対ベクトル
+		//LibVec3 vec = rigidA.GetPos() - rigidB.GetPos();
+
+		////値の絶対化
+		//vec.x = fabs(vec.x);
+		//vec.y = fabs(vec.y);
+		//vec.z = fabs(vec.z);
+
+		//float trw = colB->m_radius + (rigidA.GetSize().width * 0.5f);
+		//float trh = colB->m_radius + (rigidA.GetSize().height * 0.5f);
+		//float trd = colB->m_radius + (rigidA.GetSize().depth * 0.5f);
+
+		////各成分の判定
+		//bool isHitX = vec.x < trw;
+		//bool isHitY = vec.y < trh;
+		//bool isHitZ = vec.z < trd;
+
+		////判定
+		//isCollide = isHitX && isHitY && isHitZ;
 	}
 
 	return isCollide;

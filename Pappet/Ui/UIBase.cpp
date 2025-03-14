@@ -17,7 +17,7 @@ UIBase::UIBase() :
 	m_body(0),
 	m_uglyShield(0),
 	m_commonArmor(0),
-	m_but(0),
+	m_bat(0),
 	m_woodShield(0),
 	m_rest(0),
 	m_dead(0),

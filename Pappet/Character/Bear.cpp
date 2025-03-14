@@ -203,8 +203,8 @@ void Bear::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos, bo
 	//アニメーションで移動しているフレームの番号を検索する
 	m_frameRightHand[0] = MV1SearchFrame(m_modelHandle, "mixamorig:RightForeArm");
 	m_frameRightHand[1] = MV1SearchFrame(m_modelHandle, "mixamorig:RightHandThumb4");
-	m_frameLiftHand[0] = MV1SearchFrame(m_modelHandle, "mixamorig:LeftForeArm");
-	m_frameLiftHand[1] = MV1SearchFrame(m_modelHandle, "mixamorig:LeftHandThumb4");
+	m_frameLiftHand[0] = MV1SearchFrame(m_modelHandle, "mixamorig:LeftArm");
+	m_frameLiftHand[1] = MV1SearchFrame(m_modelHandle, "mixamorig:LeftHand");
 
 	m_ligRightPos[0] = MV1GetFramePosition(m_modelHandle, m_frameRightHand[0]);
 	m_ligRightPos[1] = MV1GetFramePosition(m_modelHandle, m_frameRightHand[1]);
@@ -716,13 +716,12 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 		if (m_difPSize <= 80.0f)
 		{
 			m_randomAction = GetRand(2);
-			//m_randomAction = 1;
+			//m_randomAction = 2;
 		}
 		//近くないときのランダム行動
 		else
 		{
 			m_randomAction = GetRand(1) + 1;
-			//m_randomAction = 1;
 		}
 		
 	}

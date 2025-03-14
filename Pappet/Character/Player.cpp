@@ -48,17 +48,17 @@ namespace
 	//行動での移動距離
 	float cMove = 0.0f;
 	//拳の攻撃範囲
-	constexpr float cFistAttackRadius = 30.0f;
+	constexpr float cFistAttackRadius = 25.0f;
 	//攻撃の判定範囲
 	constexpr float cPartAttackRadius = 16.0f;
 	//強攻撃の攻撃範囲
 	constexpr float cStrengthAttackRadius = 100.0f;
 	//盾の幅
-	constexpr float cShieldWidth = 20.0f;
+	constexpr float cShieldWidth = 40.0f;
 	//盾の横
-	constexpr float cShieldHight = 60.0f;
+	constexpr float cShieldHight = 120.0f;
 	//盾の奥行
-	constexpr float cShieldDepht = 10.0f;
+	constexpr float cShieldDepht = 20.0f;
 	//盾の索敵範囲
 	constexpr float cShieldSearchRadius = 100.0f;
 	//現在のアタックのナンバーを入れる
@@ -245,7 +245,7 @@ void Player::Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* mana
 	//m_pAttack = std::make_shared<AttackObject>(m_attackRadius);
 	//m_pPartAttack = std::make_shared<AttackObjectPart>(cPartAttackRadius, 0.0f, 0.0f);
 	m_pStrengthAttack = std::make_shared<AttackObject>(cStrengthAttackRadius);
-	m_pLigAttack = std::make_shared<AttackLigObject>(MyLibrary::LibVec3(m_attackLigPos1.x, m_attackLigPos1.y, m_attackLigPos1.z), MyLibrary::LibVec3(m_attackLigPos2.x, m_attackLigPos2.y, m_attackLigPos2.z), cPartAttackRadius);
+	m_pLigAttack = std::make_shared<AttackLigObject>(MyLibrary::LibVec3(m_attackLigPos1.x, m_attackLigPos1.y, m_attackLigPos1.z), MyLibrary::LibVec3(m_attackLigPos2.x, m_attackLigPos2.y, m_attackLigPos2.z), cFistAttackRadius);
 
 	m_pSearch = std::make_shared<PlayerSearchObject>(m_searchRadius);
 	m_pSearch->Init(m_pPhysics, rigidbody.GetPos());
@@ -578,6 +578,7 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			//結構適当にしたけどこれでいいと思う
 			if (m_pShieldSearch->GetIsStay())
 			{
+				//盾の当たり判定
 				if (m_pShield->GetIsStay())
 				{
 					m_animChange.sa_imapact = true;
@@ -616,9 +617,13 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		{
 			for (auto damage : enemy.GetEnemyDamage())
 			{
-				if (damage > 0)
+				if (damage > 0 && shield.GetUgly())
 				{
 					m_status.s_stamina -= damage - (shield.GetStrengthUgly() / 10);
+				}
+				else if (damage > 0 && shield.GetWood())
+				{
+					m_status.s_stamina -= damage - (shield.GetStrengthWood() / 10);
 				}
 			}
 
@@ -742,7 +747,7 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	MyLibrary::LibVec3 ligAttackPos1 = MyLibrary::LibVec3(m_attackLigPos1.x, m_attackLigPos1.y, m_attackLigPos1.z);
 	MyLibrary::LibVec3 ligAttackPos2 = MyLibrary::LibVec3(m_attackLigPos2.x, m_attackLigPos2.y, m_attackLigPos2.z);
 	MyLibrary::LibVec3 StrengthAttackPos = MyLibrary::LibVec3(rigidbody.GetPos().x, rigidbody.GetPos().y, rigidbody.GetPos().z);
-	m_shieldPos = MyLibrary::LibVec3(rigidbody.GetPos().x + sinf(m_angle) * -15.0f, rigidbody.GetPos().y + 25.0f, rigidbody.GetPos().z - cosf(m_angle) * 15.0f);
+	m_shieldPos = MyLibrary::LibVec3(rigidbody.GetPos().x + sinf(m_angle) * -5.0f, rigidbody.GetPos().y + 25.0f, rigidbody.GetPos().z - cosf(m_angle) * 5.0f);
 
 	//sinでX軸のwidthのサイズを出す
 	if (sinf(m_angle) > 0)
@@ -1720,7 +1725,7 @@ void Player::Draw(Armor& armor, int font)
 	DrawFormatString(1000, 550, 0xffffff, "taking : %d", m_animChange.sa_taking);
 	DrawFormatString(1000, 650, 0xffffff, "touch : %d", m_animChange.sa_touch);
 #endif
-#if true
+#if false
 	DrawFormatString(1000, 150, 0xffffff, "posx : %f", rigidbody.GetPos().x);   //15
 	DrawFormatString(1000, 200, 0xffffff, "posy : %f", rigidbody.GetPos().y);   //12
 	DrawFormatString(1000, 250, 0xffffff, "posz : %f", rigidbody.GetPos().z);   //0

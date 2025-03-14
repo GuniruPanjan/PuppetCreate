@@ -160,6 +160,7 @@
     <ClCompile Include="Library\CollidableDataAttackCapsule.cpp" />
     <ClCompile Include="Library\CollidableDataCapsule.cpp" />
     <ClCompile Include="Library\CollidableDataRect.cpp" />
+    <ClCompile Include="Library\CollidableDataShield.cpp" />
     <ClCompile Include="Library\CollidableDataSphere.cpp" />
     <ClCompile Include="Library\DebugDraw.cpp" />
     <ClCompile Include="Library\Physics.cpp" />
@@ -226,6 +227,7 @@
     <ClInclude Include="Library\CollidableDataAttackCapsule.h" />
     <ClInclude Include="Library\CollidableDataCapsule.h" />
     <ClInclude Include="Library\CollidableDataRect.h" />
+    <ClInclude Include="Library\CollidableDataShield.h" />
     <ClInclude Include="Library\CollidableDataSphere.h" />
     <ClInclude Include="Library\DebugDraw.h" />
     <ClInclude Include="Library\LibMatrix3.h" />

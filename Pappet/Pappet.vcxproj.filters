@@ -267,6 +267,9 @@
     <ClCompile Include="External\Font.cpp">
       <Filter>ソース ファイル\External</Filter>
     </ClCompile>
+    <ClCompile Include="Library\CollidableDataShield.cpp">
+      <Filter>ソース ファイル\Library</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Icon\Icon.h">
@@ -469,6 +472,9 @@
     </ClInclude>
     <ClInclude Include="External\Font.h">
       <Filter>ヘッダー ファイル\External</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\CollidableDataShield.h">
+      <Filter>ヘッダー ファイル\Library</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

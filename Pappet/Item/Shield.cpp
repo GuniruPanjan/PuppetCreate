@@ -7,10 +7,6 @@ namespace
 	//アイテム名
 	constexpr const char* cItemName = "Shield";
 
-	//武器の行列
-	constexpr float cShieldMatrixY = 3.142f;
-	constexpr float cShieldMatrixZ = 0.0f;
-
 	//シングルトン
 	auto& handle = HandleManager::GetInstance();
 	auto& effect = EffectManager::GetInstance();
@@ -46,12 +42,23 @@ void Shield::Init()
 		m_ugly.ss_strength = 20.0f;
 
 		m_pos = VGet(0.0f, 0.0f, 7.787f);
+
+		m_shieldMatrixX = 0.0f;
+		m_shieldMatrixY = 3.142f;
+		m_shieldMatrixZ = 0.0f;
 	}
 	else if (m_wood.ss_equipment)
 	{
 		m_itemHandle = handle.GetModelHandle("Data/Shield/WoodenShield.mv1");
 		m_wood.ss_cut = 60.0f;
 		m_wood.ss_strength = 5.0f;
+
+		m_pos = VGet(0.0f, 0.0f, 6.512f);
+
+		m_shieldMatrixX = 0.0f;
+		m_shieldMatrixY = 3.231f;
+		m_shieldMatrixZ = 1.750f;
+
 	}
 }
 
@@ -80,18 +87,19 @@ void Shield::Update(MATRIX mat)
 {
 	MV1SetMatrix(m_itemHandle, MGetIdent());
 
-	//フレームを検索
-	m_frameIndex = MV1SearchFrame(m_itemHandle, "0:fbx");
+	////フレームを検索
+	//m_frameIndex = MV1SearchFrame(m_itemHandle, "0:fbx");
 
-	m_framePos = MV1GetFramePosition(m_itemHandle, m_frameIndex);
+	//m_framePos = MV1GetFramePosition(m_itemHandle, m_frameIndex);
 
-	m_pos = VAdd(m_framePos, m_pos);
+	//m_pos = VAdd(m_framePos, m_pos);
 
 	//アタッチするモデルをフレームの座標を原点にするための平行移動行列を作成
 	m_transMatrix = MGetTranslate(VScale(m_pos, -1.0f));
 
-	m_transMatrix = MMult(m_transMatrix, MGetRotY(cShieldMatrixY));
-	m_transMatrix = MMult(m_transMatrix, MGetRotZ(cShieldMatrixZ));
+	m_transMatrix = MMult(m_transMatrix, MGetRotX(m_shieldMatrixX));
+	m_transMatrix = MMult(m_transMatrix, MGetRotY(m_shieldMatrixY));
+	m_transMatrix = MMult(m_transMatrix, MGetRotZ(m_shieldMatrixZ));
 
 	m_mixMatrix = MMult(m_transMatrix, mat);
 

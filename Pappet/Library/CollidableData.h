@@ -15,6 +15,7 @@ namespace MyLibrary
 			AttackCapsule,  //攻撃型のカプセル型
 			Sphere,         //球体型
 			Rect,           //四角型
+			ShieldRect,     //防御型
 		};
 
 		//コンストラクタ

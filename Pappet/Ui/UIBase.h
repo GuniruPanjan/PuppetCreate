@@ -59,7 +59,7 @@ protected:
 	int m_body;           //—‡‘Ì‚Ì‰æ‘œŠi”[•Ï”
 	int m_uglyShield;     //X‚¢‚‚Ì‰æ‘œŠi”[•Ï”
 	int m_commonArmor;    //•½–}‚ÈŠZ‰æ‘œŠi”[•Ï”
-	int m_but;            //–Ø‚Ìƒoƒbƒg‰æ‘œŠi”[•Ï”
+	int m_bat;            //–Ø‚Ìƒoƒbƒg‰æ‘œŠi”[•Ï”
 	int m_woodShield;     //–Ø‚Ì‚‰æ‘œŠi”[•Ï”
 
 	//UI‚Ì‰æ‘œ

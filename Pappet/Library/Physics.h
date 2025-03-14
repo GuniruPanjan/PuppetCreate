@@ -76,6 +76,8 @@ namespace MyLibrary
 		void CheckCollide3();
 		//当たり判定チェック
 		void CheckCollide4();
+		//当たり判定チェック
+		void CheckCollide5();
 		//二つのオブジェクトが接続しているかどうか
 		bool IsCollide(const Rigidbody& rigidA, const Rigidbody& rigidB, CollidableData* colliderA, CollidableData* colliderB) const;
 		//二つのオブジェクトが接続しているかどうか
@@ -86,6 +88,8 @@ namespace MyLibrary
 		bool IsCollide3(const Rigidbody& rigidA, const Rigidbody& rigidB, CollidableData* colliderA, CollidableData* colliderB) const;
 		//二つのオブジェクトが接続しているかどうか
 		bool IsCollide4(const Rigidbody& rigidA, const Rigidbody& rigidB, CollidableData* colliderA, CollidableData* colliderB) const;
+		//二つのオブジェクトが接続しているかどうか
+		bool IsCollide5(const Rigidbody& rigidA, const Rigidbody& rigidB, CollidableData* colliderA, CollidableData* colliderB) const;
 		//当たったオブジェクトのペアを登録する
 		void AddNewCollideInfo(const std::shared_ptr<Collidable>& objA, const std::shared_ptr<Collidable>& objB, SendCollideInfo& info);
 		//移動予定の座標を修正する

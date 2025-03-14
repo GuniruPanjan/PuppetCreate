@@ -46,5 +46,9 @@ private:
 	sShield m_fist;    //‘fè
 	sShield m_ugly;    //X‚¢‚
 	sShield m_wood;    //–Ø‚Ì‚
+
+	float m_shieldMatrixX = 0.0f;
+	float m_shieldMatrixY = 0.0f;
+	float m_shieldMatrixZ = 0.0f;
 };
 

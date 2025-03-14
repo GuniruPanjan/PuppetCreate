@@ -51,7 +51,7 @@ void EnemyAttackLigObject::CollisionEnd()
 void EnemyAttackLigObject::OnTriggerEnter(const std::shared_ptr<Collidable>& collidable)
 {
 	auto tag = collidable->GetTag();
-	if (tag == ObjectTag::Player)
+	if (tag == ObjectTag::Player || tag == ObjectTag::Shield)
 	{
 		CollisionEnd();
 		m_isCollisionOn = false;

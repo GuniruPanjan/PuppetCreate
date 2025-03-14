@@ -7,11 +7,6 @@ namespace
 	//アイテム名
 	constexpr const char* cItemName = "Weapon";
 
-	//行列
-	//constexpr float cWeaponMatrixX = 0.0f;
-	//constexpr float cWeaponMatrixY = 5.655f;
-	//constexpr float cWeaponMatrixZ = 1.795f;
-
 	//シングルトン
 	auto& handle = HandleManager::GetInstance();
 	auto& effect = EffectManager::GetInstance();

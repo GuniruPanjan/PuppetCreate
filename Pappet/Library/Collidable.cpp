@@ -115,6 +115,10 @@ std::shared_ptr<MyLibrary::CollidableData> MyLibrary::Collidable::AddCollider(co
 	{
 		add = std::make_shared<CollidableDataRect>(isTrigger);
 	}
+	else if (kind == CollidableData::Kind::ShieldRect)
+	{
+		add = std::make_shared<CollidableDataShield>(isTrigger);
+	}
 	else
 	{
 		assert(0 && "Žw’è‚³‚ê‚½Ží—Þ‚Ì“–‚½‚è”»’è‚ð’Ç‰Á‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½");
