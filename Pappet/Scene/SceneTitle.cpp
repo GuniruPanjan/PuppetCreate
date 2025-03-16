@@ -376,7 +376,7 @@ void SceneTitle::Draw()
 	DrawGraph(1150, 900, m_AButton, true);
 	DrawStringToHandle(1210, 910, "決定", 0xffffff, m_pFont->GetHandle());
 	DrawGraph(1350, 900, m_BButton, true);
-	DrawStringToHandle(1410, 910,"キャンセル", 0xffffff, m_pFont->GetHandle());
+	DrawStringToHandle(1410, 910, "キャンセル", 0xffffff, m_pFont->GetHandle());
 
 	SetFontSize(40);
 

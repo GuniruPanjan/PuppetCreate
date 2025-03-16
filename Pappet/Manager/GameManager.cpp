@@ -16,8 +16,6 @@
 
 namespace
 {
-	//マップをワープする準備
-	bool cWarp = false;
 	//ワープ時に一回リセットする
 	bool cOne = false;
 	//ゲームBGMを再生する
@@ -43,7 +41,8 @@ GameManager::GameManager() :
 	m_nowMap(eMapName::TutorialMap),
 	m_deadInit(false),
 	m_init(false),
-	m_title(false)
+	m_title(false),
+	m_isLoading(false)
 {
 	m_pUi = std::make_shared<UI>();
 	m_pWeapon = std::make_shared<Weapon>();
@@ -104,8 +103,6 @@ void GameManager::Init()
 	m_pTool = std::make_shared<Tool>();
 	m_pTool->Init();
 
-	cWarp = false;
-
 	m_pBgm->GameOneInit();
 
 	if (m_pMap->GetStageName() == "stageTutorial")
@@ -116,6 +113,8 @@ void GameManager::Init()
 	{
 		cTutorial = false;
 	}
+
+	m_isLoading = true;      //必ず各クラスの後につける
 }
 
 /// <summary>
@@ -172,251 +171,268 @@ void GameManager::GameInit()
 /// </summary>
 void GameManager::Update()
 {
-	//ワープしてない時
-	if (!m_pPlayer->GetWarp() && !cClearTutorial)
+	if (m_isLoading)
 	{
-		m_pBgm->Update(m_pSetting->GetVolume());
+		m_pEnemy->EnemyGenerate(m_pPhysics, this, *m_pEnemyWeapon, cTutorial);
 
-		//一回再生
-		if (!cGameBGMOne && !m_pMap->GetBossRoom())
+		if (GetASyncLoadNum() == 0)
 		{
-			m_pBgm->GameBGM();
-
-			cBossBGMOne = false;
-			cGameBGMOne = true;
+			m_isLoading = false;
 		}
-
-		m_pPlayer->SetCameraAngle(m_pCamera->GetAngle().y);
-
-		//ロックオンしてない時
-		m_pCamera->Update(*m_pPlayer);
-		//ボス部屋に入ったらボスをロックオンするようにする
-		if (m_pMap->GetBossRoom() && m_pPlayer->GetLock() && !m_pEnemy->GetBossDead(GetThisMapName()))
+	}
+	else
+	{
+		//ワープしてない時
+		if (!m_pPlayer->GetWarp() && !cClearTutorial)
 		{
-			m_pCamera->LockBossUpdate(*m_pPlayer, *m_pEnemy);
-		}
-		//ロックオンしてる時
-		else if (m_pPlayer->GetLock())
-		{
-			m_pCamera->LockUpdate(*m_pPlayer, *m_pEnemy);
-		}
+			m_pBgm->Update(m_pSetting->GetVolume());
 
-		m_pItem->Update(m_pPhysics, this, m_pPlayer->GetTaking());
-		m_pMessage->Update(m_pPhysics, this, *m_pPlayer);
-		m_pEnemy->Update(m_pPhysics, this, *m_pCore, m_pPlayer->GetPos(), m_pCamera->GetDirection(), m_pPlayer->GetShieldPos(), !m_pPlayer->IsGetPlayerDead(), *m_pSe, *m_pEnemyWeapon, m_init, cTutorial);
-
-		m_pPlayer->Update(*m_pWeapon, *m_pShield, *m_pArmor, *m_pEnemy, *m_pCore, m_pMap->GetRestPos(), *m_pTool, *m_pSe, m_pMap->GetBossRoom(), m_pEnemy->GetBossDead(GetThisMapName()), m_pPhysics);
-
-
-		m_pMap->JudgeUpdate();
-
-		//プレイヤーのボス部屋に入り口判定
-		m_pPlayer->SetBossStart(m_pMap->GetBossEnter());
-
-		//休息ができるか
-		m_pPlayer->SetRest(m_pMap->GetRest());
-		//アイテムを拾えるかどうか
-		m_pPlayer->SetItemPick(m_pItem->GetItemPick());
-		//メッセージを読めるかどうか
-		m_pPlayer->SetMessegePick(false);
-		//ボス部屋に入ったか
-		m_pEnemy->SetBossRoom(m_pMap->GetBossRoom(), GetThisMapName());
-		//ボス部屋に入ったら
-		if (m_pMap->GetBossRoom())
-		{
-			if (!cBossBGMOne)
+			//一回再生
+			if (!cGameBGMOne && !m_pMap->GetBossRoom())
 			{
-				//ボスのBGM再生
-				m_pBgm->BossBGM();
+				m_pBgm->GameBGM();
 
-				cGameBGMOne = false;
-				cBossBGMOne = true;
+				cBossBGMOne = false;
+				cGameBGMOne = true;
 			}
-			
-		}
 
-		//ボスが死んだ判定
-		if (m_pEnemy->GetBossDead(GetThisMapName()))
-		{
-			cWarp = true;
-			m_pMap->CoreUpdate();
+			m_pPlayer->SetCameraAngle(m_pCamera->GetAngle().y);
 
-			m_pBgm->BossStopBGM();
-
-			//ステージ１だった場合
-			if (m_pMap->GetStageName() == "stage1")
+			//ロックオンしてない時
+			m_pCamera->Update(*m_pPlayer);
+			//ボス部屋に入ったらボスをロックオンするようにする
+			if (m_pMap->GetBossRoom() && m_pPlayer->GetLock() && !m_pEnemy->GetBossDead(GetThisMapName()))
 			{
-				//クマ
-				m_bossEnd.sBear = true;
+				m_pCamera->LockBossUpdate(*m_pPlayer, *m_pEnemy);
 			}
-			//ステージチュートリアルだった場合
-			else if (m_pMap->GetStageName() == "stageTutorial")
+			//ロックオンしてる時
+			else if (m_pPlayer->GetLock())
 			{
-				//アサシン
-				m_bossEnd.sAssassin = true;
+				m_pCamera->LockUpdate(*m_pPlayer, *m_pEnemy);
+			}
 
-				if (cTutorialTime >= 90.0f)
+			m_pItem->Update(m_pPhysics, this, m_pPlayer->GetTaking());
+			m_pMessage->Update(m_pPhysics, this, *m_pPlayer);
+			m_pEnemy->Update(m_pPhysics, this, *m_pCore, m_pPlayer->GetPos(), m_pCamera->GetDirection(), m_pPlayer->GetShieldPos(), !m_pPlayer->IsGetPlayerDead(), *m_pSe, *m_pEnemyWeapon, m_init, cTutorial);
+
+			m_pPlayer->Update(*m_pWeapon, *m_pShield, *m_pArmor, *m_pEnemy, *m_pCore, m_pMap->GetRestPos(), *m_pTool, *m_pSe, m_pMap->GetBossRoom(), m_pEnemy->GetBossDead(GetThisMapName()), m_pPhysics);
+
+
+			m_pMap->JudgeUpdate();
+
+			//プレイヤーのボス部屋に入り口判定
+			m_pPlayer->SetBossStart(m_pMap->GetBossEnter());
+
+			//休息ができるか
+			m_pPlayer->SetRest(m_pMap->GetRest());
+			//アイテムを拾えるかどうか
+			m_pPlayer->SetItemPick(m_pItem->GetItemPick());
+			//メッセージを読めるかどうか
+			m_pPlayer->SetMessegePick(false);
+			//ボス部屋に入ったか
+			m_pEnemy->SetBossRoom(m_pMap->GetBossRoom(), GetThisMapName());
+			//ボス部屋に入ったら
+			if (m_pMap->GetBossRoom())
+			{
+				if (!cBossBGMOne)
 				{
-					cClearTutorial = true;
-				}
-				else
-				{
-					cTutorialTime++;
+					//ボスのBGM再生
+					m_pBgm->BossBGM();
+
+					cGameBGMOne = false;
+					cBossBGMOne = true;
 				}
 
-				
 			}
 
-			//ワープする
-			if (m_pMap->GetCore())
+			//ボスが死んだ判定
+			if (m_pEnemy->GetBossDead(GetThisMapName()))
 			{
-				m_pPlayer->WarpMap();
-			}
-		}
-
-		m_pMap->Update(m_pPhysics, m_pPlayer->GetWarp(), m_pPlayer->GetBossStart(), m_pEnemy->GetBossDead(GetThisMapName()));
-
-		//メニューを開く
-		if (m_pPlayer->GetMenu() && !m_pSetting->GetEquipment() && !m_pSetting->GetItem())
-		{
-			m_pSetting->MenuUpdate(*m_pPlayer);
-
-			m_title = m_pSetting->GetTitle();
-
-			m_pPlayer->SetMenu(m_pSetting->GetReturn());
-		}
-		//装備画面を開く
-		else if (m_pSetting->GetEquipment() && !m_pSetting->GetDecision())
-		{
-			m_pSetting->EquipmentUpdate();
-		}
-		//アイテム画面を開く
-		else if (m_pSetting->GetItem() && !m_pSetting->GetDecision())
-		{
-			m_pSetting->ItemBoxUpdate();
-		}
-		//装備選択画面更新
-		else if (m_pSetting->GetDecision())
-		{
-			m_pSetting->EquipmentDecisionUpdate(*m_pWeapon, *m_pShield, *m_pArmor, *m_pItem);
-			EquipmentUpdate();
-		}
-		//メニューを開けるようにする
-		else if(!m_pPlayer->GetMenu() && !m_pSetting->GetEquipment() && !m_pSetting->GetItem())
-		{
-			m_pSetting->SetReturn(true);
-		}
-
-		//装備画面とアイテム画面の変更更新
-		if (m_pSetting->GetEquipment() || m_pSetting->GetItem())
-		{
-			if (!m_pSetting->GetDecision())
-			{
-				m_pSetting->MenuChange();
-			}
-			
-		}
-
-		//死亡した場合
-		if (m_pUi->GetReset())
-		{
-			//一回だけ実行
-			if (m_deadInit == true)
-			{
-				//cEffect.End();
-				m_pPlayer->GameInit(m_pPhysics);
-				m_pEnemy->GameInit(m_pPhysics, this, *m_pEnemyWeapon, m_deadInit, cTutorial);
-				m_pMap->TriggerReset();
-				m_pUi->Init();
-				m_pPlayer->ChangeStatus();
-				m_pTool->Init();
+				m_pMap->CoreUpdate();
 
 				m_pBgm->BossStopBGM();
 
-				m_deadInit = false;
-			}
-		}
-		else
-		{
-			m_deadInit = true;
-		}
+				//ステージ１だった場合
+				if (m_pMap->GetStageName() == "stage1")
+				{
+					//クマ
+					m_bossEnd.sBear = true;
+				}
+				//ステージチュートリアルだった場合
+				else if (m_pMap->GetStageName() == "stageTutorial")
+				{
+					//アサシン
+					m_bossEnd.sAssassin = true;
 
-		//休息した場合
-		if (m_pPlayer->GetRest())
-		{
-			//レベルアップ処理
-			if (m_pSetting->GetLevel())
+					if (cTutorialTime >= 90.0f)
+					{
+						cClearTutorial = true;
+					}
+					else
+					{
+						cTutorialTime++;
+					}
+
+
+				}
+
+				//ワープする
+				if (m_pMap->GetCore())
+				{
+					m_pPlayer->WarpMap();
+				}
+			}
+
+			m_pMap->Update(m_pPhysics, m_pPlayer->GetWarp(), m_pPlayer->GetBossStart(), m_pEnemy->GetBossDead(GetThisMapName()));
+
+			//メニューを開く
+			if (m_pPlayer->GetMenu() && !m_pSetting->GetEquipment() && !m_pSetting->GetItem())
 			{
-				m_pSetting->LevelUpdate(*m_pPlayer, *m_pCore);
-				m_pPlayer->ChangeStatus();
+				m_pSetting->MenuUpdate(*m_pPlayer);
+
+				m_title = m_pSetting->GetTitle();
+
+				m_pPlayer->SetMenu(m_pSetting->GetReturn());
+			}
+			//装備画面を開く
+			else if (m_pSetting->GetEquipment() && !m_pSetting->GetDecision())
+			{
+				m_pSetting->EquipmentUpdate();
+			}
+			//アイテム画面を開く
+			else if (m_pSetting->GetItem() && !m_pSetting->GetDecision())
+			{
+				m_pSetting->ItemBoxUpdate();
+			}
+			//装備選択画面更新
+			else if (m_pSetting->GetDecision())
+			{
+				m_pSetting->EquipmentDecisionUpdate(*m_pWeapon, *m_pShield, *m_pArmor, *m_pItem);
+				EquipmentUpdate();
+			}
+			//メニューを開けるようにする
+			else if (!m_pPlayer->GetMenu() && !m_pSetting->GetEquipment() && !m_pSetting->GetItem())
+			{
+				m_pSetting->SetReturn(true);
+			}
+
+			//装備画面とアイテム画面の変更更新
+			if (m_pSetting->GetEquipment() || m_pSetting->GetItem())
+			{
+				if (!m_pSetting->GetDecision())
+				{
+					m_pSetting->MenuChange();
+				}
 
 			}
-			//休息処理
-			else
+
+			//死亡した場合
+			if (m_pUi->GetReset())
 			{
 				//一回だけ実行
-				if (m_init == true)
+				if (m_deadInit == true)
 				{
+					//cEffect.End();
 					m_pPlayer->GameInit(m_pPhysics);
+					m_pEnemy->GameInit(m_pPhysics, this, *m_pEnemyWeapon, m_deadInit, cTutorial);
+					m_pMap->TriggerReset();
+					m_pUi->Init();
 					m_pPlayer->ChangeStatus();
 					m_pTool->Init();
 
-					//休息地点以外だと初期化
-					if (m_nowMap != 0)
-					{
-						m_pEnemy->GameInit(m_pPhysics, this, *m_pEnemyWeapon, m_init, cTutorial);
-					}
+					m_pBgm->BossStopBGM();
 
-					m_pMap->TriggerReset();
-
-					m_init = false;
+					m_deadInit = false;
+					m_isLoading = true;
 				}
-
-				m_pSetting->RestUpdate(*m_pPlayer, *m_pCore);
+			}
+			else
+			{
+				m_deadInit = true;
 			}
 
+			//休息した場合
+			if (m_pPlayer->GetRest())
+			{
+				//レベルアップ処理
+				if (m_pSetting->GetLevel())
+				{
+					m_pSetting->LevelUpdate(*m_pPlayer, *m_pCore);
+					m_pPlayer->ChangeStatus();
+
+				}
+				//休息処理
+				else
+				{
+					//一回だけ実行
+					if (m_init == true)
+					{
+						m_pPlayer->GameInit(m_pPhysics);
+						m_pPlayer->ChangeStatus();
+						m_pTool->Init();
+
+						//休息地点以外だと初期化
+						if (m_nowMap != 0)
+						{
+							m_pEnemy->GameInit(m_pPhysics, this, *m_pEnemyWeapon, m_init, cTutorial);
+						}
+
+						m_pMap->TriggerReset();
+
+						m_init = false;
+
+						m_isLoading = true;
+					}
+
+					m_pSetting->RestUpdate(*m_pPlayer, *m_pCore);
+
+				}
+
+			}
+			else
+			{
+				m_init = true;
+			}
+
+			cOne = false;
+
+			//物理更新
+			m_pPhysics->Update();
 		}
-		else
+		//ワープしたとき
+		else if (m_pPlayer->GetWarp() || cClearTutorial)
 		{
-			m_init = true;
+			//チュートリアルをクリアしたら強制ワープ
+			if (cClearTutorial)
+			{
+				m_pPlayer->SetWarp(true);
+			}
+
+			m_pMap->WarpUpdate(m_pPhysics, m_pPlayer->GetWarp(), false);
+
+			//一回だけ実行
+			if (!cOne)
+			{
+				cEffect.End();
+				m_pEnemy->End();
+				m_pItem->End();
+				m_pBgm->GameEnd();
+				m_pSetting->End();
+				m_pUi->End();
+				GameInit();
+
+				m_pPlayer->SetWarp(false);
+
+				cOne = true;
+			}
+
+			cClearTutorial = false;
+
+			m_isLoading = true;
 		}
 
-		cOne = false;
-
-		//物理更新
-		m_pPhysics->Update();
+		cEffect.Update();
 	}
-	//ワープしたとき
-	else if (m_pPlayer->GetWarp() || cClearTutorial)
-	{
-		//チュートリアルをクリアしたら強制ワープ
-		if (cClearTutorial)
-		{
-			m_pPlayer->SetWarp(true);
-		}
-
-		m_pMap->WarpUpdate(m_pPhysics, m_pPlayer->GetWarp(), false);
-
-		//一回だけ実行
-		if (!cOne)
-		{
-			cEffect.End();
-			m_pEnemy->End();
-			m_pItem->End();
-			m_pBgm->GameEnd();
-			m_pSetting->End();
-			m_pUi->End();
-			GameInit();
-
-			m_pPlayer->SetWarp(false);
-
-			cOne = true;
-		}
-
-		cClearTutorial = false;
-	}
-
-	cEffect.Update();
 	
 }
 
@@ -425,86 +441,112 @@ void GameManager::Update()
 /// </summary>
 void GameManager::Draw()
 {
-	m_pMap->Draw();
-	m_pPlayer->Draw(*m_pArmor, m_pFont->GetHandle());
-	m_pWeapon->Draw();
-	m_pShield->Draw();
-	m_pEnemy->Draw(*m_pUi, *m_pEnemyWeapon);
-	//m_pNpc->Draw();
-
-	//ボスが死んだ判定
-	if (cWarp)
+	if (m_isLoading)
 	{
-		m_pMap->CoreDraw();
+		DrawString(0, 0, "NowLoading...", 0xffffff);
+
+		// ロードの進行状況を計算
+		int totalLoadTasks = GetASyncLoadNum(); // 総ロードタスク数を取得する関数（仮定）
+		int remainingLoadTasks = GetASyncLoadNum(); // 残りのロードタスク数を取得
+		float progress = 1.0f - (static_cast<float>(remainingLoadTasks) / totalLoadTasks);
+
+		// バーの描画
+		int barWidth = 200; // バーの幅
+		int barHeight = 20; // バーの高さ
+		int barX = 100; // バーのX座標
+		int barY = 50; // バーのY座標
+		DrawBox(barX, barY, barX + static_cast<int>(barWidth * progress), barY + barHeight, 0x00ff00, TRUE); // プログレスバー
+		DrawBox(barX, barY, barX + barWidth, barY + barHeight, 0xffffff, false);
+
+
+		//if (GetASyncLoadNum() == 0)
+		//{
+		//	m_isLoading = false;
+		//}
 	}
-
-	m_pCamera->Draw();
-
-	cEffect.Draw();
-
-	m_pUi->Draw(*m_pPlayer, *m_pEnemy, *m_pSetting, *m_pMap, *m_pItem, *m_pWeapon, *m_pShield, *m_pArmor, *m_pTool, *m_pMessage);
-
-	//メニューの背景描画
-	if (m_pPlayer->GetMenu())
+	else
 	{
-		m_pSetting->MenuBackDraw();
-	}
+		m_pMap->Draw();
+		m_pPlayer->Draw(*m_pArmor, m_pFont->GetHandle());
+		m_pWeapon->Draw();
+		m_pShield->Draw();
+		m_pEnemy->Draw(*m_pUi, *m_pEnemyWeapon);
+		//m_pNpc->Draw();
 
-	//メニュー画面
-	if (m_pPlayer->GetMenu() && !m_pSetting->GetEquipment() && !m_pSetting->GetItem())
-	{
-		m_pSetting->MenuDraw();
-	}
-	//装備画面
-	else if (m_pSetting->GetEquipment() && !m_pSetting->GetDecision())
-	{
-		m_pSetting->EquipmentDraw();
-		m_pUi->EquipmentDraw(*m_pWeapon, *m_pShield, *m_pArmor);
-	}
-	//アイテム画面
-	else if (m_pSetting->GetItem() && !m_pSetting->GetDecision())
-	{
-		m_pSetting->ItemBoxDraw();
-	}
-	//装備選択画面描画
-	else if (m_pSetting->GetDecision())
-	{
-		m_pSetting->EquipmentDecisionDraw(*m_pItem);
-		EquipmentDraw();
-	}
-
-	//アイテム画面と装備画面の変更描画
-	if (m_pSetting->GetEquipment() || m_pSetting->GetItem())
-	{
-		if (!m_pSetting->GetDecision())
+		//ボスが死んだ判定
+		if (m_pEnemy->GetBossDead(GetThisMapName()))
 		{
-			m_pSetting->MenuChangeDraw();
+			m_pMap->CoreDraw();
 		}
-	}
 
-	//休息画面描画
-	if (m_pPlayer->GetRest())
-	{
-		if (m_pSetting->GetLevel())
+		m_pCamera->Draw();
+
+		cEffect.Draw();
+
+		m_pUi->Draw(*m_pPlayer, *m_pEnemy, *m_pSetting, *m_pMap, *m_pItem, *m_pWeapon, *m_pShield, *m_pArmor, *m_pTool, *m_pMessage);
+
+		//メニューの背景描画
+		if (m_pPlayer->GetMenu())
 		{
-			m_pSetting->LevelUpDraw(*m_pPlayer, *m_pCore);
+			m_pSetting->MenuBackDraw();
 		}
-		else
+
+		//メニュー画面
+		if (m_pPlayer->GetMenu() && !m_pSetting->GetEquipment() && !m_pSetting->GetItem())
 		{
-			m_pSetting->RestDraw(m_pPlayer->GetBigRest());
+			m_pSetting->MenuDraw();
 		}
+		//装備画面
+		else if (m_pSetting->GetEquipment() && !m_pSetting->GetDecision())
+		{
+			m_pSetting->EquipmentDraw();
+			m_pUi->EquipmentDraw(*m_pWeapon, *m_pShield, *m_pArmor);
+		}
+		//アイテム画面
+		else if (m_pSetting->GetItem() && !m_pSetting->GetDecision())
+		{
+			m_pSetting->ItemBoxDraw();
+		}
+		//装備選択画面描画
+		else if (m_pSetting->GetDecision())
+		{
+			m_pSetting->EquipmentDecisionDraw(*m_pItem);
+			EquipmentDraw();
+		}
+
+		//アイテム画面と装備画面の変更描画
+		if (m_pSetting->GetEquipment() || m_pSetting->GetItem())
+		{
+			if (!m_pSetting->GetDecision())
+			{
+				m_pSetting->MenuChangeDraw();
+			}
+		}
+
+		//休息画面描画
+		if (m_pPlayer->GetRest())
+		{
+			if (m_pSetting->GetLevel())
+			{
+				m_pSetting->LevelUpDraw(*m_pPlayer, *m_pCore);
+			}
+			else
+			{
+				m_pSetting->RestDraw(m_pPlayer->GetBigRest());
+			}
+		}
+
+
+		if (m_pPlayer->GetDead())
+		{
+			m_pUi->DiedDraw();
+		}
+
+		m_pItem->Draw();
+
+		m_pMessage->DrawString();
+		m_pMessage->Draw();
 	}
-
-
-	if (m_pPlayer->GetDead())
-	{
-		m_pUi->DiedDraw();
-	}
-
-	m_pItem->Draw();
-
-	m_pMessage->DrawString();
-	m_pMessage->Draw();
 
 }
 

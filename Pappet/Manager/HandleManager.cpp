@@ -20,6 +20,7 @@ HandleManager::~HandleManager()
 
 int HandleManager::GetModelHandle(std::string path, bool isEternal)
 {
+
 	//すでにロードされていたら複製ハンドルを返す
 	for (auto& h : m_handles)
 	{
@@ -31,7 +32,11 @@ int HandleManager::GetModelHandle(std::string path, bool isEternal)
 
 	//ロードされていなかったら
 	Handle add;
+
+	SetUseASyncLoadFlag(true);     //非同期読み込み有効
 	add.handle = MV1LoadModel(path.c_str());
+	SetUseASyncLoadFlag(false);    //以降非同期読み込み判定してはいけないため解除
+
 	add.path = path;
 	add.isEternal = isEternal;
 

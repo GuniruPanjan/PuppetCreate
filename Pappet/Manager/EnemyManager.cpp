@@ -117,24 +117,14 @@ void EnemyManager::GameInit(std::shared_ptr<MyLibrary::Physics> physics, GameMan
 }
 
 /// <summary>
-/// 更新
+/// エネミーを作る関数
 /// </summary>
-/// <param name="physics">物理クラス</param>
-/// <param name="gameManager">ゲームマナジャー</param>
-/// <param name="playerPos">プレイヤーポジション</param>
-/// <param name="playerDir">プレイヤーの方向</param>
-/// <param name="isPlayerChase">プレイヤーを発見したかどうか</param>
-void EnemyManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, CoreManager& core, MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 playerDir, MyLibrary::LibVec3 shieldPos, bool isPlayerChase, SEManager& se, EnemyWeapon& weapon, bool init, bool tutorial)
+/// <param name="physics"></param>
+/// <param name="gameManager"></param>
+/// <param name="weapon"></param>
+/// <param name="tutorial"></param>
+void EnemyManager::EnemyGenerate(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, EnemyWeapon& weapon, bool tutorial)
 {
-	m_enemyPos.clear();
-	m_enemyTarget.clear();
-	m_damage.clear();
-	m_enemyAttackHit.clear();
-	m_dropCore.clear();
-	m_bossJudg.clear();
-	m_enemyIsDead.clear();
-
-
 	//今のマップがどのマップか取得する
 	auto thisMapName = gameManager->GetThisMapName();
 
@@ -178,11 +168,34 @@ void EnemyManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManag
 						generate->isCreated = true;
 						CreateEnemy(generate->posX, generate->posY, generate->posZ, generate->enemyName, physics, tutorial, weapon);
 					}
-					
+
 				}
 			}
 		}
 	}
+}
+
+/// <summary>
+/// 更新
+/// </summary>
+/// <param name="physics">物理クラス</param>
+/// <param name="gameManager">ゲームマナジャー</param>
+/// <param name="playerPos">プレイヤーポジション</param>
+/// <param name="playerDir">プレイヤーの方向</param>
+/// <param name="isPlayerChase">プレイヤーを発見したかどうか</param>
+void EnemyManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, CoreManager& core, MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 playerDir, MyLibrary::LibVec3 shieldPos, bool isPlayerChase, SEManager& se, EnemyWeapon& weapon, bool init, bool tutorial)
+{
+	m_enemyPos.clear();
+	m_enemyTarget.clear();
+	m_damage.clear();
+	m_enemyAttackHit.clear();
+	m_dropCore.clear();
+	m_bossJudg.clear();
+	m_enemyIsDead.clear();
+
+
+	//今のマップがどのマップか取得する
+	auto thisMapName = gameManager->GetThisMapName();
 	
 	//マップが0以外だと動かす
 	if (thisMapName != 0)

@@ -44,6 +44,8 @@ public:
 	void Init(int mapNumber);
 	//ゲームの仕様上での初期化
 	void GameInit(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, EnemyWeapon& weapon, bool init = false, bool tutorial = false);
+	//敵を作る
+	void EnemyGenerate(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, EnemyWeapon& weapon, bool tutorial = false);
 	//更新
 	void Update(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, CoreManager& core, MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 playerDir, MyLibrary::LibVec3 shieldPos, bool isPlayerChase, SEManager& se, EnemyWeapon& weapon,
 		        bool init = false, bool tutorial = false);

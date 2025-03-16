@@ -103,11 +103,14 @@ void Message::DrawString()
 	//説明描画
 	if (m_draw)
 	{
-		//公式メッセージ描画
+		//今後何をするかの説明
 		if (m_official == 1)
 		{
 			//背景描画
 			DrawGraph(130, 100, m_messageUI, false);
+
+
+
 		}
 		//移動チュートリアル
 		else if (m_official == 2)

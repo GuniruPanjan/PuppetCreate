@@ -109,5 +109,7 @@ private:
 	bool m_init;
 	//ƒ^ƒCƒgƒ‹‚É–ß‚é
 	bool m_title;
+	//”ñ“¯Šúˆ—
+	bool m_isLoading;
 };
 

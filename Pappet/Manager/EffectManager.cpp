@@ -47,6 +47,8 @@ void EffectManager::Init()
 /// <param name="scale">拡大率</param>
 void EffectManager::EffectLoad(std::string name, const char* path, int endFrame, float scale)
 {
+	SetUseASyncLoadFlag(true);     //非同期読み込み有効
+
 	//同じパスのエフェクトがロードされていないか確認する
 	for (auto& effect : m_effect)
 	{
@@ -56,13 +58,19 @@ void EffectManager::EffectLoad(std::string name, const char* path, int endFrame,
 		}
 	}
 
+
 	//ここまで来たらロードする
 	std::shared_ptr<EffectEmitter> add = std::make_shared<EffectEmitter>();
+
+	SetUseASyncLoadFlag(false);    //以降非同期読み込み判定してはいけないため解除
+
+
 	add->emitterHandle = LoadEffekseerEffect(path, scale);
 	assert(add->emitterHandle != -1 && "エフェクトロード失敗");
 	add->endFrame = endFrame;
 
 	m_effect[name] = add;
+
 }
 
 /// <summary>

@@ -14,7 +14,8 @@ class SceneBase : public std::enable_shared_from_this<SceneBase>
 public:
 	//コンストラクタ
 	SceneBase() :
-		m_end(false)
+		m_end(false),
+		m_isLoading(false)
 	{}
 
 	//デストラクタ
@@ -51,6 +52,8 @@ protected:
 	//変数を入れる
 	int m_backScene = 0;
 	bool m_end;   //ゲーム終了変数
+
+	bool m_isLoading;     //非同期処理
 
 	//スマートポインタ
 	std::shared_ptr<Setting> m_pSetting = std::make_shared<Setting>();
