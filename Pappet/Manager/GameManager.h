@@ -22,6 +22,7 @@ class ItemManager;
 class UI;
 class Tool;
 class SEManager;
+class FadeManager;
 class Font;
 
 /// <summary>
@@ -58,7 +59,6 @@ public:
 	void ChangeStage(const char* stageName);
 	void End();
 
-	void EquipmentUpdate();
 	void EquipmentDraw();
 
 	//現在のマップ名を取得
@@ -94,6 +94,7 @@ private:
 	std::shared_ptr<MessageManager> m_pMessage;
 	std::shared_ptr<SEManager> m_pSe;
 	std::shared_ptr<Font> m_pFont;
+	std::shared_ptr<FadeManager> m_pFade;
 
 	//現在のマップ
 	eMapName m_nowMap;
@@ -102,6 +103,8 @@ private:
 
 	//
 	sBossEnd m_bossEnd;
+	//ロード時間
+	int m_load;
 
 	//死亡で初期化する
 	bool m_deadInit;
@@ -111,5 +114,7 @@ private:
 	bool m_title;
 	//非同期処理
 	bool m_isLoading;
+	//休息
+	bool m_restInit;
 };
 

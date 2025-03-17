@@ -92,7 +92,10 @@ UIBase::~UIBase()
 /// <returns>サイズを変えた画像を返す</returns>
 int UIBase::MyLoadGraph(const char* FileName, int XSize, int YSize)
 {
+	SetUseASyncLoadFlag(TRUE);     //非同期読み込み有効
 	int handle = LoadGraph(FileName);  //画像のロード
+	SetUseASyncLoadFlag(FALSE);    //以降非同期読み込み判定してはいけないため解除
+
 	if (handle != -1)  //画像のロードに成功した場合
 	{
 		int SizeX, SizeY;  //画像サイズを格納するための変数を用意

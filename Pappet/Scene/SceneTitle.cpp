@@ -5,6 +5,7 @@
 #include "Map/Map.h"
 #include "Manager/MapManager.h"
 #include "Manager/EffectManager.h"
+#include "Manager/FadeManager.h"
 #include "External/Font.h"
 
 namespace
@@ -44,6 +45,7 @@ SceneTitle::SceneTitle() :
 	m_one(false),
 	m_blend(false),
 	m_setButton(false),
+	m_decisionButton(false),
 	m_waitTime(0),
 	m_cameraPos(VGet(0.0f, 0.0f, 0.0f)),
 	m_playerHandle(0),
@@ -139,6 +141,9 @@ void SceneTitle::Init()
 	m_cameraPos = VGet(-80.0f, 35.0f, 80.0f);
 	m_cameraTarget = VGet(cCameraTargetx, cCameraTargety, cCameraTargetz);
 
+	//フェードアウトイン初期化
+	m_pFade->Init();
+
 	//フォント初期化
 	m_pFont->FontInit(cFontSize);
 
@@ -150,6 +155,7 @@ void SceneTitle::Init()
 
 	m_one = false;
 	m_blend = false;
+	m_decisionButton = false;
 }
 
 /// <summary>
@@ -188,12 +194,12 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 		GetJoypadXInputState(DX_INPUT_KEY_PAD1, &m_xpad);
 
 		//上
-		if (m_xpad.ThumbLY > 2000 || m_xpad.Buttons[0] == 1)
+		if (m_xpad.ThumbLY > 2000 || m_xpad.Buttons[0] == 1 && !m_decisionButton)
 		{
 			m_button++;
 		}
 		//下
-		else if (m_xpad.ThumbLY < 0 || m_xpad.Buttons[1] == 1)
+		else if (m_xpad.ThumbLY < 0 || m_xpad.Buttons[1] == 1 && !m_decisionButton)
 		{
 			m_button--;
 		}
@@ -236,12 +242,8 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 				//ゲームスタート
 				if (selectDecision == 8)
 				{
-					m_pMap->End(m_pPhysics, true);
-					m_pSetting->End();
-
-					return std::make_shared<SceneGame>();
-
-					//pmap->End();
+					//ボタンを決定した判定
+					m_decisionButton = true;
 				}
 				//設定
 				if (selectDecision == 9)
@@ -259,7 +261,7 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 				}
 			}
 			//Bボタンを押したら
-			else if (m_xpad.Buttons[13] == 1)
+			else if (m_xpad.Buttons[13] == 1 && !m_decisionButton)
 			{
 				SetEnd(true);
 			}
@@ -276,10 +278,27 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 
 	}
 	//設定を開く
-	if (m_pSetting->GetSettingScene() == true)
+	else if (m_pSetting->GetSettingScene() == true)
 	{
 		m_pSetting->Update();
 	}
+
+	if (m_decisionButton)
+	{
+		//フェード開始
+		m_pFade->FadeOut();
+	}
+
+	//フェードアウト完了
+	if (m_pFade->GetOut())
+	{
+		m_pMap->End(m_pPhysics, true);
+		m_pSetting->End();
+
+		return std::make_shared<SceneGame>();
+	}
+
+
 
 	if (m_playTime >= m_totalAnimationTime && m_animation != -1)
 	{
@@ -392,6 +411,9 @@ void SceneTitle::Draw()
 	{
 		pselect->Draw();
 	}
+
+	//フェードアウトイン描画
+	m_pFade->Draw();
 }
 
 /// <summary>

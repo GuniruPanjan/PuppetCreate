@@ -169,6 +169,7 @@
     <ClCompile Include="Manager\CoreManager.cpp" />
     <ClCompile Include="Manager\EffectManager.cpp" />
     <ClCompile Include="Manager\EnemyManager.cpp" />
+    <ClCompile Include="Manager\FadeManager.cpp" />
     <ClCompile Include="Manager\GameManager.cpp" />
     <ClCompile Include="Manager\HandleManager.cpp" />
     <ClCompile Include="Manager\ItemManager.cpp" />
@@ -240,6 +241,7 @@
     <ClInclude Include="Manager\CoreManager.h" />
     <ClInclude Include="Manager\EffectManager.h" />
     <ClInclude Include="Manager\EnemyManager.h" />
+    <ClInclude Include="Manager\FadeManager.h" />
     <ClInclude Include="Manager\GameManager.h" />
     <ClInclude Include="Manager\HandleManager.h" />
     <ClInclude Include="Manager\ItemManager.h" />

@@ -10,9 +10,7 @@
 #include "Manager/SEManager.h"
 #include "Item/Tool.h"
 #include "External/Font.h"
-
-//カメラの初期化で描画バグが発生する
-//カメラのせいでマップとモデルの描画がバグる
+#include "Manager/FadeManager.h"
 
 namespace
 {
@@ -39,10 +37,12 @@ namespace
 /// </summary>
 GameManager::GameManager() :
 	m_nowMap(eMapName::TutorialMap),
+	m_load(0),
 	m_deadInit(false),
 	m_init(false),
 	m_title(false),
-	m_isLoading(false)
+	m_isLoading(false),
+	m_restInit(false)
 {
 	m_pUi = std::make_shared<UI>();
 	m_pWeapon = std::make_shared<Weapon>();
@@ -99,6 +99,10 @@ void GameManager::Init()
 
 	//フォントの初期化
 	m_pFont->FontInit(32);
+
+	m_pFade = std::make_shared<FadeManager>();
+	//フェードアウトイン初期化
+	m_pFade->Init();
 	
 	m_pTool = std::make_shared<Tool>();
 	m_pTool->Init();
@@ -113,6 +117,8 @@ void GameManager::Init()
 	{
 		cTutorial = false;
 	}
+
+	m_load = 30;
 
 	m_isLoading = true;      //必ず各クラスの後につける
 }
@@ -144,6 +150,7 @@ void GameManager::GameInit()
 
 	m_pTool->Init();
 
+	m_load = 30;
 
 	//ステージ１だった場合
 	if (m_pMap->GetStageName() == "stage1")
@@ -175,13 +182,32 @@ void GameManager::Update()
 	{
 		m_pEnemy->EnemyGenerate(m_pPhysics, this, *m_pEnemyWeapon, cTutorial);
 
-		if (GetASyncLoadNum() == 0)
+		m_pCamera->Update(*m_pPlayer);
+
+		m_pFade->SetFade(255);
+
+		if (m_load == 0)
 		{
 			m_isLoading = false;
 		}
 	}
 	else
 	{
+		//フェードインが完了していない
+		if (!m_pFade->GetIn())
+		{
+			m_pFade->FadeIn();
+		}
+		
+
+		//休息初期化
+		if (m_restInit)
+		{
+			m_pEnemy->EnemyGenerate(m_pPhysics, this, *m_pEnemyWeapon, cTutorial);
+
+			m_restInit = false;
+		}
+
 		//ワープしてない時
 		if (!m_pPlayer->GetWarp() && !cClearTutorial)
 		{
@@ -308,7 +334,6 @@ void GameManager::Update()
 			else if (m_pSetting->GetDecision())
 			{
 				m_pSetting->EquipmentDecisionUpdate(*m_pWeapon, *m_pShield, *m_pArmor, *m_pItem);
-				EquipmentUpdate();
 			}
 			//メニューを開けるようにする
 			else if (!m_pPlayer->GetMenu() && !m_pSetting->GetEquipment() && !m_pSetting->GetItem())
@@ -343,6 +368,9 @@ void GameManager::Update()
 					m_pBgm->BossStopBGM();
 
 					m_deadInit = false;
+
+					m_load = 20;
+
 					m_isLoading = true;
 				}
 			}
@@ -379,9 +407,8 @@ void GameManager::Update()
 
 						m_pMap->TriggerReset();
 
+						m_restInit = true;
 						m_init = false;
-
-						m_isLoading = true;
 					}
 
 					m_pSetting->RestUpdate(*m_pPlayer, *m_pCore);
@@ -446,9 +473,12 @@ void GameManager::Draw()
 		DrawString(0, 0, "NowLoading...", 0xffffff);
 
 		// ロードの進行状況を計算
-		int totalLoadTasks = GetASyncLoadNum(); // 総ロードタスク数を取得する関数（仮定）
-		int remainingLoadTasks = GetASyncLoadNum(); // 残りのロードタスク数を取得
-		float progress = 1.0f - (static_cast<float>(remainingLoadTasks) / totalLoadTasks);
+		int totalLoadTasks = m_load; // 総ロードタスク数を取得する関数（仮定）
+
+		m_load--;
+
+		int remainingLoadTasks = m_load; // 残りのロードタスク数を取得
+		float progress = 1.0f - (static_cast<float>(remainingLoadTasks) / static_cast<float>(totalLoadTasks));
 
 		// バーの描画
 		int barWidth = 200; // バーの幅
@@ -457,12 +487,6 @@ void GameManager::Draw()
 		int barY = 50; // バーのY座標
 		DrawBox(barX, barY, barX + static_cast<int>(barWidth * progress), barY + barHeight, 0x00ff00, TRUE); // プログレスバー
 		DrawBox(barX, barY, barX + barWidth, barY + barHeight, 0xffffff, false);
-
-
-		//if (GetASyncLoadNum() == 0)
-		//{
-		//	m_isLoading = false;
-		//}
 	}
 	else
 	{
@@ -546,6 +570,11 @@ void GameManager::Draw()
 
 		m_pMessage->DrawString();
 		m_pMessage->Draw();
+		
+
+		//フェードアウトイン描画
+		m_pFade->Draw();
+
 	}
 
 }
@@ -587,28 +616,6 @@ void GameManager::End()
 	m_pSetting->End();
 	m_pEnemy->End();
 	m_pMessage->End();
-}
-
-/// <summary>
-/// 装備の更新処理
-/// </summary>
-void GameManager::EquipmentUpdate()
-{
-	//右装備
-	if (m_pSetting->GetSelect().right)
-	{
-
-	}
-	//左装備
-	else if (m_pSetting->GetSelect().left)
-	{
-
-	}
-	//防具
-	else if (m_pSetting->GetSelect().armor)
-	{
-
-	}
 }
 
 /// <summary>
