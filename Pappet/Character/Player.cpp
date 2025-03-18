@@ -270,6 +270,9 @@ void Player::Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* mana
 
 	m_staminaBreak = false;
 
+	//攻撃で死んだ時ヒット判定を消す
+	m_anim.s_hit = false;
+
 	//装備初期化
 	if (!cEquipmentOne)
 	{
@@ -315,6 +318,9 @@ void Player::GameInit(std::shared_ptr<MyLibrary::Physics> physics)
 
 	m_deadReset = false;
 	m_staminaBreak = false;
+
+	//攻撃で死んだ時ヒット判定を消す
+	m_anim.s_hit = false;
 
 	//HPの最大回復量
 	m_maxHeel = 80;
@@ -747,7 +753,7 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	MyLibrary::LibVec3 ligAttackPos1 = MyLibrary::LibVec3(m_attackLigPos1.x, m_attackLigPos1.y, m_attackLigPos1.z);
 	MyLibrary::LibVec3 ligAttackPos2 = MyLibrary::LibVec3(m_attackLigPos2.x, m_attackLigPos2.y, m_attackLigPos2.z);
 	MyLibrary::LibVec3 StrengthAttackPos = MyLibrary::LibVec3(rigidbody.GetPos().x, rigidbody.GetPos().y, rigidbody.GetPos().z);
-	m_shieldPos = MyLibrary::LibVec3(rigidbody.GetPos().x + sinf(m_angle) * -5.0f, rigidbody.GetPos().y + 25.0f, rigidbody.GetPos().z - cosf(m_angle) * 5.0f);
+	m_shieldPos = MyLibrary::LibVec3(rigidbody.GetPos().x + sinf(m_angle) * -15.0f, rigidbody.GetPos().y + 25.0f, rigidbody.GetPos().z - cosf(m_angle) * 15.0f);
 
 	//sinでX軸のwidthのサイズを出す
 	if (sinf(m_angle) > 0)

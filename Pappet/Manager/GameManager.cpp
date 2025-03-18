@@ -184,7 +184,9 @@ void GameManager::Update()
 
 		m_pCamera->Update(*m_pPlayer);
 
+		//フェードインされる準備
 		m_pFade->SetFade(255);
+		m_pFade->SetIn(false);
 
 		if (m_load == 0)
 		{
@@ -196,9 +198,14 @@ void GameManager::Update()
 		//フェードインが完了していない
 		if (!m_pFade->GetIn())
 		{
-			m_pFade->FadeIn();
+			m_pFade->FadeIn(5);
 		}
 		
+		//フェードアウトさせる
+		if (m_pPlayer->GetDead())
+		{
+			m_pFade->FadeOut(1);
+		}
 
 		//休息初期化
 		if (m_restInit)
@@ -560,12 +567,6 @@ void GameManager::Draw()
 			}
 		}
 
-
-		if (m_pPlayer->GetDead())
-		{
-			m_pUi->DiedDraw();
-		}
-
 		m_pItem->Draw();
 
 		m_pMessage->DrawString();
@@ -574,6 +575,11 @@ void GameManager::Draw()
 
 		//フェードアウトイン描画
 		m_pFade->Draw();
+		//死亡した時描画する
+		if (m_pPlayer->GetDead())
+		{
+			m_pUi->DiedDraw();
+		}
 
 	}
 

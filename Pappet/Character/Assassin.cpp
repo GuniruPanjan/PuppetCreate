@@ -389,6 +389,7 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 			}
 		}
 	}
+	//攻撃行動移動
 	else if (m_anim.s_attack && !m_enemyAnim.s_rool && !m_anim.s_hit)
 	{
 		cAvoidanceMove = 0.0f;
@@ -409,6 +410,7 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 			}
 		}
 	}
+	//回避行動移動
 	else if (m_enemyAnim.s_rool && !m_anim.s_attack && !m_anim.s_hit)
 	{
 		cAttackMove = 0.0f;
@@ -429,6 +431,7 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 			}
 		}
 	}
+	//怯み行動移動
 	else if (m_anim.s_hit && !m_enemyAnim.s_rool && !m_anim.s_attack)
 	{
 		cAttackMove = 0.0f;
@@ -961,6 +964,9 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 
 			AttackUpdate("Attack2", 4);
 
+			//回避状態終了
+			m_avoidnaceNow = false;
+
 			m_enemyAnim.s_rool = false;
 			m_anim.s_moveflag = false;
 		}
@@ -975,6 +981,9 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 			m_move = VGet(0.0f, 0.0f, 0.0f);
 
 			AttackUpdate("Attack3", 5);
+
+			//回避状態終了
+			m_avoidnaceNow = false;
 
 			m_enemyAnim.s_rool = false;
 			m_anim.s_moveflag = false;
@@ -991,6 +1000,9 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 
 			AttackUpdate("Attack4", 6);
 
+			//回避状態終了
+			m_avoidnaceNow = false;
+
 			m_enemyAnim.s_rool = false;
 			m_anim.s_moveflag = false;
 		}
@@ -1005,6 +1017,9 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 			m_move = VGet(0.0f, 0.0f, 0.0f);
 
 			AttackUpdate("Attack5", 7);
+
+			//回避状態終了
+			m_avoidnaceNow = false;
 
 			m_anim.s_moveflag = false;
 			m_enemyAnim.s_rool = false;
@@ -1024,6 +1039,9 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 		//ランダム行動で6は出た場合
 		else if (m_randomAction == 6)
 		{
+			//回避状態終了
+			m_avoidnaceNow = false;
+
 			m_enemyAnim.s_rool = false;
 			m_anim.s_moveflag = false;
 			m_anim.s_attack = false;

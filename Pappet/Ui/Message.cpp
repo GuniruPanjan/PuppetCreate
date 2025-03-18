@@ -109,8 +109,12 @@ void Message::DrawString()
 			//背景描画
 			DrawGraph(130, 100, m_messageUI, false);
 
-
-
+			DrawStringToHandle(400, 150, "目の前の大釜では特殊な休息ができ", 0xffffff, m_pFont->GetHandle());
+			DrawStringToHandle(400, 250, "右下にある取得したコアを使って", 0xffffff, m_pFont->GetHandle());
+			DrawStringToHandle(500, 350, "レベルを上げることが可能", 0xffffff, m_pFont->GetHandle());
+			DrawStringToHandle(500, 450, "レベルを上げ各地に居座る", 0xffffff, m_pFont->GetHandle());
+			DrawStringToHandle(400, 550, "強大なコアを持った人形達を倒し", 0xffffff, m_pFont->GetHandle());
+			DrawStringToHandle(700, 650, "頂点に立て", 0xffffff, m_pFont->GetHandle());
 		}
 		//移動チュートリアル
 		else if (m_official == 2)

@@ -28,7 +28,7 @@ void FadeManager::Init()
 /// <summary>
 /// フェードアウト関数
 /// </summary>
-void FadeManager::FadeOut()
+void FadeManager::FadeOut(int fade)
 {
 	//一回だけ実行
 	if (!cIn)
@@ -41,7 +41,7 @@ void FadeManager::FadeOut()
 
 	if (m_fade < 255)
 	{
-		m_fade += 2;
+		m_fade += fade;
 	}
 	else
 	{
@@ -52,7 +52,7 @@ void FadeManager::FadeOut()
 /// <summary>
 /// フェードイン関数
 /// </summary>
-void FadeManager::FadeIn()
+void FadeManager::FadeIn(int fade)
 {
 	//一回だけ実行
 	if (!cOut)
@@ -65,7 +65,7 @@ void FadeManager::FadeIn()
 
 	if (m_fade > 0)
 	{
-		m_fade -= 2;
+		m_fade -= fade;
 	}
 	else
 	{

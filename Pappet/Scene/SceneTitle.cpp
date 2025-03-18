@@ -237,7 +237,10 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 			//Aボタンを押したら
 			if (m_xpad.Buttons[12] == 1 || CheckHitKey(KEY_INPUT_A) == 1)
 			{
-				PlaySoundMem(pse->GetButtonSE(), DX_PLAYTYPE_BACK, true);
+				if (!m_decisionButton)
+				{
+					PlaySoundMem(pse->GetButtonSE(), DX_PLAYTYPE_BACK, true);
+				}
 
 				//ゲームスタート
 				if (selectDecision == 8)
@@ -286,7 +289,7 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 	if (m_decisionButton)
 	{
 		//フェード開始
-		m_pFade->FadeOut();
+		m_pFade->FadeOut(2);
 	}
 
 	//フェードアウト完了

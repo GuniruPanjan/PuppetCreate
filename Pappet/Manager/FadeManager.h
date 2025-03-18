@@ -20,9 +20,9 @@ public:
 	void Init();
 
 	//フェードアウト関数
-	void FadeOut();
+	void FadeOut(int fade);
 	//フェードイン関数
-	void FadeIn();
+	void FadeIn(int fade);
 	//描画処理
 	void Draw();
 	//終了処理
