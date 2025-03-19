@@ -148,8 +148,7 @@ private:
 	//const char* m_enemyBossName;
 
 	//死亡の画像透過アルファ値
-	int m_deadBack;
-	int m_deadA;
+	int m_youDead;
 
 	//死亡時のゲームリセット
 	int m_waitResetTime;

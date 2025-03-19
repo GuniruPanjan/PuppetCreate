@@ -40,8 +40,7 @@ UI::~UI()
 /// <param name="enemy"></param>
 void UI::Init()
 {
-	m_deadBack = 0;
-	m_deadA = 0;
+	m_youDead = 0;
 	m_waitResetTime = 0;
 	m_deadReset = false;
 
@@ -253,7 +252,7 @@ void UI::RightDraw(Weapon& weapon, ItemManager& item)
 {
 	int x = 100;
 	int y = 210;
-	int offset = 160;
+	int offset = 150;
 	//Œ
 	DrawGraph(70, 56, m_fist, true);
 
@@ -287,7 +286,8 @@ void UI::LeftDraw(Shield& shield, ItemManager& item)
 {
 	int x = 85;
 	int y = 230;
-	int offset = 180;
+	int offset = 150;
+
 
 	//Œ
 	DrawGraph(70, 56, m_fist, true);
@@ -427,19 +427,14 @@ void UI::ItemTakingUI(int item, int handle, int x, int y, int charX, int charY, 
 /// </summary>
 void UI::DiedDraw()
 {
-	//€–S‚Ì”wŒi‚Ì“§‰ß
-	if (m_deadBack < 150)
-	{
-		m_deadBack++;
-	}
 	//€–S‚Ì•¶š‚Ì“§‰ß
-	if (m_deadA < 255)
+	if (m_youDead < 255)
 	{
-		m_deadA++;
+		m_youDead++;
 
 		m_waitResetTime = 0;
 	}
-	else if (m_deadA >= 255)
+	else if (m_youDead >= 255)
 	{
 		if (m_waitResetTime <= 30)
 		{
@@ -451,14 +446,9 @@ void UI::DiedDraw()
 		}
 	}
 
-	//”wŒi‚ÌF‚ğ”–‚­‚·‚é
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_deadBack);
-	DrawBox(0, 100, 2000, 400, 0x000000, true);
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
 	//€–S‚Ì•¶š‚ğo‚·
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_deadA);
-	DrawGraph(-150, -100, m_dead, true);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_youDead);
+	DrawGraph(-150, 100, m_dead, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
 }

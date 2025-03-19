@@ -48,11 +48,12 @@ private:
 	int m_button;    //押した時間を得る
 	int m_select[3];    //選択用の変数
 	int m_pal[3];      //ブレンド描画用
+	int m_waitTime;      //待つための時間
+	int m_load;          //ロード時間
 	bool m_one;      //単発入力
 	bool m_blend;    //ブレンド判定
 	bool m_setButton;    //設定の判定
 	bool m_decisionButton;  //決定判定
-	int m_waitTime;      //待つための時間
 	VECTOR m_cameraPos;    //カメラポジション
 	VECTOR m_cameraTarget;     //カメラのターゲットポジション
 

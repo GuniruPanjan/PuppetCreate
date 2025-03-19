@@ -39,7 +39,7 @@ void Shield::Init()
 	{
 		m_itemHandle = handle.GetModelHandle("Data/Shield/Shield.mv1");
 		m_ugly.ss_cut = 90.0f;
-		m_ugly.ss_strength = 20.0f;
+		m_ugly.ss_strength = 100.0f;
 
 		m_pos = VGet(0.0f, 0.0f, 7.787f);
 
@@ -51,7 +51,7 @@ void Shield::Init()
 	{
 		m_itemHandle = handle.GetModelHandle("Data/Shield/WoodenShield.mv1");
 		m_wood.ss_cut = 60.0f;
-		m_wood.ss_strength = 5.0f;
+		m_wood.ss_strength = 50.0f;
 
 		m_pos = VGet(0.0f, 0.0f, 6.512f);
 

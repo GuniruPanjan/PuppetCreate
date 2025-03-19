@@ -1,16 +1,11 @@
 #include "SelectManager.h"
 #include "DxLib.h"
 
-namespace
-{
-	bool menuOne = false;   //一度だけ行う
-	bool itemOne = false;   //一度だけ行う
-}
-
 /// <summary>
 /// コンストラクタ
 /// </summary>
 SelectManager::SelectManager():
+	m_menuOne(false),
 	NowSelect()
 {
 }
@@ -33,12 +28,12 @@ SelectManager::~SelectManager()
 void SelectManager::Menu_Update(int stick, bool& one, int button, int& decision, int now)
 {
 	//一度だけ初期化
-	if (menuOne == false)
+	if (m_menuOne == false)
 	{
 		NowSelect = now;   //現在の選択肢
 		decision = 0;
 
-		menuOne = true;
+		m_menuOne = true;
 	}
 
 	//上選択or左選択
@@ -84,43 +79,43 @@ void SelectManager::Menu_Update(int stick, bool& one, int button, int& decision,
 		{
 		case One:
 			decision = 1;
-			menuOne = false;
+			m_menuOne = false;
 			break;
 		case Two:
 			decision = 2;
-			menuOne = false;
+			m_menuOne = false;
 			break;
 		case Three:
 			decision = 3;
-			menuOne = false;
+			m_menuOne = false;
 			break;
 		case Four:
 			decision = 4;
-			menuOne = false;
+			m_menuOne = false;
 			break;
 		case Five:
 			decision = 5;
-			menuOne = false;
+			m_menuOne = false;
 			break;
 		case Six:
 			decision = 6;
-			menuOne = false;
+			m_menuOne = false;
 			break;
 		case Seven:
 			decision = 7;
-			menuOne = false;
+			m_menuOne = false;
 			break;
 		case Eight:
 			decision = 8;
-			menuOne = false;
+			m_menuOne = false;
 			break;
 		case Nine:
 			decision = 9;
-			menuOne = false;
+			m_menuOne = false;
 			break;
 		case Ten:
 			decision = 10;
-			menuOne = false;
+			m_menuOne = false;
 			break;
 		}
 	}

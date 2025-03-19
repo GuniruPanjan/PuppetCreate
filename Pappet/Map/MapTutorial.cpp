@@ -45,6 +45,8 @@ namespace
 	bool cEffectOne = false;
 	//エフェクトの再生位置
 	VECTOR cEffectPos = VGet(-10.0f, 50.0f, 0.0f);
+	VECTOR cEffectPos1 = VGet(-10.0f, 50.0f, 30.0f);
+	VECTOR cEffectPos2 = VGet(-10.0f, 50.0f, -30.0f);
 
 	//シングルトン
 	auto& cEffect = EffectManager::GetInstance();
@@ -165,7 +167,9 @@ std::shared_ptr<MapBase> MapTutorial::Update(bool warp, bool enter, bool Dead)
 	//エフェクトの生成
 	if (cEffectTime >= 20 && !Dead)
 	{
-		cEffect.EffectCreate("Smoke", cEffectPos);
+		cEffect.EffectCreate("Smoke", cEffectPos1);
+		cEffect.EffectCreate("Smoke", cEffectPos2);
+
 
 		cEffectTime = 0;
 	}
@@ -173,6 +177,19 @@ std::shared_ptr<MapBase> MapTutorial::Update(bool warp, bool enter, bool Dead)
 	{
 		cEffectTime++;
 	}
+
+	//エフェクトの生成
+	if (m_effect >= 30)
+	{
+		cEffect.EffectCreate("RestLuminescence", VGet(-150.0f, 1.0f, 130.0f));
+
+		m_effect = 0;
+	}
+	else
+	{
+		m_effect++;
+	}
+
 	//エフェクト生成
 	if (!cEffectOne && enter && !Dead)
 	{

@@ -40,6 +40,7 @@ public:
 
 	//•`‰æˆ—
 	void Draw();
-
+private:
+	bool m_menuOne;    //ˆê‰ñ‚¾‚¯s‚¤
 };
 

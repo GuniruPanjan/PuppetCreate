@@ -343,7 +343,7 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	m_moveAnimFrameIndex = MV1SearchFrame(m_modelHandle, "mixamorig:Hips");
 	m_moveAnimFrameRight = MV1SearchFrame(m_modelHandle, "mixamorig:RightHandThumb2");
 
-	//装備をしていないときのリグ
+	//装備をしていない時のリグ
 	if (weapon.GetFist())
 	{
 		m_attackLig1 = MV1SearchFrame(m_modelHandle, "mixamorig:RightForeArm");
@@ -352,8 +352,8 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		m_attackLigPos1 = MV1GetFramePosition(m_modelHandle, m_attackLig1);
 		m_attackLigPos2 = MV1GetFramePosition(m_modelHandle, m_attackLig2);
 	}
-	//木の棒を装備したときのリグ
-	else if (weapon.GetBat())
+	//装備をしている時のリグ
+	else if (!weapon.GetFist())
 	{
 		m_attackLigPos1 = weapon.WeaponPattern();
 		m_attackLigPos2 = weapon.WeaponTip();

@@ -93,6 +93,13 @@ Setting::Setting() :
 	m_titleMenu(false),
 	m_statusLevel(false),
 	m_up(false),
+	m_menuDecision(false),
+	m_reset(false),
+	m_change(),
+	m_core(0),
+	m_equipmentColorPos(),
+	m_selectObject(),
+	ms_levelUP(),
 	m_xpad()
 {
 
@@ -159,6 +166,7 @@ void Setting::Init()
 	m_equipmentMenu = false;
 	m_returnMenu = true;
 	m_titleMenu = false;
+	m_menuDecision = false;
 
 	m_brightnessColor = 0xffffff;
 	m_bgmColor = 0xffffff;
@@ -295,12 +303,12 @@ void Setting::MenuUpdate(Player& player)
 	GetJoypadXInputState(DX_INPUT_KEY_PAD1, &m_xpad);
 
 	//上
-	if (m_xpad.Buttons[0] == 1)
+	if (m_xpad.Buttons[0] == 1 && !m_menuDecision)
 	{
 		m_button++;
 	}
 	//下
-	else if (m_xpad.Buttons[1] == 1)
+	else if (m_xpad.Buttons[1] == 1 && !m_menuDecision)
 	{
 		m_button--;
 	}
@@ -321,7 +329,11 @@ void Setting::MenuUpdate(Player& player)
 		//Aボタンが押されたら
 		if (m_xpad.Buttons[12] == 1)
 		{
-			PlaySoundMem(pse->GetButtonSE(), DX_PLAYTYPE_BACK, true);
+			if (!m_menuDecision)
+			{
+				PlaySoundMem(pse->GetButtonSE(), DX_PLAYTYPE_BACK, true);
+
+			}
 
 			//装備選択
 			if (selectDecision == 8)
@@ -342,6 +354,8 @@ void Setting::MenuUpdate(Player& player)
 			if (selectDecision == 10)
 			{
 				m_titleMenu = true;
+
+				m_menuDecision = true;
 			}
 
 			//リセット
@@ -512,7 +526,7 @@ void Setting::RestUpdate(Player& player, CoreManager& core)
 	//普通の休息だった場合
 	if (!player.GetBigRest())
 	{
-		pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Nine);
+		pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Eight);
 
 		if (cWaitTime >= 10)
 		{
@@ -521,6 +535,11 @@ void Setting::RestUpdate(Player& player, CoreManager& core)
 			{
 				PlaySoundMem(pse->GetButtonSE(), DX_PLAYTYPE_BACK, true);
 
+				//休息する
+				if (selectDecision == 8)
+				{
+					m_reset = true;
+				}
 				//転送
 				if (selectDecision == 9)
 				{
@@ -554,7 +573,7 @@ void Setting::RestUpdate(Player& player, CoreManager& core)
 	//レベルを上げられる休息だった場合
 	else
 	{
-		pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Eight);
+		pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Seven);
 
 		if (cWaitTime >= 10)
 		{
@@ -563,6 +582,11 @@ void Setting::RestUpdate(Player& player, CoreManager& core)
 			{
 				PlaySoundMem(pse->GetButtonSE(), DX_PLAYTYPE_BACK, true);
 
+				//休息する
+				if (selectDecision == 7)
+				{
+					m_reset = true;
+				}
 				//レベルを上げる
 				if (selectDecision == 8)
 				{
@@ -1257,35 +1281,6 @@ void Setting::RestDraw(bool rest)
 	//普通の休息
 	if (!rest)
 	{
-		if (pselect->NowSelect == pselect->Nine)
-		{
-			m_selectY = 255;
-
-			m_menuColor[0] = 0x000000;
-			m_menuColor[1] = 0xffffff;
-		}
-		else if (pselect->NowSelect == pselect->Ten)
-		{
-			m_selectY = 355;
-
-			m_menuColor[0] = 0xffffff;
-			m_menuColor[1] = 0x000000;
-		}
-
-		//フォントのサイズ変更
-		SetFontSize(60);
-
-		DrawString(150, 50, "普通の休息", 0xffffff);
-
-		//フォントのサイズ変更
-		SetFontSize(40);
-
-		DrawString(150, 300, "転送", m_menuColor[0]);
-		DrawString(150, 400, "立ち去る", m_menuColor[1]);
-	}
-	//レベル上げられる休息
-	else
-	{
 		if (pselect->NowSelect == pselect->Eight)
 		{
 			m_selectY = 255;
@@ -1314,14 +1309,68 @@ void Setting::RestDraw(bool rest)
 		//フォントのサイズ変更
 		SetFontSize(60);
 
+		DrawString(150, 50, "普通の休息", 0xffffff);
+
+		//フォントのサイズ変更
+		SetFontSize(40);
+
+		DrawString(150, 300, "休息", m_menuColor[0]);
+		DrawString(150, 400, "転送", m_menuColor[1]);
+		DrawString(150, 500, "立ち去る", m_menuColor[2]);
+	}
+	//レベル上げられる休息
+	else
+	{
+		if (pselect->NowSelect == pselect->Seven)
+		{
+			m_selectY = 255;
+
+			m_menuColor[0] = 0x000000;
+			m_menuColor[1] = 0xffffff;
+			m_menuColor[2] = 0xffffff;
+			m_menuColor[3] = 0xffffff;
+		}
+		else if (pselect->NowSelect == pselect->Eight)
+		{
+			m_selectY = 355;
+
+			m_menuColor[0] = 0xffffff;
+			m_menuColor[1] = 0x000000;
+			m_menuColor[2] = 0xffffff;
+			m_menuColor[3] = 0xffffff;
+		}
+		else if (pselect->NowSelect == pselect->Nine)
+		{
+			m_selectY = 455;
+
+			m_menuColor[0] = 0xffffff;
+			m_menuColor[1] = 0xffffff;
+			m_menuColor[2] = 0x000000;
+			m_menuColor[3] = 0xffffff;
+
+		}
+		else if (pselect->NowSelect == pselect->Ten)
+		{
+			m_selectY = 555;
+
+			m_menuColor[0] = 0xffffff;
+			m_menuColor[1] = 0xffffff;
+			m_menuColor[2] = 0xffffff;
+			m_menuColor[3] = 0x000000;
+		}
+
+		//フォントのサイズ変更
+		SetFontSize(60);
+
 		DrawString(150, 50, "魂器", 0xffffff);
 
 		//フォントのサイズ変更
 		SetFontSize(40);
 
-		DrawString(150, 300, "レベル上げ", m_menuColor[0]);
-		DrawString(150, 400, "転送", m_menuColor[1]);
-		DrawString(150, 500, "立ち去る", m_menuColor[2]);
+		DrawString(150, 300, "休息", m_menuColor[0]);
+		DrawString(150, 400, "レベル上げ", m_menuColor[1]);
+		DrawString(150, 500, "転送", m_menuColor[2]);
+		DrawString(150, 600, "立ち去る", m_menuColor[3]);
 	}
 }
 

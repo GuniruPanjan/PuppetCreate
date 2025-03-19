@@ -39,10 +39,10 @@ GameManager::GameManager() :
 	m_nowMap(eMapName::TutorialMap),
 	m_load(0),
 	m_deadInit(false),
-	m_init(false),
 	m_title(false),
 	m_isLoading(false),
-	m_restInit(false)
+	m_restInit(false),
+	m_fadeTitle(false)
 {
 	m_pUi = std::make_shared<UI>();
 	m_pWeapon = std::make_shared<Weapon>();
@@ -70,6 +70,7 @@ void GameManager::Init()
 {
 	cGameBGMOne = false;
 	cBossBGMOne = false;
+	
 
 	m_pMap->DataInit(6);
 
@@ -206,6 +207,18 @@ void GameManager::Update()
 		{
 			m_pFade->FadeOut(1);
 		}
+		//タイトルに戻る際のフェードアウト
+		else if (m_fadeTitle)
+		{
+			m_pFade->FadeOut(5);
+		}
+
+		//フェードアウト完了でタイトルにもどる
+		if (m_pFade->GetOut())
+		{
+			m_title = m_pSetting->GetTitle();
+		}
+
 
 		//休息初期化
 		if (m_restInit)
@@ -246,7 +259,7 @@ void GameManager::Update()
 
 			m_pItem->Update(m_pPhysics, this, m_pPlayer->GetTaking());
 			m_pMessage->Update(m_pPhysics, this, *m_pPlayer);
-			m_pEnemy->Update(m_pPhysics, this, *m_pCore, m_pPlayer->GetPos(), m_pCamera->GetDirection(), m_pPlayer->GetShieldPos(), !m_pPlayer->IsGetPlayerDead(), *m_pSe, *m_pEnemyWeapon, m_init, cTutorial);
+			m_pEnemy->Update(m_pPhysics, this, *m_pCore, m_pPlayer->GetPos(), m_pCamera->GetDirection(), m_pPlayer->GetShieldPos(), !m_pPlayer->IsGetPlayerDead(), *m_pSe, *m_pEnemyWeapon, cTutorial);
 
 			m_pPlayer->Update(*m_pWeapon, *m_pShield, *m_pArmor, *m_pEnemy, *m_pCore, m_pMap->GetRestPos(), *m_pTool, *m_pSe, m_pMap->GetBossRoom(), m_pEnemy->GetBossDead(GetThisMapName()), m_pPhysics);
 
@@ -323,7 +336,12 @@ void GameManager::Update()
 			{
 				m_pSetting->MenuUpdate(*m_pPlayer);
 
-				m_title = m_pSetting->GetTitle();
+				//タイトルに戻る際のフェードアウトをさせる
+				if (m_pSetting->GetTitle())
+				{
+					m_fadeTitle = true;
+
+				}
 
 				m_pPlayer->SetMenu(m_pSetting->GetReturn());
 			}
@@ -389,6 +407,8 @@ void GameManager::Update()
 			//休息した場合
 			if (m_pPlayer->GetRest())
 			{
+				m_pSetting->RestUpdate(*m_pPlayer, *m_pCore);
+
 				//レベルアップ処理
 				if (m_pSetting->GetLevel())
 				{
@@ -397,35 +417,26 @@ void GameManager::Update()
 
 				}
 				//休息処理
-				else
+				else if(m_pSetting->GetReset())
 				{
 					//一回だけ実行
-					if (m_init == true)
+					m_pPlayer->GameInit(m_pPhysics);
+					m_pPlayer->ChangeStatus();
+					m_pTool->Init();
+
+					//休息地点以外だと初期化
+					if (m_nowMap != 0)
 					{
-						m_pPlayer->GameInit(m_pPhysics);
-						m_pPlayer->ChangeStatus();
-						m_pTool->Init();
-
-						//休息地点以外だと初期化
-						if (m_nowMap != 0)
-						{
-							m_pEnemy->GameInit(m_pPhysics, this, *m_pEnemyWeapon, m_init, cTutorial);
-						}
-
-						m_pMap->TriggerReset();
-
-						m_restInit = true;
-						m_init = false;
+						m_pEnemy->GameInit(m_pPhysics, this, *m_pEnemyWeapon, m_pSetting->GetReset(), cTutorial);
 					}
 
-					m_pSetting->RestUpdate(*m_pPlayer, *m_pCore);
+					m_pMap->TriggerReset();
 
+					m_pSetting->SetReset(false);
+
+					m_restInit = true;
 				}
 
-			}
-			else
-			{
-				m_init = true;
 			}
 
 			cOne = false;

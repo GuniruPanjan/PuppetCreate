@@ -94,6 +94,7 @@ protected:
 	int m_wallHandle;                       //壁のハンドル
 	int m_ceilingHandle;                    //天井のハンドル
 	int m_restObjectHandle;                 //休息のハンドル
+	int m_effect;                           //エフェクトの再生
 	float m_size;                           //マップのサイズ
 	float m_width;                          //幅
 	float m_hight;                          //高さ

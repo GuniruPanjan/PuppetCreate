@@ -26,6 +26,9 @@ namespace
 
 	int cHandY = 600;
 
+	//一回だけ行う
+	bool cOne = false;
+
 	//シングルトン
 	auto& handle = HandleManager::GetInstance();
 	auto& cEffect = EffectManager::GetInstance();
@@ -153,6 +156,22 @@ void SceneTitle::Init()
 	m_pBgm->TitleBGM();
 	pse->SceneInit();
 
+	//一回だけ行う
+	if (!cOne)
+	{
+		//非同期処理をしない
+		m_isLoading = false;
+
+		cOne = true;
+	}
+	else
+	{
+		//非同期処理を行う
+		m_isLoading = true;
+
+		m_load = 20;
+	}
+
 	m_one = false;
 	m_blend = false;
 	m_decisionButton = false;
@@ -164,158 +183,165 @@ void SceneTitle::Init()
 /// <returns>シーンを返す</returns>
 std::shared_ptr<SceneBase> SceneTitle::Update()
 {
-	cEffect.Update();
-	m_pMap->Update(m_pPhysics, false, false, false);
-
-	//カメラ上下に動く用
-	if (cCameraTargety >= 140.0f)
+	if (m_isLoading)
 	{
-		cCameraTrun = false;
-	}
-	else if (cCameraTargety <= 100.0f)
-	{
-		cCameraTrun = true;
-	}
-
-	if (!cCameraTrun)
-	{
-		cCameraTargety -= 0.1f;
-	}
-	else if (cCameraTrun)
-	{
-		cCameraTargety += 0.1f;
-	}
-
-	m_cameraTarget = VGet(cCameraTargetx, cCameraTargety, cCameraTargetz);
-
-	if (m_pSetting->GetSettingScene() == false)
-	{
-		//パッド入力所得
-		GetJoypadXInputState(DX_INPUT_KEY_PAD1, &m_xpad);
-
-		//上
-		if (m_xpad.ThumbLY > 2000 || m_xpad.Buttons[0] == 1 && !m_decisionButton)
+		//非同期を終わらせる
+		if (m_load == 0)
 		{
-			m_button++;
+			m_isLoading = false;
 		}
-		//下
-		else if (m_xpad.ThumbLY < 0 || m_xpad.Buttons[1] == 1 && !m_decisionButton)
-		{
-			m_button--;
-		}
-		else
-		{
-			//初期化
-			m_button = 0;
+	}
+	else
+	{
+		cEffect.Update();
+		m_pMap->Update(m_pPhysics, false, false, false);
 
-			m_one = false;
+		//カメラ上下に動く用
+		if (cCameraTargety >= 140.0f)
+		{
+			cCameraTrun = false;
+		}
+		else if (cCameraTargety <= 100.0f)
+		{
+			cCameraTrun = true;
 		}
 
-		m_playTime += 0.5f;
+		if (!cCameraTrun)
+		{
+			cCameraTargety -= 0.1f;
+		}
+		else if (cCameraTrun)
+		{
+			cCameraTargety += 0.1f;
+		}
 
-		//選択する
+		m_cameraTarget = VGet(cCameraTargetx, cCameraTargety, cCameraTargetz);
+
 		if (m_pSetting->GetSettingScene() == false)
 		{
-			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Eight);
-		}
+			//パッド入力所得
+			GetJoypadXInputState(DX_INPUT_KEY_PAD1, &m_xpad);
 
-		if (pselect->NowSelect == 7)
-		{
-			cHandY = 600;
-		}
-		else if (pselect->NowSelect == 8)
-		{
-			cHandY = 750;
-		}
-		else if (pselect->NowSelect == 9)
-		{
-			cHandY = 900;
-		}
-
-		if (m_waitTime > 50)
-		{
-			//Aボタンを押したら
-			if (m_xpad.Buttons[12] == 1 || CheckHitKey(KEY_INPUT_A) == 1)
+			//上
+			if (m_xpad.ThumbLY > 2000 || m_xpad.Buttons[0] == 1 && !m_decisionButton)
 			{
-				if (!m_decisionButton)
-				{
-					PlaySoundMem(pse->GetButtonSE(), DX_PLAYTYPE_BACK, true);
-				}
+				m_button++;
+			}
+			//下
+			else if (m_xpad.ThumbLY < 0 || m_xpad.Buttons[1] == 1 && !m_decisionButton)
+			{
+				m_button--;
+			}
+			else
+			{
+				//初期化
+				m_button = 0;
 
-				//ゲームスタート
-				if (selectDecision == 8)
-				{
-					//ボタンを決定した判定
-					m_decisionButton = true;
-				}
-				//設定
-				if (selectDecision == 9)
-				{
-					m_setButton = true;
+				m_one = false;
+			}
 
-					m_waitTime = 0;
+			m_playTime += 0.5f;
 
-					m_pSetting->SetSettingScene(m_setButton);
+			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Eight);
+
+			if (pselect->NowSelect == 7)
+			{
+				cHandY = 600;
+			}
+			else if (pselect->NowSelect == 8)
+			{
+				cHandY = 750;
+			}
+			else if (pselect->NowSelect == 9)
+			{
+				cHandY = 900;
+			}
+
+			if (m_waitTime > 50)
+			{
+				//Aボタンを押したら
+				if (m_xpad.Buttons[12] == 1 || CheckHitKey(KEY_INPUT_A) == 1)
+				{
+					if (!m_decisionButton)
+					{
+						PlaySoundMem(pse->GetButtonSE(), DX_PLAYTYPE_BACK, true);
+					}
+
+					//ゲームスタート
+					if (selectDecision == 8)
+					{
+						//ボタンを決定した判定
+						m_decisionButton = true;
+					}
+					//設定
+					if (selectDecision == 9)
+					{
+						m_setButton = true;
+
+						m_waitTime = 0;
+
+						m_pSetting->SetSettingScene(m_setButton);
+					}
+					//終了
+					if (selectDecision == 10)
+					{
+						SetEnd(true);
+					}
 				}
-				//終了
-				if (selectDecision == 10)
+				//Bボタンを押したら
+				else if (m_xpad.Buttons[13] == 1 && !m_decisionButton)
 				{
 					SetEnd(true);
 				}
 			}
-			//Bボタンを押したら
-			else if (m_xpad.Buttons[13] == 1 && !m_decisionButton)
+			else if (m_pSetting->GetSettingScene() == false)
 			{
-				SetEnd(true);
+				m_waitTime++;
 			}
+
+
+			SelectBlend(7, 0, 1, 2);
+			SelectBlend(8, 1, 0, 2);
+			SelectBlend(9, 2, 1, 0);
+
 		}
-		else if (m_pSetting->GetSettingScene() == false)
+		//設定を開く
+		else if (m_pSetting->GetSettingScene() == true)
 		{
-			m_waitTime++;
+			m_pSetting->Update();
+		}
+
+		if (m_decisionButton)
+		{
+			//フェード開始
+			m_pFade->FadeOut(2);
+		}
+
+		//フェードアウト完了
+		if (m_pFade->GetOut())
+		{
+			m_pMap->End(m_pPhysics, true);
+			m_pSetting->End();
+
+			return std::make_shared<SceneGame>();
 		}
 
 
-		SelectBlend(7, 0, 1, 2);
-		SelectBlend(8, 1, 0, 2);
-		SelectBlend(9, 2, 1, 0);
 
+		if (m_playTime >= m_totalAnimationTime && m_animation != -1)
+		{
+			m_playTime = 80.0f;
+		}
+		if (m_animation != -1)
+		{
+			MV1SetAttachAnimTime(m_playerHandle, m_animation, m_playTime);
+		}
+
+		m_pBgm->Update(m_pSetting->GetVolume());
+		pse->Update(m_pSetting->GetVolume());
+
+		SetCameraPositionAndTarget_UpVecY(m_cameraPos, m_cameraTarget);
 	}
-	//設定を開く
-	else if (m_pSetting->GetSettingScene() == true)
-	{
-		m_pSetting->Update();
-	}
-
-	if (m_decisionButton)
-	{
-		//フェード開始
-		m_pFade->FadeOut(2);
-	}
-
-	//フェードアウト完了
-	if (m_pFade->GetOut())
-	{
-		m_pMap->End(m_pPhysics, true);
-		m_pSetting->End();
-
-		return std::make_shared<SceneGame>();
-	}
-
-
-
-	if (m_playTime >= m_totalAnimationTime && m_animation != -1)
-	{
-		m_playTime = 80.0f;
-	}
-	if (m_animation != -1)
-	{
-		MV1SetAttachAnimTime(m_playerHandle, m_animation, m_playTime);
-	}
-
-	m_pBgm->Update(m_pSetting->GetVolume());
-	pse->Update(m_pSetting->GetVolume());
-
-	SetCameraPositionAndTarget_UpVecY(m_cameraPos, m_cameraTarget);
 
 	return shared_from_this();  //自身のポインタを返す
 }
@@ -366,57 +392,80 @@ void SceneTitle::SelectBlend(int select, int now, int other1, int other2)
 /// </summary>
 void SceneTitle::Draw()
 {
-	//pmap->Draw();
-	m_pMap->Draw();
-	cEffect.Draw();
-
-	MV1SetPosition(m_playerHandle, m_pos);
-
-	MV1DrawModel(m_playerHandle);
-
-	//3Dモデルの回転地をセットする
-	MV1SetRotationXYZ(m_playerHandle, VGet(0.0f, 160.0f, 0.0f));
-
-
-	DrawGraph(120, 0, m_backScene, TRUE);
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[0]);
-	DrawGraph(500, 350, m_start, TRUE);
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[1]);
-	DrawGraph(500, 500, m_setting, TRUE);
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[2]);
-	DrawGraph(500, 650, m_end, TRUE);
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
-	//DrawGraph(500, 350, m_hand, true);
-	DrawRotaGraph(620, cHandY, 1.0f, DX_PI_F - (DX_PI_F / 4), m_hand, true);
-	DrawRotaGraph(1050, cHandY, 1.0f, DX_PI_F + (DX_PI_F / 4), m_hand, true, true);
-
-	SetFontSize(35);
-
-	DrawGraph(1150, 900, m_AButton, true);
-	DrawStringToHandle(1210, 910, "決定", 0xffffff, m_pFont->GetHandle());
-	DrawGraph(1350, 900, m_BButton, true);
-	DrawStringToHandle(1410, 910, "キャンセル", 0xffffff, m_pFont->GetHandle());
-
-	SetFontSize(40);
-
-	//設定画面を描画
-	if (m_pSetting->GetSettingScene() == true)
+	if (m_isLoading)
 	{
-		m_pSetting->Draw();
+		DrawString(0, 0, "NowLoading...", 0xffffff);
+
+		// ロードの進行状況を計算
+		int totalLoadTasks = m_load; // 総ロードタスク数を取得する関数（仮定）
+
+		m_load--;
+
+		int remainingLoadTasks = m_load; // 残りのロードタスク数を取得
+		float progress = 1.0f - (static_cast<float>(remainingLoadTasks) / static_cast<float>(totalLoadTasks));
+
+		// バーの描画
+		int barWidth = 200; // バーの幅
+		int barHeight = 20; // バーの高さ
+		int barX = 100; // バーのX座標
+		int barY = 50; // バーのY座標
+		DrawBox(barX, barY, barX + static_cast<int>(barWidth * progress), barY + barHeight, 0x00ff00, TRUE); // プログレスバー
+		DrawBox(barX, barY, barX + barWidth, barY + barHeight, 0xffffff, false);
 	}
-
-	m_pSetting->SettingDraw(m_pSetting->GetVolume());
-
-	if (m_pSetting->GetSettingScene() == false)
+	else
 	{
-		pselect->Draw();
-	}
+		//pmap->Draw();
+		m_pMap->Draw();
+		cEffect.Draw();
 
-	//フェードアウトイン描画
-	m_pFade->Draw();
+		MV1SetPosition(m_playerHandle, m_pos);
+
+		MV1DrawModel(m_playerHandle);
+
+		//3Dモデルの回転地をセットする
+		MV1SetRotationXYZ(m_playerHandle, VGet(0.0f, 160.0f, 0.0f));
+
+
+		DrawGraph(120, 0, m_backScene, TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[0]);
+		DrawGraph(500, 350, m_start, TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[1]);
+		DrawGraph(500, 500, m_setting, TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[2]);
+		DrawGraph(500, 650, m_end, TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+		//DrawGraph(500, 350, m_hand, true);
+		DrawRotaGraph(620, cHandY, 1.0f, DX_PI_F - (DX_PI_F / 4), m_hand, true);
+		DrawRotaGraph(1050, cHandY, 1.0f, DX_PI_F + (DX_PI_F / 4), m_hand, true, true);
+
+		SetFontSize(35);
+
+		DrawGraph(1150, 900, m_AButton, true);
+		DrawStringToHandle(1210, 910, "決定", 0xffffff, m_pFont->GetHandle());
+		DrawGraph(1350, 900, m_BButton, true);
+		DrawStringToHandle(1410, 910, "キャンセル", 0xffffff, m_pFont->GetHandle());
+
+		SetFontSize(40);
+
+		//設定画面を描画
+		if (m_pSetting->GetSettingScene() == true)
+		{
+			m_pSetting->Draw();
+		}
+
+		m_pSetting->SettingDraw(m_pSetting->GetVolume());
+
+		if (m_pSetting->GetSettingScene() == false)
+		{
+			pselect->Draw();
+		}
+
+		//フェードアウトイン描画
+		m_pFade->Draw();
+	}
 }
 
 /// <summary>

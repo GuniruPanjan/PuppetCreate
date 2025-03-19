@@ -19,6 +19,7 @@ MapBase::MapBase() :
 	m_wallHandle(-1),
 	m_ceilingHandle(-1),
 	m_restObjectHandle(-1),
+	m_effect(100),
 	m_size(0.0f),
 	m_width(0.0f),
 	m_hight(0.0f),

@@ -19,7 +19,8 @@ Weapon::Weapon() :
 	m_weaponPatternFrame(0),
 	m_weaponTipFrame(0),
 	m_weaponPatternName(),
-	m_weaponTipName()
+	m_weaponTipName(),
+	m_size(0.0f)
 {
 }
 
@@ -48,13 +49,18 @@ void Weapon::Init()
 		m_black.sw_muscle = 2.0f;   //補正B
 		m_black.sw_skill = 1.5f;    //補正C
 		m_black.sw_radius = 25.0f;
-		m_itemHandle = handle.GetModelHandle("Data/Weapon/Sword.mv1");
+		m_itemHandle = handle.GetModelHandle("Data/Weapon/BlackSword.mv1");
 
-		m_pos = VGet(-5.0f, 1.947f, -1.947f);
+		m_size = 0.1f;
 
-		m_weaponMatrixX = 0.0f;
-		m_weaponMatrixY = 5.655f;
-		m_weaponMatrixZ = 1.795f;
+		m_pos = VGet(-3.256f, -1.628f, 4.884f);
+
+		m_weaponMatrixX = 0.224f;
+		m_weaponMatrixY = 2.827f;
+		m_weaponMatrixZ = 1.616f;
+
+		m_weaponPatternName = "Pattern";
+		m_weaponTipName = "Tip";
 	}
 	//バット装備
 	else if (m_bat.sw_equipment)
@@ -64,6 +70,8 @@ void Weapon::Init()
 		m_bat.sw_skill = 0.5f;     //補正E
 		m_bat.sw_radius = 25.0f;
 		m_itemHandle = handle.GetModelHandle("Data/Weapon/Bat.mv1");
+
+		m_size = 1.0f;
 
 		m_pos = VGet(4.884f, 1.628f, -1.628f);
 
@@ -100,6 +108,8 @@ void Weapon::ItemInit(float posX, float posY, float posZ, std::shared_ptr<MyLibr
 void Weapon::Update(MATRIX mat)
 {
 	MV1SetMatrix(m_itemHandle, MGetIdent());
+
+	MATRIX scale = MGetScale(VGet(m_size, m_size, m_size));
 	////フレーム検索
 	//m_frameIndex = MV1SearchFrame(m_itemHandle, "2:Sphere");
 	////フレームのポジション
@@ -113,6 +123,7 @@ void Weapon::Update(MATRIX mat)
 	m_transMatrix = MMult(m_transMatrix, MGetRotY(m_weaponMatrixY));
 	m_transMatrix = MMult(m_transMatrix, MGetRotZ(m_weaponMatrixZ));
 
+	m_transMatrix = MMult(m_transMatrix, scale);
 	m_mixMatrix = MMult(m_transMatrix, mat);
 
 	MV1SetMatrix(m_itemHandle, m_mixMatrix);

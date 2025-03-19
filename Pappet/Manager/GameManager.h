@@ -108,8 +108,8 @@ private:
 
 	//死亡で初期化する
 	bool m_deadInit;
-	//初期化する
-	bool m_init;
+	//タイトルに戻る際のフェードアウト用変数
+	bool m_fadeTitle;
 	//タイトルに戻る
 	bool m_title;
 	//非同期処理

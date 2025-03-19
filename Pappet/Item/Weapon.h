@@ -66,6 +66,8 @@ private:
 	const char* m_weaponPatternName;
 	const char* m_weaponTipName;
 
+	float m_size;
+
 	float m_weaponMatrixX = 0.0f;
 	float m_weaponMatrixY = 0.0f;
 	float m_weaponMatrixZ = 0.0f;

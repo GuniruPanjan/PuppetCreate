@@ -36,6 +36,8 @@ void EffectManager::Init()
 	EffectLoad("Message", "Data/Effect/message.efkefc", 50, 10.0f);
 	//Hitエフェクト
 	EffectLoad("Hit", "Data/Effect/HitEffect.efkefc", 30, 15.0f);
+	//休息エフェクト
+	EffectLoad("RestLuminescence", "Data/Effect/Thunder.efkefc", 80, 20.0f);
 }
 
 /// <summary>

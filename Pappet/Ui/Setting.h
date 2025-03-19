@@ -269,6 +269,13 @@ public:
 	/// <returns>判定をとる</returns>
 	bool GetTitle() { return m_titleMenu; }
 
+	/// <summary>
+	/// 休息スタート
+	/// </summary>
+	/// <returns></returns>
+	bool GetReset() { return m_reset; }
+	bool SetReset(bool set) { return m_reset = set; }
+
 private:
 
 	void WeaponUpdate(std::list<std::string> list, Weapon& weapon, int right);
@@ -276,10 +283,13 @@ private:
 	void ArmorUpdate(std::list<std::string> list, Armor& armor, int body);
 
 private:
+
+	XINPUT_STATE m_xpad;      //パッド入力
+
 	int m_black;              //黒い画像格納変数
 	int m_white;              //白い画像格納変数
 	int m_back;               //黒い画像格納変数
-	XINPUT_STATE m_xpad;      //パッド入力
+	int m_volumeSize;         //音量
 	int m_menuSelect[5];      //メニュー選択 
 	int m_selectX;            //選択画像のX座標
 	int m_selectY;            //選択画像のY座標
@@ -303,7 +313,6 @@ private:
 	bool m_settingScene;      //設定するための画面を呼ぶ変数
 	bool m_brightness;        //明るさ設定
 	bool m_volume;            //音量設定
-	int m_volumeSize;         //音量
 	bool m_equipmentMenu;     //装備メニュー
 	bool m_itemMenu;          //アイテムボックスメニュー
 	bool m_decisionEquipment; //装備選択画面
@@ -312,6 +321,9 @@ private:
 	bool m_statusLevel;       //ステータスを開く判定
 	bool m_blend;             //ブレンド判定
 	bool m_up;                //レベルが上げられるかの判定
+	bool m_menuDecision;      //メニューでの決定判定
+	bool m_reset;             //休息によるリセット
+
 
 	//選んだ装備
 	SelectEquipment m_select;

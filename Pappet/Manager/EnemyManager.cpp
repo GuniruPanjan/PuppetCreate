@@ -183,7 +183,7 @@ void EnemyManager::EnemyGenerate(std::shared_ptr<MyLibrary::Physics> physics, Ga
 /// <param name="playerPos">プレイヤーポジション</param>
 /// <param name="playerDir">プレイヤーの方向</param>
 /// <param name="isPlayerChase">プレイヤーを発見したかどうか</param>
-void EnemyManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, CoreManager& core, MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 playerDir, MyLibrary::LibVec3 shieldPos, bool isPlayerChase, SEManager& se, EnemyWeapon& weapon, bool init, bool tutorial)
+void EnemyManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, CoreManager& core, MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 playerDir, MyLibrary::LibVec3 shieldPos, bool isPlayerChase, SEManager& se, EnemyWeapon& weapon, bool tutorial)
 {
 	m_enemyPos.clear();
 	m_enemyTarget.clear();
