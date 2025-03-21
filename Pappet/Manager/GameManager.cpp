@@ -20,6 +20,8 @@ namespace
 	bool cGameBGMOne = false;
 	//ボスBGMを再生する
 	bool cBossBGMOne = false;
+	//休息終了後のフェードイン判定
+	bool cFadeIn = false;
 	//チュートリアル
 	bool cTutorial = false;
 	//チュートリアルをクリアした時の判定
@@ -312,7 +314,15 @@ void GameManager::Update()
 
 					if (cTutorialTime >= 90.0f)
 					{
-						cClearTutorial = true;
+						//フェードアウト可能にする
+						m_pFade->SetOut(false);
+						//フェードアウトさせる
+						m_pFade->FadeOut(10);
+						//フェードアウトが完了
+						if (m_pFade->GetOut())
+						{
+							cClearTutorial = true;
+						}
 					}
 					else
 					{
@@ -419,22 +429,46 @@ void GameManager::Update()
 				//休息処理
 				else if(m_pSetting->GetReset())
 				{
-					//一回だけ実行
-					m_pPlayer->GameInit(m_pPhysics);
-					m_pPlayer->ChangeStatus();
-					m_pTool->Init();
-
-					//休息地点以外だと初期化
-					if (m_nowMap != 0)
+					//フェードアウト可能にする
+					m_pFade->SetOut(false);
+					//フェードアウト実行
+					m_pFade->FadeOut(20);
+					//フェードアウト完了
+					if (m_pFade->GetOut())
 					{
-						m_pEnemy->GameInit(m_pPhysics, this, *m_pEnemyWeapon, m_pSetting->GetReset(), cTutorial);
+						//一回だけ実行
+						m_pPlayer->GameInit(m_pPhysics);
+						m_pPlayer->ChangeStatus();
+						m_pTool->Init();
+
+						//休息地点以外だと初期化
+						if (m_nowMap != 0)
+						{
+							m_pEnemy->GameInit(m_pPhysics, this, *m_pEnemyWeapon, m_pSetting->GetReset(), cTutorial);
+						}
+
+						m_pMap->TriggerReset();
+
+						m_pSetting->SetReset(false);
+
+						m_restInit = true;
+
+						cFadeIn = true;
 					}
+				}
 
-					m_pMap->TriggerReset();
-
-					m_pSetting->SetReset(false);
-
-					m_restInit = true;
+				//一回実行
+				if (cFadeIn)
+				{
+					//フェードイン可能にする
+					m_pFade->SetIn(false);
+					//フェードイン開始
+					m_pFade->FadeIn(20);
+					//フェードイン完了
+					if (m_pFade->GetIn())
+					{
+						cFadeIn = false;
+					}
 				}
 
 			}

@@ -208,7 +208,7 @@ void Message::DrawString()
 
 			//Yボタン描画
 			DrawGraph(200, 250, m_yButton, true);
-			DrawStringToHandle(400, 150, "石に剣が刺さっているオブジェクトは\n　　　　　　　休息が可能、\n休息をするとリスポーン地点を固定する", 0xffffff, m_pFont->GetHandle());
+			DrawStringToHandle(400, 150, "　　　石の棺桶のようなオブジェクトは\n　　　　　　　休息が可能、\n休息をするとリスポーン地点を固定する", 0xffffff, m_pFont->GetHandle());
 			DrawStringToHandle(600, 320, "Yボタン　：　休息", 0xffffff, m_pFont->GetHandle());
 
 			//アイテム描画
@@ -217,9 +217,14 @@ void Message::DrawString()
 			DrawStringToHandle(600, 600, "アイテムは使用すると消費する", 0xffffff, m_pFont->GetHandle());
 
 		}
-		else
+		//熊のエリアに誘導する
+		else if(m_official == 8)
 		{
+			//背景描画
+			DrawGraph(130, 100, m_messageUI, false);
 
+			//熊の説明文
+			DrawStringToHandle(450, 400, "熊の傀儡人形この先の墓場に眠る\n　　　　　HARIBO", 0xffffff, m_pFont->GetHandle());
 		}
 
 		
