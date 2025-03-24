@@ -63,6 +63,10 @@ void ShieldObject::OnTriggerEnter(const std::shared_ptr<Collidable>& collidable)
         {
             m_isTriggerEnter = true;
         }
+        else if (tag == ObjectTag::StrengthAttack)
+        {
+            m_isTriggerEnter = true;
+        }
     }
     else
     {
@@ -84,6 +88,10 @@ void ShieldObject::OnTriggerStay(const std::shared_ptr<Collidable>& collidable)
         {
             m_isTriggerStay = true;
         }
+        else if (tag == ObjectTag::StrengthAttack)
+        {
+            m_isTriggerStay = true;
+        }
     }
     else
     {
@@ -102,6 +110,10 @@ void ShieldObject::OnTriggerExit(const std::shared_ptr<Collidable>& collidable)
     {
         auto tag = collidable->GetTag();
         if (tag == ObjectTag::Attack)
+        {
+            m_isTriggerExit = true;
+        }
+        else if (tag == ObjectTag::StrengthAttack)
         {
             m_isTriggerExit = true;
         }

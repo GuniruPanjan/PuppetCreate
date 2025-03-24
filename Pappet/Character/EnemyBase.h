@@ -162,6 +162,7 @@ protected:
 	EnemyAnimation m_enemyAnim;   //アニメーション
 
 	AttackLigObject* m_col;
+	AttackObject* m_strengthCol;
 
 	int m_randomAction;       //ランダムに行動するための変数
 	int m_maxHP;              //最大HP
@@ -187,6 +188,7 @@ protected:
 	bool m_isStayTarget = false; //プレイヤーの索敵に当たってるかどうか
 	bool m_isExitTarget = false; //プレイヤーの索敵から外れたかどうか
 	bool m_isEnterHit = false;   //プレイヤーの攻撃が当たっているかどうか
+	bool m_isEnterStrengtHit = false;   //プレイヤーの強攻撃が当たっているかどうか
 	bool m_isExitHit = false;    //プレイヤーの攻撃が外れたかどうか
 	bool m_bossjudg = false;     //ボスかの判断
 	bool m_tutorial = false;     //チュートリアルかの判断

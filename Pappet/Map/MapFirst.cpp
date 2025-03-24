@@ -5,11 +5,17 @@
 namespace
 {
 	//マップのパス
-	constexpr const char* cMapName = "Data/Map/Map.mv1";
+	//constexpr const char* cMapName = "Data/Map/Map.mv1";
+	//マップのパス
+	constexpr const char* cMapName = "Data/Map/Map1.mv1";
 	//マップのコリジョンパス
-	constexpr const char* cMapCollisionName = "Data/Map/Collision.mv1";
+	//constexpr const char* cMapCollisionName = "Data/Map/Collision.mv1";
+	//マップのコリジョンパス
+	constexpr const char* cMapCollisionName = "Data/Map/CollisionMap1.mv1";
 	//コアのパス
 	constexpr const char* cCoreName = "Data/Object/Core.mv1";
+	//休息オブジェクトパス
+	constexpr const char* cMapRestObjectName = "Data/Object/coffin.mv1";
 	//休息地点の半径
 	constexpr float cRestRadius = 50.0f;
 	//ボス部屋入り口の半径
@@ -64,6 +70,8 @@ void MapFirst::DataInit()
 {
 	//データロード
 	LoadData(cMapName, cMapCollisionName, cCoreName);
+	//パーツロード
+	LoadPartsData("", "", "", cMapRestObjectName);
 
 	m_stageName = "stage1";
 }
@@ -89,7 +97,7 @@ void MapFirst::Init(std::shared_ptr<MyLibrary::Physics> physics)
 	m_mapPos = VGet(0.0f, 250.0f, 0.0f);
 	m_mapCollisionPos = VGet(-241.0f, -277.0f, -173.0f);
 	m_mapCorePos = VGet(-830.0f, 50.0f, 0.0f);
-	m_mapRestPos = MyLibrary::LibVec3(100.0f, 0.0f, -75.0f);
+	m_mapRestPos = MyLibrary::LibVec3(80.0f, 0.0f, -50.0f);
 	m_mapBossRoomPos = MyLibrary::LibVec3(-80.0f, 0.0f, 0.0f);
 	m_mapBossEnterPos = MyLibrary::LibVec3(-10.0f, 50.0f, 0.0f);
 	//m_mapBossEnterPos = MyLibrary::LibVec3(0.0f, 400.0f, 0.0f);
@@ -241,6 +249,9 @@ void MapFirst::Draw()
 
 	//3Dモデル描画
 	MV1DrawModel(m_handle);
+
+	//休息地点描画
+	PartDrawSet(m_restObjectHandle, VGet(0.2f, 0.2f, 0.2f), VGet(m_mapRestPos.x, m_mapRestPos.y, m_mapRestPos.z - 30.0f), VGet(0.0f, 0.0f, 0.0f));
 }
 
 /// <summary>

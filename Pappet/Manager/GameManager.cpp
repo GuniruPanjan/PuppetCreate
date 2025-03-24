@@ -38,7 +38,7 @@ namespace
 /// コンストラクタ
 /// </summary>
 GameManager::GameManager() :
-	m_nowMap(eMapName::TutorialMap),
+	m_nowMap(eMapName::FirstMap),
 	m_load(0),
 	m_deadInit(false),
 	m_title(false),
@@ -74,7 +74,7 @@ void GameManager::Init()
 	cBossBGMOne = false;
 	
 
-	m_pMap->DataInit(6);
+	m_pMap->DataInit(1);
 
 	m_pPhysics = std::make_shared<MyLibrary::Physics>(m_pMap->GetCollisionMap());
 
@@ -417,8 +417,11 @@ void GameManager::Update()
 			//休息した場合
 			if (m_pPlayer->GetRest())
 			{
-				m_pSetting->RestUpdate(*m_pPlayer, *m_pCore);
-
+				//レベルアップ処理をしていない場合
+				if (!m_pSetting->GetLevel())
+				{
+					m_pSetting->RestUpdate(*m_pPlayer, *m_pCore);
+				}
 				//レベルアップ処理
 				if (m_pSetting->GetLevel())
 				{

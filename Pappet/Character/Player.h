@@ -151,7 +151,7 @@ public:
 private:
 	void SetModelPos();
 private:
-	std::shared_ptr<AttackObject> m_pAttack;               //UŒ‚”»’è
+	//std::shared_ptr<AttackObject> m_pAttack;               //UŒ‚”»’è
 	std::shared_ptr<AttackObject> m_pStrengthAttack;       //‹­UŒ‚”»’è
 	std::shared_ptr<AttackLigObject> m_pLigAttack;         //ƒŠƒO–ˆ‚ÌUŒ‚”»’è
 	std::shared_ptr<PlayerSearchObject> m_pSearch;         //õ“G”»’è

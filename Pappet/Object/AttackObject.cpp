@@ -1,7 +1,7 @@
 #include "AttackObject.h"
 
 AttackObject::AttackObject(float radius) :
-	ObjectBase(Priority::Middle, ObjectTag::Attack),
+	ObjectBase(Priority::Middle, ObjectTag::StrengthAttack),
 	m_isCollisionOn(false),
 	m_attack(0)
 {

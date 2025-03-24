@@ -6,6 +6,7 @@ enum class ObjectTag
 	Player,               //プレイヤー
 	Enemy,                //エネミー(まとめ)
 	Attack,               //攻撃
+	StrengthAttack,       //強攻撃
 	EnemyAttack,          //プレイヤー以外の攻撃
 	Rect,                 //矩形
 	Shield,               //盾の当たり判定

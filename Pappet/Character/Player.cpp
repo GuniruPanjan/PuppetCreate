@@ -242,7 +242,7 @@ void Player::Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* mana
 	//Œ‚¾‚Á‚½ê‡
 	m_attackRadius = cFistAttackRadius;
 
-	m_pAttack = std::make_shared<AttackObject>(m_attackRadius);
+	//m_pAttack = std::make_shared<AttackObject>(m_attackRadius);
 	//m_pPartAttack = std::make_shared<AttackObjectPart>(cPartAttackRadius, 0.0f, 0.0f);
 	m_pStrengthAttack = std::make_shared<AttackObject>(cStrengthAttackRadius);
 	m_pLigAttack = std::make_shared<AttackLigObject>(MyLibrary::LibVec3(m_attackLigPos1.x, m_attackLigPos1.y, m_attackLigPos1.z), MyLibrary::LibVec3(m_attackLigPos2.x, m_attackLigPos2.y, m_attackLigPos2.z), cFistAttackRadius);
@@ -784,7 +784,7 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 
 	//”»’è‚ÌXV
 	m_pSearch->Update(centerPos);
-	m_pAttack->Update(attackPos);
+	//m_pAttack->Update(attackPos);
 	m_pLigAttack->Update(ligAttackPos1, ligAttackPos2);
 	m_pStrengthAttack->Update(StrengthAttackPos);
 	m_pShield->Update(m_shieldPos, m_shieldSize);

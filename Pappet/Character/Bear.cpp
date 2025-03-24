@@ -284,7 +284,30 @@ void Bear::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos, bo
 		cEffect.EffectCreate("Hit", VGet(rigidbody.GetPos().x, rigidbody.GetPos().y + 30.0f, rigidbody.GetPos().z));
 		//HitSE再生
 		PlaySoundMem(se.GetHitSE(), DX_PLAYTYPE_BACK, true);
+
+		//HPが0になるとヒットしない
+		if (m_status.s_hp > 0.0f)
+		{
+			m_anim.s_hit = true;
+		}
 	}
+	else if (m_isEnterStrengtHit)
+	{
+		m_status.s_hp -= m_strengthCol->GetAttack() - m_status.s_defense;
+
+		//Hitエフェクト
+		cEffect.EffectCreate("Hit", VGet(rigidbody.GetPos().x, rigidbody.GetPos().y + 20.0f, rigidbody.GetPos().z));
+
+		//HitSE再生
+		PlaySoundMem(se.GetHitSE(), DX_PLAYTYPE_BACK, true);
+
+		//HPが0になるとヒットしない
+		if (m_status.s_hp > 0.0f)
+		{
+			m_anim.s_hit = true;
+		}
+	}
+
 	//プレイヤーがボス部屋に入ったら
 	if (m_isBossDiscovery && !cDead)
 	{

@@ -47,6 +47,7 @@ EnemyBase::EnemyBase(Priority priority) :
 	m_isStayTarget(false),
 	m_isExitTarget(false),
 	m_isEnterHit(false),
+	m_isEnterStrengtHit(false),
 	m_isExitHit(false),
 	m_centerPos(),
 	m_I(0),
@@ -153,6 +154,20 @@ void EnemyBase::OnTriggerEnter(const std::shared_ptr<Collidable>& collidable)
 		}
 		
 		break;
+
+	case ObjectTag::StrengthAttack:
+#if _DEBUG
+		message += "‹­UŒ‚";
+#endif
+		m_strengthCol = dynamic_cast<AttackObject*>(collidable.get());
+
+		//‰ñ”ğ’†‚Å‚È‚¯‚ê‚Î“–‚½‚è”»’è‚ğó‚¯‚é
+		if (!m_avoidnaceNow)
+		{
+			m_isEnterStrengtHit = true;
+		}
+
+
 	case ObjectTag::Search:
 #if _DEBUG
 		message += "õ“G”ÍˆÍ";
@@ -552,6 +567,7 @@ void EnemyBase::TargetNow()
 void EnemyBase::HitTriggerUpdate()
 {
 	m_isEnterHit = false;
+	m_isEnterStrengtHit = false;
 }
 
 /// <summary>
