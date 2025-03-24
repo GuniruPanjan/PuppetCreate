@@ -184,6 +184,19 @@ std::shared_ptr<MapBase> MapFirst::Update(bool warp, bool enter, bool Dead)
 	{
 		cEffectTime++;
 	}
+
+	//エフェクトの生成
+	if (m_effect >= 30)
+	{
+		cEffect.EffectCreate("RestLuminescence", VGet(m_mapRestPos.x, m_mapRestPos.y + 1.0f, m_mapRestPos.z - 20.0f));
+
+		m_effect = 0;
+	}
+	else
+	{
+		m_effect++;
+	}
+
 	//エフェクト生成
 	if (!cEffectOne && enter && !Dead)
 	{

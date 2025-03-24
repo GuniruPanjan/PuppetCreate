@@ -208,7 +208,7 @@ void Message::DrawString()
 
 			//Yボタン描画
 			DrawGraph(200, 250, m_yButton, true);
-			DrawStringToHandle(400, 150, "　　　石の棺桶のようなオブジェクトは\n　　　　　　　休息が可能、\n休息をするとリスポーン地点を固定する", 0xffffff, m_pFont->GetHandle());
+			DrawStringToHandle(400, 150, "　　棺桶のようなオブジェクトは\n　　　　　　　休息が可能、\n休息をするとリスポーン地点を固定する", 0xffffff, m_pFont->GetHandle());
 			DrawStringToHandle(600, 320, "Yボタン　：　休息", 0xffffff, m_pFont->GetHandle());
 
 			//アイテム描画

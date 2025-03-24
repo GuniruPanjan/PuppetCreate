@@ -110,12 +110,7 @@ void Weapon::Update(MATRIX mat)
 	MV1SetMatrix(m_itemHandle, MGetIdent());
 
 	MATRIX scale = MGetScale(VGet(m_size, m_size, m_size));
-	////フレーム検索
-	//m_frameIndex = MV1SearchFrame(m_itemHandle, "2:Sphere");
-	////フレームのポジション
-	//m_framePos = MV1GetFramePosition(m_itemHandle, m_frameIndex);
-
-	//m_pos = VAdd(m_framePos, m_pos);
+	
 	//アタッチするモデルをフレームの座標を原点にするための平行移動行列を作成
 	m_transMatrix = MGetTranslate(VScale(m_pos, -1.0f));
 

@@ -87,13 +87,6 @@ void Shield::Update(MATRIX mat)
 {
 	MV1SetMatrix(m_itemHandle, MGetIdent());
 
-	////フレームを検索
-	//m_frameIndex = MV1SearchFrame(m_itemHandle, "0:fbx");
-
-	//m_framePos = MV1GetFramePosition(m_itemHandle, m_frameIndex);
-
-	//m_pos = VAdd(m_framePos, m_pos);
-
 	//アタッチするモデルをフレームの座標を原点にするための平行移動行列を作成
 	m_transMatrix = MGetTranslate(VScale(m_pos, -1.0f));
 
