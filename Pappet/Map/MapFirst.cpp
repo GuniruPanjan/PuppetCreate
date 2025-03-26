@@ -5,11 +5,7 @@
 namespace
 {
 	//マップのパス
-	//constexpr const char* cMapName = "Data/Map/Map.mv1";
-	//マップのパス
 	constexpr const char* cMapName = "Data/Map/Map1.mv1";
-	//マップのコリジョンパス
-	//constexpr const char* cMapCollisionName = "Data/Map/Collision.mv1";
 	//マップのコリジョンパス
 	constexpr const char* cMapCollisionName = "Data/Map/CollisionMap1.mv1";
 	//コアのパス
