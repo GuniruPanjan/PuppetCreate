@@ -67,6 +67,7 @@ void UI::Init()
 	m_itemTaking = MyLoadGraph("Data/UI/ƒAƒCƒeƒ€Žæ“¾ˆÍ‚¢.png", 1, 1);
 	m_yButton = MyLoadGraph("Data/UI/YButton.png", 3, 3);
 	m_bButton = MyLoadGraph("Data/UI/BButton.png", 3, 3);
+	m_tagetLock = MyLoadGraph("Data/UI/TagetLock.png", 1, 1);
 }
 
 /// <summary>

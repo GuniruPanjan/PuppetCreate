@@ -546,11 +546,17 @@ void GameManager::Draw()
 	else
 	{
 		m_pMap->Draw();
+		m_pEnemy->Draw(*m_pEnemyWeapon);
+
+		//ロックオンしてる時に描画する
+		if (m_pPlayer->GetLock())
+		{
+			m_pCamera->Draw(*m_pUi);
+		}
+
 		m_pPlayer->Draw(*m_pArmor, m_pFont->GetHandle());
 		m_pWeapon->Draw();
 		m_pShield->Draw();
-		m_pEnemy->Draw(*m_pUi, *m_pEnemyWeapon);
-		//m_pNpc->Draw();
 
 		//ボスが死んだ判定
 		if (m_pEnemy->GetBossDead(GetThisMapName()))
@@ -558,9 +564,10 @@ void GameManager::Draw()
 			m_pMap->CoreDraw();
 		}
 
-		m_pCamera->Draw();
-
 		cEffect.Draw();
+
+		//エネミーのUI描画
+		m_pEnemy->DrawUI(*m_pUi);
 
 		m_pUi->Draw(*m_pPlayer, *m_pEnemy, *m_pSetting, *m_pMap, *m_pItem, *m_pWeapon, *m_pShield, *m_pArmor, *m_pTool, *m_pMessage);
 

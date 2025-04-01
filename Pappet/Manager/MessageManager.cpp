@@ -126,10 +126,8 @@ bool MessageManager::GetDraw()
 		}
 		
 	}
-	else
-	{
-		return false;
-	}
+
+	return false;
 }
 
 void MessageManager::CreateMessage(float posx, float posy, float posz, int official, int one, int two, int three, std::shared_ptr<MyLibrary::Physics> physics)

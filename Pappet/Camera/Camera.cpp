@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include "Character/Player.h"
 #include "Manager/EnemyManager.h"
+#include "Ui/UI.h"
 #include <algorithm>
 #include <functional>
 //度をラジアンに変換
@@ -30,7 +31,9 @@ Camera::Camera() :
 	m_radius(0.0f),
 	m_easingTime(0.0f),
 	m_easingDuration(1.0f),
-	m_currentTargetIndex(0)
+	m_currentTargetIndex(0),
+	m_rate(0.0f),
+	m_isRate(true)
 {
 }
 
@@ -46,6 +49,8 @@ Camera::~Camera()
 /// </summary>
 void Camera::Init()
 {
+	m_rate = 1.1f;
+
 	m_radius = 3.0f;
 
 	//基準となるカメラの座標
@@ -67,6 +72,27 @@ void Camera::Init()
 void Camera::Update(Player& player)
 {
 	GetJoypadDirectInputState(DX_INPUT_PAD1, &input);
+
+
+	//判定
+	if (m_rate <= 1.0f)
+	{
+		m_isRate = true;
+	}
+	else if(m_rate >= 1.3f)
+	{
+		m_isRate = false;
+	}
+	//拡大させる
+	if (m_isRate)
+	{
+		m_rate += 0.01f;
+	}
+	else
+	{
+		m_rate -= 0.01f;
+	}
+
 
 	if (!player.GetLock())
 	{
@@ -378,9 +404,9 @@ void Camera::LockBossUpdate(Player& player, EnemyManager& enemy)
 /// <summary>
 /// 描画処理
 /// </summary>
-void Camera::Draw()
+void Camera::Draw(UI& ui)
 {
-	
+	DrawRotaGraph(800, 450, m_rate, 0.0f, ui.GetLockUI(), true);
 }
 
 /// <summary>

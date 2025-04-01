@@ -759,7 +759,7 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 /// <summary>
 /// •`‰æˆ—
 /// </summary>
-void Bear::Draw(UI& ui, EnemyWeapon& weapon)
+void Bear::Draw(EnemyWeapon& weapon)
 {
 	//“–‚½‚è”»’èÀ•W‚ğæ“¾‚µ‚Äƒ‚ƒfƒ‹‚Ì•`‰æÀ•W‚ğİ’è‚·‚é
 	SetDrawModelPos(cModelPosY);
@@ -767,18 +767,22 @@ void Bear::Draw(UI& ui, EnemyWeapon& weapon)
 	MV1SetRotationXYZ(m_modelHandle, VGet(0.0f, m_angle, 0.0f));
 	//ƒ‚ƒfƒ‹‚Ì•`‰æ
 	MV1DrawModel(m_modelHandle);
-
-	//DrawFormatString(200, 400, 0xffffff, "m_playerHit : %d", m_isPlayerHit);
-
-	if (m_isBossDiscovery && !cDead)
-	{
-		ui.BossHPDraw(m_status.s_hp, m_maxHP, m_bossName, m_subName);
-	}
-
 #if false
 	DrawFormatString(200, 300, 0xffffff, "m_angle : %f", m_angle);
 	DrawFormatString(200, 350, 0xffffff, "m_correctionAngle : %f", m_correctionAngle);
 	DrawFormatString(200, 400, 0xffffff, "m_left : %d", m_enemyAnim.s_turnLeft);
 	DrawFormatString(200, 450, 0xffffff, "m_right : %d", m_enemyAnim.s_turnRight);
 #endif
+}
+
+/// <summary>
+/// UI•`‰æ
+/// </summary>
+/// <param name="ui"></param>
+void Bear::DrawUI(UI& ui)
+{
+	if (m_isBossDiscovery && !cDead)
+	{
+		ui.BossHPDraw(m_status.s_hp, m_maxHP, m_bossName, m_subName);
+	}
 }

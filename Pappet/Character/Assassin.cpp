@@ -1296,7 +1296,7 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 	m_moveVec = MyLibrary::LibVec3(m_move.x, m_move.y, m_move.z);
 }
 
-void Assassin::Draw(UI& ui, EnemyWeapon& weapon)
+void Assassin::Draw(EnemyWeapon& weapon)
 {
 	//当たり判定座標を取得してモデルの描画座標を設定する
 	SetDrawModelPos(cModelPosY);
@@ -1306,11 +1306,6 @@ void Assassin::Draw(UI& ui, EnemyWeapon& weapon)
 	//モデルの描画
 	MV1DrawModel(m_modelHandle);
 
-
-	if (m_isBossDiscovery && !cDead)
-	{
-		ui.BossHPDraw(m_status.s_hp, m_maxHP, m_bossName, m_subName);
-	}
 #if false
 	DrawFormatString(1000, 500, 0xffffff, "move : %d", cA[0]);
 	DrawFormatString(1000, 550, 0xffffff, "attack : %d", cA[1]);
@@ -1318,4 +1313,16 @@ void Assassin::Draw(UI& ui, EnemyWeapon& weapon)
 	DrawFormatString(1000, 650, 0xffffff, "hit : %d", cA[3]);
 	DrawFormatString(1000, 700, 0xffffff, "random : %d", m_randomAction);
 #endif
+}
+
+/// <summary>
+/// UI描画
+/// </summary>
+/// <param name="ui"></param>
+void Assassin::DrawUI(UI& ui)
+{
+	if (m_isBossDiscovery && !cDead)
+	{
+		ui.BossHPDraw(m_status.s_hp, m_maxHP, m_bossName, m_subName);
+	}
 }

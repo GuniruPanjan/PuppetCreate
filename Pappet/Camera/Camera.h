@@ -5,6 +5,7 @@
 
 class EnemyManager;
 class Player;
+class UI;
 class Map;
 
 /// <summary>
@@ -31,7 +32,7 @@ public:
 	//ボスのロックオン処理
 	void LockBossUpdate(Player& player, EnemyManager& enemy);
 	//描画処理
-	void Draw();
+	void Draw(UI& ui);
 	//終了処理
 	void End();
 	//カメラが向いてる方向ベクトルを取得
@@ -72,4 +73,7 @@ private:
 	float m_x, m_z;
 	float m_radius;
 
+	float m_rate;
+
+	bool m_isRate;
 };

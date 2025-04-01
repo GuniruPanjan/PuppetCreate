@@ -44,7 +44,8 @@ UIBase::UIBase() :
 	m_rtButton(0),
 	m_lbButton(0),
 	m_startButton(0),
-	m_messageUI(0)
+	m_messageUI(0),
+	m_tagetLock(0)
 {
 	
 }
@@ -81,6 +82,7 @@ UIBase::~UIBase()
 	DeleteGraph(m_bButton);
 	DeleteGraph(m_lStick);
 	DeleteGraph(m_messageUI);
+	DeleteGraph(m_tagetLock);
 }
 
 /// <summary>

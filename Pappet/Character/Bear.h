@@ -25,7 +25,9 @@ public:
 	//É{ÉXÇÃçsìÆ
 	void Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se);
 	//ï`âÊ
-	void Draw(UI& ui, EnemyWeapon& weapon);
+	void Draw(EnemyWeapon& weapon);
+	//UIï`âÊ
+	void DrawUI(UI& ui) override;
 
 
 private:

@@ -435,7 +435,7 @@ void Immortal::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 /// <summary>
 /// •`‰æ
 /// </summary>
-void Immortal::Draw(UI& ui, EnemyWeapon& weapon)
+void Immortal::Draw(EnemyWeapon& weapon)
 {
 	//“–‚½‚è”»’èÀ•W‚ğæ“¾‚µ‚Äƒ‚ƒfƒ‹‚Ì•`‰æÀ•W‚ğİ’è‚·‚é
 	SetDrawModelPos(cModelPosY);
@@ -444,11 +444,17 @@ void Immortal::Draw(UI& ui, EnemyWeapon& weapon)
 	//ƒ‚ƒfƒ‹‚Ì•`‰æ
 	MV1DrawModel(m_modelHandle);
 	
+}
+
+/// <summary>
+/// UI•`‰æ
+/// </summary>
+void Immortal::DrawUI(UI& ui)
+{
 	//í“¬’†‚¾‚Æ•`‰æ
 	if (m_pSearch->GetIsStay())
 	{
 		//HPƒo[‚Ì•`‰æ
 		ui.EnemyHPDraw(rigidbody.GetPos().GetVector(), m_status.s_hp, m_maxHP);
 	}
-	
 }

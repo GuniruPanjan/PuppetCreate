@@ -50,7 +50,9 @@ public:
 	void Update(std::shared_ptr<MyLibrary::Physics> physics, GameManager* gameManager, CoreManager& core, MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 playerDir, MyLibrary::LibVec3 shieldPos, bool isPlayerChase, SEManager& se, EnemyWeapon& weapon,
 		        bool tutorial = false);
 	//•`‰æ
-	void Draw(UI& ui, EnemyWeapon& weapon);
+	void Draw(EnemyWeapon& weapon);
+	//UI•`‰æ
+	void DrawUI(UI& ui);
 	//I—¹ˆ—
 	void End();
 

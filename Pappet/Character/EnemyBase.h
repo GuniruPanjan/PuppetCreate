@@ -34,7 +34,9 @@ public:
 	//XV
 	virtual void Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos, bool isChange, SEManager& se, std::shared_ptr<MyLibrary::Physics> physics, EnemyWeapon& weapon) {};
 	//•`‰æ
-	virtual void Draw(UI& ui, EnemyWeapon& weapon) {};
+	virtual void Draw(EnemyWeapon& weapon) {};
+	//UI•`‰æ
+	virtual void DrawUI(UI& ui) {};
 	//I—¹ˆ—
 	virtual void End();
 

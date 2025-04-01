@@ -238,15 +238,26 @@ void EnemyManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManag
 /// <summary>
 /// •`‰æ
 /// </summary>
-void EnemyManager::Draw(UI& ui, EnemyWeapon& weapon)
+void EnemyManager::Draw(EnemyWeapon& weapon)
 {
 	//“G‚ð•`‰æ‚·‚é
 	for (auto& enemy : m_pEnemys)
 	{
-		enemy->Draw(ui, weapon);
+		enemy->Draw(weapon);
 	}
+}
 
-	//DrawFormatString(200, 500, 0xffffff, "%d", cEnemy);
+/// <summary>
+/// UI•`‰æ
+/// </summary>
+/// <param name="ui"></param>
+void EnemyManager::DrawUI(UI& ui)
+{
+	//“G‚ð•`‰æ‚·‚é
+	for (auto& enemy : m_pEnemys)
+	{
+		enemy->DrawUI(ui);
+	}
 }
 
 /// <summary>
