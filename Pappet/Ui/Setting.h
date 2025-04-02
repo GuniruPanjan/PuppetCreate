@@ -13,6 +13,7 @@ class Weapon;
 class Armor;
 class Player;
 class CoreManager;
+class Font;
 
 /// <summary>
 /// 設定処理用のクラス
@@ -161,7 +162,7 @@ public:
 	/// <summary>
 	/// 装備の描画処理
 	/// </summary>
-	void EquipmentDraw();
+	void EquipmentDraw(Player& player);
 
 	/// <summary>
 	/// 休息の描画処理
@@ -279,8 +280,11 @@ public:
 private:
 
 	void WeaponUpdate(std::list<std::string> list, Weapon& weapon, int right);
+	void WeaponDraw(std::list<std::string> list, int right);
 	void ShieldUpdate(std::list<std::string> list, Shield& shield, int left);
+	void ShieldDraw(std::list<std::string> list, int left);
 	void ArmorUpdate(std::list<std::string> list, Armor& armor, int body);
+	void ArmorDraw(std::list<std::string> list, int body);
 
 private:
 
@@ -338,8 +342,11 @@ private:
 	std::list<std::string> m_armorList;       //鎧の入手順に入れるリスト
 
 	//スマートポインタ
-	std::shared_ptr<SEManager> pse = std::make_shared<SEManager>();
-	std::shared_ptr<SelectManager> pselect = std::make_shared<SelectManager>();
+	std::shared_ptr<SEManager> m_pSe = std::make_shared<SEManager>();
+	std::shared_ptr<SelectManager> m_pSelect = std::make_shared<SelectManager>();
+	std::shared_ptr<Font> m_pFont;
+	std::shared_ptr<Font> m_pSmallFont;
+	std::shared_ptr<Font> m_pBigFont;
 };
 
 

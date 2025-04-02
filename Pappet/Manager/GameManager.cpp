@@ -265,7 +265,6 @@ void GameManager::Update()
 
 			m_pPlayer->Update(*m_pWeapon, *m_pShield, *m_pArmor, *m_pEnemy, *m_pCore, m_pMap->GetRestPos(), *m_pTool, *m_pSe, m_pMap->GetBossRoom(), m_pEnemy->GetBossDead(GetThisMapName()), m_pPhysics);
 
-
 			m_pMap->JudgeUpdate();
 
 			//プレイヤーのボス部屋に入り口判定
@@ -430,7 +429,7 @@ void GameManager::Update()
 
 				}
 				//休息処理
-				else if(m_pSetting->GetReset())
+				else if (m_pSetting->GetReset())
 				{
 					//フェードアウト可能にする
 					m_pFade->SetOut(false);
@@ -585,7 +584,7 @@ void GameManager::Draw()
 		//装備画面
 		else if (m_pSetting->GetEquipment() && !m_pSetting->GetDecision())
 		{
-			m_pSetting->EquipmentDraw();
+			m_pSetting->EquipmentDraw(*m_pPlayer);
 			m_pUi->EquipmentDraw(*m_pWeapon, *m_pShield, *m_pArmor);
 		}
 		//アイテム画面

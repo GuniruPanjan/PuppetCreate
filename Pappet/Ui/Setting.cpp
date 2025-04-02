@@ -7,6 +7,7 @@
 #include "Character/Player.h"
 #include "Manager/CoreManager.h"
 #include "Manager/ItemManager.h"
+#include "External/Font.h"
 
 namespace
 {
@@ -110,6 +111,10 @@ Setting::Setting() :
 		m_menuSelect[i] = 0;
 		m_menuColor[i] = 0;
 	}
+
+	m_pFont = std::make_shared<Font>();
+	m_pSmallFont = std::make_shared<Font>();
+	m_pBigFont = std::make_shared<Font>();
 }
 
 /// <summary>
@@ -183,6 +188,10 @@ void Setting::Init()
 	m_rest = MyLoadGraph("Data/UI/四角の白い長方形の囲い.png", 1, 1);
 	m_selectUi = MyLoadGraph("Data/UI/選択UI.png", 2, 2);
 	m_levelUp = MyLoadGraph("Data/UI/レベルステータスUI.png", 1, 1);
+
+	m_pFont->FontInit(50);
+	m_pSmallFont->FontInit(30);
+	m_pBigFont->FontInit(80);
 }
 
 /// <summary>
@@ -227,17 +236,17 @@ void Setting::Update()
 		//選択中
 		if (m_brightness == false && m_volume == false)
 		{
-			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Eight);
+			m_pSelect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, m_pSelect->Eight);
 		}
 		//明るさの選択中
 		if (m_brightness == true && m_volume == false)
 		{
-			pselect->Menu_Update(m_thumb, m_one, m_xpad.Buttons[13], brightDecision, pselect->Six);
+			m_pSelect->Menu_Update(m_thumb, m_one, m_xpad.Buttons[13], brightDecision, m_pSelect->Six);
 		}
 		//音量の選択中
 		if (m_brightness == false && m_volume == true)
 		{
-			pselect->Menu_Update(m_thumb, m_one, m_xpad.Buttons[13], volumeDecision, pselect->Six);
+			m_pSelect->Menu_Update(m_thumb, m_one, m_xpad.Buttons[13], volumeDecision, m_pSelect->Six);
 		}
 
 		//Aボタンを押したら
@@ -322,7 +331,7 @@ void Setting::MenuUpdate(Player& player)
 
 	
 
-	pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Eight);
+	m_pSelect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, m_pSelect->Eight);
 
 	if (cWaitTime >= 10)
 	{
@@ -443,7 +452,7 @@ void Setting::EquipmentUpdate()
 		m_one = false;
 	}
 
-	pselect->Menu_Update(m_thumb, m_one, m_xpad.Buttons[12], selectDecision, pselect->Eight);
+	m_pSelect->Menu_Update(m_thumb, m_one, m_xpad.Buttons[12], selectDecision, m_pSelect->Eight);
 
 
 	if (cWaitTime >= 10)
@@ -526,7 +535,7 @@ void Setting::RestUpdate(Player& player, CoreManager& core)
 	//普通の休息だった場合
 	if (!player.GetBigRest())
 	{
-		pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Eight);
+		m_pSelect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, m_pSelect->Eight);
 
 		if (cWaitTime >= 10)
 		{
@@ -573,7 +582,7 @@ void Setting::RestUpdate(Player& player, CoreManager& core)
 	//レベルを上げられる休息だった場合
 	else
 	{
-		pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Seven);
+		m_pSelect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, m_pSelect->Seven);
 
 		if (cWaitTime >= 10)
 		{
@@ -656,7 +665,7 @@ void Setting::LevelUpdate(Player& player, CoreManager& core)
 		m_one = false;
 	}
 
-	pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Six);
+	m_pSelect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, m_pSelect->Six);
 
 	//必要コアより多かったらレベルが上げられる
 	if (core.NeedCore(ms_levelUP.sl_all) <= m_core)
@@ -679,10 +688,10 @@ void Setting::LevelUpdate(Player& player, CoreManager& core)
 			cWaitTime = 0;
 		}
 		
-		LevelUp(core, player.GetHPLevel(), ms_levelUP.sl_hp, pselect->Six);   //HP
-		LevelUp(core, player.GetStaminaLevel(), ms_levelUP.sl_stamina, pselect->Seven); //Stamina
-		LevelUp(core, player.GetMuscleLevel(), ms_levelUP.sl_muscle, pselect->Eight); //Muscle
-		LevelUp(core, player.GetSkillLevel(), ms_levelUP.sl_skill, pselect->Nine);  //Skill
+		LevelUp(core, player.GetHPLevel(), ms_levelUP.sl_hp, m_pSelect->Six);   //HP
+		LevelUp(core, player.GetStaminaLevel(), ms_levelUP.sl_stamina, m_pSelect->Seven); //Stamina
+		LevelUp(core, player.GetMuscleLevel(), ms_levelUP.sl_muscle, m_pSelect->Eight); //Muscle
+		LevelUp(core, player.GetSkillLevel(), ms_levelUP.sl_skill, m_pSelect->Nine);  //Skill
 		
 		
 		//Aボタンが押されたら
@@ -715,7 +724,7 @@ void Setting::LevelUp(CoreManager& core, int origin, int& level, int now)
 {
 	if (cPush >= 30)
 	{
-		if (pselect->NowSelect == now)
+		if (m_pSelect->NowSelect == now)
 		{
 			//左(レベルを戻す)
 			if (m_xpad.Buttons[2] == 1)
@@ -830,17 +839,17 @@ void Setting::EquipmentDecisionUpdate(Weapon& weapon, Shield& shield, Armor& arm
 		if (Right == 0)
 		{
 			//武器が0だった場合
-			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Ten);
+			m_pSelect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, m_pSelect->Ten);
 		}
 		else if (Right == 1)
 		{
 			//武器が1つだった場合
-			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Nine);
+			m_pSelect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, m_pSelect->Nine);
 		}
 		else if (Right == 2)
 		{
 			//武器が2つだった場合
-			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Eight);
+			m_pSelect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, m_pSelect->Eight);
 		}
 
 	}
@@ -868,17 +877,17 @@ void Setting::EquipmentDecisionUpdate(Weapon& weapon, Shield& shield, Armor& arm
 		if (Left == 0)
 		{
 			//盾が0だった場合
-			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Ten);
+			m_pSelect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, m_pSelect->Ten);
 		}
 		else if (Left == 1)
 		{
 			//盾が1つだった場合
-			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Nine);
+			m_pSelect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, m_pSelect->Nine);
 		}
 		else if (Left == 2)
 		{
 			//盾が2つだった場合
-			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Eight);
+			m_pSelect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, m_pSelect->Eight);
 		}
 	}
 	//防具だった場合
@@ -898,12 +907,12 @@ void Setting::EquipmentDecisionUpdate(Weapon& weapon, Shield& shield, Armor& arm
 		if (Armor == 0)
 		{
 			//防具が0だった場合
-			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Ten);
+			m_pSelect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, m_pSelect->Ten);
 		}
 		else if (Armor == 1)
 		{
 			//防具が1つだった場合
-			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Nine);
+			m_pSelect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, m_pSelect->Nine);
 		}
 	}
 
@@ -967,19 +976,19 @@ void Setting::Draw()
 	//選択中の色を変える
 	if (m_brightness == false && m_volume == false)
 	{
-		if (pselect->NowSelect == pselect->Eight)
+		if (m_pSelect->NowSelect == m_pSelect->Eight)
 		{
 			m_brightnessColor = 0xffff00;
 			m_bgmColor = 0xffffff;
 			m_returnColor = 0xffffff;
 		}
-		if (pselect->NowSelect == pselect->Nine)
+		if (m_pSelect->NowSelect == m_pSelect->Nine)
 		{
 			m_brightnessColor = 0xffffff;
 			m_bgmColor = 0xffff00;
 			m_returnColor = 0xffffff;
 		}
-		if (pselect->NowSelect == pselect->Ten)
+		if (m_pSelect->NowSelect == m_pSelect->Ten)
 		{
 			m_brightnessColor = 0xffffff;
 			m_bgmColor = 0xffffff;
@@ -1029,7 +1038,7 @@ void Setting::Draw()
 	DrawBox(1100, 500, 1220, 620, m_volumeColor[3], true);
 	DrawBox(1300, 500, 1420, 620, m_volumeColor[4], true);
 
-	pselect->Draw();
+	m_pSelect->Draw();
 
 	//フォントのサイズを戻す
 	SetFontSize(40);
@@ -1048,7 +1057,7 @@ void Setting::Draw()
 /// <param name="white">白い画像のブレンド率</param>
 void Setting::BrightColorDraw(int select, int now, int other1, int other2, int other3, int other4, int black, int white)
 {
-	if (pselect->NowSelect == select)
+	if (m_pSelect->NowSelect == select)
 	{
 		m_brightColor[now] = 0xffff00;
 		m_brightColor[other1] = 0xffffff;
@@ -1073,7 +1082,7 @@ void Setting::BrightColorDraw(int select, int now, int other1, int other2, int o
 /// <param name="volume">音量</param>
 void Setting::VolumeColorDraw(int select, int now, int other1, int other2, int other3, int other4, int volume)
 {
-	if (pselect->NowSelect == select)
+	if (m_pSelect->NowSelect == select)
 	{
 		m_volumeColor[now] = 0xffff00;
 		m_volumeColor[other1] = 0xffffff;
@@ -1155,19 +1164,19 @@ void Setting::SettingDraw(int volume)
 void Setting::MenuDraw()
 {
 
-	if (pselect->NowSelect == pselect->Eight)
+	if (m_pSelect->NowSelect == m_pSelect->Eight)
 	{
 		m_menuColor[0] = 0xffff00;
 		m_menuColor[1] = 0xffffff;
 		m_menuColor[2] = 0xffffff;
 	}
-	if (pselect->NowSelect == pselect->Nine)
+	if (m_pSelect->NowSelect == m_pSelect->Nine)
 	{
 		m_menuColor[0] = 0xffffff;
 		m_menuColor[1] = 0xffff00;
 		m_menuColor[2] = 0xffffff;
 	}
-	if (pselect->NowSelect == pselect->Ten)
+	if (m_pSelect->NowSelect == m_pSelect->Ten)
 	{
 		m_menuColor[0] = 0xffffff;
 		m_menuColor[1] = 0xffffff;
@@ -1236,25 +1245,25 @@ void Setting::MenuChangeDraw()
 /// <summary>
 /// 装備画面
 /// </summary>
-void Setting::EquipmentDraw()
+void Setting::EquipmentDraw(Player& player)
 {
 	DrawGraph(0, 0, m_equipment, true);
 
-	if (pselect->NowSelect == pselect->Eight)
+	if (m_pSelect->NowSelect == m_pSelect->Eight)
 	{
 		m_equipmentColorPos.oneX = cRightEquipmentOneX;
 		m_equipmentColorPos.oneY = cRightEquipmentOneY;
 		m_equipmentColorPos.secondX = cRightEquipmentSecondX;
 		m_equipmentColorPos.secondY = cRightEquipmentSecondY;
 	}
-	else if (pselect->NowSelect == pselect->Nine)
+	else if (m_pSelect->NowSelect == m_pSelect->Nine)
 	{
 		m_equipmentColorPos.oneX = cLeftEquipmentOneX;
 		m_equipmentColorPos.oneY = cLeftEquipmentOneY;
 		m_equipmentColorPos.secondX = cLeftEquipmentSecondX;
 		m_equipmentColorPos.secondY = cLeftEquipmentSecondY;
 	}
-	else if (pselect->NowSelect == pselect->Ten)
+	else if (m_pSelect->NowSelect == m_pSelect->Ten)
 	{
 		m_equipmentColorPos.oneX = cArmorEquipmentOneX;
 		m_equipmentColorPos.oneY = cArmorEquipmentOneY;
@@ -1265,6 +1274,29 @@ void Setting::EquipmentDraw()
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
 	DrawBox(m_equipmentColorPos.oneX, m_equipmentColorPos.oneY, m_equipmentColorPos.secondX, m_equipmentColorPos.secondY, 0x000fff, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+	ms_levelUP.sl_all = player.GetLevel();
+
+	ms_levelUP.sl_hp = player.GetHPLevel();
+	ms_levelUP.sl_stamina = player.GetStaminaLevel();
+	ms_levelUP.sl_muscle = player.GetMuscleLevel();
+	ms_levelUP.sl_skill = player.GetSkillLevel();
+
+	DrawFormatStringToHandle(1100, 400, 0xffffff, m_pFont->GetHandle(), "レベル　　　%d", ms_levelUP.sl_all);
+
+	DrawFormatStringToHandle(1150, 515, 0xffffff, m_pFont->GetHandle(), "%d", ms_levelUP.sl_hp);
+	DrawFormatStringToHandle(1150, 600, 0xffffff, m_pFont->GetHandle(), "%d", ms_levelUP.sl_stamina);
+	DrawFormatStringToHandle(1150, 680, 0xffffff, m_pFont->GetHandle(), "%d", ms_levelUP.sl_muscle);
+	DrawFormatStringToHandle(1150, 760, 0xffffff, m_pFont->GetHandle(), "%d", ms_levelUP.sl_skill);
+
+
+	DrawStringToHandle(1300, 515, "生命力", 0xffffff, m_pFont->GetHandle());
+	DrawFormatStringToHandle(1300, 565, 0xffffff, m_pFont->GetHandle(), "%d", static_cast<int>(player.GetStatus().s_hp));
+	DrawStringToHandle(1300, 615, "体力", 0xffffff, m_pFont->GetHandle());
+	DrawFormatStringToHandle(1300, 665, 0xffffff, m_pFont->GetHandle(), "%d", static_cast<int>(player.GetStatus().s_stamina));
+	DrawStringToHandle(1300, 715, "攻撃力", 0xffffff, m_pFont->GetHandle());
+	DrawFormatStringToHandle(1300, 765, 0xffffff, m_pFont->GetHandle(), "%d", static_cast<int>(player.GetAttackDamage() + ((ms_levelUP.sl_muscle - 1) * player.GetAttackMuscle()) + ((ms_levelUP.sl_skill - 1) * player.GetAttackSkill())));
+
 }
 
 /// <summary>
@@ -1281,7 +1313,7 @@ void Setting::RestDraw(bool rest)
 	//普通の休息
 	if (!rest)
 	{
-		if (pselect->NowSelect == pselect->Eight)
+		if (m_pSelect->NowSelect == m_pSelect->Eight)
 		{
 			m_selectY = 255;
 
@@ -1289,7 +1321,7 @@ void Setting::RestDraw(bool rest)
 			m_menuColor[1] = 0xffffff;
 			m_menuColor[2] = 0xffffff;
 		}
-		else if (pselect->NowSelect == pselect->Nine)
+		else if (m_pSelect->NowSelect == m_pSelect->Nine)
 		{
 			m_selectY = 355;
 
@@ -1297,7 +1329,7 @@ void Setting::RestDraw(bool rest)
 			m_menuColor[1] = 0x000000;
 			m_menuColor[2] = 0xffffff;
 		}
-		else if (pselect->NowSelect == pselect->Ten)
+		else if (m_pSelect->NowSelect == m_pSelect->Ten)
 		{
 			m_selectY = 455;
 
@@ -1321,7 +1353,7 @@ void Setting::RestDraw(bool rest)
 	//レベル上げられる休息
 	else
 	{
-		if (pselect->NowSelect == pselect->Seven)
+		if (m_pSelect->NowSelect == m_pSelect->Seven)
 		{
 			m_selectY = 255;
 
@@ -1330,7 +1362,7 @@ void Setting::RestDraw(bool rest)
 			m_menuColor[2] = 0xffffff;
 			m_menuColor[3] = 0xffffff;
 		}
-		else if (pselect->NowSelect == pselect->Eight)
+		else if (m_pSelect->NowSelect == m_pSelect->Eight)
 		{
 			m_selectY = 355;
 
@@ -1339,7 +1371,7 @@ void Setting::RestDraw(bool rest)
 			m_menuColor[2] = 0xffffff;
 			m_menuColor[3] = 0xffffff;
 		}
-		else if (pselect->NowSelect == pselect->Nine)
+		else if (m_pSelect->NowSelect == m_pSelect->Nine)
 		{
 			m_selectY = 455;
 
@@ -1349,7 +1381,7 @@ void Setting::RestDraw(bool rest)
 			m_menuColor[3] = 0xffffff;
 
 		}
-		else if (pselect->NowSelect == pselect->Ten)
+		else if (m_pSelect->NowSelect == m_pSelect->Ten)
 		{
 			m_selectY = 555;
 
@@ -1384,7 +1416,7 @@ void Setting::LevelUpDraw(Player& player, CoreManager& core)
 	DrawGraph(-50, 0, m_levelUp, true);
 	DrawRotaGraph(m_selectX, m_selectY, cGraphSize, DX_PI_F, m_selectUi, true);
 
-	if (pselect->NowSelect == pselect->Six)
+	if (m_pSelect->NowSelect == m_pSelect->Six)
 	{
 		m_selectX = 300;
 		m_selectY = 540;
@@ -1396,7 +1428,7 @@ void Setting::LevelUpDraw(Player& player, CoreManager& core)
 		m_menuColor[3] = 0xffffff;
 		m_menuColor[4] = 0xffffff;
 	}
-	else if (pselect->NowSelect == pselect->Seven)
+	else if (m_pSelect->NowSelect == m_pSelect->Seven)
 	{
 		m_selectX = 300;
 		m_selectY = 635;
@@ -1408,7 +1440,7 @@ void Setting::LevelUpDraw(Player& player, CoreManager& core)
 		m_menuColor[3] = 0xffffff;
 		m_menuColor[4] = 0xffffff;
 	}
-	else if (pselect->NowSelect == pselect->Eight)
+	else if (m_pSelect->NowSelect == m_pSelect->Eight)
 	{
 		m_selectX = 300;
 		m_selectY = 730;
@@ -1420,7 +1452,7 @@ void Setting::LevelUpDraw(Player& player, CoreManager& core)
 		m_menuColor[3] = 0xffffff;
 		m_menuColor[4] = 0xffffff;
 	}
-	else if (pselect->NowSelect == pselect->Nine)
+	else if (m_pSelect->NowSelect == m_pSelect->Nine)
 	{
 		m_selectX = 300;
 		m_selectY = 825;
@@ -1432,7 +1464,7 @@ void Setting::LevelUpDraw(Player& player, CoreManager& core)
 		m_menuColor[3] = 0x000000;
 		m_menuColor[4] = 0xffffff;
 	}
-	else if (pselect->NowSelect == pselect->Ten)
+	else if (m_pSelect->NowSelect == m_pSelect->Ten)
 	{
 		m_selectX = 815;
 		m_selectY = 930;
@@ -1510,7 +1542,7 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 
 		if (Right == 0)
 		{
-			if (pselect->NowSelect == pselect->Ten)
+			if (m_pSelect->NowSelect == m_pSelect->Ten)
 			{
 				m_selectObject.oneX = cOneX;
 				m_selectObject.oneY = cOneY;
@@ -1523,7 +1555,7 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 		}
 		else if (Right == 1)
 		{
-			if (pselect->NowSelect == pselect->Nine)
+			if (m_pSelect->NowSelect == m_pSelect->Nine)
 			{
 				m_selectObject.oneX = cOneX;
 				m_selectObject.oneY = cOneY;
@@ -1533,7 +1565,7 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 				//何を選択しているかの変数
 				m_right = 0;
 			}
-			else if (pselect->NowSelect == pselect->Ten)
+			else if (m_pSelect->NowSelect == m_pSelect->Ten)
 			{
 				m_selectObject.oneY = cOneY + cDifferenceY;
 				m_selectObject.secondY = cSecondY + cDifferenceY;
@@ -1544,7 +1576,7 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 		}
 		else if (Right == 2)
 		{
-			if (pselect->NowSelect == pselect->Eight)
+			if (m_pSelect->NowSelect == m_pSelect->Eight)
 			{
 				m_selectObject.oneX = cOneX;
 				m_selectObject.oneY = cOneY;
@@ -1554,7 +1586,7 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 				//何を選択しているかの変数
 				m_right = 0;
 			}
-			else if (pselect->NowSelect == pselect->Nine)
+			else if (m_pSelect->NowSelect == m_pSelect->Nine)
 			{
 				m_selectObject.oneY = cOneY + cDifferenceY;
 				m_selectObject.secondY = cSecondY + cDifferenceY;
@@ -1562,7 +1594,7 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 				//何を選択しているかの変数
 				m_right = 1;
 			}
-			else if (pselect->NowSelect == pselect->Ten)
+			else if (m_pSelect->NowSelect == m_pSelect->Ten)
 			{
 				m_selectObject.oneY = cOneY + (cDifferenceY * 2);
 				m_selectObject.secondY = cSecondY + (cDifferenceY * 2);
@@ -1571,6 +1603,9 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 				m_right = 2;
 			}
 		}
+
+		//武器の説明描画
+		WeaponDraw(m_weaponList, m_right);
 	}
 	//左装備だった場合
 	else if (m_select.left)
@@ -1590,7 +1625,7 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 
 		if (Left == 0)
 		{
-			if (pselect->NowSelect == pselect->Ten)
+			if (m_pSelect->NowSelect == m_pSelect->Ten)
 			{
 				m_selectObject.oneX = cOneX;
 				m_selectObject.oneY = cOneY;
@@ -1603,7 +1638,7 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 		}
 		else if (Left == 1)
 		{
-			if (pselect->NowSelect == pselect->Nine)
+			if (m_pSelect->NowSelect == m_pSelect->Nine)
 			{
 				m_selectObject.oneX = cOneX;
 				m_selectObject.oneY = cOneY;
@@ -1613,7 +1648,7 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 				//何を選択しているかの変数
 				m_left = 0;
 			}
-			else if (pselect->NowSelect == pselect->Ten)
+			else if (m_pSelect->NowSelect == m_pSelect->Ten)
 			{
 				m_selectObject.oneY = cOneY + cDifferenceY;
 				m_selectObject.secondY = cSecondY + cDifferenceY;
@@ -1624,7 +1659,7 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 		}
 		else if (Left == 2)
 		{
-			if (pselect->NowSelect == pselect->Eight)
+			if (m_pSelect->NowSelect == m_pSelect->Eight)
 			{
 				m_selectObject.oneX = cOneX;
 				m_selectObject.oneY = cOneY;
@@ -1634,7 +1669,7 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 				//何を選択しているかの変数
 				m_left = 0;
 			}
-			else if (pselect->NowSelect == pselect->Nine)
+			else if (m_pSelect->NowSelect == m_pSelect->Nine)
 			{
 				m_selectObject.oneY = cOneY + cDifferenceY;
 				m_selectObject.secondY = cSecondY + cDifferenceY;
@@ -1642,7 +1677,7 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 				//何を選択しているかの変数
 				m_left = 1;
 			}
-			else if (pselect->NowSelect == pselect->Ten)
+			else if (m_pSelect->NowSelect == m_pSelect->Ten)
 			{
 				m_selectObject.oneY = cOneY + (cDifferenceY * 2);
 				m_selectObject.secondY = cSecondY + (cDifferenceY * 2);
@@ -1651,6 +1686,9 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 				m_left = 2;
 			}
 		}
+
+		//盾の説明描画
+		ShieldDraw(m_shieldList, m_left);
 	}
 	//防具だった場合
 	else if (m_select.armor)
@@ -1666,7 +1704,7 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 
 		if (Armor == 0)
 		{
-			if (pselect->NowSelect == pselect->Ten)
+			if (m_pSelect->NowSelect == m_pSelect->Ten)
 			{
 				m_selectObject.oneX = cOneX;
 				m_selectObject.oneY = cOneY;
@@ -1679,7 +1717,7 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 		}
 		else if (Armor == 1)
 		{
-			if (pselect->NowSelect == pselect->Nine)
+			if (m_pSelect->NowSelect == m_pSelect->Nine)
 			{
 				m_selectObject.oneX = cOneX;
 				m_selectObject.oneY = cOneY;
@@ -1689,7 +1727,7 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 				//何を選択しているか判断するための変数
 				m_armor = 0;
 			}
-			else if (pselect->NowSelect == pselect->Ten)
+			else if (m_pSelect->NowSelect == m_pSelect->Ten)
 			{
 				m_selectObject.oneY = cOneY + cDifferenceY;
 				m_selectObject.secondY = cSecondY + cDifferenceY;
@@ -1698,6 +1736,9 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 				m_armor = 1;
 			}
 		}
+
+		//防具の説明描画
+		ArmorDraw(m_armorList, m_armor);
 	}
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
@@ -1774,6 +1815,54 @@ void Setting::WeaponUpdate(std::list<std::string> list, Weapon& weapon, int righ
 	}
 }
 
+/// <summary>
+/// 武器の説明分描画
+/// </summary>
+/// <param name="list"></param>
+/// <param name="right"></param>
+void Setting::WeaponDraw(std::list<std::string> list, int right)
+{
+	int select = 1;
+
+	//素手選択
+	if (right == 0)
+	{
+		DrawStringToHandle(400, 100, "素手", 0xffffff, m_pBigFont->GetHandle());
+
+		DrawStringToHandle(400, 300, "信じるべきは己の力のみ", 0xffffff, m_pFont->GetHandle());
+	}
+	//武器選択
+	else if (right >= 1)
+	{
+		for (const auto& item : list)
+		{
+			if (right == select)
+			{
+				//黒い剣選択
+				if (item == "BlackSword")
+				{
+					DrawStringToHandle(400, 100, "黒剣", 0xffffff, m_pBigFont->GetHandle());
+
+					DrawStringToHandle(400, 300, "その漆黒の刃は、まるで夜そのものを\n鍛え上げたかのように光を吸い込み、\n沈黙の中に冷たい輝きを宿す", 0xffffff, m_pFont->GetHandle());
+					DrawStringToHandle(400, 450, "この剣を振るう者は、\n刃に秘められた深淵を覗き込むこととなる\n迷いなき者には忠実な刃となり、\n心揺らぐ者には破滅の影を落とす", 0xffffff, m_pFont->GetHandle());
+				}
+				//木のバット選択
+				if (item == "Bat")
+				{
+					DrawStringToHandle(400, 100, "木の棍棒", 0xffffff, m_pBigFont->GetHandle());
+
+					DrawStringToHandle(400, 300, "人形の一部を削り出した棍棒\n幾千もの戦いを耐え抜いた木肌は\n鋼にも劣らぬ強度を誇る", 0xffffff, m_pFont->GetHandle());
+					DrawStringToHandle(400, 450, "かつての人形の記憶を宿し、\n持ち主の手に馴染むその感触は、\n不思議な安心感すら与える", 0xffffff, m_pFont->GetHandle());
+
+				}
+
+			}
+
+			select++;
+		}
+	}
+}
+
 void Setting::ShieldUpdate(std::list<std::string> list, Shield& shield, int left)
 {
 	int select = 1;
@@ -1825,11 +1914,60 @@ void Setting::ShieldUpdate(std::list<std::string> list, Shield& shield, int left
 	}
 }
 
-void Setting::ArmorUpdate(std::list<std::string> list, Armor& armor, int body)
+/// <summary>
+/// 盾の説明描画
+/// </summary>
+/// <param name="list"></param>
+/// <param name="left"></param>
+void Setting::ShieldDraw(std::list<std::string> list, int left)
 {
 	int select = 1;
 
 	//素手選択
+	if (left == 0)
+	{
+		DrawStringToHandle(400, 100, "素手", 0xffffff, m_pBigFont->GetHandle());
+
+		DrawStringToHandle(400, 300, "信じるべきは己の力のみ", 0xffffff, m_pFont->GetHandle());
+	}
+	//盾選択
+	else if (left >= 1)
+	{
+		for (const auto& item : list)
+		{
+			if (left == select)
+			{
+				//歪んだ盾選択
+				if (item == "Distorted")
+				{
+					DrawStringToHandle(400, 100, "忌盾", 0xffffff, m_pBigFont->GetHandle());
+
+					DrawStringToHandle(400, 300, "神への反逆を試みた者が捧げた、呪われし盾\n触れる者の心に微かな囁きを落とすという\n刃も魔も弾くが、持ち主の魂を蝕む", 0xffffff, m_pFont->GetHandle());
+					DrawStringToHandle(400, 450, "選ぶのなら覚悟せよこの盾は、\n持つ者を守るのではなく、試すのだから", 0xffffff, m_pFont->GetHandle());
+
+				}
+				//木の盾選択
+				if (item == "WoodShield")
+				{
+					DrawStringToHandle(400, 100, "木の盾", 0xffffff, m_pBigFont->GetHandle());
+
+					DrawStringToHandle(400, 300, "人形の一部を削り出した盾\nその木目にはかつての嵐と戦火を\n耐え抜いた誇りが刻まれている", 0xffffff, m_pFont->GetHandle());
+					DrawStringToHandle(400, 450, "剣をも弾く堅牢さと、\nしなやかに衝撃を受け流す柔軟さを兼ね備え、\n持ち主を静かに、しかし確かに守り続ける", 0xffffff, m_pFont->GetHandle());
+
+				}
+
+			}
+
+			select++;
+		}
+	}
+}
+
+void Setting::ArmorUpdate(std::list<std::string> list, Armor& armor, int body)
+{
+	int select = 1;
+
+	//裸体選択
 	if (body == 0)
 	{
 		armor.SetBody(true);
@@ -1852,6 +1990,46 @@ void Setting::ArmorUpdate(std::list<std::string> list, Armor& armor, int body)
 
 					armor.Init();
 				}
+			}
+
+			select++;
+		}
+	}
+}
+
+/// <summary>
+/// 防具の説明描画
+/// </summary>
+/// <param name="list"></param>
+/// <param name="body"></param>
+void Setting::ArmorDraw(std::list<std::string> list, int body)
+{
+	int select = 1;
+
+	//裸体選択
+	if (body == 0)
+	{
+		DrawStringToHandle(400, 100, "裸体", 0xffffff, m_pBigFont->GetHandle());
+
+		DrawStringToHandle(400, 300, "信じるべきは己の力のみ", 0xffffff, m_pFont->GetHandle());
+	}
+	//防具選択
+	else if (body >= 1)
+	{
+		for (const auto& item : list)
+		{
+			if (body == select)
+			{
+				//歪んだ盾選択
+				if (item == "ArmorNormal")
+				{
+					DrawStringToHandle(400, 100, "ノクターニス兵の鎧", 0xffffff, m_pBigFont->GetHandle());
+
+					DrawStringToHandle(400, 300, "ノクターニス城を守護する兵たちの鎧\n絶望を吸い込み、静寂を纏う", 0xffffff, m_pFont->GetHandle());
+					DrawStringToHandle(400, 400, "鍛え上げられた鋼は剣を弾き、魔を拒む\n夜が終わるまで戦い続ける\nそれがノクターニス兵の宿命である", 0xffffff, m_pFont->GetHandle());
+
+				}
+
 			}
 
 			select++;
