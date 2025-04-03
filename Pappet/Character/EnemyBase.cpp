@@ -22,6 +22,8 @@ namespace
 /// <param name="priority">—Dæ“x</param>
 EnemyBase::EnemyBase(Priority priority) :
 	CharacterBase(priority, ObjectTag::Enemy),
+	m_col(),
+	m_strengthCol(),
 	m_randomAction(0),
 	m_maxHP(0),
 	m_hpRadius(0.0f),

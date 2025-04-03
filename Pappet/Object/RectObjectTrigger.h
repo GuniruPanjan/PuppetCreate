@@ -1,5 +1,9 @@
 #pragma once
 #include "ObjectBase.h"
+
+/// <summary>
+/// 矩形用のトリガークラス
+/// </summary>
 class RectObjectTrigger : public ObjectBase
 {
 public:

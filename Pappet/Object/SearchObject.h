@@ -1,5 +1,9 @@
 #pragma once
 #include "ObjectBase.h"
+
+/// <summary>
+/// 探索用のオブジェクトクラス
+/// </summary>
 class SearchObject : public ObjectBase
 {
 public:

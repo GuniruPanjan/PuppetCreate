@@ -722,18 +722,19 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se,
 			if (m_randomAction == 0)
 			{
 				//攻撃判定のポジション
-				//m_pAttack->Update(attackLeftKickPos);
 				InitAttackLigUpdate(attackKnifePos1, attackKnifePos2);
 
 				if (m_nowFrame == 5)
 				{
-					//InitAttack(cAttackRadiusKick);
 					InitLigAttack(attackKnifePos1, attackKnifePos2, cAttackRadiusKnife);
 					InitAttackDamage(m_status.s_attack);
 				}
 				//アニメーションフレーム中に攻撃判定を出す
 				if (m_nowFrame == 24)
 				{
+					//攻撃SE再生
+					PlaySoundMem(se.GetKnifeSE(), DX_PLAYTYPE_BACK, true);
+
 					InitAttackUpdate(m_status.s_attack);
 				}
 				if (m_nowFrame == 30)
@@ -746,6 +747,9 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se,
 				//アニメーションフレーム中に攻撃判定を出す
 				if (m_nowFrame == 40)
 				{
+					//攻撃SE再生
+					PlaySoundMem(se.GetKnifeSE(), DX_PLAYTYPE_BACK, true);
+
 					InitAttackUpdate(m_status.s_attack);
 				}
 				if (m_nowFrame >= 48)
@@ -759,18 +763,19 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se,
 			else if (m_randomAction == 1)
 			{
 				//攻撃判定のポジション
-				//m_pAttack->Update(attackLeftKickPos);
 				InitAttackLigUpdate(attackKnifePos1, attackKnifePos2);
 
 				if (m_nowFrame == 5)
 				{
-					//InitAttack(cAttackRadiusKick);
 					InitLigAttack(attackKnifePos1, attackKnifePos2, cAttackRadiusKnife);
 					InitAttackDamage(m_status.s_attack);
 				}
 				//アニメーションフレーム中に攻撃判定を出す
 				if (m_nowFrame == 24)
 				{
+					//攻撃SE再生
+					PlaySoundMem(se.GetKnifeSE(), DX_PLAYTYPE_BACK, true);
+
 					InitAttackUpdate(m_status.s_attack);
 				}
 				if (m_nowFrame >= 28)
@@ -784,18 +789,19 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se,
 			else if (m_randomAction == 2)
 			{
 				//攻撃判定のポジション
-				//m_pAttack->Update(attackLeftKickPos);
 				InitAttackLigUpdate(attackKnifePos1, attackKnifePos2);
 
 				if (m_nowFrame == 5)
 				{
-					//InitAttack(cAttackRadiusKick);
 					InitLigAttack(attackKnifePos1, attackKnifePos2, cAttackRadiusKnife);
 					InitAttackDamage(m_status.s_attack);
 				}
 				//アニメーションフレーム中に攻撃判定を出す
 				if (m_nowFrame == 11)
 				{
+					//攻撃SE再生
+					PlaySoundMem(se.GetKnifeSE(), DX_PLAYTYPE_BACK, true);
+
 					InitAttackUpdate(m_status.s_attack);
 				}
 				if (m_nowFrame >= 18)
@@ -809,19 +815,19 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se,
 			else if (m_randomAction == 3)
 			{
 				//攻撃判定のポジション
-				//m_pAttack->Update(attackLeftKickPos);
 				InitAttackLigUpdate(attackLeftKickPos1, attackLeftKickPos2);
 
 				if (m_nowFrame == 5)
 				{
-					//InitAttack(cAttackRadiusKick);
 					InitLigAttack(attackLeftKickPos1, attackLeftKickPos2, cAttackRadiusKick);
 					InitAttackDamage(m_status.s_attack);
 				}
 				//アニメーションフレーム中に攻撃判定を出す
 				if (m_nowFrame == 62)
 				{
-					//InitAttackUpdate(m_status.s_attack);
+					//攻撃SE再生
+					PlaySoundMem(se.GetKickSE(), DX_PLAYTYPE_BACK, true);
+
 					InitAttackUpdate(m_status.s_attack);
 				}
 				if (m_nowFrame >= 70)
@@ -835,18 +841,19 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se,
 			else if (m_randomAction == 4)
 			{
 				//攻撃判定のポジション
-				//m_pAttack->Update(attackRightKickPos);
 				InitAttackLigUpdate(attackRightKickPos1, attackRightKickPos2);
 
 				if (m_nowFrame == 5)
 				{
-					//InitAttack(cAttackRadiusKick);
 					InitLigAttack(attackRightKickPos1, attackRightKickPos2, cAttackRadiusKick);
 					InitAttackDamage(m_status.s_attack);
 				}
 				//アニメーションフレーム中に攻撃判定を出す
 				if (m_nowFrame == 25)
 				{
+					//攻撃SE再生
+					PlaySoundMem(se.GetKickSE(), DX_PLAYTYPE_BACK, true);
+
 					InitAttackUpdate(m_status.s_attack);
 				}
 				if (m_nowFrame >= 35)
@@ -1068,7 +1075,6 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 		if (m_randomAction == 0)
 		{
 			//攻撃判定のポジション
-			//m_pAttack->Update(attackLeftKickPos);
 			InitAttackLigUpdate(attackKnifePos1, attackKnifePos2);
 
 			//攻撃時の移動する距離
@@ -1083,7 +1089,6 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 
 			if (m_nowFrame == 5)
 			{
-				//InitAttack(cAttackRadiusKick);
 				InitLigAttack(attackKnifePos1, attackKnifePos2, cAttackRadiusKnife);
 				InitAttackDamage(m_status.s_attack);
 			}
@@ -1102,6 +1107,9 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 			//アニメーションフレーム中に攻撃判定を出す
 			if (m_nowFrame == 40)
 			{
+				//攻撃SE再生
+				PlaySoundMem(se.GetKnifeSE(), DX_PLAYTYPE_BACK, true);
+
 				InitAttackUpdate(m_status.s_attack);
 			}
 			if (m_nowFrame >= 48)
@@ -1115,7 +1123,6 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 		else if (m_randomAction == 1)
 		{
 			//攻撃判定のポジション
-			//m_pAttack->Update(attackLeftKickPos);
 			InitAttackLigUpdate(attackKnifePos1, attackKnifePos2);
 
 			//攻撃時の移動する距離
@@ -1123,13 +1130,15 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 
 			if (m_nowFrame == 5)
 			{
-				//InitAttack(cAttackRadiusKick);
 				InitLigAttack(attackKnifePos1, attackKnifePos2, cAttackRadiusKnife);
 				InitAttackDamage(m_status.s_attack);
 			}
 			//アニメーションフレーム中に攻撃判定を出す
 			if (m_nowFrame == 24)
 			{
+				//攻撃SE再生
+				PlaySoundMem(se.GetKnifeSE(), DX_PLAYTYPE_BACK, true);
+
 				InitAttackUpdate(m_status.s_attack);
 			}
 			if (m_nowFrame >= 28)
@@ -1143,7 +1152,6 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 		else if (m_randomAction == 2)
 		{
 			//攻撃判定のポジション
-			//m_pAttack->Update(attackLeftKickPos);
 			InitAttackLigUpdate(attackKnifePos1, attackKnifePos2);
 
 			//攻撃時の移動する距離
@@ -1151,13 +1159,15 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 
 			if (m_nowFrame == 5)
 			{
-				//InitAttack(cAttackRadiusKick);
 				InitLigAttack(attackKnifePos1, attackKnifePos2, cAttackRadiusKnife);
 				InitAttackDamage(m_status.s_attack);
 			}
 			//アニメーションフレーム中に攻撃判定を出す
 			if (m_nowFrame == 11)
 			{
+				//攻撃SE再生
+				PlaySoundMem(se.GetKnifeSE(), DX_PLAYTYPE_BACK, true);
+
 				InitAttackUpdate(m_status.s_attack);
 			}
 			if (m_nowFrame >= 18)
@@ -1171,7 +1181,6 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 		else if (m_randomAction == 3)
 		{
 			//攻撃判定のポジション
-			//m_pAttack->Update(attackLeftKickPos);
 			InitAttackLigUpdate(attackLeftKickPos1, attackLeftKickPos2);
 
 			//攻撃時の移動する距離
@@ -1198,14 +1207,15 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 
 			if (m_nowFrame == 5)
 			{
-				//InitAttack(cAttackRadiusKick);
 				InitLigAttack(attackLeftKickPos1, attackLeftKickPos2, cAttackRadiusKick);
 				InitAttackDamage(m_status.s_attack);
 			}
 			//アニメーションフレーム中に攻撃判定を出す
 			if (m_nowFrame == 62)
 			{
-				//InitAttackUpdate(m_status.s_attack);
+				//攻撃SE再生
+				PlaySoundMem(se.GetKickSE(), DX_PLAYTYPE_BACK, true);
+
 				InitAttackUpdate(m_status.s_attack);
 			}
 			if (m_nowFrame >= 70)
@@ -1219,7 +1229,6 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 		else if (m_randomAction == 4)
 		{
 			//攻撃判定のポジション
-			//m_pAttack->Update(attackRightKickPos);
 			InitAttackLigUpdate(attackRightKickPos1, attackRightKickPos2);
 
 			//攻撃時の移動する距離
@@ -1242,13 +1251,15 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 
 			if (m_nowFrame == 5)
 			{
-				//InitAttack(cAttackRadiusKick);
 				InitLigAttack(attackRightKickPos1, attackRightKickPos2, cAttackRadiusKick);
 				InitAttackDamage(m_status.s_attack);
 			}
 			//アニメーションフレーム中に攻撃判定を出す
 			if (m_nowFrame == 25)
 			{
+				//攻撃SE再生
+				PlaySoundMem(se.GetKickSE(), DX_PLAYTYPE_BACK, true);
+
 				InitAttackUpdate(m_status.s_attack);
 			}
 			if (m_nowFrame >= 35)

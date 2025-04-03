@@ -50,6 +50,8 @@ private:
 	int m_pal[3];      //ブレンド描画用
 	int m_waitTime;      //待つための時間
 	int m_load;          //ロード時間
+	int m_loadNow1;      //ロード画像格納変数
+	int m_loadNow2;      //ロード画像格納変数
 	bool m_one;      //単発入力
 	bool m_blend;    //ブレンド判定
 	bool m_setButton;    //設定の判定
@@ -66,7 +68,6 @@ private:
 	VECTOR m_pos;
 
 	//スマートポインタ
-	//std::shared_ptr<Map> pmap = std::make_shared<Map>();
 	std::shared_ptr<SEManager> pse = std::make_shared<SEManager>();
 	std::shared_ptr<SelectManager> pselect = std::make_shared<SelectManager>();
 	std::shared_ptr<FadeManager> m_pFade = std::make_shared<FadeManager>();

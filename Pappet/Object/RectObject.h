@@ -1,5 +1,9 @@
 #pragma once
 #include "ObjectBase.h"
+
+/// <summary>
+/// 矩形用のオブジェクトクラス
+/// </summary>
 class RectObject : public ObjectBase
 {
 public:

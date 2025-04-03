@@ -194,7 +194,6 @@
     <ClCompile Include="Object\RectObjectTrigger.cpp" />
     <ClCompile Include="Object\SearchObject.cpp" />
     <ClCompile Include="Object\ShieldObject.cpp" />
-    <ClCompile Include="Scene\MenuScene.cpp" />
     <ClCompile Include="Scene\SceneBase.cpp" />
     <ClCompile Include="Scene\SceneGame.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
@@ -266,7 +265,6 @@
     <ClInclude Include="Object\RectObjectTrigger.h" />
     <ClInclude Include="Object\SearchObject.h" />
     <ClInclude Include="Object\ShieldObject.h" />
-    <ClInclude Include="Scene\MenuScene.h" />
     <ClInclude Include="Scene\SceneBase.h" />
     <ClInclude Include="Scene\SceneGame.h" />
     <ClInclude Include="Scene\SceneManager.h" />

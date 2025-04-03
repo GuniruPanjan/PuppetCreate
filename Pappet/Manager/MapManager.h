@@ -21,7 +21,7 @@ public:
 	//更新処理
 	void Update(std::shared_ptr<MyLibrary::Physics> physics, bool warp, bool enter, bool Dead);
 	//ワープの更新処理
-	void WarpUpdate(std::shared_ptr<MyLibrary::Physics> physics, bool warp, bool title);
+	void WarpUpdate(std::shared_ptr<MyLibrary::Physics> physics, bool warp, bool title, bool rest);
 	//当たったかの判定処理
 	void JudgeUpdate();
 	//コアの更新

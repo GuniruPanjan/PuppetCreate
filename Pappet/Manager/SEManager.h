@@ -32,11 +32,14 @@ public:
 	int GetWalkSE() { return m_walkSE; }                  //歩く時のSEをとる
 	int GetHeelSE() { return m_playerHeelSE; }            //回復した時のSEをとる
 	int GetRestSE() { return m_playerRestSE; }            //休息した時のSEをとる
+	int GetItemSE() { return m_itemGetSE; }               //アイテムを取った時のSEをとる
 	int GetBossVoiceSE() { return m_bossVoiceSE; }        //ボスの叫びのSEをとる
 	int GetBossAttackSE1() { return m_bossAttackSE[0]; }  //ボスの攻撃１のSEをとる
 	int GetBossAttackSE2() { return m_bossAttackSE[1]; }  //ボスの攻撃2のSEをとる
 	int GetBossAttackSE3() { return m_bossAttackSE[2]; }  //ボスの攻撃3のSEをとる
 	int GetBossWalkSE() { return m_bossWalkSE; }          //ボスが歩いた時のSEをとる
+	int GetKickSE() { return m_kickSE; }                  //キックのSEをとる
+	int GetKnifeSE() { return m_knifeSE; }                //ナイフのSEをとる
 	int GetDiedSE() { return m_diedSE; }                  //死んだ時のSEをとる
 
 private:
@@ -49,9 +52,12 @@ private:
 	int m_walkSE;           //エネミーとプレイヤーの歩く時のSE
 	int m_playerHeelSE;     //回復した時のSE
 	int m_playerRestSE;     //休息した時のSE
+	int m_itemGetSE;        //アイテムを取った時のSE
 	int m_bossVoiceSE;      //ボスの咆哮SE
 	int m_bossAttackSE[3];  //ボスの攻撃３パターン
 	int m_bossWalkSE;       //ボスが歩く時のSE
+	int m_kickSE;           //キックのSE
+	int m_knifeSE;          //ナイフのSE
 	int m_diedSE;           //死んだ時のSE
 	int m_volumePal;        //音量
 };

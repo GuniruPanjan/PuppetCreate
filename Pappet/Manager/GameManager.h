@@ -76,10 +76,8 @@ private:
 	//スマートポインタ管理
 	std::shared_ptr<MyLibrary::Physics> m_pPhysics;
 	std::shared_ptr<Player> m_pPlayer;
-	//std::shared_ptr<Map> m_pMap = std::make_shared<Map>();
 	std::shared_ptr<MapManager> m_pMap;
 	std::shared_ptr<Camera> m_pCamera = std::make_shared<Camera>();
-	//std::shared_ptr<CollidableNpc> m_pNpc = std::make_shared<CollidableNpc>();
 	std::shared_ptr<EnemyManager> m_pEnemy;
 	std::shared_ptr<Setting> m_pSetting;
 	std::shared_ptr<UI> m_pUi;
@@ -98,10 +96,8 @@ private:
 
 	//現在のマップ
 	eMapName m_nowMap;
-	//ステージ名
-	//std::string m_stageName;
 
-	//
+	//ボスが死んだかの判定
 	sBossEnd m_bossEnd;
 	//ロード時間
 	int m_load;
@@ -116,5 +112,9 @@ private:
 	bool m_isLoading;
 	//休息
 	bool m_restInit;
+	//休息地点に着いた判定
+	bool m_restMap;
+	//ロード画面格納変数
+	int m_loadNow1, m_loadNow2;
 };
 

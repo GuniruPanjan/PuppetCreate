@@ -61,6 +61,7 @@ public:
 		m_itemUse(0),
 		m_itemHandle(-1),
 		m_frameIndex(0),
+		m_enemyItemHandle(0),
 		m_effectTime(30),
 		m_itemPick(false),
 		m_isTaking(false),

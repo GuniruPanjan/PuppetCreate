@@ -1,6 +1,9 @@
 #pragma once
 #include "ObjectBase.h"
 
+/// <summary>
+/// プレイヤーのリグ攻撃判定用クラス
+/// </summary>
 class AttackLigObject : public ObjectBase
 {
 public:

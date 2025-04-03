@@ -236,8 +236,6 @@ void Camera::FilterEnemiesInRange(Player& player, EnemyManager& enemy, float ran
 void Camera::LockUpdate(Player& player, EnemyManager& enemy)
 {
 	m_enemyPositions.clear();
-	//m_enemyPos = VGet(0, 0, 0);
-	//m_cameraTarget = VGet(0, 0, 0);
 	float minDistance = FLT_MAX;
 
 	for (const auto& enemyPos : enemy.GetEnemyPos())
@@ -264,7 +262,6 @@ void Camera::LockUpdate(Player& player, EnemyManager& enemy)
 	VECTOR pPos = VGet(player.GetPos().x, player.GetPos().y, player.GetPos().z);
 
 	//注視点は敵の座標にする
-	//m_cameraTarget = VAdd(m_enemyPos, VGet(0.0, 20.0f, 0.0f));
 	m_endTargetPos = VAdd(m_enemyPos, VGet(0.0f, 20.0f, 0.0f));
 
 	//プレイヤーとエネミーのX座標の差を求める
@@ -296,7 +293,6 @@ void Camera::LockUpdate(Player& player, EnemyManager& enemy)
 	m_cameraAngle.y = angle;
 
 	//プレイヤーの座標に求めたベクトルを足してカメラの座標とする
-	//m_cameraPos = VAdd(pPos, posTarget);
 	m_endPos = VAdd(pPos, posTarget);
 
 	//イージングの更新
@@ -348,7 +344,6 @@ void Camera::LockBossUpdate(Player& player, EnemyManager& enemy)
 	VECTOR pPos = VGet(player.GetPos().x, player.GetPos().y, player.GetPos().z);
 
 	//注視点は敵の座標にする
-	//m_cameraTarget = VAdd(m_enemyPos, VGet(0.0, 20.0f, 0.0f));
 	m_endTargetPos = VAdd(m_enemyPos, VGet(0.0f, 20.0f, 0.0f));
 
 	//プレイヤーとエネミーのX座標の差を求める
@@ -380,7 +375,6 @@ void Camera::LockBossUpdate(Player& player, EnemyManager& enemy)
 	m_cameraAngle.y = angle;
 
 	//プレイヤーの座標に求めたベクトルを足してカメラの座標とする
-	//m_cameraPos = VAdd(pPos, posTarget);
 	m_endPos = VAdd(pPos, posTarget);
 
 	//イージングの更新

@@ -86,7 +86,7 @@ public:
 	/// <summary>
 	/// 休息の更新処理
 	/// </summary>
-	void RestUpdate(Player& player, CoreManager& core);
+	void RestUpdate(Player& player, CoreManager& core, bool rest);
 
 	/// <summary>
 	/// レベルアップ処理
@@ -185,6 +185,11 @@ public:
 	void EquipmentDecisionDraw(ItemManager& item);
 
 	/// <summary>
+	/// ワープできない時の描画処理
+	/// </summary>
+	void CaveatDraw();
+
+	/// <summary>
 	/// 終了処理
 	/// </summary>
 	void End();
@@ -277,6 +282,13 @@ public:
 	bool GetReset() { return m_reset; }
 	bool SetReset(bool set) { return m_reset = set; }
 
+	/// <summary>
+	/// 休息地点にワープするかの判定をとる
+	/// </summary>
+	/// <returns></returns>
+	bool GetRestWarp() { return m_restWarp; }
+	bool SetRestWarp(bool set) { return m_restWarp = set; }
+
 private:
 
 	void WeaponUpdate(std::list<std::string> list, Weapon& weapon, int right);
@@ -326,6 +338,8 @@ private:
 	bool m_blend;             //ブレンド判定
 	bool m_up;                //レベルが上げられるかの判定
 	bool m_menuDecision;      //メニューでの決定判定
+	bool m_restWarp;          //休息地点をワープするための判定
+	bool m_caveat;            //注意書きの表示
 	bool m_reset;             //休息によるリセット
 
 

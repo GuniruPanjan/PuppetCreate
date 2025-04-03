@@ -25,6 +25,10 @@ namespace
 	int cWaitTime = 0;
 	//連続で押さないようにする
 	int cPush = 0;
+	//時間が立つと消えるようにする
+	int cTime = 0;
+	//文字が消えるまでの時間
+	constexpr int cTimeMax = 80;
 
 	//変更する変数
 	constexpr int cEquipmentOneX = 630;
@@ -95,6 +99,8 @@ Setting::Setting() :
 	m_statusLevel(false),
 	m_up(false),
 	m_menuDecision(false),
+	m_restWarp(false),
+	m_caveat(false),
 	m_reset(false),
 	m_change(),
 	m_core(0),
@@ -508,7 +514,7 @@ void Setting::EquipmentUpdate()
 /// <summary>
 /// 休息の更新処理
 /// </summary>
-void Setting::RestUpdate(Player& player, CoreManager& core)
+void Setting::RestUpdate(Player& player, CoreManager& core, bool rest)
 {
 	//パッド入力所得
 	GetJoypadXInputState(DX_INPUT_KEY_PAD1, &m_xpad);
@@ -552,7 +558,16 @@ void Setting::RestUpdate(Player& player, CoreManager& core)
 				//転送
 				if (selectDecision == 9)
 				{
-					//まだマップがないから実装しない
+					//休息地点に転送する
+					if (rest)
+					{
+						m_restWarp = true;
+					}
+					//転送できない
+					else
+					{
+						m_caveat = true;
+					}
 				}
 				//休息をやめる
 				if (selectDecision == 10)
@@ -612,7 +627,16 @@ void Setting::RestUpdate(Player& player, CoreManager& core)
 				//転送
 				if (selectDecision == 9)
 				{
-					//まだマップがないから実装しない
+					//休息地点に転送する
+					if (rest)
+					{
+						m_restWarp = true;
+					}
+					//転送できない
+					else
+					{
+						m_caveat = true;
+					}
 
 				}
 				//休息をやめる
@@ -1744,6 +1768,33 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
 	DrawBox(m_selectObject.oneX, m_selectObject.oneY, m_selectObject.secondX, m_selectObject.secondY, 0x000fff, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+}
+
+/// <summary>
+/// ワープできない時の描画処理
+/// </summary>
+void Setting::CaveatDraw()
+{
+	if (m_caveat)
+	{
+		cTime++;
+		//時間中注意書きを表示する
+		if (cTime <= cTimeMax)
+		{
+			DrawGraph(600, 200, m_rest, true);
+
+			DrawStringToHandle(720, 350, "転送できない", 0xffffff, m_pFont->GetHandle());
+		}
+		else
+		{
+			m_caveat = false;
+		}
+	}
+	else
+	{
+		//初期化する
+		cTime = 0;
+	}
 }
 
 /// <summary>

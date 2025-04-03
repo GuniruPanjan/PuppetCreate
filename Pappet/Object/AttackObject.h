@@ -2,6 +2,9 @@
 #include "ObjectBase.h"
 
 
+/// <summary>
+/// プレイヤーの攻撃判定クラス
+/// </summary>
 class AttackObject : public ObjectBase
 {
 public:

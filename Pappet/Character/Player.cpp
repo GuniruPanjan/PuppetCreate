@@ -92,6 +92,10 @@ namespace
 
 Player::Player() :
 	CharacterBase(Collidable::Priority::Low, ObjectTag::Player),
+	m_attackMove(VGet(0.0f,0.0f,0.0f)),
+	m_pEnemyAttackCol(),
+	m_staminaBreak(false),
+	ms_maxStatus(),
 	m_xpad(),
 	m_attackNumber(0),
 	m_mapNow(0),
@@ -1045,8 +1049,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	//ボス部屋に入るモーション中
 	else if (m_animChange.sa_bossEnter)
 	{
-		//とりあえず妥協点で後で直す
-		//主にプレイヤーの当たり判定を消し、モデルだけを動かしモデルの最終地点に当たり判定を出す
 		//一回実行
 		if (cEnterPos)
 		{
@@ -1408,7 +1410,15 @@ void Player::Action(VECTOR restpos, Tool& tool, Shield& shield, SEManager& se, b
 		//Yボタンを押したら
 		if (m_xpad.Buttons[15] == 1)
 		{
-			m_animChange.sa_taking = true;
+			//一回実行とアニメーション遷移
+			if (!m_animChange.sa_taking)
+			{
+				//アイテム取得SE再生
+				PlaySoundMem(se.GetItemSE(), DX_PLAYTYPE_BACK, true);
+
+				m_animChange.sa_taking = true;
+
+			}
 		}
 	}
 

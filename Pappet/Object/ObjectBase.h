@@ -3,6 +3,9 @@
 #include "Library/MyLibrary.h"
 #include <memory>
 
+/// <summary>
+/// オブジェクトベースクラス
+/// </summary>
 class ObjectBase : public MyLibrary::Collidable
 {
 public:

@@ -3,7 +3,8 @@
 /// <summary>
 /// コンストラクタ
 /// </summary>
-Tool::Tool()
+Tool::Tool() :
+	m_heel()
 {
 
 }

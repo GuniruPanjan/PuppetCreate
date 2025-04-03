@@ -21,7 +21,6 @@ CoreManager::~CoreManager()
 /// </summary>
 void CoreManager::Init()
 {
-	//m_core = 0.0f;
 }
 
 /// <summary>

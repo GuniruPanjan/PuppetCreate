@@ -7,23 +7,125 @@
 #include "Manager/ItemManager.h"
 #include "Manager/MapManager.h"
 #include "Item/Tool.h"
+#include "External/Font.h"
 #include "Manager/MessageManager.h"
 
 namespace
 {
-	int c_maxHP = 800;
-	int c_maxHPWidth = 1000;
+	const int cFontSizeLarge = 40;
+	const int cFontSizeMedium = 30;
+	const int cHpBarWidth = 200;
+	const int cBossHpBarWidth = 800;
+	const int cStatusDrawX = 180;
+	const int cStatusDrawY = 30;
+	const int cEquipmentFrameX1 = 150;
+	const int cEquipmentFrameY1 = 550;
+	const int cEquipmentFrameX2 = 0;
+	const int cEquipmentFrameY2 = 665;
+	const int cEquipmentFrameX3 = 300;
+	const int cEquipmentFrameY3 = 665;
+	const int cEquipmentFrameX4 = 150;
+	const int cEquipmentFrameY4 = 780;
+	const int cCoreBarX = 1050;
+	const int cCoreBarY = 750;
+	const int cActionUiX = 480;
+	const int cActionUiY = 800;
+	const int cButtonY = 805;
+	const int cItemTakingX = 480;
+	const int cItemTakingY = 600;
+	const int cOkTextX = 800;
+	const int cOkTextY = 820;
+	const int cPlayerCoreX = 1400;
+	const int cPlayerCoreY = 905;
+	const int cDeadTextX = -150;
+	const int cDeadTextY = 100;
+	const int cEnemyHpBarXOffset = -100;
+	const int cEnemyHpBarYOffset = -300;
+	const int cBossNameX = 450;
+	const int cBossNameY = 700;
+	const int cBossSubnameY = 670;
+	const int cBossHpBarX = 450;
+	const int cBossHpBarY = 750;
 
-	bool c_itemTakingUI = false;
+	const int cHpBarHeight = 45;
+	const int cStaminaBarHeight = 50;
+	const int cHpBarOffsetX = 5;
+	const int cHpBarOffsetY = 8;
+	const int cStaminaBarOffsetX = -8;
+	const int cStaminaBarOffsetY = 50;
+	const int cHpBarSegmentWidth = 50;
+	const int cStaminaBarSegmentWidth = 10;
+	const int cHpBarInitialWidth = 185;
+	const int cStaminaBarInitialWidth = 150;
+	const int cHpBarSegmentXOffset = 23;
+	const int cStaminaBarSegmentXOffset = 23;
+	const int cStaminaBarSegmentXAdjustment = 2;
+
+	const int cFistX = 70;
+	const int cFistY = 56;
+	const int cBodyX = 120;
+	const int cBodyY = 66;
+
+	const int cRightWeaponX = 305;
+	const int cRightWeaponY = 700;
+	const int cLeftWeaponX = 5;
+	const int cLeftWeaponY = 700;
+	const int cLeftWeaponOffsetX = 15;
+	const int cLeftWeaponOffsetY = 20;
+	const int cArmorX = 195;
+	const int cArmorY = 600;
+	const int cCommonArmorX = 160;
+	const int cCommonArmorY = 600;
+	const int cHeelStoneX = 115;
+	const int cHeelStoneY = 815;
+	const int cHeelStoneTextX = 260;
+	const int cHeelStoneTextY = 930;
+
+	const int cWeaponX = 110;
+	const int cWeaponY = 310;
+	const int cShieldX = 310;
+	const int cShieldY = 310;
+	const int cShieldOffsetX = 25;
+	const int cShieldOffsetY = 20;
+	const int cArmorBodyX = 565;
+	const int cArmorBodyY = 320;
+	const int cArmorCommonX = 530;
+	const int cArmorCommonY = 320;
+
+	const int cStatusIconX = -50;
+	const int cStatusIconY = 0;
+	const int cActionUiXOffset = 20;
+	const int cActionTextX = 750;
+	const int cActionTextY = 820;
+	const int cItemTextX = 700;
+	const int cBossTextX = 700;
+	const int cWarpTextX = 750;
+	const int cMessageTextX = 700;
+	const int cTextColor = 0xffffff;
+	const int cItemTakingUiX = 500;
+	const int cItemTakingUiYBlackSword = 625;
+	const int cItemTakingUiYDistorted = 645;
+	const int cItemTakingUiYArmorNormal = 635;
+	const int cItemTakingUiYBat = 635;
+	const int cItemTakingUiYWoodShield = 635;
+	const int cItemTakingUiCharX = 800;
+	const int cItemTakingUiCharY = 675;
+
+	bool cItemTakingUi = false;
 }
 
 /// <summary>
 /// コンストラクタ
 /// </summary>
 UI::UI() :
+	m_deadReset(false),
+	m_waitResetTime(0),
+	m_youDead(0),
 	m_equipmentReturn(false),
 	m_xpad()
 {
+	m_pFont = std::make_shared<Font>();
+	m_pBigFont = std::make_shared<Font>();
 }
 
 /// <summary>
@@ -68,6 +170,9 @@ void UI::Init()
 	m_yButton = MyLoadGraph("Data/UI/YButton.png", 3, 3);
 	m_bButton = MyLoadGraph("Data/UI/BButton.png", 3, 3);
 	m_tagetLock = MyLoadGraph("Data/UI/TagetLock.png", 1, 1);
+
+	m_pFont->FontInit(40);
+	m_pBigFont->FontInit(80);
 }
 
 /// <summary>
@@ -84,24 +189,24 @@ void UI::Draw(Player& player, EnemyManager& enemy, Setting& eq, MapManager& map,
 	GetJoypadXInputState(DX_INPUT_KEY_PAD1, &m_xpad);
 
 	//ステータスバーの描画
-	StatusDraw(180, 30, player);
+	StatusDraw(cStatusDrawX, cStatusDrawY, player);
 
 	//プレイヤーの状態アイコン描画
-	DrawGraph(-50, 0, m_statusIcon, true);
+	DrawGraph(cStatusIconX, cStatusIconY, m_statusIcon, true);
 
 	//装備の描画
-	DrawGraph(150, 550, m_equipmentFrame, true);
-	DrawGraph(0, 665, m_equipmentFrame, true);
-	DrawGraph(300, 665, m_equipmentFrame, true);
-	DrawGraph(150, 780, m_equipmentFrame, true);
+	DrawGraph(cEquipmentFrameX1, cEquipmentFrameY1, m_equipmentFrame, true);
+	DrawGraph(cEquipmentFrameX2, cEquipmentFrameY2, m_equipmentFrame, true);
+	DrawGraph(cEquipmentFrameX3, cEquipmentFrameY3, m_equipmentFrame, true);
+	DrawGraph(cEquipmentFrameX4, cEquipmentFrameY4, m_equipmentFrame, true);
 
 	//装備している物描画
 	EquipmentUIDraw(weapon, shield, armor, tool);
 
 	//コアバーの描画
-	DrawGraph(1050, 750, m_coreBackBar, true);
+	DrawGraph(cCoreBarX, cCoreBarY, m_coreBackBar, true);
 
-	SetFontSize(40);
+	SetFontSize(cFontSizeLarge);
 
 	//休息するときは　休息する
 	//アイテムの時は　アイテムを取る
@@ -109,32 +214,32 @@ void UI::Draw(Player& player, EnemyManager& enemy, Setting& eq, MapManager& map,
 	//ワープするときは　転移する
 	if (player.GetItemPick() || player.GetRestTouch() || player.GetBossEnter() || map.GetCore() || player.GetMessagePick())
 	{
-		DrawGraph(480, 800, m_actionUI, true);
-		DrawGraph(500, 805, m_yButton, true);
+		DrawGraph(cActionUiX, cActionUiY, m_actionUI, true);
+		DrawGraph(cActionUiX + cActionUiXOffset, cButtonY, m_yButton, true);
 		//休息
 		if (player.GetRestTouch())
 		{
-			DrawFormatString(750, 820, 0xffffff, "休息する");
+			DrawFormatString(cActionTextX, cActionTextY, cTextColor, "休息する");
 		}
 		//アイテム
 		else if (player.GetItemPick())
 		{
-			DrawFormatString(700, 820, 0xffffff, "アイテムを取る");
+			DrawFormatString(cItemTextX, cActionTextY, cTextColor, "アイテムを取る");
 		}
 		//ボス部屋入り口
 		else if (player.GetBossEnter())
 		{
-			DrawFormatString(700, 820, 0xffffff, "白い光の中に入る");
+			DrawFormatString(cBossTextX, cActionTextY, cTextColor, "白い光の中に入る");
 		}
 		//ワープ
 		else if (map.GetCore())
 		{
-			DrawFormatString(750, 820, 0xffffff, "転移する");
+			DrawFormatString(cWarpTextX, cActionTextY, cTextColor, "転移する");
 		}
 		//メッセージ
 		else if (player.GetMessagePick())
 		{
-			DrawFormatString(700, 820, 0xffffff, "メッセージを読む");
+			DrawFormatString(cMessageTextX, cActionTextY, cTextColor, "メッセージを読む");
 		}
 	}
 
@@ -143,23 +248,23 @@ void UI::Draw(Player& player, EnemyManager& enemy, Setting& eq, MapManager& map,
 	{
 		if (player.GetNowFrame() == 2.0f)
 		{
-			c_itemTakingUI = true;
+			cItemTakingUi = true;
 		}
 	}
 
-	if (c_itemTakingUI)
+	if (cItemTakingUi)
 	{
-		DrawGraph(480, 600, m_itemTaking, true);
-		DrawGraph(480, 800, m_actionUI, true);
-		DrawGraph(500, 805, m_bButton, true);
+		DrawGraph(cItemTakingX, cItemTakingY, m_itemTaking, true);
+		DrawGraph(cActionUiX, cActionUiY, m_actionUI, true);
+		DrawGraph(cActionUiX + cActionUiXOffset, cButtonY, m_bButton, true);
 
-		DrawFormatString(800, 820, 0xffffff, "O K");
+		DrawFormatString(cOkTextX, cOkTextY, cTextColor, "O K");
 
-		ItemTakingUI(item.m_uiItem.u_BlackSword, m_blackSword, 500, 625, 800, 675, "黒い剣");
-		ItemTakingUI(item.m_uiItem.u_Distorted, m_uglyShield, 500, 645, 800, 675, "歪んだ盾");
-		ItemTakingUI(item.m_uiItem.u_ArmorNormal, m_commonArmor, 500, 635, 800, 675, "普通の鎧");
-		ItemTakingUI(item.m_uiItem.u_Bat, m_bat, 500, 635, 800, 675, "木のバット");
-		ItemTakingUI(item.m_uiItem.u_WoodShield, m_woodShield, 500, 635, 800, 675, "木の盾");
+		ItemTakingUI(item.m_uiItem.u_BlackSword, m_blackSword, cItemTakingUiX, cItemTakingUiYBlackSword, cItemTakingUiCharX, cItemTakingUiCharY, "黒い剣");
+		ItemTakingUI(item.m_uiItem.u_Distorted, m_uglyShield, cItemTakingUiX, cItemTakingUiYDistorted, cItemTakingUiCharX, cItemTakingUiCharY, "歪んだ盾");
+		ItemTakingUI(item.m_uiItem.u_ArmorNormal, m_commonArmor, cItemTakingUiX, cItemTakingUiYArmorNormal, cItemTakingUiCharX, cItemTakingUiCharY, "普通の鎧");
+		ItemTakingUI(item.m_uiItem.u_Bat, m_bat, cItemTakingUiX, cItemTakingUiYBat, cItemTakingUiCharX, cItemTakingUiCharY, "木のバット");
+		ItemTakingUI(item.m_uiItem.u_WoodShield, m_woodShield, cItemTakingUiX, cItemTakingUiYWoodShield, cItemTakingUiCharX, cItemTakingUiCharY, "木の盾");
 
 		//Bbuttonを押すと閉じる
 		if (m_xpad.Buttons[13] == 1)
@@ -173,22 +278,22 @@ void UI::Draw(Player& player, EnemyManager& enemy, Setting& eq, MapManager& map,
 			item.m_uiItem.u_Bat = 0;
 			item.m_uiItem.u_WoodShield = 0;
 
-			c_itemTakingUI = false;
+			cItemTakingUi = false;
 		}
 	}
 
 	if (message.GetDraw())
 	{
-		DrawGraph(480, 800, m_actionUI, true);
-		DrawGraph(500, 805, m_bButton, true);
+		DrawGraph(cActionUiX, cActionUiY, m_actionUI, true);
+		DrawGraph(cActionUiX + cActionUiXOffset, cButtonY, m_bButton, true);
 
-		DrawFormatString(800, 820, 0xffffff, "O K");
+		DrawFormatString(cOkTextX, cOkTextY, cTextColor, "O K");
 	}
 
 	//コア数描画
-	DrawFormatString(1400, 905, 0xffffff, "%d", player.GetStatus().s_core);
+	DrawFormatString(cPlayerCoreX, cPlayerCoreY, cTextColor, "%d", player.GetStatus().s_core);
 
-	SetFontSize(40);
+	SetFontSize(cFontSizeLarge);
 }
 
 /// <summary>
@@ -197,53 +302,55 @@ void UI::Draw(Player& player, EnemyManager& enemy, Setting& eq, MapManager& map,
 /// <param name="player"></param>
 void UI::EquipmentDraw(Weapon& weapon, Shield& shield, Armor& armor)
 {
+	const int OffsetX = 30;
+	const int ShieldOffsetX = 25;
+	const int OffsetY = 20;
+
 	//右武器
 	if (weapon.GetFist())
 	{
 		//拳
-		DrawGraph(110, 310, m_fist, true);
+		DrawGraph(cWeaponX, cWeaponY, m_fist, true);
 	}
 	else if (weapon.GetBlack())
 	{
 		//黒い剣
-		DrawGraph(140, 310, m_blackSword, true);
+		DrawGraph(cWeaponX + OffsetX, cWeaponY, m_blackSword, true);
 	}
 	else if (weapon.GetBat())
 	{
 		//木の棒
-		DrawGraph(140, 310, m_bat, true);
+		DrawGraph(cWeaponX + OffsetX, cWeaponY, m_bat, true);
 	}
-
 
 	//左武器
 	if (shield.GetFist())
 	{
 		//拳
-		DrawGraph(310, 310, m_fist, true);
+		DrawGraph(cShieldX, cShieldY, m_fist, true);
 	}
 	else if (shield.GetUgly())
 	{
 		//醜い盾
-		DrawGraph(335, 330, m_uglyShield, true);
+		DrawGraph(cShieldX + ShieldOffsetX, cShieldY + OffsetY, m_uglyShield, true);
 	}
 	else if (shield.GetWood())
 	{
 		//木の盾
-		DrawGraph(335, 330, m_woodShield, true);
+		DrawGraph(cShieldX + ShieldOffsetX, cShieldY + OffsetY, m_woodShield, true);
 	}
 
 	//防具
 	if (armor.GetBody())
 	{
 		//裸体
-		DrawGraph(565, 320, m_body, true);
+		DrawGraph(cArmorBodyX, cArmorBodyY, m_body, true);
 	}
 	else if (armor.GetCommon())
 	{
 		//平凡な防具
-		DrawGraph(530, 320, m_commonArmor, true);
+		DrawGraph(cArmorCommonX, cArmorCommonY, m_commonArmor, true);
 	}
-	
 }
 
 /// <summary>
@@ -255,7 +362,7 @@ void UI::RightDraw(Weapon& weapon, ItemManager& item)
 	int y = 210;
 	int offset = 150;
 	//拳
-	DrawGraph(70, 56, m_fist, true);
+	DrawGraph(cFistX, cFistY, m_fist, true);
 
 	//アイテムを取得した順に描画する
 	for (const auto& itemName : item.GetItemOrder())
@@ -291,7 +398,8 @@ void UI::LeftDraw(Shield& shield, ItemManager& item)
 
 
 	//拳
-	DrawGraph(70, 56, m_fist, true);
+	DrawGraph(cFistX, cFistY, m_fist, true);
+
 
 	//アイテムを取得した順に描画
 	for (const auto& itemName : item.GetItemOrder())
@@ -326,7 +434,7 @@ void UI::ArmorDraw(Armor& armor, ItemManager& item)
 	int offset = 180;
 
 	//裸
-	DrawGraph(120, 66, m_body, true);
+	DrawGraph(cBodyX, cBodyY, m_body, true);
 
 	//アイテムを取得した順に描画
 	for (const auto& itemName : item.GetItemOrder())
@@ -350,58 +458,62 @@ void UI::ArmorDraw(Armor& armor, ItemManager& item)
 /// <param name="armor"></param>
 void UI::EquipmentUIDraw(Weapon& weapon, Shield& shield, Armor& armor, Tool& tool)
 {
+	int rightX = 12;
+
+	
+
 	//右武器
 	if (weapon.GetFist())
 	{
 		//拳
-		DrawGraph(305, 700, m_fist, true);
+		DrawGraph(cRightWeaponX, cRightWeaponY, m_fist, true);
 	}
 	else if (weapon.GetBlack())
 	{
 		//黒い剣
-		DrawGraph(317, 700, m_blackSword, true);
+		DrawGraph(cRightWeaponX + rightX, cRightWeaponY, m_blackSword, true);
 	}
 	else if (weapon.GetBat())
 	{
 		//木の棒
-		DrawGraph(317, 700, m_bat, true);
+		DrawGraph(cRightWeaponX + rightX, cRightWeaponY, m_bat, true);
 	}
 
 	//左武器
 	if (shield.GetFist())
 	{
 		//拳
-		DrawGraph(5, 700, m_fist, true);
+		DrawGraph(cLeftWeaponX, cLeftWeaponY, m_fist, true);
 	}
 	else if (shield.GetUgly())
 	{
 		//醜い盾
-		DrawGraph(20, 720, m_uglyShield, true);
+		DrawGraph(cLeftWeaponX + cLeftWeaponOffsetX, cLeftWeaponY + cLeftWeaponOffsetY, m_uglyShield, true);
 	}
 	else if (shield.GetWood())
 	{
 		//木の盾
-		DrawGraph(20, 720, m_woodShield, true);
+		DrawGraph(cLeftWeaponX + cLeftWeaponOffsetX, cLeftWeaponY + cLeftWeaponOffsetY, m_woodShield, true);
 	}
 
 	//防具
 	if (armor.GetBody())
 	{
 		//裸体
-		DrawGraph(195, 600, m_body, true);
+		DrawGraph(cArmorX, cArmorY, m_body, true);
 	}
 	else if (armor.GetCommon())
 	{
 		//平凡な防具
-		DrawGraph(160, 600, m_commonArmor, true);
+		DrawGraph(cCommonArmorX, cCommonArmorY, m_commonArmor, true);
 	}
 
 	if (tool.GetHeel().sa_number > 0)
 	{
 		//アイテム
-		DrawGraph(115, 815, m_heelStone, true);
+		DrawGraph(cHeelStoneX, cHeelStoneY, m_heelStone, true);
 
-		DrawFormatString(260, 930, 0xffffff, "%d", tool.GetHeel().sa_number);
+		DrawFormatString(cHeelStoneTextX, cHeelStoneTextY, cTextColor, "%d", tool.GetHeel().sa_number);
 	}
 }
 
@@ -412,13 +524,16 @@ void UI::EquipmentUIDraw(Weapon& weapon, Shield& shield, Armor& armor, Tool& too
 /// <param name="handle"></param>
 void UI::ItemTakingUI(int item, int handle, int x, int y, int charX, int charY, const char* letter)
 {
+	int X = 1100;
+	int Y = 675;
+
 	if (item > 0)
 	{
 		DrawGraph(x, y, handle, true);
 
 		DrawFormatString(charX, charY, 0xffffff, letter);
 
-		DrawFormatString(1100, 675, 0xffffff, "%d", item);
+		DrawFormatString(X, Y, 0xffffff, "%d", item);
 	}
 
 }
@@ -428,16 +543,19 @@ void UI::ItemTakingUI(int item, int handle, int x, int y, int charX, int charY, 
 /// </summary>
 void UI::DiedDraw()
 {
+	int Max = 255;
+	int WaitTime = 30;
+
 	//死亡の文字の透過
-	if (m_youDead < 255)
+	if (m_youDead < Max)
 	{
 		m_youDead++;
 
 		m_waitResetTime = 0;
 	}
-	else if (m_youDead >= 255)
+	else if (m_youDead >= Max)
 	{
-		if (m_waitResetTime <= 30)
+		if (m_waitResetTime <= WaitTime)
 		{
 			m_waitResetTime++;
 		}
@@ -449,9 +567,8 @@ void UI::DiedDraw()
 
 	//死亡時の文字を出す
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_youDead);
-	DrawGraph(-150, 100, m_dead, true);
+	DrawGraph(cDeadTextX, cDeadTextY, m_dead, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
 }
 
 /// <summary>
@@ -465,18 +582,17 @@ void UI::StatusDraw(int x, int y, Player& player)
 	//HP最大幅を計算
 	int HPbar = player.GetMaxStatus().sm_hp / 30;
 	//HP最大幅を計算
-	int HPBarWidth = (int)((float)player.GetStatus().s_hp / player.GetMaxStatus().sm_hp * (185 + (50 * player.GetLevelStatus().sl_hp)));
+	int HPBarWidth = (int)((float)player.GetStatus().s_hp / player.GetMaxStatus().sm_hp * (cHpBarInitialWidth + (cHpBarSegmentWidth * player.GetLevelStatus().sl_hp)));
 
 	//スタミナ最大幅を計算
 	int StaminaBar = player.GetMaxStatus().sm_stamina / 10;
 	//スタミナ最大幅を計算
-	int StaminaBarWidth = (int)((float)player.GetStatus().s_stamina / player.GetMaxStatus().sm_stamina * (150 + (10 * player.GetLevelStatus().sl_stamina)));
+	int StaminaBarWidth = (int)((float)player.GetStatus().s_stamina / player.GetMaxStatus().sm_stamina * (cStaminaBarInitialWidth + (cStaminaBarSegmentWidth * player.GetLevelStatus().sl_stamina)));
 
 	if (HPBarWidth > 0)
 	{
-		DrawRectGraph(x + 5, y + 8, 0, 0, HPBarWidth, 45, m_hpBar, true);
+		DrawRectGraph(x + cHpBarOffsetX, y + cHpBarOffsetY, 0, 0, HPBarWidth, cHpBarHeight, m_hpBar, true);
 	}
-
 
 	for (int i = 0; i < HPbar; i++)
 	{
@@ -485,11 +601,11 @@ void UI::StatusDraw(int x, int y, Player& player)
 		{
 			if (i == 1)
 			{
-				DrawGraph(x + 23, y, m_backCenterBar, true);
+				DrawGraph(x + cHpBarSegmentXOffset, y, m_backCenterBar, true);
 			}
 			else
 			{
-				DrawGraph(x + 23 + (50 * (i - 1)), y, m_backCenterBar, true);
+				DrawGraph(x + cHpBarSegmentXOffset + (cHpBarSegmentWidth * (i - 1)), y, m_backCenterBar, true);
 			}
 		}
 		//左端のバーを描画
@@ -500,19 +616,17 @@ void UI::StatusDraw(int x, int y, Player& player)
 		//右端のバーを描画
 		else if (i == HPbar - 1)
 		{
-			DrawGraph(x + 23 + (50 * (i - 1)), y, m_backRightBar, true);
+			DrawGraph(x + cHpBarSegmentXOffset + (cHpBarSegmentWidth * (i - 1)), y, m_backRightBar, true);
 		}
-
-		
 	}
 
 	if (StaminaBarWidth > 0)
 	{
-		DrawRectGraph(x - 8, y + 50, 0, 0, StaminaBarWidth, 50, m_staminaBar, true);
+		DrawRectGraph(x + cStaminaBarOffsetX, y + cStaminaBarOffsetY, 0, 0, StaminaBarWidth, cStaminaBarHeight, m_staminaBar, true);
 	}
 
 	//左端のバーを描画
-	DrawGraph(x, y + 50, m_backLeftBar, true);
+	DrawGraph(x, y + cStaminaBarOffsetY, m_backLeftBar, true);
 
 	for (int i = 0; i < StaminaBar; i++)
 	{
@@ -521,20 +635,19 @@ void UI::StatusDraw(int x, int y, Player& player)
 		{
 			if (i == 1)
 			{
-				DrawGraph(x + 23, y +50, m_backCenterBar, true);
+				DrawGraph(x + cStaminaBarSegmentXOffset, y + cStaminaBarOffsetY, m_backCenterBar, true);
 			}
 			else
 			{
-				DrawGraph(x + 23 + (10 * (i - 1)), y + 50, m_backCenterBar, true);
+				DrawGraph(x + cStaminaBarSegmentXOffset + (cStaminaBarSegmentWidth * (i - 1)), y + cStaminaBarOffsetY, m_backCenterBar, true);
 			}
 		}
 		//右端のバーを描画
 		else if (i == StaminaBar - 1)
 		{
-			DrawGraph(x + 23 + (10 * (i - 1)) + (2 * i), y + 50, m_backRightBar, true);
+			DrawGraph(x + cStaminaBarSegmentXOffset + (cStaminaBarSegmentWidth * (i - 1)) + (cStaminaBarSegmentXAdjustment * i), y + cStaminaBarOffsetY, m_backRightBar, true);
 		}
 	}
-	
 }
 
 /// <summary>
@@ -545,20 +658,22 @@ void UI::StatusDraw(int x, int y, Player& player)
 /// <param name="maxHP"></param>
 void UI::EnemyHPDraw(VECTOR pos, int hp, int maxHP)
 {
+	int Height = 30;
+
 	//3D座標から2D座標に変換
 	VECTOR screenPos;
-	
+
 	screenPos = ConvWorldPosToScreenPos(pos);
 
-	int screenX = (int)screenPos.x - 100;   //HPバーの場所を調整
-	int screenY = (int)screenPos.y - 300;   //HPバーの高さを調整
+	int screenX = (int)screenPos.x + cEnemyHpBarXOffset;   //HPバーの場所を調整
+	int screenY = (int)screenPos.y + cEnemyHpBarYOffset;   //HPバーの高さを調整
 
 	//HPバーの最大幅を計算
-	int HPBarWidth = (int)((float)hp / maxHP * 200);
+	int HPBarWidth = (int)((float)hp / maxHP * cHpBarWidth);
 
 	if (HPBarWidth > 0)
 	{
-		DrawRectGraph(screenX, screenY, 0, 0, HPBarWidth, 30, m_hpBar, true);
+		DrawRectGraph(screenX, screenY, 0, 0, HPBarWidth, Height, m_hpBar, true);
 	}
 }
 
@@ -570,23 +685,24 @@ void UI::EnemyHPDraw(VECTOR pos, int hp, int maxHP)
 /// <param name="name"></param>
 void UI::BossHPDraw(int hp, int maxHP, const char* name, const char* subName)
 {
+	const int Height = 50;
+
 	//HPバーの最大幅を計算
-	int HPBarWidth = (int)((float)hp / maxHP * 800);
+	int HPBarWidth = (int)((float)hp / maxHP * cBossHpBarWidth);
 
-	SetFontSize(30);
+	SetFontSize(cFontSizeMedium);
 	//ボスの当て字
-	DrawString(450, 670, subName, 0xffffff);
+	DrawString(cBossNameX, cBossSubnameY, subName, cTextColor);
 
-	SetFontSize(40);
+	SetFontSize(cFontSizeMedium);
 
 	//ボスの名前
-	DrawString(450, 700, name, 0xffffff);
+	DrawString(cBossNameX, cBossNameY, name, cTextColor);
 
 	if (HPBarWidth > 0)
 	{
-		DrawRectGraph(450, 750, 0, 0, HPBarWidth, 50, m_hpBar, true);
+		DrawRectGraph(cBossHpBarX, cBossHpBarY, 0, 0, HPBarWidth, Height, m_hpBar, true);
 	}
-
 }
 
 /// <summary>

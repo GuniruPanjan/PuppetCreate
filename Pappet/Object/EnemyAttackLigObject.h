@@ -1,6 +1,10 @@
 #pragma once
 #include "ObjectBase.h"
 
+
+/// <summary>
+/// “G‚ÌƒŠƒO‚Ì“–‚½‚è”»’èƒNƒ‰ƒX
+/// </summary>
 class EnemyAttackLigObject : public ObjectBase
 {
 public:

@@ -1,6 +1,9 @@
 #pragma once
 #include "ObjectBase.h"
 
+/// <summary>
+/// メッセージオブジェクトクラス
+/// </summary>
 class MessageObject : public ObjectBase
 {
 public:

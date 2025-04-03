@@ -19,14 +19,6 @@ public:
 	void GameRestInit();
 	//ゲームシーン1BGM初期化
 	void GameOneInit();
-	//ゲームシーン2BGM初期化
-	void GameTwoInit();
-	//ゲームシーン3BGM初期化
-	void GameThreeInit();
-	//ゲームシーン4BGM初期化
-	void GameFourInit();
-	//ゲームシーン5BGM初期化
-	void GameFiveInit();
 	//クリアシーンBGM初期化
 	void ClearInit();
 	//更新処理

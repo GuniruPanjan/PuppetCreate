@@ -12,6 +12,7 @@ class Shield;
 class Armor;
 class Tool;
 class MessageManager;
+class Font;
 
 /// <summary>
 /// UI関係のクラス
@@ -128,6 +129,9 @@ private:
 
 	//装備画面から戻る
 	bool m_equipmentReturn;
+
+	std::shared_ptr<Font> m_pFont;          //フォント
+	std::shared_ptr<Font> m_pBigFont;       //大きいフォント
 
 	XINPUT_STATE m_xpad;                //パッド入力
 };

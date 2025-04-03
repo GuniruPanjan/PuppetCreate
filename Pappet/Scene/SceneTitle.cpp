@@ -12,10 +12,6 @@ namespace
 {
 	int selectDecision = 0;  //選択し、決定したもの
 
-	//float cCameraTargetx = 485.0f;
-	//float cCameraTargety = 80.0f;
-	//float cCameraTargetz = -550.0f;
-
 	float cCameraTargetx = -250.0f;
 	float cCameraTargety = 115.0f;
 	float cCameraTargetz = -270.0f;
@@ -28,6 +24,10 @@ namespace
 
 	//一回だけ行う
 	bool cOne = false;
+	bool cOneLoad = false;
+
+	//ロード画面ランダム
+	int cLoad = 0;
 
 	//シングルトン
 	auto& handle = HandleManager::GetInstance();
@@ -45,6 +45,8 @@ SceneTitle::SceneTitle() :
 	m_hand(0),
 	m_BButton(0),
 	m_AButton(0),
+	m_loadNow1(-1),
+	m_loadNow2(-1),
 	m_one(false),
 	m_blend(false),
 	m_setButton(false),
@@ -82,6 +84,8 @@ SceneTitle::~SceneTitle()
 	DeleteGraph(m_hand);
 	DeleteGraph(m_BButton);
 	DeleteGraph(m_AButton);
+	DeleteGraph(m_loadNow1);
+	DeleteGraph(m_loadNow2);
 	MV1DeleteModel(m_playerHandle);
 	MV1DeleteModel(m_anim);
 	m_pSetting->End();
@@ -104,6 +108,9 @@ void SceneTitle::Init()
 	m_hand = m_pUi->MyLoadGraph("Data/UI/PuppetHand.png", 2, 2);                         
 	m_BButton = m_pUi->MyLoadGraph("Data/UI/BButton.png", 3, 3);
 	m_AButton = m_pUi->MyLoadGraph("Data/UI/AButton.png", 3, 3);
+
+	m_loadNow1 = m_pUi->MyLoadGraph("Data/SceneBack/NowLoading1.png", 1, 1);
+	m_loadNow2 = m_pUi->MyLoadGraph("Data/SceneBack/NowLoading2.png", 1, 1);
 
 	m_playerHandle = handle.GetModelHandle("Data/Player/PuppetPlayerModel.mv1");
 	m_anim = handle.GetModelHandle("Data/PlayerAnimation/JumpingDown.mv1");
@@ -394,7 +401,26 @@ void SceneTitle::Draw()
 {
 	if (m_isLoading)
 	{
-		DrawString(0, 0, "NowLoading...", 0xffffff);
+		//一回だけ行う
+		if (!cOneLoad)
+		{
+			cLoad = GetRand(1);
+
+			cOneLoad = true;
+		}
+
+		//ランダムでロード画面を変える
+		if (cLoad == 0)
+		{
+			DrawGraph(0, 0, m_loadNow1, true);
+		}
+		else if (cLoad == 1)
+		{
+			DrawGraph(-100, 0, m_loadNow2, true);
+		}
+		
+
+		DrawStringToHandle(0, 0, "NowLoading...", 0xffffff, m_pFont->GetHandle());
 
 		// ロードの進行状況を計算
 		int totalLoadTasks = m_load; // 総ロードタスク数を取得する関数（仮定）
@@ -405,7 +431,7 @@ void SceneTitle::Draw()
 		float progress = 1.0f - (static_cast<float>(remainingLoadTasks) / static_cast<float>(totalLoadTasks));
 
 		// バーの描画
-		int barWidth = 200; // バーの幅
+		int barWidth = 600; // バーの幅
 		int barHeight = 20; // バーの高さ
 		int barX = 100; // バーのX座標
 		int barY = 50; // バーのY座標
@@ -414,7 +440,8 @@ void SceneTitle::Draw()
 	}
 	else
 	{
-		//pmap->Draw();
+		cOneLoad = false;
+
 		m_pMap->Draw();
 		cEffect.Draw();
 
@@ -437,7 +464,6 @@ void SceneTitle::Draw()
 		DrawGraph(500, 650, m_end, TRUE);
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-		//DrawGraph(500, 350, m_hand, true);
 		DrawRotaGraph(620, cHandY, 1.0f, DX_PI_F - (DX_PI_F / 4), m_hand, true);
 		DrawRotaGraph(1050, cHandY, 1.0f, DX_PI_F + (DX_PI_F / 4), m_hand, true, true);
 
@@ -481,6 +507,8 @@ void SceneTitle::End()
 	DeleteGraph(m_hand);
 	DeleteGraph(m_BButton);
 	DeleteGraph(m_AButton);
+	DeleteGraph(m_loadNow1);
+	DeleteGraph(m_loadNow2);
 	MV1DeleteModel(m_playerHandle);
 	MV1DeleteModel(m_anim);
 	m_pSetting->End();

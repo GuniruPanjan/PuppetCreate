@@ -18,17 +18,6 @@ public:
 
 	//初期化処理
 	void Init();
-	//更新処理
-	void Update();
-
-	/// <summary>
-	/// アイテムのポジション設定
-	/// </summary>
-	/// <param name="number">アイテムのナンバー</param>
-	/// <param name="x">X座標</param>
-	/// <param name="y">Y座標</param>
-	/// <param name="z">Z座標</param>
-	void ItemPos(int number, float x, float y, float z);
 
 	//描画処理
 	void Draw();
@@ -45,12 +34,6 @@ public:
 	//マップの休息場所を返す
 	bool GetSavePossible() { return m_saveSpot; }
 
-	//現在のアイテムの状態を返す
-	//bool GetItem(int max) { return item->GetItem(max); }
-
-	//アイテムが取れるか返す
-	//bool SetItemSpot(int max, bool set) { return m_itemSpot[max] = set; }
-
 	//マップのポジションを返す
 	VECTOR GetVectorMapPos() { return m_MapPosition; }
 
@@ -61,7 +44,6 @@ private:
 	int m_handle;   //マップのデータを入れる変数
 	int m_collisionHandle;   //マップのコリジョンのデータを入れる変数
 	int m_light;    //ライトを作る変数
-	//int m_itemModel[ITEM_NUMBER];         //マップに置くアイテムのモデル変数
 	float m_size;   //モデルのサイズ変数
 	float m_Xposition;    //Xポジション
 	float m_Yposition;    //Yポジション
@@ -72,7 +54,6 @@ private:
 	bool m_bossRoomEntered;    //ボス部屋に入った判定
 	bool m_saveSpot;        //回復スポットを使える判定
 	bool m_oneInit;         //一回だけ初期化する
-	//bool m_itemSpot[ITEM_NUMBER];        //アイテムを所得できる場所
 	VECTOR m_MapPosition;   //マップのポジション
 	VECTOR m_collisionMapPosition;   //コリジョンのポジション設定
 	VECTOR m_restPos;        //休息するポジション

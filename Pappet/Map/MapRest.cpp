@@ -135,11 +135,15 @@ std::shared_ptr<MapBase> MapRest::Update(bool warp, bool enter, bool Dead)
 /// </summary>
 /// <param name="warp"></param>
 /// <returns></returns>
-std::shared_ptr<MapBase> MapRest::WarpUpdate(bool warp)
+std::shared_ptr<MapBase> MapRest::WarpUpdate(bool warp, bool rest)
 {
 	if (warp)
 	{
 		return std::make_shared<MapFirst>();
+	}
+	else if (rest)
+	{
+		return std::make_shared<MapRest>();
 	}
 
 	return shared_from_this();  //自身のポインタ

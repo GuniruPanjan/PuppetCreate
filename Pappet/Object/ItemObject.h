@@ -1,5 +1,9 @@
 #pragma once
 #include "ObjectBase.h"
+
+/// <summary>
+/// アイテムオブジェトクラス
+/// </summary>
 class ItemObject : public ObjectBase
 {
 public:

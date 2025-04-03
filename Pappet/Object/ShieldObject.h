@@ -1,5 +1,9 @@
 #pragma once
 #include "ObjectBase.h"
+
+/// <summary>
+/// 盾のオブジェトクラス
+/// </summary>
 class ShieldObject : public ObjectBase
 {
 public:

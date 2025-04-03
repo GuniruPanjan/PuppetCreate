@@ -7,7 +7,6 @@ namespace
 
 	//シングルトン
 	auto& handle = HandleManager::GetInstance();
-	//auto& effect = Effect::GetInstance();
 }
 
 /// <summary>
@@ -31,15 +30,6 @@ Map::Map() :
 	m_MapPosition = VGet(0.0f, 0.0, 0.0f);
 	m_collisionMapPosition = VGet(0.0f, 0.0f, 0.0f);
 	m_restPos = VGet(0.0f, 0.0f, 0.0f);
-
-	//for (int i = 0; i < ITEM_NUMBER; i++)
-	//{
-	//	m_itemModel[i] = -1;
-
-	//	m_itemColor[i] = 0xffffff;
-
-	//	m_itemSpot[i] = false;
-	//}
 }
 
 /// <summary>
@@ -91,12 +81,6 @@ void Map::Init()
 	m_MapPosition = VGet(m_Xposition, m_Yposition, m_Zposition);
 	m_collisionMapPosition = VGet(m_XCollisionposition, m_YCollisionposition, m_ZCollisionposition);
 
-	//for (int i = 0; i < ITEM_NUMBER; i++)
-	//{
-	//	m_itemPos[i] = Pos3(-10000.0f, -10000.0f, -10000.0f);
-	//	m_itemCol[i].Init(m_itemPos[i], m_itemRadius);
-	//}
-
 	//ライト関係
 	ChangeLightTypeDir(VGet(-1.0f, 0.0f, 0.0f));
 	m_light = CreateDirLightHandle(VGet(1.0f, 0.0f, 0.0f));
@@ -108,74 +92,6 @@ void Map::Init()
 		m_oneInit = true;
 	}
 
-
-	//for (int i = 0; i < ITEM_NUMBER; i++)
-	//{
-	//	m_itemModel[i] = -1;
-
-	//	m_itemColor[i] = 0xffffff;
-	//}
-
-}
-
-/// <summary>
-/// 更新処理
-/// </summary>
-void Map::Update()
-{
-	//for (int i = 0; i < ITEM_NUMBER; i++)
-	//{
-	//	//アイテムが存在していれば
-	//	if (m_itemSpot[i] == false)
-	//	{
-	//		if (i == 0)
-	//		{
-	//			ItemPos(i, 300.0f, 5.0f, -360.0f);
-	//		}
-	//		if (i == 1)
-	//		{
-	//			ItemPos(i, 700.0f, 5.0f, 200.0f);
-	//		}
-	//		if (i == 2)
-	//		{
-	//			ItemPos(i, 700.0f, 5.0f, -230.0f);
-	//		}
-	//	}
-	//	//アイテムが存在していなければ消す
-	//	if (m_itemSpot[i] == true)
-	//	{
-	//		m_itemPos[i] = Pos3(-10000.0f, -10000.0f, -10000.0f);
-	//	}
-	//}
-
-	////effectPlayBackが一定数達すると初期化する
-	//if (effectPlayBack <= 50)
-	//{
-	//	effectPlayBack++;
-	//}
-	//else
-	//{
-	//	for (int i = 0; i < 3; i++)
-	//	{
-	//		effect.EffectCreate("Item", VGet(m_itemPos[i].x, m_itemPos[i].y, m_itemPos[i].z));
-
-	//		m_itemCol[i].Update(m_itemPos[i]);
-	//	}
-
-	//	effectPlayBack = 0;
-	//}
-}
-
-/// <summary>
-/// アイテムのエフェクト再生場所と場所
-/// </summary>
-/// <param name="number">アイテムの番号</param>
-/// <param name="x">X座標</param>
-/// <param name="y">Y座標</param>
-/// <param name="z">Z座標</param>
-void Map::ItemPos(int number, float x, float y, float z)
-{
-	//m_itemPos[number] = Pos3(x, y, z);
 }
 
 void Map::Draw()
@@ -226,7 +142,6 @@ void Map::Draw()
 
 	//モデル描画
 	MV1DrawModel(m_handle);
-	//MV1DrawModel(m_collisionHandle);
 }
 
 /// <summary>

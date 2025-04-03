@@ -210,9 +210,13 @@ std::shared_ptr<MapBase> MapTutorial::Update(bool warp, bool enter, bool Dead)
 /// </summary>
 /// <param name="warp"></param>
 /// <returns></returns>
-std::shared_ptr<MapBase> MapTutorial::WarpUpdate(bool warp)
+std::shared_ptr<MapBase> MapTutorial::WarpUpdate(bool warp, bool rest)
 {
 	if (warp)
+	{
+		return std::make_shared<MapRest>();
+	}
+	else if (rest)
 	{
 		return std::make_shared<MapRest>();
 	}

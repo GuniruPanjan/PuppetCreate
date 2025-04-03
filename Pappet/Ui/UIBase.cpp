@@ -4,6 +4,7 @@
 /// コンストラクタ
 /// </summary>
 UIBase::UIBase() :
+	m_pItem(),
 	m_heelStone(0),
 	m_eqFist(0),
 	m_sword(0),

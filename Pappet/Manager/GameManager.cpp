@@ -29,6 +29,11 @@ namespace
 
 	//チュートリアルをクリアして跳ぶまでの時間
 	float cTutorialTime = 0.0f;
+	//一回だけ行う
+	bool cOneLoad = false;
+
+	//ロード画面ランダム
+	int cLoad = 0;
 
 	//シングルトン
 	auto& cEffect = EffectManager::GetInstance();
@@ -40,11 +45,14 @@ namespace
 GameManager::GameManager() :
 	m_nowMap(eMapName::TutorialMap),
 	m_load(0),
+	m_loadNow1(-1),
+	m_loadNow2(-1),
 	m_deadInit(false),
 	m_title(false),
 	m_isLoading(false),
 	m_restInit(false),
-	m_fadeTitle(false)
+	m_fadeTitle(false),
+	m_restMap(false)
 {
 	m_pUi = std::make_shared<UI>();
 	m_pWeapon = std::make_shared<Weapon>();
@@ -63,6 +71,8 @@ GameManager::GameManager() :
 /// </summary>
 GameManager::~GameManager()
 {
+	DeleteGraph(m_loadNow1);
+	DeleteGraph(m_loadNow2);
 }
 
 /// <summary>
@@ -72,6 +82,9 @@ void GameManager::Init()
 {
 	cGameBGMOne = false;
 	cBossBGMOne = false;
+
+	m_loadNow1 = m_pUi->MyLoadGraph("Data/SceneBack/NowLoading1.png", 1, 1);
+	m_loadNow2 = m_pUi->MyLoadGraph("Data/SceneBack/NowLoading2.png", 1, 1);
 	
 
 	m_pMap->DataInit(6);
@@ -214,6 +227,13 @@ void GameManager::Update()
 		{
 			m_pFade->FadeOut(5);
 		}
+		//ワープ時のフェードアウト
+		else if (m_pPlayer->GetWarp() || m_pSetting->GetRestWarp())
+		{
+			//フェードアウト可能にする
+			m_pFade->SetOut(false);
+			m_pFade->FadeOut(10);
+		}
 
 		//フェードアウト完了でタイトルにもどる
 		if (m_pFade->GetOut())
@@ -231,7 +251,7 @@ void GameManager::Update()
 		}
 
 		//ワープしてない時
-		if (!m_pPlayer->GetWarp() && !cClearTutorial)
+		if (!m_pPlayer->GetWarp() && !cClearTutorial && !m_pSetting->GetRestWarp())
 		{
 			m_pBgm->Update(m_pSetting->GetVolume());
 
@@ -419,7 +439,7 @@ void GameManager::Update()
 				//レベルアップ処理をしていない場合
 				if (!m_pSetting->GetLevel())
 				{
-					m_pSetting->RestUpdate(*m_pPlayer, *m_pCore);
+					m_pSetting->RestUpdate(*m_pPlayer, *m_pCore, m_restMap);
 				}
 				//レベルアップ処理
 				if (m_pSetting->GetLevel())
@@ -481,7 +501,7 @@ void GameManager::Update()
 			m_pPhysics->Update();
 		}
 		//ワープしたとき
-		else if (m_pPlayer->GetWarp() || cClearTutorial)
+		else if (m_pPlayer->GetWarp() || cClearTutorial || m_pSetting->GetRestWarp())
 		{
 			//チュートリアルをクリアしたら強制ワープ
 			if (cClearTutorial)
@@ -489,27 +509,32 @@ void GameManager::Update()
 				m_pPlayer->SetWarp(true);
 			}
 
-			m_pMap->WarpUpdate(m_pPhysics, m_pPlayer->GetWarp(), false);
-
-			//一回だけ実行
-			if (!cOne)
+			if (m_pFade->GetOut() || cClearTutorial)
 			{
-				cEffect.End();
-				m_pEnemy->End();
-				m_pItem->End();
-				m_pBgm->GameEnd();
-				m_pSetting->End();
-				m_pUi->End();
-				GameInit();
+				m_pMap->WarpUpdate(m_pPhysics, m_pPlayer->GetWarp(), false, m_pSetting->GetRestWarp());
 
-				m_pPlayer->SetWarp(false);
+				//一回だけ実行
+				if (!cOne)
+				{
+					cEffect.End();
+					m_pEnemy->End();
+					m_pItem->End();
+					m_pBgm->GameEnd();
+					m_pSetting->End();
+					m_pUi->End();
+					GameInit();
 
-				cOne = true;
+					m_pPlayer->SetNotRest(false);
+					m_pPlayer->SetWarp(false);
+					m_pSetting->SetRestWarp(false);
+
+					cOne = true;
+				}
+
+				cClearTutorial = false;
+
+				m_isLoading = true;
 			}
-
-			cClearTutorial = false;
-
-			m_isLoading = true;
 		}
 
 		cEffect.Update();
@@ -524,7 +549,24 @@ void GameManager::Draw()
 {
 	if (m_isLoading)
 	{
-		DrawString(0, 0, "NowLoading...", 0xffffff);
+		//一回だけ行う
+		if (!cOneLoad)
+		{
+			cLoad = GetRand(1);
+
+			cOneLoad = true;
+		}
+		//ランダムでロード画面を変える
+		if (cLoad == 0)
+		{
+			DrawGraph(0, 0, m_loadNow1, true);
+		}
+		else if (cLoad == 1)
+		{
+			DrawGraph(-100, 0, m_loadNow2, true);
+		}
+
+		DrawStringToHandle(0, 0, "NowLoading...", 0xffffff, m_pFont->GetHandle());
 
 		// ロードの進行状況を計算
 		int totalLoadTasks = m_load; // 総ロードタスク数を取得する関数（仮定）
@@ -535,7 +577,7 @@ void GameManager::Draw()
 		float progress = 1.0f - (static_cast<float>(remainingLoadTasks) / static_cast<float>(totalLoadTasks));
 
 		// バーの描画
-		int barWidth = 200; // バーの幅
+		int barWidth = 600; // バーの幅
 		int barHeight = 20; // バーの高さ
 		int barX = 100; // バーのX座標
 		int barY = 50; // バーのY座標
@@ -544,6 +586,8 @@ void GameManager::Draw()
 	}
 	else
 	{
+		cOneLoad = false;
+
 		m_pMap->Draw();
 		m_pEnemy->Draw(*m_pEnemyWeapon);
 
@@ -635,6 +679,8 @@ void GameManager::Draw()
 			m_pUi->DiedDraw();
 		}
 
+		//ワープできない時の描画
+		m_pSetting->CaveatDraw();
 	}
 
 }
@@ -650,6 +696,8 @@ void GameManager::ChangeStage(const char* stageName)
 	{
 		m_nowMap = eMapName::RestMap;
 		m_pPlayer->SetMapNow(RestMap);
+
+		m_restMap = true;
 	}
 	//マップ1だった場合
 	if (stageName == "stage1")
@@ -676,6 +724,9 @@ void GameManager::End()
 	m_pSetting->End();
 	m_pEnemy->End();
 	m_pMessage->End();
+
+	DeleteGraph(m_loadNow1);
+	DeleteGraph(m_loadNow2);
 }
 
 /// <summary>
