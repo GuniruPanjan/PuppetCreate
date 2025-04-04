@@ -141,9 +141,6 @@
     <ClCompile Include="Ui\UIBase.cpp">
       <Filter>ソース ファイル\Ui</Filter>
     </ClCompile>
-    <ClCompile Include="Map\Map.cpp">
-      <Filter>ソース ファイル\Map</Filter>
-    </ClCompile>
     <ClCompile Include="Character\CharacterBase.cpp">
       <Filter>ソース ファイル\Character</Filter>
     </ClCompile>
@@ -346,9 +343,6 @@
     </ClInclude>
     <ClInclude Include="Ui\UIBase.h">
       <Filter>ヘッダー ファイル\Ui</Filter>
-    </ClInclude>
-    <ClInclude Include="Map\Map.h">
-      <Filter>ヘッダー ファイル\Map</Filter>
     </ClInclude>
     <ClInclude Include="External\CsvLoad.h">
       <Filter>ヘッダー ファイル\External</Filter>

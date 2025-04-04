@@ -177,7 +177,6 @@
     <ClCompile Include="Manager\MessageManager.cpp" />
     <ClCompile Include="Manager\SelectManager.cpp" />
     <ClCompile Include="Manager\SEManager.cpp" />
-    <ClCompile Include="Map\Map.cpp" />
     <ClCompile Include="Map\MapBase.cpp" />
     <ClCompile Include="Map\MapFirst.cpp" />
     <ClCompile Include="Map\MapRest.cpp" />
@@ -248,7 +247,6 @@
     <ClInclude Include="Manager\MessageManager.h" />
     <ClInclude Include="Manager\SelectManager.h" />
     <ClInclude Include="Manager\SEManager.h" />
-    <ClInclude Include="Map\Map.h" />
     <ClInclude Include="Map\MapBase.h" />
     <ClInclude Include="Map\MapFirst.h" />
     <ClInclude Include="Map\MapRest.h" />

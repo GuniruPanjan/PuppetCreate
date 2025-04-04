@@ -38,8 +38,8 @@ public:
 	bool SetWood(bool set) { return m_wood.ss_equipment = set; }
 
 	//‚‚Ì‹­“x
-	int GetStrengthUgly() { return m_ugly.ss_strength; }
-	int GetStrengthWood() { return m_wood.ss_strength; }
+	float GetStrengthUgly() { return m_ugly.ss_strength; }
+	float GetStrengthWood() { return m_wood.ss_strength; }
 	
 private:
 	//‚‚Ì\‘¢‘Ì

@@ -51,6 +51,67 @@ namespace
 	//シングルトン
 	auto& cEffect = EffectManager::GetInstance();
 
+	// 床の位置
+	const VECTOR cFloorPositions[] = {
+		VGet(-1652.0f, -7.0f, 0.0f),
+		VGet(-1352.0f, -7.0f, 0.0f),
+		VGet(-1052.0f, -7.0f, 0.0f),
+		VGet(-752.0f, -7.0f, 0.0f),
+		VGet(-452.0f, -7.0f, 0.0f),
+		VGet(-152.0f, -7.0f, 0.0f)
+	};
+
+	// 壁の位置
+	const VECTOR cWallPositions[] = {
+		VGet(-1929.0f, 90.0f, 0.0f),
+		VGet(-1862.0f, 90.0f, 67.0f),
+		VGet(-1862.0f, 90.0f, -67.0f),
+		VGet(-1809.0f, 90.0f, -120.0f),
+		VGet(-1809.0f, 90.0f, 120.0f),
+		VGet(-1500.0f, 90.0f, -120.0f),
+		VGet(-1500.0f, 90.0f, 120.0f),
+		VGet(-1200.0f, 90.0f, -120.0f),
+		VGet(-1200.0f, 90.0f, 120.0f),
+		VGet(-900.0f, 90.0f, -120.0f),
+		VGet(-900.0f, 90.0f, 120.0f),
+		VGet(-600.0f, 90.0f, -120.0f),
+		VGet(-600.0f, 90.0f, 120.0f),
+		VGet(-300.0f, 90.0f, -120.0f),
+		VGet(-300.0f, 90.0f, 120.0f),
+		VGet(-8.0f, 90.0f, -120.0f),
+		VGet(-8.0f, 90.0f, 120.0f),
+		VGet(-8.0f, 90.0f, -240.0f),
+		VGet(-8.0f, 90.0f, 240.0f)
+	};
+
+	// 普通の大きさの壁の位置
+	const VECTOR cNormalWallPositions[] = {
+		VGet(-1652.0f, 90.0f, -168.0f),
+		VGet(-1352.0f, 90.0f, -168.0f),
+		VGet(-1052.0f, 90.0f, -168.0f),
+		VGet(-752.0f, 90.0f, -168.0f),
+		VGet(-452.0f, 90.0f, -168.0f),
+		VGet(-152.0f, 90.0f, -168.0f),
+		VGet(-1652.0f, 90.0f, 168.0f),
+		VGet(-1352.0f, 90.0f, 168.0f),
+		VGet(-1052.0f, 90.0f, 168.0f),
+		VGet(-752.0f, 90.0f, 168.0f),
+		VGet(-452.0f, 90.0f, 168.0f),
+		VGet(-152.0f, 90.0f, 168.0f)
+	};
+
+	// 大きい壁の位置
+	const VECTOR cBigWallPositions[] = {
+		VGet(290.0f, 90.0f, 335.0f),
+		VGet(290.0f, 90.0f, -335.0f),
+		VGet(625.0f, 90.0f, 0.0f)
+	};
+
+	// 天井の位置
+	const VECTOR cCeilingPosition = VGet(-450.0f, 190.0f, 0.0f);
+
+	// 休息地点の位置
+	const VECTOR cRestObjectPosition = VGet(-150.0f, 0.0f, 120.0f);
 }
 
 MapTutorial::MapTutorial()
@@ -236,9 +297,6 @@ void MapTutorial::Draw()
 {
 	//3Dモデルのポジション設定
 	MV1SetPosition(m_collisionHandle, m_mapCollisionPos);
-
-	//3Dモデル描画
-	//MV1DrawModel(m_collisionHandle);
 
 	//普通の床描画
 	PartDrawSet(m_floorHandle, VGet(m_size, m_size, m_size), VGet(-1652.0f, -7.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));

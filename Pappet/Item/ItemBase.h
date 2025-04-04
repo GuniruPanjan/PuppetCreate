@@ -28,25 +28,25 @@ public:
 	//武器の構造体
 	struct sWeapon
 	{
-		float sw_attack = 0;               //攻撃力
-		float sw_muscle = 0;               //筋力補正
-		float sw_skill = 0;                //技量補正
-		float sw_radius = 0;               //武器の当たり判定
+		float sw_attack = 0.0f;               //攻撃力
+		float sw_muscle = 0.0f;               //筋力補正
+		float sw_skill = 0.0f;                //技量補正
+		float sw_radius = 0.0f;               //武器の当たり判定
 		bool sw_equipment = false;         //装備したかの判定
 	};
 
 	//盾の構造体
 	struct sShield
 	{
-		int ss_cut = 0;                    //カット率
-		int ss_strength = 0;               //盾強度
+		float ss_cut = 0.0f;                    //カット率
+		float ss_strength = 0.0f;               //盾強度
 		bool ss_equipment = false;         //装備したかの判定
 	};
 
 	//防具の構造体
 	struct sArmor
 	{
-		int sa_defense = 0;                //防御力
+		float sa_defense = 0.0f;                //防御力
 		bool sa_equipment = false;         //装備したかの判定
 	};
 

@@ -2,7 +2,6 @@
 #include "SceneGame.h"
 #include "Manager/HandleManager.h"
 #include "Manager/SelectManager.h"
-#include "Map/Map.h"
 #include "Manager/MapManager.h"
 #include "Manager/EffectManager.h"
 #include "Manager/FadeManager.h"
