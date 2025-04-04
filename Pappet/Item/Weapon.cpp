@@ -191,7 +191,7 @@ void Weapon::Draw()
 /// </summary>
 void Weapon::ItemDraw()
 {
-	if (m_effectTime <= 30)
+	if (m_effectTime <= m_effectTimeMax)
 	{
 		m_effectTime++;
 	}

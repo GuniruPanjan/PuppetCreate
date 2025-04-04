@@ -86,7 +86,9 @@ void GameManager::Init()
 	m_loadNow1 = m_pUi->MyLoadGraph("Data/SceneBack/NowLoading1.png", 1, 1);
 	m_loadNow2 = m_pUi->MyLoadGraph("Data/SceneBack/NowLoading2.png", 1, 1);
 	
-
+	//0が休息マップデータ
+	//1がHARIBOのマップデータ
+	//6がチュートリアルマップデータ
 	m_pMap->DataInit(6);
 
 	m_pPhysics = std::make_shared<MyLibrary::Physics>(m_pMap->GetCollisionMap());

@@ -1067,26 +1067,6 @@ bool MyLibrary::Physics::IsCollide5(const Rigidbody& rigidA, const Rigidbody& ri
 
 		//判定
 		isCollide = isHitX && isHitY && isHitZ;
-
-		////相対ベクトル
-		//LibVec3 vec = rigidA.GetPos() - rigidB.GetPos();
-
-		////値の絶対化
-		//vec.x = fabs(vec.x);
-		//vec.y = fabs(vec.y);
-		//vec.z = fabs(vec.z);
-
-		//float trw = colB->m_radius + (rigidA.GetSize().width * 0.5f);
-		//float trh = colB->m_radius + (rigidA.GetSize().height * 0.5f);
-		//float trd = colB->m_radius + (rigidA.GetSize().depth * 0.5f);
-
-		////各成分の判定
-		//bool isHitX = vec.x < trw;
-		//bool isHitY = vec.y < trh;
-		//bool isHitZ = vec.z < trd;
-
-		////判定
-		//isCollide = isHitX && isHitY && isHitZ;
 	}
 
 	return isCollide;

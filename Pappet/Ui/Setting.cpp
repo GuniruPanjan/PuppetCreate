@@ -581,6 +581,7 @@ void Setting::RestUpdate(Player& player, CoreManager& core, bool rest)
 				cWaitTime = 0;
 			}
 
+			//Aボタンが押されたら休息をやめる
 			if (m_xpad.Buttons[13] == 1)
 			{
 				PlaySoundMem(pse->GetButtonSE(), DX_PLAYTYPE_BACK, true);
@@ -643,11 +644,22 @@ void Setting::RestUpdate(Player& player, CoreManager& core, bool rest)
 				if (selectDecision == 10)
 				{
 					player.SetNotRest(false);
+
+					player.SetRoll(0);
 				}
 
 				//リセット
 				cWaitTime = 0;
 			}
+
+			//Aボタンが押されたら休息をやめる
+			if (m_xpad.Buttons[13] == 1)
+			{
+				PlaySoundMem(pse->GetButtonSE(), DX_PLAYTYPE_BACK, true);
+
+				player.SetNotRest(false);
+			}
+
 		}
 		else
 		{
@@ -1365,13 +1377,13 @@ void Setting::RestDraw(bool rest)
 		//フォントのサイズ変更
 		SetFontSize(60);
 
-		DrawString(150, 50, "普通の休息", 0xffffff);
+		DrawString(150, 50, "棺桶", 0xffffff);
 
 		//フォントのサイズ変更
 		SetFontSize(40);
 
 		DrawString(150, 300, "休息", m_menuColor[0]);
-		DrawString(150, 400, "転送", m_menuColor[1]);
+		DrawString(150, 400, "魂器へ転送", m_menuColor[1]);
 		DrawString(150, 500, "立ち去る", m_menuColor[2]);
 	}
 	//レベル上げられる休息
@@ -1425,7 +1437,7 @@ void Setting::RestDraw(bool rest)
 
 		DrawString(150, 300, "休息", m_menuColor[0]);
 		DrawString(150, 400, "レベル上げ", m_menuColor[1]);
-		DrawString(150, 500, "転送", m_menuColor[2]);
+		DrawString(150, 500, "魂器へ転送", m_menuColor[2]);
 		DrawString(150, 600, "立ち去る", m_menuColor[3]);
 	}
 }

@@ -143,7 +143,7 @@ void Shield::Draw()
 /// </summary>
 void Shield::ItemDraw()
 {
-	if (m_effectTime <= 30)
+	if (m_effectTime <= m_effectTimeMax)
 	{
 		m_effectTime++;
 	}

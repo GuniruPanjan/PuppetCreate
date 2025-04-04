@@ -16,6 +16,32 @@ namespace
 
 	int cSize = 0;
 	int cTargetSize = 0;
+
+	constexpr float cInitialRate = 1.1f;
+	constexpr float cInitialRadius = 3.0f;
+	constexpr float cInitialCameraPosY = 50.0f;
+	constexpr float cInitialCameraPosZ = 100.0f;
+	constexpr float cInitialCameraTargetY = 5.0f;
+	constexpr float cInitialCameraAngleX = D2R(-20.0f);
+	constexpr float cInitialCameraAngleY = 97.4f;
+	constexpr float cCameraNear = 0.001f;
+	constexpr float cCameraFar = 1000.0f;
+	constexpr float cRateIncrement = 0.01f;
+	constexpr float cRateMax = 1.3f;
+	constexpr float cCameraAngleIncrement = D2R(2.0f);
+	constexpr float cCameraPosYMin = 15.2f;
+	constexpr float cCameraAngleXMax = 0.7f;
+	constexpr float cDirectionY = 112.0f;
+	constexpr float cDirectionZ = -112.0f;
+	constexpr int cInputThreshold = 5;
+	constexpr float cFilterRange = 200.0f;
+	constexpr float cEndTargetPosY = 20.0f;
+	constexpr float cPosTargetXMultiplier = 130.0f;
+	constexpr float cPosTargetZMultiplier = 130.0f;
+	constexpr float cPosTargetY = 80.0f;
+	constexpr float cEasingIncrement = 0.016f;
+	constexpr float cDrawRotaGraphX = 800.0f;
+	constexpr float cDrawRotaGraphY = 450.0f;
 }
 
 /// <summary>
@@ -49,20 +75,20 @@ Camera::~Camera()
 /// </summary>
 void Camera::Init()
 {
-	m_rate = 1.1f;
+	m_rate = cInitialRate;
 
-	m_radius = 3.0f;
+	m_radius = cInitialRadius;
 
 	//基準となるカメラの座標
-	m_cameraPos = VGet(0.0f, 50.0f, 100.0f);
+	m_cameraPos = VGet(0.0f, cInitialCameraPosY, cInitialCameraPosZ);
 
 	//カメラのターゲット座標初期化
-	m_cameraTarget = VGet(0.0f, 5.0f, 0.0f);
+	m_cameraTarget = VGet(0.0f, cInitialCameraTargetY, 0.0f);
 
 	//カメラのアングル初期設定
-	m_cameraAngle = VGet(D2R(-20.0f), 97.4f, 0.0f);
+	m_cameraAngle = VGet(cInitialCameraAngleX, cInitialCameraAngleY, 0.0f);
 
-	SetCameraNearFar(0.001f, 1000.0f);
+	SetCameraNearFar(cCameraNear, cCameraFar);
 }
 
 /// <summary>
@@ -73,26 +99,24 @@ void Camera::Update(Player& player)
 {
 	GetJoypadDirectInputState(DX_INPUT_PAD1, &input);
 
-
 	//判定
 	if (m_rate <= 1.0f)
 	{
 		m_isRate = true;
 	}
-	else if(m_rate >= 1.3f)
+	else if (m_rate >= cRateMax)
 	{
 		m_isRate = false;
 	}
 	//拡大させる
 	if (m_isRate)
 	{
-		m_rate += 0.01f;
+		m_rate += cRateIncrement;
 	}
 	else
 	{
-		m_rate -= 0.01f;
+		m_rate -= cRateIncrement;
 	}
-
 
 	if (!player.GetLock())
 	{
@@ -103,38 +127,34 @@ void Camera::Update(Player& player)
 		//左キー
 		if (input.Rx < 0)
 		{
-			m_cameraAngle.y -= D2R(2.0f);
-
+			m_cameraAngle.y -= cCameraAngleIncrement;
 		}
 		//右キー
 		if (input.Rx > 0)
 		{
-			m_cameraAngle.y += D2R(2.0f);
-
+			m_cameraAngle.y += cCameraAngleIncrement;
 		}
 		//上キー
 		if (input.Ry < 0)
 		{
 			//カメラが地面にめりこまないように
-			if (m_cameraPos.y >= 15.2f + player.GetPos().y)
+			if (m_cameraPos.y >= cCameraPosYMin + player.GetPos().y)
 			{
-				m_cameraAngle.x -= D2R(2.0f);
+				m_cameraAngle.x -= cCameraAngleIncrement;
 			}
-
 		}
 		//下キー
 		if (input.Ry > 0)
 		{
 			//カメラがプレイヤーを超えないくらいまで
-			if (m_cameraAngle.x <= 0.7f)
+			if (m_cameraAngle.x <= cCameraAngleXMax)
 			{
-				m_cameraAngle.x += D2R(2.0f);
+				m_cameraAngle.x += cCameraAngleIncrement;
 			}
 		}
 
-
 		//基準のベクトル
-		VECTOR Direction = VGet(0.0f, 112.0f, -112.0f);
+		VECTOR Direction = VGet(0.0f, cDirectionY, cDirectionZ);
 
 		//X軸回転行列
 		MATRIX matrixX = MGetRotX(m_cameraAngle.x);
@@ -151,7 +171,7 @@ void Camera::Update(Player& player)
 		m_cameraPos = VAdd(cPlayerPos, Direction);
 
 		//注視点の座標はプレイヤー座標の少し上
-		m_cameraTarget = VAdd(cPlayerPos, VGet(0.0f, 50.0f, 0.0f));
+		m_cameraTarget = VAdd(cPlayerPos, VGet(0.0f, cInitialCameraPosY, 0.0f));
 
 		SetCameraPositionAndTarget_UpVecY(m_cameraPos, m_cameraTarget);
 	}
@@ -161,7 +181,7 @@ void Camera::Update(Player& player)
 		if (input.Rx < 0)
 		{
 			cRxl++;
-			if (cRxl == 5)
+			if (cRxl == cInputThreshold)
 			{
 				SelectNextTarget();
 			}
@@ -174,7 +194,7 @@ void Camera::Update(Player& player)
 		if (input.Rx > 0)
 		{
 			cRxr++;
-			if (cRxr == 5)
+			if (cRxr == cInputThreshold)
 			{
 				SelectPreviousTarget();
 			}
@@ -185,10 +205,7 @@ void Camera::Update(Player& player)
 		}
 
 		SetCameraPositionAndTarget_UpVecY(m_cameraPos, m_cameraTarget);
-
 	}
-	
-	
 }
 
 void Camera::SelectNextTarget()
@@ -249,7 +266,7 @@ void Camera::LockUpdate(Player& player, EnemyManager& enemy)
 	}
 
 	//フィルタリングされた敵のリストを使用
-	FilterEnemiesInRange(player, enemy, 200.0f);
+	FilterEnemiesInRange(player, enemy, cFilterRange);
 
 	if (m_filterEnemyPositions.empty())
 	{
@@ -262,7 +279,7 @@ void Camera::LockUpdate(Player& player, EnemyManager& enemy)
 	VECTOR pPos = VGet(player.GetPos().x, player.GetPos().y, player.GetPos().z);
 
 	//注視点は敵の座標にする
-	m_endTargetPos = VAdd(m_enemyPos, VGet(0.0f, 20.0f, 0.0f));
+	m_endTargetPos = VAdd(m_enemyPos, VGet(0.0f, cEndTargetPosY, 0.0f));
 
 	//プレイヤーとエネミーのX座標の差を求める
 	float X = m_enemyPos.x - pPos.x;
@@ -284,11 +301,11 @@ void Camera::LockUpdate(Player& player, EnemyManager& enemy)
 	//ベクトルの正規化
 	VECTOR posTarget = VNorm(pos);
 
-	posTarget.x *= 130.0f;
-	posTarget.z *= 130.0f;
+	posTarget.x *= cPosTargetXMultiplier;
+	posTarget.z *= cPosTargetZMultiplier;
 
 	//カメラがどれだけプレイヤーの座標より高いかを設定
-	posTarget.y = 80.0f;
+	posTarget.y = cPosTargetY;
 
 	m_cameraAngle.y = angle;
 
@@ -298,14 +315,14 @@ void Camera::LockUpdate(Player& player, EnemyManager& enemy)
 	//イージングの更新
 	if (m_easingTime < m_easingDuration)
 	{
-		m_easingTime += 0.016f;
+		m_easingTime += cEasingIncrement;
 		float t = m_easingTime / m_easingDuration;
 		m_cameraPos = m_lerp.Lerp(MyLibrary::LibVec3(m_cameraPos.x, m_cameraPos.y, m_cameraPos.z), MyLibrary::LibVec3(m_endPos.x, m_endPos.y, m_endPos.z), t).GetVector();
 		m_cameraTarget = m_lerpTarget.Lerp(MyLibrary::LibVec3(m_cameraTarget.x, m_cameraTarget.y, m_cameraTarget.z), MyLibrary::LibVec3(m_endTargetPos.x, m_endTargetPos.y, m_endTargetPos.z), t).GetVector();
 	}
 	else
 	{
-		m_cameraTarget = VAdd(m_enemyPos, VGet(0.0, 20.0f, 0.0f));
+		m_cameraTarget = VAdd(m_enemyPos, VGet(0.0, cEndTargetPosY, 0.0f));
 		m_cameraPos = VAdd(pPos, posTarget);
 	}
 
@@ -314,8 +331,6 @@ void Camera::LockUpdate(Player& player, EnemyManager& enemy)
 
 void Camera::LockBossUpdate(Player& player, EnemyManager& enemy)
 {
-	//m_enemyPos = VGet(0, 0, 0);
-	//m_cameraTarget = VGet(0, 0, 0);
 	cTargetSize = 0;
 	cSize = 0;
 
@@ -323,7 +338,7 @@ void Camera::LockBossUpdate(Player& player, EnemyManager& enemy)
 	{
 		cTargetSize++;
 
-		if(enemyTarget == true)
+		if (enemyTarget == true)
 		{
 			for (auto& enemyPos : enemy.GetEnemyPos())
 			{
@@ -340,11 +355,10 @@ void Camera::LockBossUpdate(Player& player, EnemyManager& enemy)
 		}
 	}
 
-
 	VECTOR pPos = VGet(player.GetPos().x, player.GetPos().y, player.GetPos().z);
 
 	//注視点は敵の座標にする
-	m_endTargetPos = VAdd(m_enemyPos, VGet(0.0f, 20.0f, 0.0f));
+	m_endTargetPos = VAdd(m_enemyPos, VGet(0.0f, cEndTargetPosY, 0.0f));
 
 	//プレイヤーとエネミーのX座標の差を求める
 	float X = m_enemyPos.x - pPos.x;
@@ -366,11 +380,11 @@ void Camera::LockBossUpdate(Player& player, EnemyManager& enemy)
 	//ベクトルの正規化
 	VECTOR posTarget = VNorm(pos);
 
-	posTarget.x *= 130.0f;
-	posTarget.z *= 130.0f;
+	posTarget.x *= cPosTargetXMultiplier;
+	posTarget.z *= cPosTargetZMultiplier;
 
 	//カメラがどれだけプレイヤーの座標より高いかを設定
-	posTarget.y = 80.0f;
+	posTarget.y = cPosTargetY;
 
 	m_cameraAngle.y = angle;
 
@@ -380,19 +394,18 @@ void Camera::LockBossUpdate(Player& player, EnemyManager& enemy)
 	//イージングの更新
 	if (m_easingTime < m_easingDuration)
 	{
-		m_easingTime += 0.016f;
+		m_easingTime += cEasingIncrement;
 		float t = m_easingTime / m_easingDuration;
 		m_cameraPos = m_lerp.Lerp(MyLibrary::LibVec3(m_cameraPos.x, m_cameraPos.y, m_cameraPos.z), MyLibrary::LibVec3(m_endPos.x, m_endPos.y, m_endPos.z), t).GetVector();
 		m_cameraTarget = m_lerpTarget.Lerp(MyLibrary::LibVec3(m_cameraTarget.x, m_cameraTarget.y, m_cameraTarget.z), MyLibrary::LibVec3(m_endTargetPos.x, m_endTargetPos.y, m_endTargetPos.z), t).GetVector();
 	}
 	else
 	{
-		m_cameraTarget = VAdd(m_enemyPos, VGet(0.0, 20.0f, 0.0f));
+		m_cameraTarget = VAdd(m_enemyPos, VGet(0.0, cEndTargetPosY, 0.0f));
 		m_cameraPos = VAdd(pPos, posTarget);
 	}
 
 	SetCameraPositionAndTarget_UpVecY(m_cameraPos, m_cameraTarget);
-
 }
 
 /// <summary>
@@ -400,7 +413,7 @@ void Camera::LockBossUpdate(Player& player, EnemyManager& enemy)
 /// </summary>
 void Camera::Draw(UI& ui)
 {
-	DrawRotaGraph(800, 450, m_rate, 0.0f, ui.GetLockUI(), true);
+	DrawRotaGraph(cDrawRotaGraphX, cDrawRotaGraphY, m_rate, 0.0f, ui.GetLockUI(), true);
 }
 
 /// <summary>

@@ -28,32 +28,32 @@ public:
 	//武器の構造体
 	struct sWeapon
 	{
-		float sw_attack;               //攻撃力
-		float sw_muscle;               //筋力補正
-		float sw_skill;                //技量補正
-		float sw_radius;               //武器の当たり判定
-		bool sw_equipment = false;     //装備したかの判定
+		float sw_attack = 0;               //攻撃力
+		float sw_muscle = 0;               //筋力補正
+		float sw_skill = 0;                //技量補正
+		float sw_radius = 0;               //武器の当たり判定
+		bool sw_equipment = false;         //装備したかの判定
 	};
 
 	//盾の構造体
 	struct sShield
 	{
-		int ss_cut;                    //カット率
-		int ss_strength;               //盾強度
-		bool ss_equipment = false;     //装備したかの判定
+		int ss_cut = 0;                    //カット率
+		int ss_strength = 0;               //盾強度
+		bool ss_equipment = false;         //装備したかの判定
 	};
 
 	//防具の構造体
 	struct sArmor
 	{
-		int sa_defense;                //防御力
-		bool sa_equipment = false;     //装備したかの判定
+		int sa_defense = 0;                //防御力
+		bool sa_equipment = false;         //装備したかの判定
 	};
 
 	//アイテムの構造体
 	struct sTool
 	{
-		int sa_number;                 //持っている数
+		int sa_number = 0;                 //持っている数
 	};
 
 	//コンストラクタ
@@ -63,6 +63,7 @@ public:
 		m_frameIndex(0),
 		m_enemyItemHandle(0),
 		m_effectTime(30),
+		m_effectTimeMax(30),
 		m_itemPick(false),
 		m_isTaking(false),
 		m_itemBox(false),
@@ -145,4 +146,5 @@ protected:
 	MyLibrary::LibVec3 m_centerPos;              //中心座標
 
 	int m_effectTime;     //エフェクトの再生時間
+	int m_effectTimeMax;  //エフェクトの最大時間
 };

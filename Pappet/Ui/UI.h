@@ -131,7 +131,7 @@ private:
 	bool m_equipmentReturn;
 
 	std::shared_ptr<Font> m_pFont;          //フォント
-	std::shared_ptr<Font> m_pBigFont;       //大きいフォント
+	std::shared_ptr<Font> m_pSmallFont;     //小フォント
 
 	XINPUT_STATE m_xpad;                //パッド入力
 };

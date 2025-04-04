@@ -91,7 +91,7 @@ void Armor::Draw()
 /// </summary>
 void Armor::ItemDraw()
 {
-	if (m_effectTime <= 30)
+	if (m_effectTime <= m_effectTimeMax)
 	{
 		m_effectTime++;
 	}
