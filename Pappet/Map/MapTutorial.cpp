@@ -51,6 +51,18 @@ namespace
 	//シングルトン
 	auto& cEffect = EffectManager::GetInstance();
 
+	// ボス部屋の位置
+	const MyLibrary::LibVec3 cBossRoomDeadPos = MyLibrary::LibVec3(-80.0f, 400.0f, 0.0f);
+	const MyLibrary::LibVec3 cBossEnterTriggerDeadPos = MyLibrary::LibVec3(10.0f, 400.0f, 0.0f);
+	const MyLibrary::LibVec3 cCoreUpdateDeadPos = MyLibrary::LibVec3(-1000.0f, -1000.0f, -1000.0f);
+	const MyLibrary::LibVec3 cBossEnterPos = MyLibrary::LibVec3(-10.0f, 400.0f, 0.0f);
+	const MyLibrary::LibVec3 cBossEnterResetPos = MyLibrary::LibVec3(-10.0f, 50.0f, 0.0f);
+
+	// エフェクトの生成時間
+	constexpr int cEffectCreateTime = 20;
+	constexpr int cEffectCreateInterval = 30;
+	const VECTOR cRestLuminescencePos = VGet(-150.0f, 1.0f, 130.0f);
+
 	// 床の位置
 	const VECTOR cFloorPositions[] = {
 		VGet(-1652.0f, -7.0f, 0.0f),
@@ -191,15 +203,15 @@ std::shared_ptr<MapBase> MapTutorial::Update(bool warp, bool enter, bool Dead)
 	//ボスが死んだとき
 	if (Dead)
 	{
-		m_mapBossRoomPos = MyLibrary::LibVec3(-80.0f, 400.0f, 0.0f);
-		m_mapBossEnterTriggerPos = MyLibrary::LibVec3(10.0f, 400.0f, 0.0f);
+		m_mapBossRoomPos = cBossRoomDeadPos;
+		m_mapBossEnterTriggerPos = cBossEnterTriggerDeadPos;
 
 		m_pCore->Update(m_mapCoreCollisionePos);
 
 	}
 	else if (!Dead)
 	{
-		m_pCore->Update(MyLibrary::LibVec3(-1000.0f, -1000.0f, -1000.0f));
+		m_pCore->Update(cCoreUpdateDeadPos);
 	}
 
 	if (enter || Dead)
@@ -208,7 +220,7 @@ std::shared_ptr<MapBase> MapTutorial::Update(bool warp, bool enter, bool Dead)
 		if (!cOne)
 		{
 			//ボス部屋入り口のポジション
-			m_mapBossEnterPos = MyLibrary::LibVec3(-10.0f, 400.0f, 0.0f);
+			m_mapBossEnterPos = cBossEnterPos;
 
 			cOne = true;
 		}
@@ -219,18 +231,17 @@ std::shared_ptr<MapBase> MapTutorial::Update(bool warp, bool enter, bool Dead)
 		if (cOne)
 		{
 			//ボス部屋入り口のポジション
-			m_mapBossEnterPos = MyLibrary::LibVec3(-10.0f, 50.0f, 0.0f);
+			m_mapBossEnterPos = cBossEnterResetPos;
 
 			cOne = false;
 		}
 	}
 
 	//エフェクトの生成
-	if (cEffectTime >= 20 && !Dead)
+	if (cEffectTime >= cEffectCreateTime && !Dead)
 	{
 		cEffect.EffectCreate("Smoke", cEffectPos1);
 		cEffect.EffectCreate("Smoke", cEffectPos2);
-
 
 		cEffectTime = 0;
 	}
@@ -240,9 +251,9 @@ std::shared_ptr<MapBase> MapTutorial::Update(bool warp, bool enter, bool Dead)
 	}
 
 	//エフェクトの生成
-	if (m_effect >= 30)
+	if (m_effect >= cEffectCreateInterval)
 	{
-		cEffect.EffectCreate("RestLuminescence", VGet(-150.0f, 1.0f, 130.0f));
+		cEffect.EffectCreate("RestLuminescence", cRestLuminescencePos);
 
 		m_effect = 0;
 	}
@@ -299,12 +310,10 @@ void MapTutorial::Draw()
 	MV1SetPosition(m_collisionHandle, m_mapCollisionPos);
 
 	//普通の床描画
-	PartDrawSet(m_floorHandle, VGet(m_size, m_size, m_size), VGet(-1652.0f, -7.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_floorHandle, VGet(m_size, m_size, m_size), VGet(-1352.0f, -7.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_floorHandle, VGet(m_size, m_size, m_size), VGet(-1052.0f, -7.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_floorHandle, VGet(m_size, m_size, m_size), VGet(-752.0f, -7.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_floorHandle, VGet(m_size, m_size, m_size), VGet(-452.0f, -7.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_floorHandle, VGet(m_size, m_size, m_size), VGet(-152.0f, -7.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
+	for (const auto& pos : cFloorPositions)
+	{
+		PartDrawSet(m_floorHandle, VGet(m_size, m_size, m_size), pos, VGet(0.0f, 0.0f, 0.0f));
+	}
 
 	//大きい床描画
 	PartDrawSet(m_floorHandle, VGet(m_size * cBigFloor, m_size, m_size * cBigFloor), VGet(290.0f, -7.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
@@ -313,56 +322,44 @@ void MapTutorial::Draw()
 	PartDrawSet(m_floorHandle, VGet(m_size * cSmallFloor, m_size, m_size * cSmallFloor), VGet(-1862.0f, -7.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
 
 	//壁の描画
-	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-1929.0f, 90.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-1862.0f, 90.0f, 67.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-1862.0f, 90.0f, -67.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	for (const auto& pos : cWallPositions)
+	{
+		if (pos.x == cWallPositions[2].x)
+		{
+			PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), pos, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+		}
+		else
+		{
+			PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), pos, VGet(0.0f, 0.0f, 0.0f));
+		}
 
-
-	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-1809.0f, 90.0f, -120.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-1809.0f, 90.0f, 120.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-1500.0f, 90.0f, -120.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-1500.0f, 90.0f, 120.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-1200.0f, 90.0f, -120.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-1200.0f, 90.0f, 120.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-900.0f, 90.0f, -120.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-900.0f, 90.0f, 120.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-600.0f, 90.0f, -120.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-600.0f, 90.0f, 120.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-300.0f, 90.0f, -120.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-300.0f, 90.0f, 120.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-8.0f, 90.0f, -120.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-8.0f, 90.0f, 120.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-8.0f, 90.0f, -240.0f), VGet(0.0f, 0.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size, m_size, m_size), VGet(-8.0f, 90.0f, 240.0f), VGet(0.0f, 0.0f, 0.0f));
-
+	}
 
 	//普通の大きさの壁描画
-	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-1652.0f, 90.0f, -168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-1352.0f, 90.0f, -168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-1052.0f, 90.0f, -168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-752.0f, 90.0f, -168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-452.0f, 90.0f, -168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-152.0f, 90.0f, -168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-
-
-	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-1652.0f, 90.0f, 168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-1352.0f, 90.0f, 168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-1052.0f, 90.0f, 168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-752.0f, 90.0f, 168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-452.0f, 90.0f, 168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), VGet(-152.0f, 90.0f, 168.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-
+	for (const auto& pos : cNormalWallPositions)
+	{
+		PartDrawSet(m_wallHandle, VGet(m_size * cNormalWall, m_size, m_size * cNormalWall), pos, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+	}
 
 	//大きい壁描画
-	PartDrawSet(m_wallHandle, VGet(m_size * cBigWall, m_size, m_size * cBigWall), VGet(290.0f, 90.0f, 335.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size * cBigWall, m_size, m_size * cBigWall), VGet(290.0f, 90.0f, -335.0f), VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
-	PartDrawSet(m_wallHandle, VGet(m_size * cBigWall, m_size, m_size * cBigWall), VGet(625.0f, 90.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
+	for (const auto& pos : cBigWallPositions)
+	{
+		if (pos.x == cBigWallPositions[2].x && pos.y == cBigWallPositions[2].y && pos.z == cBigWallPositions[2].z)
+		{
+			PartDrawSet(m_wallHandle, VGet(m_size * cBigWall, m_size, m_size * cBigWall), pos, VGet(0.0f, 0.0f, 0.0f));
+		}
+		else
+		{
+			PartDrawSet(m_wallHandle, VGet(m_size * cBigWall, m_size, m_size * cBigWall), pos, VGet(0.0f, DX_PI_F / 2.0f, 0.0f));
+		}
+		
+	}
 
 	//天井描画
-	PartDrawSet(m_ceilingHandle, VGet(m_size, m_size, m_size), VGet(-450.0f, 190.0f, 0.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_ceilingHandle, VGet(m_size, m_size, m_size), cCeilingPosition, VGet(0.0f, 0.0f, 0.0f));
 
 	//休息地点描画
-	PartDrawSet(m_restObjectHandle, VGet(0.2f, 0.2f, 0.2f), VGet(-150.0f, 0.0f, 120.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_restObjectHandle, VGet(0.2f, 0.2f, 0.2f), cRestObjectPosition, VGet(0.0f, 0.0f, 0.0f));
 }
 
 void MapTutorial::CoreDraw()

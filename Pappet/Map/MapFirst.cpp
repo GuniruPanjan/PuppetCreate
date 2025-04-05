@@ -38,6 +38,31 @@ namespace
 
 	//シングルトン
 	auto& cEffect = EffectManager::GetInstance();
+
+	// マップの位置
+	const VECTOR cMapPos = VGet(0.0f, 250.0f, 0.0f);
+	const VECTOR cMapCollisionPos = VGet(-241.0f, -277.0f, -173.0f);
+	const VECTOR cMapCorePos = VGet(-830.0f, 50.0f, 0.0f);
+	const MyLibrary::LibVec3 cMapRestPos = MyLibrary::LibVec3(80.0f, 0.0f, -50.0f);
+	const MyLibrary::LibVec3 cMapBossRoomPos = MyLibrary::LibVec3(-80.0f, 0.0f, 0.0f);
+	const MyLibrary::LibVec3 cMapBossEnterPos = MyLibrary::LibVec3(-10.0f, 50.0f, 0.0f);
+	const MyLibrary::LibVec3 cMapCoreCollisionePos = MyLibrary::LibVec3(cMapCorePos.x, 0.0f, cMapCorePos.z);
+	const MyLibrary::LibVec3 cMapBossEnterTriggerPos = MyLibrary::LibVec3(10.0f, 50.0f, 0.0f);
+
+	// ボス部屋の位置
+	const MyLibrary::LibVec3 cBossRoomDeadPos = MyLibrary::LibVec3(-80.0f, 400.0f, 0.0f);
+	const MyLibrary::LibVec3 cBossEnterTriggerDeadPos = MyLibrary::LibVec3(10.0f, 400.0f, 0.0f);
+	const MyLibrary::LibVec3 cCoreUpdateDeadPos = MyLibrary::LibVec3(-1000.0f, -1000.0f, -1000.0f);
+	const MyLibrary::LibVec3 cBossEnterPosDead = MyLibrary::LibVec3(-10.0f, 400.0f, 0.0f);
+	const MyLibrary::LibVec3 cBossEnterPosReset = MyLibrary::LibVec3(-10.0f, 50.0f, 0.0f);
+
+	// エフェクトの生成時間
+	constexpr int cEffectCreateTime = 20;
+	constexpr int cEffectCreateInterval = 30;
+	const VECTOR cRestLuminescencePos = VGet(cMapRestPos.x, cMapRestPos.y + 1.0f, cMapRestPos.z - 20.0f);
+	const VECTOR cRestObjectPos = VGet(cMapRestPos.x, cMapRestPos.y, cMapRestPos.z - 30.0f);
+	constexpr float cCoreRotationSpeed = 0.001f;
+	const VECTOR cCoreScale = VGet(cCoreSize, cCoreSize, cCoreSize);
 }
 
 /// <summary>
@@ -90,14 +115,14 @@ void MapFirst::Init(std::shared_ptr<MyLibrary::Physics> physics)
 	MV1SetScale(m_collisionHandle, VGet(m_size, m_size, m_size));
 
 	//ポジション設定
-	m_mapPos = VGet(0.0f, 250.0f, 0.0f);
-	m_mapCollisionPos = VGet(-241.0f, -277.0f, -173.0f);
-	m_mapCorePos = VGet(-830.0f, 50.0f, 0.0f);
-	m_mapRestPos = MyLibrary::LibVec3(80.0f, 0.0f, -50.0f);
-	m_mapBossRoomPos = MyLibrary::LibVec3(-80.0f, 0.0f, 0.0f);
-	m_mapBossEnterPos = MyLibrary::LibVec3(-10.0f, 50.0f, 0.0f);
-	m_mapCoreCollisionePos = MyLibrary::LibVec3(m_mapCorePos.x, 0.0f, m_mapCorePos.z);
-	m_mapBossEnterTriggerPos = MyLibrary::LibVec3(10.0f, 50.0f, 0.0f);
+	m_mapPos = cMapPos;
+	m_mapCollisionPos = cMapCollisionPos;
+	m_mapCorePos = cMapCorePos;
+	m_mapRestPos = cMapRestPos;
+	m_mapBossRoomPos = cMapBossRoomPos;
+	m_mapBossEnterPos = cMapBossEnterPos;
+	m_mapCoreCollisionePos = cMapCoreCollisionePos;
+	m_mapBossEnterTriggerPos = cMapBossEnterTriggerPos;
 
 	//ライト関係
 	ChangeLightTypeDir(VGet(-1.0f, 0.0f, 0.0f));
@@ -134,15 +159,15 @@ std::shared_ptr<MapBase> MapFirst::Update(bool warp, bool enter, bool Dead)
 	//ボスが死んだとき
 	if (Dead)
 	{
-		m_mapBossRoomPos = MyLibrary::LibVec3(-80.0f, 400.0f, 0.0f);
-		m_mapBossEnterTriggerPos = MyLibrary::LibVec3(10.0f, 400.0f, 0.0f);
+		m_mapBossRoomPos = cBossRoomDeadPos;
+		m_mapBossEnterTriggerPos = cBossEnterTriggerDeadPos;
 
 		m_pCore->Update(m_mapCoreCollisionePos);
 
 	}
 	else if (!Dead)
 	{
-		m_pCore->Update(MyLibrary::LibVec3(-1000.0f, -1000.0f, -1000.0f));
+		m_pCore->Update(cCoreUpdateDeadPos);
 	}
 
 	if (enter || Dead)
@@ -151,7 +176,7 @@ std::shared_ptr<MapBase> MapFirst::Update(bool warp, bool enter, bool Dead)
 		if (!cOne)
 		{
 			//ボス部屋入り口のポジション
-			m_mapBossEnterPos = MyLibrary::LibVec3(-10.0f, 400.0f, 0.0f);
+			m_mapBossEnterPos = cBossEnterPosDead;
 
 			cOne = true;
 		}
@@ -162,14 +187,14 @@ std::shared_ptr<MapBase> MapFirst::Update(bool warp, bool enter, bool Dead)
 		if (cOne)
 		{
 			//ボス部屋入り口のポジション
-			m_mapBossEnterPos = MyLibrary::LibVec3(-10.0f, 50.0f, 0.0f);
+			m_mapBossEnterPos = cBossEnterPosReset;
 
 			cOne = false;
 		}
 	}
 
 	//エフェクトの生成
-	if (cEffectTime >= 20 && !Dead)
+	if (cEffectTime >= cEffectCreateTime && !Dead)
 	{
 		cEffect.EffectCreate("Smoke", cEffectPos);
 
@@ -181,9 +206,9 @@ std::shared_ptr<MapBase> MapFirst::Update(bool warp, bool enter, bool Dead)
 	}
 
 	//エフェクトの生成
-	if (m_effect >= 30)
+	if (m_effect >= cEffectCreateInterval)
 	{
-		cEffect.EffectCreate("RestLuminescence", VGet(m_mapRestPos.x, m_mapRestPos.y + 1.0f, m_mapRestPos.z - 20.0f));
+		cEffect.EffectCreate("RestLuminescence", cRestLuminescencePos);
 
 		m_effect = 0;
 	}
@@ -199,7 +224,7 @@ std::shared_ptr<MapBase> MapFirst::Update(bool warp, bool enter, bool Dead)
 
 		cEffectOne = true;
 	}
-	else if(!enter)
+	else if (!enter)
 	{
 		cEffectOne = false;
 	}
@@ -255,6 +280,8 @@ void MapFirst::CoreUpdate()
 /// </summary>
 void MapFirst::Draw()
 {
+	int scale = 0.2f;
+
 	//3Dモデルのポジション設定
 	MV1SetPosition(m_handle, m_mapPos);
 	MV1SetPosition(m_collisionHandle, m_mapCollisionPos);
@@ -263,7 +290,7 @@ void MapFirst::Draw()
 	MV1DrawModel(m_handle);
 
 	//休息地点描画
-	PartDrawSet(m_restObjectHandle, VGet(0.2f, 0.2f, 0.2f), VGet(m_mapRestPos.x, m_mapRestPos.y, m_mapRestPos.z - 30.0f), VGet(0.0f, 0.0f, 0.0f));
+	PartDrawSet(m_restObjectHandle, VGet(scale, scale, scale), cRestObjectPos, VGet(0.0f, 0.0f, 0.0f));
 }
 
 /// <summary>

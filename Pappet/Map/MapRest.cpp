@@ -29,6 +29,13 @@ namespace
 
 	//シングルトン
 	auto& cEffect = EffectManager::GetInstance();
+
+	// エフェクトの設定
+	constexpr int cEffectLoadTime = 600;
+	constexpr float cEffectLoadScale = 90.0f;
+	constexpr int cEffectCreateInterval = 500;
+	constexpr float cEffectCreateOffsetY = -30.0f;
+	constexpr float cEffectCreateOffsetZ = -50.0f;
 }
 
 /// <summary>
@@ -86,7 +93,7 @@ void MapRest::Init(std::shared_ptr<MyLibrary::Physics> physics)
 	m_mapBossEnterTriggerPos = MyLibrary::LibVec3(10.0f, 1000.0f, 0.0f);
 
 	//炎のエフェクト
-	cEffect.EffectLoad("Fire", "Data/Effect/MagicFire1.efkefc", 600, 90.0f);
+	cEffect.EffectLoad("Fire", "Data/Effect/MagicFire1.efkefc", cEffectLoadTime, cEffectLoadScale);
 
 	//ライト関係
 	ChangeLightTypeDir(VGet(-1.0f, 0.0f, 0.0f));
@@ -115,9 +122,9 @@ std::shared_ptr<MapBase> MapRest::Update(bool warp, bool enter, bool Dead)
 	m_pSearch->Update(m_mapRestPos);
 	m_pCore->Update(m_mapCoreCollisionePos);
 
-	if (cEffectPlay >= 500)
+	if (cEffectPlay >= cEffectCreateInterval)
 	{
-		cEffect.EffectCreate("Fire", VGet(m_mapRestPos.x, m_mapRestPos.y - 30, m_mapRestPos.z - 50));
+		cEffect.EffectCreate("Fire", VGet(m_mapRestPos.x, m_mapRestPos.y + cEffectCreateOffsetY, m_mapRestPos.z + cEffectCreateOffsetZ));
 
 		cEffectPlay = 0;
 	}
