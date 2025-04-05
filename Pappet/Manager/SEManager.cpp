@@ -18,6 +18,8 @@ SEManager::SEManager():
 	m_itemGetSE(0),
 	m_kickSE(0),
 	m_knifeSE(0),
+	m_loserSE(0),
+	m_victorySE(0),
 	m_volumePal(0)
 {
 	for (int i = 0; i < 3; i++)
@@ -57,6 +59,8 @@ void SEManager::SceneInit()
 	//SE“Ç‚Ýž‚Ý
 	m_buttonSE = LoadSoundMem("Data/SE/ButtonSE.mp3");
 	m_selectSE = LoadSoundMem("Data/SE/SelectSE.mp3");
+	m_loserSE = LoadSoundMem("Data/SE/LoserSE.mp3");
+	m_victorySE = LoadSoundMem("Data/SE/VictorySE.mp3");
 }
 
 /// <summary>
@@ -118,6 +122,8 @@ void SEManager::Update(int volume)
 	ChangeVolumeSoundMem(m_volumePal, m_kickSE);
 	ChangeVolumeSoundMem(m_volumePal, m_knifeSE);
 	ChangeVolumeSoundMem(m_volumePal, m_diedSE);
+	ChangeVolumeSoundMem(m_volumePal, m_victorySE);
+	ChangeVolumeSoundMem(m_volumePal, m_loserSE);
 }
 
 /// <summary>
@@ -143,4 +149,6 @@ void SEManager::End()
 	DeleteSoundMem(m_kickSE);
 	DeleteSoundMem(m_knifeSE);
 	DeleteSoundMem(m_diedSE);
+	DeleteSoundMem(m_victorySE);
+	DeleteSoundMem(m_loserSE);
 }

@@ -13,6 +13,7 @@ class Armor;
 class Tool;
 class MessageManager;
 class Font;
+class SEManager;
 
 /// <summary>
 /// UI関係のクラス
@@ -82,10 +83,10 @@ public:
 	/// <summary>
 	/// 死んだときの描画
 	/// </summary>
-	void DiedDraw();
+	void DiedDraw(SEManager& se);
 
 	//ボスを倒したとき勝利演出描画
-	void GetCoreDraw();
+	void GetCoreDraw(SEManager& se);
 
 	/// <summary>
 	/// ステータスバーの描画処理

@@ -41,6 +41,8 @@ public:
 	int GetKickSE() { return m_kickSE; }                  //キックのSEをとる
 	int GetKnifeSE() { return m_knifeSE; }                //ナイフのSEをとる
 	int GetDiedSE() { return m_diedSE; }                  //死んだ時のSEをとる
+	int GetLoserSE() { return m_loserSE; }                //負けた時のSEをとる
+	int GetVictorySE() { return m_victorySE; }            //勝った時のSEをとる
 
 private:
 	//SE関係
@@ -59,6 +61,8 @@ private:
 	int m_kickSE;           //キックのSE
 	int m_knifeSE;          //ナイフのSE
 	int m_diedSE;           //死んだ時のSE
+	int m_loserSE;          //負けた時のSE
+	int m_victorySE;        //勝った時のSE
 	int m_volumePal;        //音量
 };
 

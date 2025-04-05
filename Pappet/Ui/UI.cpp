@@ -8,6 +8,7 @@
 #include "Manager/MapManager.h"
 #include "Item/Tool.h"
 #include "External/Font.h"
+#include "Manager/SEManager.h"
 #include "Manager/MessageManager.h"
 
 namespace
@@ -550,16 +551,19 @@ void UI::ItemTakingUI(int item, int handle, int x, int y, int charX, int charY, 
 /// <summary>
 /// €–S•`‰æˆ—
 /// </summary>
-void UI::DiedDraw()
+void UI::DiedDraw(SEManager& se)
 {
 	int Max = 255;
 	int WaitTime = 30;
 	int Value = 3;
 	int End = 10;
 
-	//Ÿ—˜‚Ì•¶š‚Ì“§‰ß
+	//€–S‚Ì•¶š‚Ì“§‰ß
 	if (m_youDead == 0)
 	{
+		//”s–kSEÄ¶
+		PlaySoundMem(se.GetLoserSE(), DX_PLAYTYPE_BACK, true);
+
 		m_alphaValue = true;
 
 		m_waitResetTime = 0;
@@ -612,7 +616,7 @@ void UI::DiedDraw()
 /// <summary>
 /// ƒ{ƒX‚ğ“|‚µ‚½‚Æ‚«‚ÌŸ—˜‰‰o•`‰æ
 /// </summary>
-void UI::GetCoreDraw()
+void UI::GetCoreDraw(SEManager& se)
 {
 	int Max = 255;
 	int WaitTime = 30;
@@ -622,6 +626,9 @@ void UI::GetCoreDraw()
 	//Ÿ—˜‚Ì•¶š‚Ì“§‰ß
 	if (m_youWin == 0)
 	{
+		//Ÿ—˜SEÄ¶
+		PlaySoundMem(se.GetVictorySE(), DX_PLAYTYPE_BACK, true);
+
 		m_alphaValue = true;
 
 		m_waitResetTime = 0;

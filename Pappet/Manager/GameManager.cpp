@@ -111,6 +111,7 @@ void GameManager::Init()
 	m_pSetting->Init();
 	m_pSe->CharaInit();
 	m_pSe->BossInit();
+	m_pSe->SceneInit();
 	m_pUi->Init();
 	m_pCore->Init();
 	m_pPlayer->ChangeStatus();
@@ -690,12 +691,12 @@ void GameManager::Draw()
 		//Ž€–S‚µ‚½Žž•`‰æ‚·‚é
 		if (m_pPlayer->GetDead() && !m_pUi->GetReset())
 		{
-			m_pUi->DiedDraw();
+			m_pUi->DiedDraw(*m_pSe);
 		}
 		//Ÿ—˜Žž‚Ì‰‰o‚ð•`‰æ‚·‚é
 		if (m_bossEnd.sWin)
 		{
-			m_pUi->GetCoreDraw();
+			m_pUi->GetCoreDraw(*m_pSe);
 			//Ÿ—˜‰‰o‚ªI‚í‚Á‚½‚çI—¹‚·‚é
 			m_bossEnd.sWin = m_pUi->GetWinReset();
 		}
