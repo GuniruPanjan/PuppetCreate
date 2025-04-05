@@ -46,6 +46,8 @@ public:
 	{
 		bool sBear = false;     //熊
 		bool sAssassin = false; //アサシン
+
+		bool sWin = false;      //勝利演出判定
 	};
 
 public:

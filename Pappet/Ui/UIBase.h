@@ -65,6 +65,7 @@ protected:
 
 	//UI‚Ì‰æ‘œ
 	int m_dead;           //€–S‚Ì‰æ‘œŠi”[•Ï”
+	int m_victory;        //Ÿ—˜‚Ì‰æ‘œŠi”[•Ï”
 	int m_selectUi;       //‘I‘ğ‚Ì‰æ‘œŠi”[•Ï”
 	int m_actionUI;       //ƒAƒNƒVƒ‡ƒ“‚ğŠi”[‚·‚é•Ï”
 	int m_itemTaking;     //ƒAƒCƒeƒ€‚ğæ“¾‚µ‚½•Ï”

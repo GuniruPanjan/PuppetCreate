@@ -22,6 +22,7 @@ UIBase::UIBase() :
 	m_woodShield(0),
 	m_rest(0),
 	m_dead(0),
+	m_victory(0),
 	m_selectUi(0),
 	m_levelUp(0),
 	m_backRightBar(0),
@@ -68,6 +69,7 @@ UIBase::~UIBase()
 	DeleteGraph(m_blackSword);
 	DeleteGraph(m_fist);
 	DeleteGraph(m_body);
+	DeleteGraph(m_victory);
 	DeleteGraph(m_uglyShield);
 	DeleteGraph(m_commonArmor);
 	DeleteGraph(m_dead);

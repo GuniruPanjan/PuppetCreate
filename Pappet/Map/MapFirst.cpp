@@ -280,7 +280,7 @@ void MapFirst::CoreUpdate()
 /// </summary>
 void MapFirst::Draw()
 {
-	int scale = 0.2f;
+	float scale = 0.2f;
 
 	//3Dモデルのポジション設定
 	MV1SetPosition(m_handle, m_mapPos);

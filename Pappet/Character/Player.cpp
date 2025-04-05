@@ -1344,14 +1344,14 @@ void Player::Action(VECTOR restpos, Tool& tool, Shield& shield, SEManager& se, b
 	//休息できたら
 	if (m_restTouch && m_mapNow != 0)
 	{
-		//初期化位置更新
-		m_updateX = m_modelPos.x;
-		m_updateY = m_modelPos.y;
-		m_updateZ = m_modelPos.z;
-
 		//Yボタンが押されたら
 		if (m_xpad.Buttons[15] == 1)
 		{
+			//初期化位置更新
+			m_updateX = m_modelPos.x;
+			m_updateY = m_modelPos.y;
+			m_updateZ = m_modelPos.z;
+
 			m_rest = true;
 
 			cEffect.EffectCreate("Rest", restpos);
@@ -1369,14 +1369,14 @@ void Player::Action(VECTOR restpos, Tool& tool, Shield& shield, SEManager& se, b
 	//マップで分ける
 	if (m_restTouch && m_mapNow == 0)
 	{
-		//初期化位置更新
-		m_updateX = m_modelPos.x;
-		m_updateY = m_modelPos.y;
-		m_updateZ = m_modelPos.z;
-
 		//Yボタンが押されたら
 		if (m_xpad.Buttons[15] == 1)
 		{
+			//初期化位置更新
+			m_updateX = m_modelPos.x;
+			m_updateY = m_modelPos.y;
+			m_updateZ = m_modelPos.z;
+
 			m_rest = true;
 			m_bigRest = true;
 

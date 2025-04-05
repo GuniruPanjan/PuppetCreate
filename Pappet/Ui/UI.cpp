@@ -35,8 +35,15 @@ namespace
 	const int cOkTextY = 815;
 	const int cPlayerCoreX = 1400;
 	const int cPlayerCoreY = 905;
-	const int cDeadTextX = -150;
-	const int cDeadTextY = 100;
+	const int cDirectionTextX = -150;
+	const int cDirectionTextY = -200;
+	const int cDirectionBackX1 = 0;
+	const int cDirectionBackX2 = 1920;
+	const int cDirectionWinBackY1 = 230;
+	const int cDirectionWinBackY2 = 450;
+	const int cDirectionDeadBackY1 = 250;
+	const int cDirectionDeadBackY2 = 450;
+	const int cDirectionDivide = 2;
 	const int cEnemyHpBarXOffset = -100;
 	const int cEnemyHpBarYOffset = -300;
 	const int cBossNameX = 450;
@@ -100,6 +107,7 @@ namespace
 	const int cWarpTextX = 750;
 	const int cMessageTextX = 680;
 	const int cTextColor = 0xffffff;
+	const int cDirectionColor = 0x000000;
 	const int cItemTakingUiX = 500;
 	const int cItemTakingUiYBlackSword = 625;
 	const int cItemTakingUiYDistorted = 645;
@@ -107,6 +115,7 @@ namespace
 	const int cItemTakingUiYBat = 635;
 	const int cItemTakingUiYWoodShield = 635;
 	const int cItemTakingUiCharX = 800;
+	const int cItemTakingUiCharX1 = 650;
 	const int cItemTakingUiCharY = 675;
 
 	bool cItemTakingUi = false;
@@ -117,8 +126,11 @@ namespace
 /// </summary>
 UI::UI() :
 	m_deadReset(false),
+	m_winReset(false),
 	m_waitResetTime(0),
 	m_youDead(0),
+	m_youWin(0),
+	m_alphaValue(false),
 	m_equipmentReturn(false),
 	m_xpad()
 {
@@ -141,8 +153,10 @@ UI::~UI()
 void UI::Init()
 {
 	m_youDead = 0;
+	m_youWin = 0;
 	m_waitResetTime = 0;
 	m_deadReset = false;
+	m_winReset = true;
 
 	m_heelStone = MyLoadGraph("Data/UI/HeelStoneMini.png", 4, 4);
 	m_blackSword = MyLoadGraph("Data/UI/黒い剣UI.png", 3, 3);
@@ -154,6 +168,7 @@ void UI::Init()
 	m_woodShield = MyLoadGraph("Data/UI/WoodShield.png", 4, 4);
 
 	m_dead = MyLoadGraph("Data/UI/YOUDIEDGraph.png", 1, 1);
+	m_victory = MyLoadGraph("Data/UI/GottheCoreback.png", 1, 1);
 	m_backRightBar = MyLoadGraph("Data/UI/StatusBar右端.png", 2, 2);
 	m_backLeftBar = MyLoadGraph("Data/UI/StatusBar左端.png", 2, 2);
 	m_backCenterBar = MyLoadGraph("Data/UI/StatusBar中央.png", 2, 2);
@@ -258,7 +273,7 @@ void UI::Draw(Player& player, EnemyManager& enemy, Setting& eq, MapManager& map,
 
 		ItemTakingUI(item.m_uiItem.u_BlackSword, m_blackSword, cItemTakingUiX, cItemTakingUiYBlackSword, cItemTakingUiCharX, cItemTakingUiCharY, "黒剣");
 		ItemTakingUI(item.m_uiItem.u_Distorted, m_uglyShield, cItemTakingUiX, cItemTakingUiYDistorted, cItemTakingUiCharX, cItemTakingUiCharY, "忌盾");
-		ItemTakingUI(item.m_uiItem.u_ArmorNormal, m_commonArmor, cItemTakingUiX, cItemTakingUiYArmorNormal, cItemTakingUiCharX, cItemTakingUiCharY, "ノクターニス兵の鎧");
+		ItemTakingUI(item.m_uiItem.u_ArmorNormal, m_commonArmor, cItemTakingUiX, cItemTakingUiYArmorNormal, cItemTakingUiCharX1, cItemTakingUiCharY, "ノクターニス兵の鎧");
 		ItemTakingUI(item.m_uiItem.u_Bat, m_bat, cItemTakingUiX, cItemTakingUiYBat, cItemTakingUiCharX, cItemTakingUiCharY, "木の棍棒");
 		ItemTakingUI(item.m_uiItem.u_WoodShield, m_woodShield, cItemTakingUiX, cItemTakingUiYWoodShield, cItemTakingUiCharX, cItemTakingUiCharY, "木の盾");
 
@@ -539,11 +554,13 @@ void UI::DiedDraw()
 {
 	int Max = 255;
 	int WaitTime = 30;
+	int Value = 3;
+	int End = 10;
 
-	//死亡の文字の透過
-	if (m_youDead < Max)
+	//勝利の文字の透過
+	if (m_youDead == 0)
 	{
-		m_youDead++;
+		m_alphaValue = true;
 
 		m_waitResetTime = 0;
 	}
@@ -555,13 +572,103 @@ void UI::DiedDraw()
 		}
 		else
 		{
+			m_alphaValue = false;
+			//初期化
+			m_waitResetTime = 0;
+		}
+	}
+	//アルファ値を変化させる
+	if (m_alphaValue)
+	{
+		if (m_youDead < Max)
+		{
+			m_youDead++;
+		}
+	}
+	else
+	{
+		if (m_youDead > End)
+		{
+			m_youDead -= Value;
+		}
+		else if (m_youDead <= End)
+		{
 			m_deadReset = true;
+
+			m_youDead = 0;
 		}
 	}
 
+	//背景の黒い画像を透過する
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_youDead / cDirectionDivide);
+	DrawBox(cDirectionBackX1, cDirectionDeadBackY1, cDirectionBackX2, cDirectionDeadBackY2, cDirectionColor, true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
 	//死亡時の文字を出す
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_youDead);
-	DrawGraph(cDeadTextX, cDeadTextY, m_dead, true);
+	DrawGraph(cDirectionTextX, 0, m_dead, true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+}
+/// <summary>
+/// ボスを倒したときの勝利演出描画
+/// </summary>
+void UI::GetCoreDraw()
+{
+	int Max = 255;
+	int WaitTime = 30;
+	int Value = 3;
+	int End = 10;
+
+	//勝利の文字の透過
+	if (m_youWin == 0)
+	{
+		m_alphaValue = true;
+
+		m_waitResetTime = 0;
+	}
+	else if(m_youWin >= Max)
+	{
+		if (m_waitResetTime <= WaitTime)
+		{
+			m_waitResetTime++;
+		}
+		else
+		{
+			m_alphaValue = false;
+			//初期化
+			m_waitResetTime = 0;
+		}
+	}
+	//アルファ値を変化させる
+	if (m_alphaValue)
+	{
+		if (m_youWin < Max)
+		{
+			m_youWin += Value;
+		}
+	}
+	else
+	{
+		if (m_youWin > End)
+		{
+			m_youWin -= Value;
+		}
+		else if(m_youWin <= End)
+		{
+			m_winReset = false;
+
+			m_youWin = 0;
+		}
+	}
+
+	//背景の黒い画像を透過する
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_youWin / cDirectionDivide);
+	DrawBox(cDirectionBackX1, cDirectionWinBackY1, cDirectionBackX2, cDirectionWinBackY2, cDirectionColor, true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+	//勝利時の文字を出す
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_youWin);
+	DrawGraph(cDirectionTextX, cDirectionTextY, m_victory, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
@@ -709,6 +816,7 @@ void UI::End()
 	DeleteGraph(m_bat);
 	DeleteGraph(m_woodShield);
 	DeleteGraph(m_dead);
+	DeleteGraph(m_victory);
 	DeleteGraph(m_backRightBar);
 	DeleteGraph(m_backLeftBar);
 	DeleteGraph(m_backCenterBar);
