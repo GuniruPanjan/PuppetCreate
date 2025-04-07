@@ -58,6 +58,7 @@ private:
 	bool m_decisionButton;  //決定判定
 	VECTOR m_cameraPos;    //カメラポジション
 	VECTOR m_cameraTarget;     //カメラのターゲットポジション
+	VECTOR m_cameraTargetGraves;    //カメラのターゲットを墓に向ける
 
 	//モデル用変数
 	int m_playerHandle;          //プレイヤーのモデル格納変数

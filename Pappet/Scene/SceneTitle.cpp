@@ -99,6 +99,7 @@ SceneTitle::SceneTitle() :
 	m_playTime(0.0f),
 	m_pos(VGet(0.0f, 0.0f, 0.0f)),
 	m_cameraTarget(VGet(0.0f, 0.0f, 0.0f)),
+	m_cameraTargetGraves(VGet(0.0f,0.0f,0.0f)),
 	m_xpad()
 {
 	for (int i = 0; i < 3; i++)
@@ -185,8 +186,10 @@ void SceneTitle::Init()
 	cCameraTrun = false;
 
 	m_cameraPos = VGet(-80.0f, 35.0f, 80.0f);
+	//カメラターゲットをプレイヤーに向ける
 	m_cameraTarget = VGet(cCameraTargetx, cCameraTargety, cCameraTargetz);
-
+	//カメラターゲットを墓に向ける
+	//m_cameraTargetGraves;
 	//フェードアウトイン初期化
 	m_pFade->Init();
 

@@ -1093,6 +1093,8 @@ void Setting::Draw()
 /// <param name="white">”’‚¢‰æ‘œ‚ÌƒuƒŒƒ“ƒh—¦</param>
 void Setting::BrightColorDraw(int select, int now, int other1, int other2, int other3, int other4, int black, int white)
 {
+	//–¾‚é‚³‚ð‰ü—Ç‚·‚é
+
 	if (m_pSelect->NowSelect == select)
 	{
 		m_brightColor[now] = 0xffff00;
@@ -1118,6 +1120,8 @@ void Setting::BrightColorDraw(int select, int now, int other1, int other2, int o
 /// <param name="volume">‰¹—Ê</param>
 void Setting::VolumeColorDraw(int select, int now, int other1, int other2, int other3, int other4, int volume)
 {
+	//‰¹—Ê‚ð‰ü—Ç‚·‚é
+
 	if (m_pSelect->NowSelect == select)
 	{
 		m_volumeColor[now] = 0xffff00;
@@ -1136,6 +1140,9 @@ void Setting::VolumeColorDraw(int select, int now, int other1, int other2, int o
 /// <param name="volume">‰¹—Ê</param>
 void Setting::SettingDraw(int volume)
 {
+	//–¾‚é‚³‚ÌÝ’è‚Í‰ü—Ç‚·‚é
+	//‰¹—Ê‚ÌÝ’è‚Í‰ü—Ç‚·‚é
+
 	pse->Update(volume);
 
 	//–¾‚é‚³
