@@ -289,7 +289,12 @@ public:
 	bool GetRestWarp() { return m_restWarp; }
 	bool SetRestWarp(bool set) { return m_restWarp = set; }
 
+	//待ち時間を設定する
+	int SetWait(int set) { return m_waitTime = set; }
+
 private:
+
+	void SettingChange(int setting, int Decision, int one, int two, int three, int four, int five, int six, int seven, int eight, int nine, int ten);
 
 	void WeaponUpdate(std::list<std::string> list, Weapon& weapon, int right);
 	void WeaponDraw(std::list<std::string> list, int right);
@@ -316,6 +321,8 @@ private:
 	int m_waitTime;           //入力を待つための時間
 	int m_brightnessColor;    //明るさの色
 	int m_bgmColor;           //音量の色
+	int m_seColor;            //SEの色
+	int m_cameraColor;        //カメラの色
 	int m_returnColor;        //戻るの色
 	int m_brightColor[5];     //明るさ選択の色
 	int m_volumeColor[5];     //音量選択の色
@@ -328,7 +335,9 @@ private:
 	bool m_one;               //単発入力
 	bool m_settingScene;      //設定するための画面を呼ぶ変数
 	bool m_brightness;        //明るさ設定
-	bool m_volume;            //音量設定
+	bool m_volume;            //BGM設定
+	bool m_se;                //SE設定
+	bool m_camera;            //カメラ感度
 	bool m_equipmentMenu;     //装備メニュー
 	bool m_itemMenu;          //アイテムボックスメニュー
 	bool m_decisionEquipment; //装備選択画面

@@ -339,6 +339,9 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 					{
 						m_waitTime = 0;
 
+						//‘Ò‚¿ŠÔ‚ğ‰Šú‰»‚·‚é
+						m_pSetting->SetWait(0);
+
 						m_pSetting->SetSettingScene(true);
 					}
 					//I—¹

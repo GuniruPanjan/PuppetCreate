@@ -14,6 +14,8 @@ namespace
 	int selectDecision = 0;     //選択したものを決定する変数
 	int brightDecision = 0;     //明るさを決定する変数
 	int volumeDecision = 0;     //音量を決定する変数
+	int seDecision = 0;         //SEを決定する変数
+	int cameraDecision = 0;     //カメラを決定する変数
 
 	//a値をいじる変数
 	int cBlenda = 10;  
@@ -81,6 +83,8 @@ Setting::Setting() :
 	m_waitTime(0),
 	m_brightnessColor(0),
 	m_bgmColor(0),
+	m_seColor(0),
+	m_cameraColor(0),
 	m_returnColor(0),
 	m_right(0),
 	m_left(0),
@@ -89,6 +93,8 @@ Setting::Setting() :
 	m_settingScene(false),
 	m_brightness(false),
 	m_volume(false),
+	m_se(false),
+	m_camera(false),
 	m_volumeSize(0),
 	m_equipmentMenu(false),
 	m_itemMenu(false),
@@ -240,19 +246,29 @@ void Setting::Update()
 		}
 
 		//選択中
-		if (m_brightness == false && m_volume == false)
+		if (m_brightness == false && m_volume == false && m_se == false && m_camera == false)
 		{
-			m_pSelect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, m_pSelect->Eight);
+			m_pSelect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, m_pSelect->Six);
 		}
 		//明るさの選択中
-		if (m_brightness == true && m_volume == false)
+		if (m_brightness == true && m_volume == false && m_se == false && m_camera == false)
 		{
-			m_pSelect->Menu_Update(m_thumb, m_one, m_xpad.Buttons[13], brightDecision, m_pSelect->Six);
+			m_pSelect->Menu_Update(m_thumb, m_one, m_xpad.Buttons[13], brightDecision, m_pSelect->One);
 		}
 		//音量の選択中
-		if (m_brightness == false && m_volume == true)
+		if (m_brightness == false && m_volume == true && m_se == false && m_camera == false)
 		{
-			m_pSelect->Menu_Update(m_thumb, m_one, m_xpad.Buttons[13], volumeDecision, m_pSelect->Six);
+			m_pSelect->Menu_Update(m_thumb, m_one, m_xpad.Buttons[13], volumeDecision, m_pSelect->One);
+		}
+		//SEの選択中
+		if (m_brightness == false && m_volume == false && m_se == true && m_camera == false)
+		{
+			m_pSelect->Menu_Update(m_thumb, m_one, m_xpad.Buttons[13], seDecision, m_pSelect->One);
+		}
+		//カメラ感度の選択中
+		if (m_brightness == false && m_volume == false && m_se == false && m_camera == true)
+		{
+			m_pSelect->Menu_Update(m_thumb, m_one, m_xpad.Buttons[13], cameraDecision, m_pSelect->One);
 		}
 
 		//Aボタンを押したら
@@ -261,14 +277,24 @@ void Setting::Update()
 			PlaySoundMem(pse->GetButtonSE(), DX_PLAYTYPE_BACK, true);
 
 			//明るさ設定
-			if (selectDecision == 8)
+			if (selectDecision == 6)
 			{
 				m_brightness = true;
 			}
-			//音量設定
-			if (selectDecision == 9)
+			//BGM設定
+			if (selectDecision == 7)
 			{
 				m_volume = true;
+			}
+			//SE設定
+			if (selectDecision == 8)
+			{
+				m_se = true;
+			}
+			//カメラ感度
+			if (selectDecision == 9)
+			{
+				m_camera = true;
 			}
 			//元の画面に戻る
 			if (selectDecision == 10)
@@ -289,7 +315,7 @@ void Setting::Update()
 			}
 		}
 		//音量設定を押したら
-		if (m_volume == true)
+		else if (m_volume == true)
 		{
 			//Bボタンを押したら
 			if (m_xpad.Buttons[13] == 1)
@@ -299,6 +325,40 @@ void Setting::Update()
 				m_volume = false;
 			}
 		}
+		//SE設定を押したら
+		else if (m_se == true)
+		{
+			//Bボタンを押したら
+			if (m_xpad.Buttons[13] == 1)
+			{
+				PlaySoundMem(pse->GetButtonSE(), DX_PLAYTYPE_BACK, true);
+
+				m_se = false;
+			}
+		}
+		//カメラ感度を設定
+		else if (m_camera == true)
+		{
+			//Bボタンを押したら
+			if (m_xpad.Buttons[13] == 1)
+			{
+				PlaySoundMem(pse->GetButtonSE(), DX_PLAYTYPE_BACK, true);
+
+				m_camera = false;
+			}
+		}
+		//画面に戻る
+		else
+		{
+			//Bボタンを押したら
+			if (m_xpad.Buttons[13] == 1)
+			{
+				PlaySoundMem(pse->GetButtonSE(), DX_PLAYTYPE_BACK, true);
+
+				m_settingScene = false;
+			}
+		}
+
 	}
 	else
 	{
@@ -1012,22 +1072,44 @@ void Setting::Draw()
 	//選択中の色を変える
 	if (m_brightness == false && m_volume == false)
 	{
-		if (m_pSelect->NowSelect == m_pSelect->Eight)
+		if (m_pSelect->NowSelect == m_pSelect->Six)
 		{
 			m_brightnessColor = 0xffff00;
 			m_bgmColor = 0xffffff;
+			m_seColor = 0xffffff;
+			m_cameraColor = 0xffffff;
 			m_returnColor = 0xffffff;
 		}
-		if (m_pSelect->NowSelect == m_pSelect->Nine)
+		else if (m_pSelect->NowSelect == m_pSelect->Seven)
 		{
 			m_brightnessColor = 0xffffff;
 			m_bgmColor = 0xffff00;
+			m_seColor = 0xffffff;
+			m_cameraColor = 0xffffff;
 			m_returnColor = 0xffffff;
 		}
-		if (m_pSelect->NowSelect == m_pSelect->Ten)
+		else if (m_pSelect->NowSelect == m_pSelect->Eight)
 		{
 			m_brightnessColor = 0xffffff;
 			m_bgmColor = 0xffffff;
+			m_seColor = 0xffff00;
+			m_cameraColor = 0xffffff;
+			m_returnColor = 0xffffff;
+		}
+		else if (m_pSelect->NowSelect == m_pSelect->Nine)
+		{
+			m_brightnessColor = 0xffffff;
+			m_bgmColor = 0xffffff;
+			m_seColor = 0xffffff;
+			m_cameraColor = 0xffff00;
+			m_returnColor = 0xffffff;
+		}
+		else if (m_pSelect->NowSelect == m_pSelect->Ten)
+		{
+			m_brightnessColor = 0xffffff;
+			m_bgmColor = 0xffffff;
+			m_seColor = 0xffffff;
+			m_cameraColor = 0xffffff;
 			m_returnColor = 0xffff00;
 		}
 	}
@@ -1051,33 +1133,39 @@ void Setting::Draw()
 		VolumeColorDraw(9, 4, 1, 2, 3, 0, 255);
 	}
 
-	//フォントのサイズ変更
-	SetFontSize(150);
+	//SEを選択
+	if (m_se == true)
+	{
 
-	DrawString(100, 70, "設定", 0xffffff);
+	}
 
-	SetFontSize(100);
+	//カメラ感度を選択
+	if (m_camera == true)
+	{
 
-	DrawString(100, 340, "明るさ", m_brightnessColor);
-	DrawString(100, 500, "音量", m_bgmColor);
-	DrawString(100, 660, "戻る", m_returnColor);
+	}
 
-	DrawBox(500, 340, 620, 460, m_brightColor[0], true);
-	DrawBox(700, 340, 820, 460, m_brightColor[1], true);
-	DrawBox(900, 340, 1020, 460, m_brightColor[2], true);
-	DrawBox(1100, 340, 1220, 460, m_brightColor[3], true);
-	DrawBox(1300, 340, 1420, 460, m_brightColor[4], true);
+	DrawStringToHandle(100, 50, "設定", 0xffffff, m_pBigFont->GetHandle());
 
-	DrawBox(500, 500, 620, 620, m_volumeColor[0], true);
-	DrawBox(700, 500, 820, 620, m_volumeColor[1], true);
-	DrawBox(900, 500, 1020, 620, m_volumeColor[2], true);
-	DrawBox(1100, 500, 1220, 620, m_volumeColor[3], true);
-	DrawBox(1300, 500, 1420, 620, m_volumeColor[4], true);
+	DrawStringToHandle(100, 340, "明るさ設定", m_brightnessColor, m_pFont->GetHandle());
+	DrawStringToHandle(100, 420, "BGM設定", m_bgmColor, m_pFont->GetHandle());
+	DrawStringToHandle(100, 500, "SE設定", m_seColor, m_pFont->GetHandle());
+	DrawStringToHandle(100, 580, "カメラ感度", m_cameraColor, m_pFont->GetHandle());
+	DrawStringToHandle(100, 660, "戻る", m_returnColor, m_pFont->GetHandle());
+
+	//DrawBox(500, 340, 620, 460, m_brightColor[0], true);
+	//DrawBox(700, 340, 820, 460, m_brightColor[1], true);
+	//DrawBox(900, 340, 1020, 460, m_brightColor[2], true);
+	//DrawBox(1100, 340, 1220, 460, m_brightColor[3], true);
+	//DrawBox(1300, 340, 1420, 460, m_brightColor[4], true);
+
+	//DrawBox(500, 500, 620, 620, m_volumeColor[0], true);
+	//DrawBox(700, 500, 820, 620, m_volumeColor[1], true);
+	//DrawBox(900, 500, 1020, 620, m_volumeColor[2], true);
+	//DrawBox(1100, 500, 1220, 620, m_volumeColor[3], true);
+	//DrawBox(1300, 500, 1420, 620, m_volumeColor[4], true);
 
 	m_pSelect->Draw();
-
-	//フォントのサイズを戻す
-	SetFontSize(40);
 }
 
 /// <summary>
@@ -1140,59 +1228,7 @@ void Setting::VolumeColorDraw(int select, int now, int other1, int other2, int o
 /// <param name="volume">音量</param>
 void Setting::SettingDraw(int volume)
 {
-	//明るさの設定は改良する
-	//音量の設定は改良する
-
 	pse->Update(volume);
-
-	//明るさ
-	if (brightDecision == 6)
-	{
-		m_blackPal = 125;
-		m_whitePal = 0;
-	}
-	if (brightDecision == 7)
-	{
-		m_blackPal = 125 / 2;
-		m_whitePal = 0;
-	}
-	if (brightDecision == 8)
-	{
-		m_blackPal = 0;
-		m_whitePal = 0;
-	}
-	if (brightDecision == 9)
-	{
-		m_blackPal = 0;
-		m_whitePal = 125 / 2;
-	}
-	if (brightDecision == 10)
-	{
-		m_blackPal = 0;
-		m_whitePal = 125;
-	}
-
-	//音量
-	if (volumeDecision == 6)
-	{
-		m_volumeSize = 0;
-	}
-	if (volumeDecision == 7)
-	{
-		m_volumeSize = 60;
-	}
-	if (volumeDecision == 8)
-	{
-		m_volumeSize = 130;
-	}
-	if (volumeDecision == 9)
-	{
-		m_volumeSize = 190;
-	}
-	if (volumeDecision == 10)
-	{
-		m_volumeSize = 255;
-	}
 
 	//画面を暗くする
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_blackPal);
@@ -1832,6 +1868,51 @@ void Setting::End()
 	DeleteGraph(m_selectUi);
 	DeleteGraph(m_levelUp);
 	pse->End();
+}
+
+//設定関数
+void Setting::SettingChange(int setting, int Decision, int one, int two, int three, int four, int five, int six, int seven, int eight, int nine, int ten)
+{
+	if (Decision == 1)
+	{
+		setting = one;
+	}
+	else if (Decision == 2)
+	{
+		setting = two;
+	}
+	else if (Decision == 3)
+	{
+		setting = three;
+	}
+	else if (Decision == 4)
+	{
+		setting = four;
+	}
+	else if (Decision == 5)
+	{
+		setting = five;
+	}
+	else if (Decision == 6)
+	{
+		setting = six;
+	}
+	else if (Decision == 7)
+	{
+		setting = seven;
+	}
+	else if (Decision == 8)
+	{
+		setting = eight;
+	}
+	else if (Decision == 9)
+	{
+		setting = nine;
+	}
+	else if (Decision == 10)
+	{
+		setting = ten;
+	}
 }
 
 void Setting::WeaponUpdate(std::list<std::string> list, Weapon& weapon, int right)
