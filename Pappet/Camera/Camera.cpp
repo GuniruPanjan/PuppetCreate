@@ -28,7 +28,6 @@ namespace
 	constexpr float cCameraFar = 1000.0f;
 	constexpr float cRateIncrement = 0.01f;
 	constexpr float cRateMax = 1.3f;
-	constexpr float cCameraAngleIncrement = D2R(2.0f);
 	constexpr float cCameraPosYMin = 15.2f;
 	constexpr float cCameraAngleXMax = 0.7f;
 	constexpr float cDirectionY = 112.0f;
@@ -95,9 +94,13 @@ void Camera::Init()
 /// 更新処理
 /// </summary>
 /// <param name="player">プレイヤーを呼び出す</param>
-void Camera::Update(Player& player)
+void Camera::Update(Player& player, float sensitivity)
 {
 	GetJoypadDirectInputState(DX_INPUT_PAD1, &input);
+
+
+	float cameraAngleIncrement = D2R(sensitivity);
+
 
 	//判定
 	if (m_rate <= 1.0f)
@@ -127,12 +130,12 @@ void Camera::Update(Player& player)
 		//左キー
 		if (input.Rx < 0)
 		{
-			m_cameraAngle.y -= cCameraAngleIncrement;
+			m_cameraAngle.y -= cameraAngleIncrement;
 		}
 		//右キー
 		if (input.Rx > 0)
 		{
-			m_cameraAngle.y += cCameraAngleIncrement;
+			m_cameraAngle.y += cameraAngleIncrement;
 		}
 		//上キー
 		if (input.Ry < 0)
@@ -140,7 +143,7 @@ void Camera::Update(Player& player)
 			//カメラが地面にめりこまないように
 			if (m_cameraPos.y >= cCameraPosYMin + player.GetPos().y)
 			{
-				m_cameraAngle.x -= cCameraAngleIncrement;
+				m_cameraAngle.x -= cameraAngleIncrement;
 			}
 		}
 		//下キー
@@ -149,7 +152,7 @@ void Camera::Update(Player& player)
 			//カメラがプレイヤーを超えないくらいまで
 			if (m_cameraAngle.x <= cCameraAngleXMax)
 			{
-				m_cameraAngle.x += cCameraAngleIncrement;
+				m_cameraAngle.x += cameraAngleIncrement;
 			}
 		}
 

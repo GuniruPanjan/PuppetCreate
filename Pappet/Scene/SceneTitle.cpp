@@ -370,7 +370,7 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 		//Ý’è‚ðŠJ‚­
 		else if (m_pSetting->GetSettingScene() == true)
 		{
-			m_pSetting->Update();
+			m_pSetting->Update(*pse);
 		}
 
 		if (m_decisionButton)
@@ -564,9 +564,10 @@ void SceneTitle::Draw()
 		if (m_pSetting->GetSettingScene())
 		{
 			m_pSetting->Draw();
+
 		}
 
-		m_pSetting->SettingDraw(m_pSetting->GetVolume());
+		m_pSetting->SettingDraw(*pse);
 
 		if (!m_pSetting->GetSettingScene())
 		{

@@ -22,7 +22,7 @@ public:
 	//‰Šú‰»ˆ—
 	void Init();
 	//XVˆ—
-	void Update(Player& player);
+	void Update(Player& player, float sensitivity);
 	//“G‚ğ‘I‘ğ‚·‚éˆ—
 	void SelectNextTarget();
 	void SelectPreviousTarget();

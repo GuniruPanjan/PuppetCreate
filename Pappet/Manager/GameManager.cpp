@@ -202,7 +202,7 @@ void GameManager::Update()
 	{
 		m_pEnemy->EnemyGenerate(m_pPhysics, this, *m_pEnemyWeapon, cTutorial);
 
-		m_pCamera->Update(*m_pPlayer);
+		m_pCamera->Update(*m_pPlayer, m_pSetting->GetCamera());
 
 		//フェードインされる準備
 		m_pFade->SetFade(255);
@@ -275,7 +275,7 @@ void GameManager::Update()
 			m_pPlayer->SetCameraAngle(m_pCamera->GetAngle().y);
 
 			//ロックオンしてない時
-			m_pCamera->Update(*m_pPlayer);
+			m_pCamera->Update(*m_pPlayer, m_pSetting->GetCamera());
 			//ボス部屋に入ったらボスをロックオンするようにする
 			if (m_pMap->GetBossRoom() && m_pPlayer->GetLock() && !m_pEnemy->GetBossDead(GetThisMapName()))
 			{
@@ -363,8 +363,6 @@ void GameManager::Update()
 					{
 						cTutorialTime++;
 					}
-
-
 				}
 
 				//ワープする
@@ -379,7 +377,7 @@ void GameManager::Update()
 			//メニューを開く
 			if (m_pPlayer->GetMenu() && !m_pSetting->GetEquipment() && !m_pSetting->GetItem())
 			{
-				m_pSetting->MenuUpdate(*m_pPlayer);
+				m_pSetting->MenuUpdate(*m_pPlayer, *m_pSe);
 
 				//タイトルに戻る際のフェードアウトをさせる
 				if (m_pSetting->GetTitle())
@@ -454,7 +452,7 @@ void GameManager::Update()
 				//レベルアップ処理をしていない場合
 				if (!m_pSetting->GetLevel())
 				{
-					m_pSetting->RestUpdate(*m_pPlayer, *m_pCore, m_restMap);
+					m_pSetting->RestUpdate(*m_pPlayer, *m_pCore, m_restMap, *m_pSe);
 				}
 				//レベルアップ処理
 				if (m_pSetting->GetLevel())
@@ -704,6 +702,8 @@ void GameManager::Draw()
 		//ワープできない時の描画
 		m_pSetting->CaveatDraw();
 	}
+
+	m_pSetting->SettingDraw(*m_pSe);
 
 }
 
