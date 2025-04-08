@@ -9,15 +9,28 @@
 
 namespace
 {
-	int selectDecision = 0;  //選択し、決定したもの
+	int cSelectDecision = 0;  //選択し、決定したもの
 
+	//プレイヤーへのターゲット変数
 	float cCameraTargetx = -250.0f;
 	float cCameraTargety = 115.0f;
 	float cCameraTargetz = -270.0f;
+	//墓へのターゲット変数
+	float cCameraTargetGravesx = -200.0f;
+	float cCameraTargetGravesy = 115.0f;
+	float cCameraTargetGravesz = 500.0f;
+
+	const float cDuration = 1.0f;   //イージングにかかる時間
+
+	float cCameraPosx = -200.0f;
+	float cCameraPosy = 500.0f;
+	float cCameraPosz = -400.0f;
 
 	constexpr int cFontSize = 35;
+	constexpr float cDeltaTime = 0.016f;
 
 	bool cCameraTrun = false;
+	bool cCameraEasing = false;
 
 	int cHandY = 600;
 
@@ -57,8 +70,6 @@ namespace
 	constexpr float cRotaGraphScale = 1.0f;
 	constexpr float cRotaGraphAngle1 = DX_PI_F - (DX_PI_F / 4);
 	constexpr float cRotaGraphAngle2 = DX_PI_F + (DX_PI_F / 4);
-	constexpr int cFontSize1 = 35;
-	constexpr int cFontSize2 = 40;
 	constexpr int cGraphX3 = 1150;
 	constexpr int cGraphY5 = 900;
 	constexpr int cStringX1 = 1210;
@@ -88,7 +99,6 @@ SceneTitle::SceneTitle() :
 	m_loadNow2(-1),
 	m_one(false),
 	m_blend(false),
-	m_setButton(false),
 	m_decisionButton(false),
 	m_waitTime(0),
 	m_cameraPos(VGet(0.0f, 0.0f, 0.0f)),
@@ -97,6 +107,7 @@ SceneTitle::SceneTitle() :
 	m_animation(0),
 	m_totalAnimationTime(0.0f),
 	m_playTime(0.0f),
+	m_time(0.0f),
 	m_pos(VGet(0.0f, 0.0f, 0.0f)),
 	m_cameraTarget(VGet(0.0f, 0.0f, 0.0f)),
 	m_cameraTargetGraves(VGet(0.0f,0.0f,0.0f)),
@@ -162,7 +173,7 @@ void SceneTitle::Init()
 
 	m_pMap->Init(m_pPhysics);
 
-	selectDecision = 0;
+	cSelectDecision = 0;
 
 	//アニメーションアタッチ
 	m_animation = MV1AttachAnim(m_playerHandle, 1, m_anim, TRUE);
@@ -185,11 +196,12 @@ void SceneTitle::Init()
 
 	cCameraTrun = false;
 
+	//カメラの位置を設定
 	m_cameraPos = VGet(-80.0f, 35.0f, 80.0f);
 	//カメラターゲットをプレイヤーに向ける
 	m_cameraTarget = VGet(cCameraTargetx, cCameraTargety, cCameraTargetz);
 	//カメラターゲットを墓に向ける
-	//m_cameraTargetGraves;
+	m_cameraTargetGraves = VGet(cCameraTargetGravesx, cCameraTargetGravesy, cCameraTargetGravesz);
 	//フェードアウトイン初期化
 	m_pFade->Init();
 
@@ -221,6 +233,7 @@ void SceneTitle::Init()
 	m_one = false;
 	m_blend = false;
 	m_decisionButton = false;
+	cCameraEasing = false;
 }
 
 /// <summary>
@@ -229,6 +242,8 @@ void SceneTitle::Init()
 /// <returns>シーンを返す</returns>
 std::shared_ptr<SceneBase> SceneTitle::Update()
 {
+	static int previousSelect = -1;   //前回の選択
+
 	if (m_isLoading)
 	{
 		//非同期を終わらせる
@@ -288,7 +303,7 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 
 			m_playTime += cPlayTimeStep;
 
-			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, pselect->Eight);
+			pselect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], cSelectDecision, pselect->Eight);
 
 			if (pselect->NowSelect == 7)
 			{
@@ -314,22 +329,20 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 					}
 
 					//ゲームスタート
-					if (selectDecision == 8)
+					if (cSelectDecision == 8)
 					{
 						//ボタンを決定した判定
 						m_decisionButton = true;
 					}
 					//設定
-					if (selectDecision == 9)
+					if (cSelectDecision == 9)
 					{
-						m_setButton = true;
-
 						m_waitTime = 0;
 
-						m_pSetting->SetSettingScene(m_setButton);
+						m_pSetting->SetSettingScene(true);
 					}
 					//終了
-					if (selectDecision == 10)
+					if (cSelectDecision == 10)
 					{
 						SetEnd(true);
 					}
@@ -383,10 +396,45 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 			MV1SetAttachAnimTime(m_playerHandle, m_animation, m_playTime);
 		}
 
-		m_pBgm->Update(m_pSetting->GetVolume());
-		pse->Update(m_pSetting->GetVolume());
+		//選択が変更された場合、イージングの進行度をリセットする
+		if (previousSelect != pselect->NowSelect)
+		{
+			m_time = 0.0f;
+			previousSelect = pselect->NowSelect;
+		}
+
+
+		//設定を選択している時のターゲット位置とカメラ位置
+		if (pselect->NowSelect == 8)
+		{
+			//イージング可能にする
+			cCameraEasing = true;
+
+			//カメラのターゲットを墓に向ける
+			UpdateCameraPositionAndTarget(cDeltaTime, m_cameraPos, VGet(cCameraPosx, cCameraPosy, cCameraPosz), m_cameraTarget, m_cameraTargetGraves);
+		}
+		else
+		{
+			//イージングが可能になったらできるようにする
+			if (cCameraEasing)
+			{
+				//プレイヤーにターゲットを向ける
+				UpdateCameraPositionAndTarget(cDeltaTime, m_cameraPos, VGet(-80.0f, 35.0f, 80.0f), m_cameraTargetGraves, m_cameraTarget);
+
+				if (m_time >= cDuration)
+				{
+					//イージングを終了する
+					cCameraEasing = false;
+				}
+			}
+		}
 
 		SetCameraPositionAndTarget_UpVecY(m_cameraPos, m_cameraTarget);
+
+
+		m_pBgm->Update(m_pSetting->GetVolume());
+		pse->Update(m_pSetting->GetVolume());
+		
 	}
 
 	return shared_from_this();  //自身のポインタを返す
@@ -487,39 +535,37 @@ void SceneTitle::Draw()
 		//3Dモデルの回転地をセットする
 		MV1SetRotationXYZ(m_playerHandle, VGet(0.0f, 160.0f, 0.0f));
 
+		if (!m_pSetting->GetSettingScene())
+		{
+			DrawGraph(cGraphX1, cGraphY1, m_backScene, TRUE);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[0]);
+			DrawGraph(cGraphX2, cGraphY2, m_start, TRUE);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[1]);
+			DrawGraph(cGraphX2, cGraphY3, m_setting, TRUE);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[2]);
+			DrawGraph(cGraphX2, cGraphY4, m_end, TRUE);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-		DrawGraph(cGraphX1, cGraphY1, m_backScene, TRUE);
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[0]);
-		DrawGraph(cGraphX2, cGraphY2, m_start, TRUE);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[1]);
-		DrawGraph(cGraphX2, cGraphY3, m_setting, TRUE);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, m_pal[2]);
-		DrawGraph(cGraphX2, cGraphY4, m_end, TRUE);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-
-		DrawRotaGraph(cRotaGraphX1, cHandY, cRotaGraphScale, cRotaGraphAngle1, m_hand, true);
-		DrawRotaGraph(cRotaGraphX2, cHandY, cRotaGraphScale, cRotaGraphAngle2, m_hand, true, true);
-
-		SetFontSize(cFontSize1);
+			DrawRotaGraph(cRotaGraphX1, cHandY, cRotaGraphScale, cRotaGraphAngle1, m_hand, true);
+			DrawRotaGraph(cRotaGraphX2, cHandY, cRotaGraphScale, cRotaGraphAngle2, m_hand, true, true);
+		}
 
 		DrawGraph(cGraphX3, cGraphY5, m_AButton, true);
 		DrawStringToHandle(cStringX1, cStringY1, "決定", 0xffffff, m_pFont->GetHandle());
 		DrawGraph(cGraphX4, cGraphY5, m_BButton, true);
 		DrawStringToHandle(cStringX2, cStringY2, "キャンセル", 0xffffff, m_pFont->GetHandle());
 
-		SetFontSize(cFontSize2);
-
 		//設定画面を描画
-		if (m_pSetting->GetSettingScene() == true)
+		if (m_pSetting->GetSettingScene())
 		{
 			m_pSetting->Draw();
 		}
 
 		m_pSetting->SettingDraw(m_pSetting->GetVolume());
 
-		if (m_pSetting->GetSettingScene() == false)
+		if (!m_pSetting->GetSettingScene())
 		{
 			pselect->Draw();
 		}
@@ -553,4 +599,28 @@ void SceneTitle::End()
 	cEffect.End();
 
 	cHandle.Clear();
+}
+
+//イージング関数(線形補間)
+float SceneTitle::Lerp(float start, float end, float t)
+{
+	return start + t * (end - start);
+}
+
+//イージングを使用してカメラの位置とターゲット位置を更新
+void SceneTitle::UpdateCameraPositionAndTarget(float deltaTime, VECTOR cameraPos, VECTOR cameraPos1, VECTOR cameraTarget, VECTOR cameraTarget1)
+{
+	//イージングの進行度を更新
+	m_time += deltaTime / cDuration;
+	if (m_time > cDuration) m_time = cDuration;
+
+	//カメラのターゲット位置をイージングで更新
+	m_cameraTarget.x = Lerp(cameraTarget.x, cameraTarget1.x, m_time);
+	m_cameraTarget.y = Lerp(cameraTarget.y, cameraTarget1.y, m_time);
+	m_cameraTarget.z = Lerp(cameraTarget.z, cameraTarget1.z, m_time);
+
+	//カメラの位置をイージングで更新
+	m_cameraPos.x = Lerp(cameraPos.x, cameraPos1.x, m_time);
+	m_cameraPos.y = Lerp(cameraPos.y, cameraPos1.y, m_time);
+	m_cameraPos.z = Lerp(cameraPos.z, cameraPos1.z, m_time);
 }

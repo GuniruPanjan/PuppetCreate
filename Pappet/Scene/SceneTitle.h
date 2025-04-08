@@ -38,6 +38,12 @@ public:
 	virtual void End();
 
 private:
+	//イージング関数(線形補間)
+	float Lerp(float start, float end, float t);
+	//イージング使用してカメラの位置とターゲット位置を更新
+	void UpdateCameraPositionAndTarget(float deltaTime, VECTOR cameraPos, VECTOR cameraPos1, VECTOR cameraTarget, VECTOR cameraTarget1);
+
+private:
 	XINPUT_STATE m_xpad;  //パッド入力
 	int m_start;      //スタートボタン画像格納変数
 	int m_setting;    //設定ボタン画像格納変数
@@ -54,7 +60,6 @@ private:
 	int m_loadNow2;      //ロード画像格納変数
 	bool m_one;      //単発入力
 	bool m_blend;    //ブレンド判定
-	bool m_setButton;    //設定の判定
 	bool m_decisionButton;  //決定判定
 	VECTOR m_cameraPos;    //カメラポジション
 	VECTOR m_cameraTarget;     //カメラのターゲットポジション
@@ -66,6 +71,7 @@ private:
 	int m_animation;
 	float m_totalAnimationTime;
 	float m_playTime;
+	float m_time;                //補間係数
 	VECTOR m_pos;
 
 	//スマートポインタ
