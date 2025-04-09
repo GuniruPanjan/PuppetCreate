@@ -16,6 +16,7 @@ UIBase::UIBase() :
 	m_blackSword(0),
 	m_fist(0),
 	m_body(0),
+	m_menu(0),
 	m_uglyShield(0),
 	m_commonArmor(0),
 	m_bat(0),
@@ -86,6 +87,7 @@ UIBase::~UIBase()
 	DeleteGraph(m_lStick);
 	DeleteGraph(m_messageUI);
 	DeleteGraph(m_tagetLock);
+	DeleteGraph(m_menu);
 }
 
 /// <summary>

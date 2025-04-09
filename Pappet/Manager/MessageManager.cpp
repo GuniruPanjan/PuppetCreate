@@ -130,6 +130,16 @@ bool MessageManager::GetDraw()
 	return false;
 }
 
+int MessageManager::GetLB()
+{
+	return message->GetLB();
+}
+
+int MessageManager::GetRB()
+{
+	return message->GetRB();
+}
+
 void MessageManager::CreateMessage(float posx, float posy, float posz, int official, int one, int two, int three, std::shared_ptr<MyLibrary::Physics> physics)
 {
 	message = std::make_shared<Message>();

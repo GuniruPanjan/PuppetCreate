@@ -144,8 +144,6 @@ Setting::Setting() :
 
 	for (int i = 0; i < 5; i++)
 	{
-		m_brightColor[i] = 0;
-		m_volumeColor[i] = 0;
 		m_menuSelect[i] = 0;
 		m_menuColor[i] = 0;
 	}
@@ -214,6 +212,7 @@ void Setting::Init()
 	m_rest = MyLoadGraph("Data/UI/四角の白い長方形の囲い.png", 1, 1);
 	m_selectUi = MyLoadGraph("Data/UI/選択UI.png", 2, 2);
 	m_levelUp = MyLoadGraph("Data/UI/レベルステータスUI.png", 1, 1);
+	m_menu = MyLoadGraph("Data/UI/MenuUI.png", 1, 1);
 
 	m_pFont->FontInit(50);
 	m_pSmallFont->FontInit(30);
@@ -231,22 +230,22 @@ void Setting::Update(SEManager& se)
 	if (m_waitTime > 10)
 	{
 		//上
-		if (m_xpad.ThumbLY > 2000)
+		if (m_xpad.ThumbLY > 2000 || m_xpad.Buttons[0] == 1)
 		{
 			m_button++;
 		}
 		//下
-		else if (m_xpad.ThumbLY < 0)
+		else if (m_xpad.ThumbLY < 0 || m_xpad.Buttons[1] == 1)
 		{
 			m_button--;
 		}
 		//右
-		else if (m_xpad.ThumbLX > 2000)
+		else if (m_xpad.ThumbLX > 2000 || m_xpad.Buttons[3] == 1)
 		{
 			m_thumb--;
 		}
 		//左
-		else if (m_xpad.ThumbLX < 0)
+		else if (m_xpad.ThumbLX < 0 || m_xpad.Buttons[2] == 1)
 		{
 			m_thumb++;
 		}
@@ -454,13 +453,13 @@ void Setting::MenuUpdate(Player& player, SEManager& se)
 	//パッド入力所得
 	GetJoypadXInputState(DX_INPUT_KEY_PAD1, &m_xpad);
 
-	//上
-	if (m_xpad.Buttons[0] == 1 && !m_menuDecision)
+	//右
+	if (m_xpad.Buttons[9] == 1 && !m_menuDecision)
 	{
 		m_button++;
 	}
-	//下
-	else if (m_xpad.Buttons[1] == 1 && !m_menuDecision)
+	//左
+	else if (m_xpad.Buttons[8] == 1 && !m_menuDecision)
 	{
 		m_button--;
 	}
@@ -474,23 +473,30 @@ void Setting::MenuUpdate(Player& player, SEManager& se)
 
 	
 
-	m_pSelect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, m_pSelect->Eight);
+	m_pSelect->Menu_Update(m_button, m_one, m_xpad.Buttons[12], selectDecision, m_pSelect->Seven);
 
 	if (cWaitTime >= 10)
 	{
 		//Aボタンが押されたら
 		if (m_xpad.Buttons[12] == 1)
 		{
-			if (!m_menuDecision)
-			{
-				PlaySoundMem(se.GetButtonSE(), DX_PLAYTYPE_BACK, true);
-
-			}
+			PlaySoundMem(se.GetButtonSE(), DX_PLAYTYPE_BACK, true);
 
 			//装備選択
-			if (selectDecision == 8)
+			if (selectDecision == 7)
 			{
 				m_equipmentMenu = true;
+
+				//リセット
+				cWaitTime = 0;
+			}
+			//設定
+			if (selectDecision == 8)
+			{
+				//初期化する
+				m_waitTime = 0;
+
+				m_settingScene = true;
 
 				//リセット
 				cWaitTime = 0;
@@ -1249,9 +1255,9 @@ void Setting::SettingDraw(SEManager& se)
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
-void Setting::MenuDraw()
+//メニュー描画
+void Setting::MenuDraw(int rb, int lb)
 {
-
 	if (m_pSelect->NowSelect == m_pSelect->Eight)
 	{
 		m_menuColor[0] = 0xffff00;
@@ -1270,30 +1276,10 @@ void Setting::MenuDraw()
 		m_menuColor[1] = 0xffffff;
 		m_menuColor[2] = 0xffff00;
 	}
-
-	//フォントのサイズ変更
-	SetFontSize(150);
-
-	DrawString(100, 70, "メニュー", 0xffffff);
-
-	SetFontSize(100);
-
-	DrawString(100, 340, "装備", m_menuColor[0]);
-	DrawString(100, 500, "戻る", m_menuColor[1]);
-	DrawString(100, 660, "タイトルへ", m_menuColor[2]);
-
-	//フォントのサイズを戻す
-	SetFontSize(40);
-}
-
-/// <summary>
-/// メニュー背景描画
-/// </summary>
-void Setting::MenuBackDraw()
-{
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
-	DrawGraph(0, 0, m_back, false);
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	
+	DrawRotaGraph(900, 100, 0.5f, 0.0f, lb, true);
+	DrawGraph(935, 0, m_menu, true);
+	DrawRotaGraph(1550, 100, 0.5f, 0.0f, rb, true);
 }
 
 /// <summary>

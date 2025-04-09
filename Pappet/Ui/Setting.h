@@ -122,12 +122,7 @@ public:
 	/// <summary>
 	/// メニュー描画
 	/// </summary>
-	void MenuDraw();
-
-	/// <summary>
-	/// 背景描画
-	/// </summary>
-	void MenuBackDraw();
+	void MenuDraw(int rb, int lb);
 
 	/// <summary>
 	/// ステータス画面を変える描画処理
@@ -311,8 +306,6 @@ private:
 	int m_seColor;            //SEの色
 	int m_cameraColor;        //カメラの色
 	int m_returnColor;        //戻るの色
-	int m_brightColor[5];     //明るさ選択の色
-	int m_volumeColor[5];     //音量選択の色
 	int m_menuColor[5];       //メニューの色
 	int m_core;               //表記用にコアを取得する
 	int m_right;              //右装備の選んでるところを格納する変数

@@ -60,6 +60,10 @@ public:
 	//メッセージを表示できるかの判断
 	bool GetDraw() { return m_draw; }
 
+	//ボタン取得
+	int GetLB() { return m_lbButton; }
+	int GetRB() { return m_rbButton; }
+
 private:
 	XINPUT_STATE m_xpad;                           //パッド入力
 	std::shared_ptr<MessageObject> m_pMessage;     //メッセージの判定

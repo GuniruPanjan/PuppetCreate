@@ -55,6 +55,10 @@ public:
 	//メッセージを表示中か返す
 	bool GetDraw();
 
+	//ボタンを取得する
+	int GetLB();
+	int GetRB();
+
 private:
 	//メッセージ生成
 	void CreateMessage(float posx, float posy, float posz, int official, int one, int two, int three, std::shared_ptr<MyLibrary::Physics> physics);

@@ -53,6 +53,8 @@ protected:
 	int m_statusIcon;     //ステータスアイコン画像格納変数
 	int m_equipmentFrame; //装備の枠画像格納変数
 	int m_tagetLock;      //ターゲットロック画像格納変数
+	int m_menu;               //メニュー画像格納変数
+
 
 	//アイテムの画像
 	int m_blackSword;     //黒い剣の画像格納変数

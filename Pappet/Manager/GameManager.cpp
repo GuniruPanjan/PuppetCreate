@@ -139,6 +139,7 @@ void GameManager::Init()
 		cTutorial = false;
 	}
 
+	//ロード時間
 	m_load = 30;
 
 	m_isLoading = true;      //必ず各クラスの後につける
@@ -508,6 +509,12 @@ void GameManager::Update()
 
 			}
 
+			//設定画面を更新
+			if (m_pSetting->GetSettingScene())
+			{
+				m_pSetting->Update(*m_pSe);
+			}
+
 			cOne = false;
 
 			//物理更新
@@ -627,16 +634,10 @@ void GameManager::Draw()
 
 		m_pUi->Draw(*m_pPlayer, *m_pEnemy, *m_pSetting, *m_pMap, *m_pItem, *m_pWeapon, *m_pShield, *m_pArmor, *m_pTool, *m_pMessage);
 
-		//メニューの背景描画
-		if (m_pPlayer->GetMenu())
-		{
-			m_pSetting->MenuBackDraw();
-		}
-
 		//メニュー画面
 		if (m_pPlayer->GetMenu() && !m_pSetting->GetEquipment() && !m_pSetting->GetItem())
 		{
-			m_pSetting->MenuDraw();
+			m_pSetting->MenuDraw(m_pMessage->GetRB(), m_pMessage->GetLB());
 		}
 		//装備画面
 		else if (m_pSetting->GetEquipment() && !m_pSetting->GetDecision())
@@ -697,6 +698,13 @@ void GameManager::Draw()
 			m_pUi->GetCoreDraw(*m_pSe);
 			//勝利演出が終わったら終了する
 			m_bossEnd.sWin = m_pUi->GetWinReset();
+		}
+
+		//設定画面を描画
+		if (m_pSetting->GetSettingScene())
+		{
+			m_pSetting->Draw();
+
 		}
 
 		//ワープできない時の描画
