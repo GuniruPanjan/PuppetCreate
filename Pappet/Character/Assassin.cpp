@@ -69,16 +69,36 @@ namespace
 	bool cOne = false;
 
 	// 定数の定義
-	constexpr float cAttackMoveFrameStart = 5.0f;
-	constexpr float cAttackMoveFrameEnd = 25.0f;
 	constexpr float cAvoidanceMoveFrameStart = 30.0f;
 	constexpr float cHitMoveFrameStart = 5.0f;
 	constexpr float cHitMoveFrameEnd = 25.0f;
 	constexpr float cDeathFrame = 36.0f;
 	constexpr float cHitEffectOffsetY = 30.0f;
 	constexpr float cStrongHitEffectOffsetY = 20.0f;
-	constexpr float cSearchRadius = 35.0f;
 	constexpr float cModelScale = 0.15f;
+
+	// 定数の定義
+	constexpr float cAttackMoveDistance1 = 0.5f;
+	constexpr float cAttackMoveDistance2 = 0.8f;
+	constexpr float cAttackMoveDistance3 = 0.5f;
+	constexpr float cAttackMoveDistance4 = -0.4f;
+	constexpr float cIdleFrameDuration = 40.0f;
+	constexpr float cAttackFrame1 = 5.0f;
+	constexpr float cAttackFrame2 = 11.0f;
+	constexpr float cAttackFrame3 = 24.0f;
+	constexpr float cAttackFrame4 = 25.0f;
+	constexpr float cAttackFrame5 = 30.0f;
+	constexpr float cAttackFrame6 = 35.0f;
+	constexpr float cAttackFrame7 = 40.0f;
+	constexpr float cAttackFrame8 = 48.0f;
+	constexpr float cAttackFrame9 = 50.0f;
+	constexpr float cAttackFrame10 = 55.0f;
+	constexpr float cAttackFrame11 = 62.0f;
+	constexpr float cAttackFrame12 = 65.0f;
+	constexpr float cAttackFrame13 = 70.0f;
+	constexpr float cAttackFrame14 = 28.0f;
+	constexpr float cAttackFrame15 = 18.0f;
+	constexpr float cAttackFrame16 = 20.0f;
 
 }
 
@@ -263,7 +283,7 @@ void Assassin::GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLi
 /// <param name="physics"></param>
 void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos, bool isChase, SEManager& se, std::shared_ptr<MyLibrary::Physics> physics, EnemyWeapon& weapon)
 {
-	//アニメーションで移動しているフレームの番号を検索する
+	// アニメーションで移動しているフレームの番号を検索する
 	m_moveFrameRightHand = MV1SearchFrame(m_modelHandle, "mixamorig:RightHandThumb2");
 	m_ligLeftLegFrame[0] = MV1SearchFrame(m_modelHandle, "mixamorig:LeftLeg");
 	m_ligLeftLegFrame[1] = MV1SearchFrame(m_modelHandle, "mixamorig:LeftToe_End_end");
@@ -276,30 +296,30 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 	m_ligRightLegPos[0] = MV1GetFramePosition(m_modelHandle, m_ligRightLegFrame[0]);
 	m_ligRightLegPos[1] = MV1GetFramePosition(m_modelHandle, m_ligRightLegFrame[1]);
 
-	//判定の更新
+	// 判定の更新
 	MyLibrary::LibVec3 attackKnifePos = MyLibrary::LibVec3(m_frameRightHand.x, m_frameRightHand.y, m_frameRightHand.z);
 	MyLibrary::LibVec3 attackLeftKickPos1 = MyLibrary::LibVec3(m_ligLeftLegPos[0].x, m_ligLeftLegPos[0].y, m_ligLeftLegPos[0].z);
 	MyLibrary::LibVec3 attackLeftKickPos2 = MyLibrary::LibVec3(m_ligLeftLegPos[1].x, m_ligLeftLegPos[1].y, m_ligLeftLegPos[1].z);
 	MyLibrary::LibVec3 attackRightKickPos1 = MyLibrary::LibVec3(m_ligRightLegPos[0].x, m_ligRightLegPos[0].y, m_ligRightLegPos[0].z);
 	MyLibrary::LibVec3 attackRightKickPos2 = MyLibrary::LibVec3(m_ligRightLegPos[1].x, m_ligRightLegPos[1].y, m_ligRightLegPos[1].z);
 
-	//ローカル→ワールド変換行列を取得する
+	// ローカル→ワールド変換行列を取得する
 	m_weaponFrameMatrix = MV1GetFrameLocalWorldMatrix(m_modelHandle, m_moveFrameRightHand);
 
 	weapon.WeaponFrame(cFrameName, cFrameAttackName);
-	weapon.Update(m_weaponFrameMatrix, 0.15f);
+	weapon.Update(m_weaponFrameMatrix, cModelScale);
 
-	//視野の角度を決める
+	// 視野の角度を決める
 	m_viewAngle = cAngle;
-	//視野の距離を決める
+	// 視野の距離を決める
 	m_viewDistance = cAngleDistance;
 
-	//アニメーションの更新
+	// アニメーションの更新
 	if (!cDead)
 	{
 		m_isAnimationFinish = UpdateAnim(m_nowAnimNo, ANIMATION_MAX);
 	}
-	//死亡したときのアニメーション更新
+	// 死亡したときのアニメーション更新
 	else if (cDead && m_nowFrame <= cDeadFrame)
 	{
 		m_isAnimationFinish = UpdateAnim(m_nowAnimNo, ANIMATION_MAX);
@@ -310,38 +330,35 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 	DistanceUpdate(playerPos, shieldPos);
 	AttackDistance();
 
-	//怯みモーション
+	// 怯みモーション
 	HitUpdate(10);
 
-	//怯み状態を解除する
+	// 怯み状態を解除する
 	if (m_anim.s_hit && m_isAnimationFinish)
 	{
 		m_anim.s_hit = false;
 	}
-	//怯んでいる時
+	// 怯んでいる時
 	else if (m_anim.s_hit)
 	{
-		//動かないようにする
+		// 動かないようにする
 		m_move = VGet(0.0f, 0.0f, 0.0f);
 		m_moveVec = MyLibrary::LibVec3(0.0f, 0.0f, 0.0f);
 
-		
 		m_enemyAnim.s_rool = false;
 		m_anim.s_moveflag = false;
 
 		if (m_anim.s_attack)
 		{
-			//判定をリセット
+			// 判定をリセット
 			m_pAttack->CollisionEnd();
 			m_pLigAttack->CollisionEnd();
 
 			m_anim.s_attack = false;
 		}
 
-		
-
-		//怯み移動処理
-		if (m_nowFrame > 5.0f && m_nowFrame <= 25.0f)
+		// 怯み移動処理
+		if (m_nowFrame > cHitMoveFrameStart && m_nowFrame <= cHitMoveFrameEnd)
 		{
 			cHitMove = -1.0f;
 		}
@@ -351,21 +368,21 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 		}
 	}
 
-	//攻撃終了
+	// 攻撃終了
 	if (m_anim.s_attack && m_isAnimationFinish)
 	{
 		m_anim.s_attack = false;
 	}
-	//回避終了
+	// 回避終了
 	if (m_enemyAnim.s_rool && m_isAnimationFinish)
 	{
 		m_enemyAnim.s_rool = false;
 	}
 
-	//回避時の行動
+	// 回避時の行動
 	if (m_enemyAnim.s_rool)
 	{
-		if (m_nowFrame <= 30.0f)
+		if (m_nowFrame <= cAvoidanceMoveFrameStart)
 		{
 			cAvoidanceMove = -1.0f;
 
@@ -379,14 +396,13 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 		}
 	}
 
-
 	if (!m_anim.s_attack && !m_enemyAnim.s_rool && !m_anim.s_hit)
 	{
 		cAttackMove = 0.0f;
 		cAvoidanceMove = 0.0f;
 		cHitMove = 0.0f;
 
-		//移動処理
+		// 移動処理
 		MoveUpdate();
 
 		cA[0] = true;
@@ -399,7 +415,7 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 			}
 		}
 	}
-	//攻撃行動移動
+	// 攻撃行動移動
 	else if (m_anim.s_attack && !m_enemyAnim.s_rool && !m_anim.s_hit)
 	{
 		cAvoidanceMove = 0.0f;
@@ -407,7 +423,7 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 
 		m_attackMove = VScale(VGet(sinf(m_angle), 0.0f, cosf(m_angle)), cAttackMove);
 
-		//攻撃移動処理
+		// 攻撃移動処理
 		MoveAnimUpdate(m_attackMove);
 
 		cA[1] = true;
@@ -420,7 +436,7 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 			}
 		}
 	}
-	//回避行動移動
+	// 回避行動移動
 	else if (m_enemyAnim.s_rool && !m_anim.s_attack && !m_anim.s_hit)
 	{
 		cAttackMove = 0.0f;
@@ -428,7 +444,7 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 
 		m_avoidanceMove = VScale(VGet(sinf(m_angle), 0.0f, cosf(m_angle)), cAvoidanceMove);
 
-		//回避移動処理
+		// 回避移動処理
 		MoveAnimUpdate(m_avoidanceMove);
 
 		cA[2] = true;
@@ -441,7 +457,7 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 			}
 		}
 	}
-	//怯み行動移動
+	// 怯み行動移動
 	else if (m_anim.s_hit && !m_enemyAnim.s_rool && !m_anim.s_attack)
 	{
 		cAttackMove = 0.0f;
@@ -449,7 +465,7 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 
 		m_hitMove = VScale(VGet(sinf(m_angle), 0.0f, cosf(m_angle)), cHitMove);
 
-		//怯み移動処理
+		// 怯み移動処理
 		MoveAnimUpdate(m_hitMove);
 
 		cA[3] = true;
@@ -462,12 +478,11 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 			}
 		}
 	}
-	
 
-	//ターゲット状態
+	// ターゲット状態
 	TargetNow();
 
-	//攻撃していないとき
+	// 攻撃していないとき
 	if (!m_anim.s_attack)
 	{
 		if (!cOne)
@@ -478,37 +493,34 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 
 			cOne = true;
 		}
-
 	}
 
-	//攻撃を受けた時
+	// 攻撃を受けた時
 	if (m_isEnterHit)
 	{
 		m_status.s_hp -= m_col->GetAttack() - m_status.s_defense;
-		//Hitエフェクト
-		cEffect.EffectCreate("Hit", VGet(rigidbody.GetPos().x, rigidbody.GetPos().y + 30.0f, rigidbody.GetPos().z));
-		//HitSE再生
+		// Hitエフェクト
+		cEffect.EffectCreate("Hit", VGet(rigidbody.GetPos().x, rigidbody.GetPos().y + cHitEffectOffsetY, rigidbody.GetPos().z));
+		// HitSE再生
 		PlaySoundMem(se.GetHitSE(), DX_PLAYTYPE_BACK, true);
 
-		//HPが0になるとヒットしない
+		// HPが0になるとヒットしない
 		if (m_status.s_hp > 0.0f)
 		{
 			m_anim.s_hit = true;
 		}
-	
-	
 	}
 	else if (m_isEnterStrengtHit)
 	{
 		m_status.s_hp -= m_strengthCol->GetAttack() - m_status.s_defense;
 
-		//Hitエフェクト
-		cEffect.EffectCreate("Hit", VGet(rigidbody.GetPos().x, rigidbody.GetPos().y + 20.0f, rigidbody.GetPos().z));
+		// Hitエフェクト
+		cEffect.EffectCreate("Hit", VGet(rigidbody.GetPos().x, rigidbody.GetPos().y + cStrongHitEffectOffsetY, rigidbody.GetPos().z));
 
-		//HitSE再生
+		// HitSE再生
 		PlaySoundMem(se.GetHitSE(), DX_PLAYTYPE_BACK, true);
 
-		//HPが0になるとヒットしない
+		// HPが0になるとヒットしない
 		if (m_status.s_hp > 0.0f)
 		{
 			m_anim.s_hit = true;
@@ -517,7 +529,7 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 
 	if (cTutorial)
 	{
-		//プレイヤーがボス部屋に入ったら
+		// プレイヤーがボス部屋に入ったら
 		if (m_isBossDiscovery && !cDead && !m_anim.s_hit)
 		{
 			BossAction(playerPos, isChase, se, weapon);
@@ -525,10 +537,10 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 	}
 	else
 	{
-		//怯んでない時
+		// 怯んでない時
 		if (!m_anim.s_hit)
 		{
-			//まだできていないため後でボスアクションの中身を写す
+			// まだできていないため後でボスアクションの中身を写す
 			Action(playerPos, isChase, se, weapon);
 		}
 	}
@@ -536,26 +548,26 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 	TriggerUpdate();
 	HitTriggerUpdate();
 
-	//判定の更新
+	// 判定の更新
 	MyLibrary::LibVec3 centerPos = rigidbody.GetPos();
 	m_pSearch->Update(centerPos);
 
-	//チュートリアルだった場合
+	// チュートリアルだった場合
 	if (cTutorial)
 	{
-		//死んだ時
+		// 死んだ時
 		if (m_status.s_hp <= 0.0f)
 		{
-			//アニメーションを初期化
+			// アニメーションを初期化
 			m_anim.s_attack = false;
 			m_anim.s_hit = false;
 			m_anim.s_moveflag = false;
 
 			Death();
 
-			if (m_nowFrame == 36)
+			if (m_nowFrame == cDeathFrame)
 			{
-				//死亡SE再生
+				// 死亡SE再生
 				PlaySoundMem(se.GetDiedSE(), DX_PLAYTYPE_BACK, true);
 			}
 
@@ -569,22 +581,21 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 	}
 	else
 	{
-		//死んだとき
+		// 死んだとき
 		if (m_status.s_hp <= 0.0f)
 		{
-			//アニメーションを初期化
+			// アニメーションを初期化
 			m_anim.s_attack = false;
 			m_anim.s_hit = false;
 			m_anim.s_moveflag = false;
 
 			Death();
 
-			if (m_nowFrame == 36)
+			if (m_nowFrame == cDeathFrame)
 			{
-				//死亡SE再生
+				// 死亡SE再生
 				PlaySoundMem(se.GetDiedSE(), DX_PLAYTYPE_BACK, true);
 			}
-
 
 			cDead = true;
 		}
@@ -616,22 +627,22 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se,
 	//プレイヤーを見つけた時
 	if (m_pSearch->GetIsStay() || cPlayerLook)
 	{
-		//攻撃してない時
+		// 攻撃してない時
 		if (!m_anim.s_attack)
 		{
-			//方向を決める
+			// 方向を決める
 			AngleUpdate(playerPos);
 		}
 
-		//近くじゃない時の行動
-		if (m_difPSize > cNear && !m_enemyAnim.s_rool)
+		// 近くじゃない時の行動
+		if (m_difPSize > cNear && !m_enemyAnim.s_rool && m_randomAction != 6)
 		{
 			WalkUpdate("Walk", 2);
 
-			//攻撃してないときの処理
+			// 攻撃してないときの処理
 			if (!m_anim.s_attack)
 			{
-				//歩くアニメーション
+				// 歩くアニメーション
 				m_anim.s_moveflag = true;
 
 				m_status.s_speed = 0.02f;
@@ -639,17 +650,16 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se,
 				m_move = VScale(m_difPlayer, m_status.s_speed);
 
 				m_enemyAnim.s_rool = false;
-
 			}
 		}
-		//近くに行った時の行動
+		// 近くに行った時の行動
 		else if (m_difPSize <= cNear)
 		{
-			//ランダム行動で0が出た場合
-			//攻撃1
+			// ランダム行動で0が出た場合
+			// 攻撃1
 			if (m_randomAction == 0)
 			{
-				//攻撃モーションさせる
+				// 攻撃モーションさせる
 				m_anim.s_attack = true;
 
 				m_move = VGet(0.0f, 0.0f, 0.0f);
@@ -658,241 +668,334 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se,
 
 				m_enemyAnim.s_rool = false;
 				m_anim.s_moveflag = false;
-
 			}
-			//ランダム行動で1が出た場合
-			//攻撃2
+			// ランダム行動で1が出た場合
+			// 攻撃2
 			else if (m_randomAction == 1)
 			{
-				//攻撃モーションさせる
+				// 攻撃モーションさせる
 				m_anim.s_attack = true;
 
 				m_move = VGet(0.0f, 0.0f, 0.0f);
 
 				AttackUpdate("Attack2", 4);
 
+				// 回避状態終了
+				m_avoidnaceNow = false;
+
 				m_enemyAnim.s_rool = false;
 				m_anim.s_moveflag = false;
 			}
-			//ランダム行動で2が出た場合
-			//攻撃3
+			// ランダム行動で2が出た場合
+			// 攻撃3
 			else if (m_randomAction == 2)
 			{
-
-				//攻撃モーションさせる
+				// 攻撃モーションさせる
 				m_anim.s_attack = true;
 
 				m_move = VGet(0.0f, 0.0f, 0.0f);
 
 				AttackUpdate("Attack3", 5);
 
+				// 回避状態終了
+				m_avoidnaceNow = false;
+
 				m_enemyAnim.s_rool = false;
 				m_anim.s_moveflag = false;
 			}
-			//ランダム行動で3が出た場合
-			//攻撃4
+			// ランダム行動で3が出た場合
+			// 攻撃4
 			else if (m_randomAction == 3)
 			{
-				//攻撃モーションさせる
+				// 攻撃モーションさせる
 				m_anim.s_attack = true;
 
 				m_move = VGet(0.0f, 0.0f, 0.0f);
 
 				AttackUpdate("Attack4", 6);
 
+				// 回避状態終了
+				m_avoidnaceNow = false;
+
 				m_enemyAnim.s_rool = false;
 				m_anim.s_moveflag = false;
 			}
-			//ランダム行動で4が出た場合
-			//攻撃5
+			// ランダム行動で4が出た場合
+			// 攻撃5
 			else if (m_randomAction == 4)
 			{
-				//攻撃モーションさせる
+				// 攻撃モーションさせる
 				m_anim.s_attack = true;
 
 				m_move = VGet(0.0f, 0.0f, 0.0f);
 
 				AttackUpdate("Attack5", 7);
 
-				m_enemyAnim.s_rool = false;
+				// 回避状態終了
+				m_avoidnaceNow = false;
+
 				m_anim.s_moveflag = false;
+				m_enemyAnim.s_rool = false;
 			}
-			//ランダム行動で5が出た場合
-			//回避
+			// ランダム行動で5が出た場合
+			// 回避
 			else if (m_randomAction == 5)
 			{
 				m_enemyAnim.s_rool = true;
 
 				m_nowAnimIdx = m_animIdx["Roll"];
 				ChangeAnim(m_nowAnimIdx, m_animOne[8], m_animOne);
+
+				m_anim.s_moveflag = false;
+				m_anim.s_attack = false;
+			}
+			// ランダム行動で6は出た場合
+			else if (m_randomAction == 6)
+			{
+				// 回避状態終了
+				m_avoidnaceNow = false;
+
+				m_enemyAnim.s_rool = false;
+				m_anim.s_moveflag = false;
+				m_anim.s_attack = false;
 			}
 		}
 
-		//攻撃時の行動
+		// 攻撃時の行動
 		if (m_anim.s_attack)
 		{
 			if (m_randomAction == 0)
 			{
-				//攻撃判定のポジション
+				// 攻撃判定のポジション
 				InitAttackLigUpdate(attackKnifePos1, attackKnifePos2);
 
-				if (m_nowFrame == 5)
+				// 攻撃時の移動する距離
+				if (m_nowFrame <= cAttackFrame4)
+				{
+					cAttackMove = cAttackMoveDistance1;
+				}
+				else
+				{
+					cAttackMove = 0.0f;
+				}
+
+				if (m_nowFrame == cAttackFrame1)
 				{
 					InitLigAttack(attackKnifePos1, attackKnifePos2, cAttackRadiusKnife);
 					InitAttackDamage(m_status.s_attack);
 				}
-				//アニメーションフレーム中に攻撃判定を出す
-				if (m_nowFrame == 24)
+				// アニメーションフレーム中に攻撃判定を出す
+				if (m_nowFrame == cAttackFrame3)
 				{
-					//攻撃SE再生
-					PlaySoundMem(se.GetKnifeSE(), DX_PLAYTYPE_BACK, true);
-
 					InitAttackUpdate(m_status.s_attack);
 				}
-				if (m_nowFrame == 30)
+				if (m_nowFrame == cAttackFrame5)
 				{
-					InitAttackDamage(0.0f);
-					//判定をリセット
+					InitAttackDamage(m_status.s_attack);
+					// 判定をリセット
 					m_pAttack->CollisionEnd();
 					m_pLigAttack->CollisionEnd();
 				}
-				//アニメーションフレーム中に攻撃判定を出す
-				if (m_nowFrame == 40)
+				// アニメーションフレーム中に攻撃判定を出す
+				if (m_nowFrame == cAttackFrame7)
 				{
-					//攻撃SE再生
+					// 攻撃SE再生
 					PlaySoundMem(se.GetKnifeSE(), DX_PLAYTYPE_BACK, true);
 
 					InitAttackUpdate(m_status.s_attack);
 				}
-				if (m_nowFrame >= 48)
+				if (m_nowFrame >= cAttackFrame8)
 				{
 					InitAttackDamage(0.0f);
-					//判定をリセット
+					// 判定をリセット
 					m_pAttack->CollisionEnd();
 					m_pLigAttack->CollisionEnd();
 				}
 			}
 			else if (m_randomAction == 1)
 			{
-				//攻撃判定のポジション
+				// 攻撃判定のポジション
 				InitAttackLigUpdate(attackKnifePos1, attackKnifePos2);
 
-				if (m_nowFrame == 5)
+				// 攻撃時の移動する距離
+				cAttackMove = 0.0f;
+
+				if (m_nowFrame == cAttackFrame1)
 				{
 					InitLigAttack(attackKnifePos1, attackKnifePos2, cAttackRadiusKnife);
 					InitAttackDamage(m_status.s_attack);
 				}
-				//アニメーションフレーム中に攻撃判定を出す
-				if (m_nowFrame == 24)
+				// アニメーションフレーム中に攻撃判定を出す
+				if (m_nowFrame == cAttackFrame3)
 				{
-					//攻撃SE再生
+					// 攻撃SE再生
 					PlaySoundMem(se.GetKnifeSE(), DX_PLAYTYPE_BACK, true);
 
 					InitAttackUpdate(m_status.s_attack);
 				}
-				if (m_nowFrame >= 28)
+				if (m_nowFrame >= cAttackFrame14)
 				{
 					InitAttackDamage(0.0f);
-					//判定をリセット
+					// 判定をリセット
 					m_pAttack->CollisionEnd();
 					m_pLigAttack->CollisionEnd();
 				}
 			}
 			else if (m_randomAction == 2)
 			{
-				//攻撃判定のポジション
+				// 攻撃判定のポジション
 				InitAttackLigUpdate(attackKnifePos1, attackKnifePos2);
 
-				if (m_nowFrame == 5)
+				// 攻撃時の移動する距離
+				cAttackMove = 0.0f;
+
+				if (m_nowFrame == cAttackFrame1)
 				{
 					InitLigAttack(attackKnifePos1, attackKnifePos2, cAttackRadiusKnife);
 					InitAttackDamage(m_status.s_attack);
 				}
-				//アニメーションフレーム中に攻撃判定を出す
-				if (m_nowFrame == 11)
+				// アニメーションフレーム中に攻撃判定を出す
+				if (m_nowFrame == cAttackFrame2)
 				{
-					//攻撃SE再生
+					// 攻撃SE再生
 					PlaySoundMem(se.GetKnifeSE(), DX_PLAYTYPE_BACK, true);
 
 					InitAttackUpdate(m_status.s_attack);
 				}
-				if (m_nowFrame >= 18)
+				if (m_nowFrame >= cAttackFrame15)
 				{
 					InitAttackDamage(0.0f);
-					//判定をリセット
+					// 判定をリセット
 					m_pAttack->CollisionEnd();
 					m_pLigAttack->CollisionEnd();
 				}
 			}
 			else if (m_randomAction == 3)
 			{
-				//攻撃判定のポジション
+				// 攻撃判定のポジション
 				InitAttackLigUpdate(attackLeftKickPos1, attackLeftKickPos2);
 
-				if (m_nowFrame == 5)
+				// 攻撃時の移動する距離
+				if (m_nowFrame <= cAttackFrame16)
+				{
+					cAttackMove = 0.0f;
+				}
+				else if (m_nowFrame > cAttackFrame16 && m_nowFrame <= cAttackFrame7)
+				{
+					cAttackMove = cAttackMoveDistance2;
+				}
+				else if (m_nowFrame > cAttackFrame7 && m_nowFrame <= cAttackFrame12)
+				{
+					cAttackMove = cAttackMoveDistance3;
+				}
+				else if (m_nowFrame > cAttackFrame12 && m_nowFrame <= cAttackFrame13)
+				{
+					cAttackMove = cAttackMoveDistance2;
+				}
+				else
+				{
+					cAttackMove = 0.0f;
+				}
+
+				if (m_nowFrame == cAttackFrame1)
 				{
 					InitLigAttack(attackLeftKickPos1, attackLeftKickPos2, cAttackRadiusKick);
 					InitAttackDamage(m_status.s_attack);
 				}
-				//アニメーションフレーム中に攻撃判定を出す
-				if (m_nowFrame == 62)
+				// アニメーションフレーム中に攻撃判定を出す
+				if (m_nowFrame == cAttackFrame11)
 				{
-					//攻撃SE再生
+					// 攻撃SE再生
 					PlaySoundMem(se.GetKickSE(), DX_PLAYTYPE_BACK, true);
 
 					InitAttackUpdate(m_status.s_attack);
 				}
-				if (m_nowFrame >= 70)
+				if (m_nowFrame >= cAttackFrame13)
 				{
 					InitAttackDamage(0.0f);
-					//判定をリセット
+					// 判定をリセット
 					m_pAttack->CollisionEnd();
 					m_pLigAttack->CollisionEnd();
 				}
 			}
 			else if (m_randomAction == 4)
 			{
-				//攻撃判定のポジション
+				// 攻撃判定のポジション
 				InitAttackLigUpdate(attackRightKickPos1, attackRightKickPos2);
 
-				if (m_nowFrame == 5)
+				// 攻撃時の移動する距離
+				if (m_nowFrame <= cAttackFrame3)
+				{
+					cAttackMove = 0.0f;
+				}
+				else if (m_nowFrame > cAttackFrame3 && m_nowFrame <= cAttackFrame4)
+				{
+					cAttackMove = cAttackMoveDistance2;
+				}
+				else if (m_nowFrame > cAttackFrame6 && m_nowFrame <= cAttackFrame10)
+				{
+					cAttackMove = cAttackMoveDistance4;
+				}
+				else
+				{
+					cAttackMove = 0.0f;
+				}
+
+				if (m_nowFrame == cAttackFrame1)
 				{
 					InitLigAttack(attackRightKickPos1, attackRightKickPos2, cAttackRadiusKick);
 					InitAttackDamage(m_status.s_attack);
 				}
-				//アニメーションフレーム中に攻撃判定を出す
-				if (m_nowFrame == 25)
+				// アニメーションフレーム中に攻撃判定を出す
+				if (m_nowFrame == cAttackFrame4)
 				{
-					//攻撃SE再生
+					// 攻撃SE再生
 					PlaySoundMem(se.GetKickSE(), DX_PLAYTYPE_BACK, true);
 
 					InitAttackUpdate(m_status.s_attack);
 				}
-				if (m_nowFrame >= 35)
+				if (m_nowFrame >= cAttackFrame6)
 				{
 					InitAttackDamage(0.0f);
-					//判定をリセット
+					// 判定をリセット
 					m_pAttack->CollisionEnd();
 					m_pLigAttack->CollisionEnd();
 				}
 			}
 		}
 
-		//アニメーションが終わる度にランダムな行動を行う
+		if (m_randomAction == 6)
+		{
+			m_nowAnimIdx = m_animIdx["Idle"];
+			ChangeAnim(m_nowAnimIdx, m_animOne[9], m_animOne);
+
+			cAttackMove = 0.0f;
+			m_move = VGet(0.0f, 0.0f, 0.0f);
+			cAvoidanceMove = 0.0f;
+
+			if (m_nowFrame >= cIdleFrameDuration)
+			{
+				m_isAnimationFinish = true;
+			}
+		}
+
+		// アニメーションが終わる度にランダムな行動を行う
 		if (m_isAnimationFinish)
 		{
+			// プレイヤーが見えている時
 			if (cPlayerLook)
 			{
 				m_randomAction = GetRand(6);
 			}
+			// プレイヤーが見えていない時
 			else
 			{
-				//回避するようにする
+				// 回避するようにする
 				m_randomAction = 5;
 			}
 		}
 
-		//移動方向
+		// 移動方向
 		m_moveVec = MyLibrary::LibVec3(m_move.x, m_move.y, m_move.z);
 	}
 	//プレイヤーを見失った時
@@ -922,7 +1025,7 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se,
 /// <param name="se"></param>
 void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se, EnemyWeapon& weapon)
 {
-	//判定の更新
+	// 判定の更新
 	MyLibrary::LibVec3 attackKnifePos = MyLibrary::LibVec3(m_frameRightHand.x, m_frameRightHand.y, m_frameRightHand.z);
 	MyLibrary::LibVec3 attackKnifePos1 = MyLibrary::LibVec3(weapon.GetFramePos1().x, weapon.GetFramePos1().y, weapon.GetFramePos1().z);
 	MyLibrary::LibVec3 attackKnifePos2 = MyLibrary::LibVec3(weapon.GetFramePos2().x, weapon.GetFramePos2().y, weapon.GetFramePos2().z);
@@ -931,7 +1034,7 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 	MyLibrary::LibVec3 attackRightKickPos1 = MyLibrary::LibVec3(m_ligRightLegPos[0].x, m_ligRightLegPos[0].y, m_ligRightLegPos[0].z);
 	MyLibrary::LibVec3 attackRightKickPos2 = MyLibrary::LibVec3(m_ligRightLegPos[1].x, m_ligRightLegPos[1].y, m_ligRightLegPos[1].z);
 
-	//正面
+	// 正面
 	if (!IsPlayerInView(playerPos))
 	{
 		cPlayerLook = true;
@@ -941,40 +1044,39 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 		cPlayerLook = false;
 	}
 
-	//攻撃してない時
+	// 攻撃してない時
 	if (!m_anim.s_attack)
 	{
-		//方向を決める
+		// 方向を決める
 		AngleUpdate(playerPos);
 	}
 
-	//近くじゃない時の行動
+	// 近くじゃない時の行動
 	if (m_difPSize > cNear && !m_enemyAnim.s_rool && m_randomAction != 6)
 	{
 		WalkUpdate("Walk", 2);
 
-		//攻撃してないときの処理
+		// 攻撃してないときの処理
 		if (!m_anim.s_attack)
 		{
-			//歩くアニメーション
+			// 歩くアニメーション
 			m_anim.s_moveflag = true;
 
 			m_status.s_speed = 0.02f;
 
 			m_move = VScale(m_difPlayer, m_status.s_speed);
-			
-			m_enemyAnim.s_rool = false;
 
+			m_enemyAnim.s_rool = false;
 		}
 	}
-	//近くに行った時の行動
+	// 近くに行った時の行動
 	else if (m_difPSize <= cNear)
 	{
-		//ランダム行動で0が出た場合
-		//攻撃1
+		// ランダム行動で0が出た場合
+		// 攻撃1
 		if (m_randomAction == 0)
 		{
-			//攻撃モーションさせる
+			// 攻撃モーションさせる
 			m_anim.s_attack = true;
 
 			m_move = VGet(0.0f, 0.0f, 0.0f);
@@ -983,82 +1085,77 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 
 			m_enemyAnim.s_rool = false;
 			m_anim.s_moveflag = false;
-
 		}
-		//ランダム行動で1が出た場合
-		//攻撃2
+		// ランダム行動で1が出た場合
+		// 攻撃2
 		else if (m_randomAction == 1)
 		{
-
-			//攻撃モーションさせる
+			// 攻撃モーションさせる
 			m_anim.s_attack = true;
 
 			m_move = VGet(0.0f, 0.0f, 0.0f);
 
 			AttackUpdate("Attack2", 4);
 
-			//回避状態終了
+			// 回避状態終了
 			m_avoidnaceNow = false;
 
 			m_enemyAnim.s_rool = false;
 			m_anim.s_moveflag = false;
 		}
-		//ランダム行動で2が出た場合
-		//攻撃3
+		// ランダム行動で2が出た場合
+		// 攻撃3
 		else if (m_randomAction == 2)
 		{
-
-			//攻撃モーションさせる
+			// 攻撃モーションさせる
 			m_anim.s_attack = true;
 
 			m_move = VGet(0.0f, 0.0f, 0.0f);
 
 			AttackUpdate("Attack3", 5);
 
-			//回避状態終了
+			// 回避状態終了
 			m_avoidnaceNow = false;
 
 			m_enemyAnim.s_rool = false;
 			m_anim.s_moveflag = false;
 		}
-		//ランダム行動で3が出た場合
-		//攻撃4
+		// ランダム行動で3が出た場合
+		// 攻撃4
 		else if (m_randomAction == 3)
 		{
-
-			//攻撃モーションさせる
+			// 攻撃モーションさせる
 			m_anim.s_attack = true;
 
 			m_move = VGet(0.0f, 0.0f, 0.0f);
 
 			AttackUpdate("Attack4", 6);
 
-			//回避状態終了
+			// 回避状態終了
 			m_avoidnaceNow = false;
 
 			m_enemyAnim.s_rool = false;
 			m_anim.s_moveflag = false;
 		}
-		//ランダム行動で4が出た場合
-		//攻撃5
+		// ランダム行動で4が出た場合
+		// 攻撃5
 		else if (m_randomAction == 4)
 		{
-
-			//攻撃モーションさせる
+			// 攻撃モーションさせる
 			m_anim.s_attack = true;
 
 			m_move = VGet(0.0f, 0.0f, 0.0f);
 
 			AttackUpdate("Attack5", 7);
 
-			//回避状態終了
+			// 回避状態終了
 			m_avoidnaceNow = false;
 
 			m_anim.s_moveflag = false;
 			m_enemyAnim.s_rool = false;
 		}
-		//ランダム行動で5が出た場合
-		//回避
+		// ランダム行動で5が出た場合
+		// 回避
 		else if (m_randomAction == 5)
 		{
 			m_enemyAnim.s_rool = true;
@@ -1069,10 +1166,10 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 			m_anim.s_moveflag = false;
 			m_anim.s_attack = false;
 		}
-		//ランダム行動で6は出た場合
+		// ランダム行動で6は出た場合
 		else if (m_randomAction == 6)
 		{
-			//回避状態終了
+			// 回避状態終了
 			m_avoidnaceNow = false;
 
 			m_enemyAnim.s_rool = false;
@@ -1081,203 +1178,203 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 		}
 	}
 
-	//攻撃時の行動
+	// 攻撃時の行動
 	if (m_anim.s_attack)
 	{
 		if (m_randomAction == 0)
 		{
-			//攻撃判定のポジション
+			// 攻撃判定のポジション
 			InitAttackLigUpdate(attackKnifePos1, attackKnifePos2);
 
-			//攻撃時の移動する距離
-			if (m_nowFrame <= 25)
+			// 攻撃時の移動する距離
+			if (m_nowFrame <= cAttackFrame4)
 			{
-				cAttackMove = 0.5f;
+				cAttackMove = cAttackMoveDistance1;
 			}
 			else
 			{
 				cAttackMove = 0.0f;
 			}
 
-			if (m_nowFrame == 5)
+			if (m_nowFrame == cAttackFrame1)
 			{
 				InitLigAttack(attackKnifePos1, attackKnifePos2, cAttackRadiusKnife);
 				InitAttackDamage(m_status.s_attack);
 			}
-			//アニメーションフレーム中に攻撃判定を出す
-			if (m_nowFrame == 24)
+			// アニメーションフレーム中に攻撃判定を出す
+			if (m_nowFrame == cAttackFrame3)
 			{
 				InitAttackUpdate(m_status.s_attack);
 			}
-			if (m_nowFrame == 30)
+			if (m_nowFrame == cAttackFrame5)
 			{
 				InitAttackDamage(m_status.s_attack);
-				//判定をリセット
+				// 判定をリセット
 				m_pAttack->CollisionEnd();
 				m_pLigAttack->CollisionEnd();
 			}
-			//アニメーションフレーム中に攻撃判定を出す
-			if (m_nowFrame == 40)
+			// アニメーションフレーム中に攻撃判定を出す
+			if (m_nowFrame == cAttackFrame7)
 			{
-				//攻撃SE再生
+				// 攻撃SE再生
 				PlaySoundMem(se.GetKnifeSE(), DX_PLAYTYPE_BACK, true);
 
 				InitAttackUpdate(m_status.s_attack);
 			}
-			if (m_nowFrame >= 48)
+			if (m_nowFrame >= cAttackFrame8)
 			{
 				InitAttackDamage(0.0f);
-				//判定をリセット
+				// 判定をリセット
 				m_pAttack->CollisionEnd();
 				m_pLigAttack->CollisionEnd();
 			}
 		}
 		else if (m_randomAction == 1)
 		{
-			//攻撃判定のポジション
+			// 攻撃判定のポジション
 			InitAttackLigUpdate(attackKnifePos1, attackKnifePos2);
 
-			//攻撃時の移動する距離
+			// 攻撃時の移動する距離
 			cAttackMove = 0.0f;
 
-			if (m_nowFrame == 5)
+			if (m_nowFrame == cAttackFrame1)
 			{
 				InitLigAttack(attackKnifePos1, attackKnifePos2, cAttackRadiusKnife);
 				InitAttackDamage(m_status.s_attack);
 			}
-			//アニメーションフレーム中に攻撃判定を出す
-			if (m_nowFrame == 24)
+			// アニメーションフレーム中に攻撃判定を出す
+			if (m_nowFrame == cAttackFrame3)
 			{
-				//攻撃SE再生
+				// 攻撃SE再生
 				PlaySoundMem(se.GetKnifeSE(), DX_PLAYTYPE_BACK, true);
 
 				InitAttackUpdate(m_status.s_attack);
 			}
-			if (m_nowFrame >= 28)
+			if (m_nowFrame >= cAttackFrame14)
 			{
 				InitAttackDamage(0.0f);
-				//判定をリセット
+				// 判定をリセット
 				m_pAttack->CollisionEnd();
 				m_pLigAttack->CollisionEnd();
 			}
 		}
 		else if (m_randomAction == 2)
 		{
-			//攻撃判定のポジション
+			// 攻撃判定のポジション
 			InitAttackLigUpdate(attackKnifePos1, attackKnifePos2);
 
-			//攻撃時の移動する距離
+			// 攻撃時の移動する距離
 			cAttackMove = 0.0f;
 
-			if (m_nowFrame == 5)
+			if (m_nowFrame == cAttackFrame1)
 			{
 				InitLigAttack(attackKnifePos1, attackKnifePos2, cAttackRadiusKnife);
 				InitAttackDamage(m_status.s_attack);
 			}
-			//アニメーションフレーム中に攻撃判定を出す
-			if (m_nowFrame == 11)
+			// アニメーションフレーム中に攻撃判定を出す
+			if (m_nowFrame == cAttackFrame2)
 			{
-				//攻撃SE再生
+				// 攻撃SE再生
 				PlaySoundMem(se.GetKnifeSE(), DX_PLAYTYPE_BACK, true);
 
 				InitAttackUpdate(m_status.s_attack);
 			}
-			if (m_nowFrame >= 18)
+			if (m_nowFrame >= cAttackFrame15)
 			{
 				InitAttackDamage(0.0f);
-				//判定をリセット
+				// 判定をリセット
 				m_pAttack->CollisionEnd();
 				m_pLigAttack->CollisionEnd();
 			}
 		}
 		else if (m_randomAction == 3)
 		{
-			//攻撃判定のポジション
+			// 攻撃判定のポジション
 			InitAttackLigUpdate(attackLeftKickPos1, attackLeftKickPos2);
 
-			//攻撃時の移動する距離
-			if (m_nowFrame <= 20.0f)
+			// 攻撃時の移動する距離
+			if (m_nowFrame <= cAttackFrame16)
 			{
 				cAttackMove = 0.0f;
 			}
-			else if(m_nowFrame > 20.0f && m_nowFrame <= 40.0f)
+			else if (m_nowFrame > cAttackFrame16 && m_nowFrame <= cAttackFrame7)
 			{
-				cAttackMove = 0.8f;
+				cAttackMove = cAttackMoveDistance2;
 			}
-			else if (m_nowFrame > 40.0f && m_nowFrame <= 50.0f)
+			else if (m_nowFrame > cAttackFrame7 && m_nowFrame <= cAttackFrame12)
 			{
-				cAttackMove = 0.5f;
+				cAttackMove = cAttackMoveDistance3;
 			}
-			else if (m_nowFrame > 50.0f && m_nowFrame <= 65.0f)
+			else if (m_nowFrame > cAttackFrame12 && m_nowFrame <= cAttackFrame13)
 			{
-				cAttackMove = 0.8f;
+				cAttackMove = cAttackMoveDistance2;
 			}
 			else
 			{
 				cAttackMove = 0.0f;
 			}
 
-			if (m_nowFrame == 5)
+			if (m_nowFrame == cAttackFrame1)
 			{
 				InitLigAttack(attackLeftKickPos1, attackLeftKickPos2, cAttackRadiusKick);
 				InitAttackDamage(m_status.s_attack);
 			}
-			//アニメーションフレーム中に攻撃判定を出す
-			if (m_nowFrame == 62)
+			// アニメーションフレーム中に攻撃判定を出す
+			if (m_nowFrame == cAttackFrame11)
 			{
-				//攻撃SE再生
+				// 攻撃SE再生
 				PlaySoundMem(se.GetKickSE(), DX_PLAYTYPE_BACK, true);
 
 				InitAttackUpdate(m_status.s_attack);
 			}
-			if (m_nowFrame >= 70)
+			if (m_nowFrame >= cAttackFrame13)
 			{
 				InitAttackDamage(0.0f);
-				//判定をリセット
+				// 判定をリセット
 				m_pAttack->CollisionEnd();
 				m_pLigAttack->CollisionEnd();
 			}
 		}
 		else if (m_randomAction == 4)
 		{
-			//攻撃判定のポジション
+			// 攻撃判定のポジション
 			InitAttackLigUpdate(attackRightKickPos1, attackRightKickPos2);
 
-			//攻撃時の移動する距離
-			if (m_nowFrame <= 10.0f)
+			// 攻撃時の移動する距離
+			if (m_nowFrame <= cAttackFrame3)
 			{
 				cAttackMove = 0.0f;
 			}
-			else if (m_nowFrame > 10.0f && m_nowFrame <= 25.0f)
+			else if (m_nowFrame > cAttackFrame3 && m_nowFrame <= cAttackFrame4)
 			{
-				cAttackMove = 0.8f;
+				cAttackMove = cAttackMoveDistance2;
 			}
-			else if(m_nowFrame > 35.0f && m_nowFrame <= 55.0f)
+			else if (m_nowFrame > cAttackFrame6 && m_nowFrame <= cAttackFrame10)
 			{
-				cAttackMove = -0.4f;
+				cAttackMove = cAttackMoveDistance4;
 			}
 			else
 			{
 				cAttackMove = 0.0f;
 			}
 
-			if (m_nowFrame == 5)
+			if (m_nowFrame == cAttackFrame1)
 			{
 				InitLigAttack(attackRightKickPos1, attackRightKickPos2, cAttackRadiusKick);
 				InitAttackDamage(m_status.s_attack);
 			}
-			//アニメーションフレーム中に攻撃判定を出す
-			if (m_nowFrame == 25)
+			// アニメーションフレーム中に攻撃判定を出す
+			if (m_nowFrame == cAttackFrame4)
 			{
-				//攻撃SE再生
+				// 攻撃SE再生
 				PlaySoundMem(se.GetKickSE(), DX_PLAYTYPE_BACK, true);
 
 				InitAttackUpdate(m_status.s_attack);
 			}
-			if (m_nowFrame >= 35)
+			if (m_nowFrame >= cAttackFrame6)
 			{
 				InitAttackDamage(0.0f);
-				//判定をリセット
+				// 判定をリセット
 				m_pAttack->CollisionEnd();
 				m_pLigAttack->CollisionEnd();
 			}
@@ -1293,29 +1390,29 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 		m_move = VGet(0.0f, 0.0f, 0.0f);
 		cAvoidanceMove = 0.0f;
 
-		if (m_nowFrame >= 40.0f)
+		if (m_nowFrame >= cIdleFrameDuration)
 		{
 			m_isAnimationFinish = true;
 		}
 	}
 
-	//アニメーションが終わる度にランダムな行動を行う
+	// アニメーションが終わる度にランダムな行動を行う
 	if (m_isAnimationFinish)
 	{
-		//プレイヤーが見えている時
+		// プレイヤーが見えている時
 		if (cPlayerLook)
 		{
 			m_randomAction = GetRand(6);
 		}
-		//プレイヤーが見えていない時
+		// プレイヤーが見えていない時
 		else
 		{
-			//回避するようにする
+			// 回避するようにする
 			m_randomAction = 5;
 		}
 	}
 
-	//移動方向
+	// 移動方向
 	m_moveVec = MyLibrary::LibVec3(m_move.x, m_move.y, m_move.z);
 }
 

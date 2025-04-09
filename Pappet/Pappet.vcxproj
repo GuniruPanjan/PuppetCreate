@@ -143,7 +143,6 @@
     <ClCompile Include="Character\Assassin.cpp" />
     <ClCompile Include="Character\Bear.cpp" />
     <ClCompile Include="Character\CharacterBase.cpp" />
-    <ClCompile Include="Character\CollidableNpc.cpp" />
     <ClCompile Include="Character\EnemyBase.cpp" />
     <ClCompile Include="Character\Immortal.cpp" />
     <ClCompile Include="Character\Player.cpp" />
@@ -208,7 +207,6 @@
     <ClInclude Include="Character\Assassin.h" />
     <ClInclude Include="Character\Bear.h" />
     <ClInclude Include="Character\CharacterBase.h" />
-    <ClInclude Include="Character\CollidableNpc.h" />
     <ClInclude Include="Character\EnemyBase.h" />
     <ClInclude Include="Character\Immortal.h" />
     <ClInclude Include="Character\Player.h" />

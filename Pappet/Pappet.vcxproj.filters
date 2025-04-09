@@ -189,9 +189,6 @@
     <ClCompile Include="Character\Bear.cpp">
       <Filter>ソース ファイル\Character</Filter>
     </ClCompile>
-    <ClCompile Include="Character\CollidableNpc.cpp">
-      <Filter>ソース ファイル\Character</Filter>
-    </ClCompile>
     <ClCompile Include="Object\PlayerSearchObject.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
@@ -393,9 +390,6 @@
       <Filter>ヘッダー ファイル\Character</Filter>
     </ClInclude>
     <ClInclude Include="Character\Bear.h">
-      <Filter>ヘッダー ファイル\Character</Filter>
-    </ClInclude>
-    <ClInclude Include="Character\CollidableNpc.h">
       <Filter>ヘッダー ファイル\Character</Filter>
     </ClInclude>
     <ClInclude Include="Object\PlayerSearchObject.h">
