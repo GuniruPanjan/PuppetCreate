@@ -376,7 +376,7 @@ void GameManager::Update()
 			m_pMap->Update(m_pPhysics, m_pPlayer->GetWarp(), m_pPlayer->GetBossStart(), m_pEnemy->GetBossDead(GetThisMapName()));
 
 			//メニューを開く
-			if (m_pPlayer->GetMenu() && !m_pSetting->GetEquipment() && !m_pSetting->GetItem())
+			if (m_pPlayer->GetMenu() && !m_pSetting->GetEquipment() && !m_pSetting->GetItem() && !m_pSetting->GetSettingScene())
 			{
 				m_pSetting->MenuUpdate(*m_pPlayer, *m_pSe);
 
@@ -634,10 +634,17 @@ void GameManager::Draw()
 
 		m_pUi->Draw(*m_pPlayer, *m_pEnemy, *m_pSetting, *m_pMap, *m_pItem, *m_pWeapon, *m_pShield, *m_pArmor, *m_pTool, *m_pMessage);
 
-		//メニュー画面
-		if (m_pPlayer->GetMenu() && !m_pSetting->GetEquipment() && !m_pSetting->GetItem())
+		//メニュー画面の背景を暗くする
+		if (m_pSetting->GetEquipment() || m_pSetting->GetItem())
 		{
-			m_pSetting->MenuDraw(m_pMessage->GetRB(), m_pMessage->GetLB());
+			m_pSetting->MenuBackDraw();
+		}
+
+
+		//メニュー画面
+		if (m_pPlayer->GetMenu() && !m_pSetting->GetEquipment() && !m_pSetting->GetItem() && !m_pSetting->GetSettingScene())
+		{
+			m_pSetting->MenuDraw(m_pMessage->GetRB(), m_pMessage->GetLB(), m_pUi->GetBox());
 		}
 		//装備画面
 		else if (m_pSetting->GetEquipment() && !m_pSetting->GetDecision())

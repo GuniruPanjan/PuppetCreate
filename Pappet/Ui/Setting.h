@@ -122,7 +122,10 @@ public:
 	/// <summary>
 	/// メニュー描画
 	/// </summary>
-	void MenuDraw(int rb, int lb);
+	void MenuDraw(int rb, int lb, int box);
+
+	//背景を暗くする
+	void MenuBackDraw();
 
 	/// <summary>
 	/// ステータス画面を変える描画処理

@@ -456,12 +456,12 @@ void Setting::MenuUpdate(Player& player, SEManager& se)
 	//右
 	if (m_xpad.Buttons[9] == 1 && !m_menuDecision)
 	{
-		m_button++;
+		m_button--;
 	}
 	//左
 	else if (m_xpad.Buttons[8] == 1 && !m_menuDecision)
 	{
-		m_button--;
+		m_button++;
 	}
 	else
 	{
@@ -1256,30 +1256,88 @@ void Setting::SettingDraw(SEManager& se)
 }
 
 //メニュー描画
-void Setting::MenuDraw(int rb, int lb)
+void Setting::MenuDraw(int rb, int lb, int box)
 {
+	int x1 = 0;
+	int y1 = 45;
+	int x2 = 0;
+	int y2 = 155;
+	const char* menu = "";
+
+	//アルファ値をいじる
+	if (!m_blend)
+	{
+		if (cBlenda < 100)
+		{
+			cBlenda++;
+		}
+		else
+		{
+			m_blend = true;
+		}
+	}
+	else if (m_blend)
+	{
+		if (cBlenda > 10)
+		{
+			cBlenda--;
+		}
+		else
+		{
+			m_blend = false;
+		}
+	}
+
+
+	if (m_pSelect->NowSelect == m_pSelect->Seven)
+	{
+		x1 = 970;
+		x2 = 1085;
+
+		menu = "装備とアイテム";
+	}
 	if (m_pSelect->NowSelect == m_pSelect->Eight)
 	{
-		m_menuColor[0] = 0xffff00;
-		m_menuColor[1] = 0xffffff;
-		m_menuColor[2] = 0xffffff;
+		x1 = 1100;
+		x2 = 1215;
+
+		menu = "設定変更";
 	}
 	if (m_pSelect->NowSelect == m_pSelect->Nine)
 	{
-		m_menuColor[0] = 0xffffff;
-		m_menuColor[1] = 0xffff00;
-		m_menuColor[2] = 0xffffff;
+		x1 = 1235;
+		x2 = 1350;
+
+		menu = "戻る";
 	}
 	if (m_pSelect->NowSelect == m_pSelect->Ten)
 	{
-		m_menuColor[0] = 0xffffff;
-		m_menuColor[1] = 0xffffff;
-		m_menuColor[2] = 0xffff00;
+		x1 = 1365;
+		x2 = 1480;
+
+		menu = "タイトルに戻る";
 	}
+	
 	
 	DrawRotaGraph(900, 100, 0.5f, 0.0f, lb, true);
 	DrawGraph(935, 0, m_menu, true);
 	DrawRotaGraph(1550, 100, 0.5f, 0.0f, rb, true);
+	DrawRotaGraph(1225, 200, 0.8f, 0.0f, box, true);
+
+	DrawStringToHandle(1130, 190, menu, 0xffffff, m_pSmallFont->GetHandle());
+
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, cBlenda);
+	DrawBox(x1, y1, x2, y2, 0x000fff, true);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+}
+
+//背景を暗くする
+void Setting::MenuBackDraw()
+{
+	//画面を暗くする
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
+	DrawGraph(0, 0, m_black, false);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
 /// <summary>

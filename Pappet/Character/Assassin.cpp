@@ -55,7 +55,6 @@ namespace
 	bool cPlayerLook = false;
 
 	//武器のポジション
-	//const VECTOR cWeaponPosition = VGet(-6.528f, 1.632f, 0.000f);
 	const VECTOR cWeaponPosition = VGet(0.0f, 0.0f, 0.0f);
 	//武器のX回転
 	constexpr float cWeaponX = 0.000f;
@@ -68,6 +67,19 @@ namespace
 	EffectManager& cEffect = EffectManager::GetInstance();
 
 	bool cOne = false;
+
+	// 定数の定義
+	constexpr float cAttackMoveFrameStart = 5.0f;
+	constexpr float cAttackMoveFrameEnd = 25.0f;
+	constexpr float cAvoidanceMoveFrameStart = 30.0f;
+	constexpr float cHitMoveFrameStart = 5.0f;
+	constexpr float cHitMoveFrameEnd = 25.0f;
+	constexpr float cDeathFrame = 36.0f;
+	constexpr float cHitEffectOffsetY = 30.0f;
+	constexpr float cStrongHitEffectOffsetY = 20.0f;
+	constexpr float cSearchRadius = 35.0f;
+	constexpr float cModelScale = 0.15f;
+
 }
 
 /// <summary>

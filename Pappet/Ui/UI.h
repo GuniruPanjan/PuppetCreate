@@ -123,6 +123,9 @@ public:
 	//勝利演出をリセットする
 	bool GetWinReset() { return m_winReset; }
 
+	//画像を取る
+	int GetBox() { return m_actionUI; }
+
 private:
 	unsigned int m_hpColor = 0xff0000;    //HPカラー
 	unsigned int m_staminaColor = 0x00ff00;       //スタミナカラー
