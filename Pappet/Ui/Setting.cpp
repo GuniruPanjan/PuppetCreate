@@ -427,6 +427,8 @@ void Setting::Update(SEManager& se)
 			{
 				PlaySoundMem(se.GetButtonSE(), DX_PLAYTYPE_BACK, true);
 
+				m_pSelect->NowSelect = 7;
+
 				//‰Šú‰»
 				m_waitTime = 0;
 

@@ -270,7 +270,7 @@ void UI::Draw(Player& player, EnemyManager& enemy, Setting& eq, MapManager& map,
 		DrawGraph(cActionUiX, cActionUiY, m_actionUI, true);
 		DrawGraph(cActionUiX + cActionUiXOffset, cButtonY, m_bButton, true);
 
-		DrawFormatString(cOkTextX, cOkTextY, cTextColor, "O K");
+		DrawStringToHandle(cOkTextX, cOkTextY, "O K", cTextColor, m_pFont->GetHandle());
 
 		ItemTakingUI(item.m_uiItem.u_BlackSword, m_blackSword, cItemTakingUiX, cItemTakingUiYBlackSword, cItemTakingUiCharX, cItemTakingUiCharY, "•Œ•");
 		ItemTakingUI(item.m_uiItem.u_Distorted, m_uglyShield, cItemTakingUiX, cItemTakingUiYDistorted, cItemTakingUiCharX, cItemTakingUiCharY, "Šõ‚");
