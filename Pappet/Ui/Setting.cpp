@@ -185,6 +185,84 @@ namespace
 	constexpr int cStatusValueY2 = 665;
 	constexpr int cStatusValueY3 = 765;
 
+	constexpr int cRestSelectX = 300;
+	constexpr int cRestSelectY1 = 330;
+	constexpr int cRestSelectY2 = 430;
+	constexpr int cRestSelectY3 = 530;
+	constexpr int cRestSelectY4 = 630;
+	constexpr float cSelectUiScale = 0.7f;
+	constexpr float cRestScale = 1.5f;
+	constexpr int cRestX = 300;
+	constexpr int cRestY = 450;
+	constexpr int cRestTextX = 720;
+	constexpr int cRestTextY = 350;
+	constexpr int cRestTitleX = 150;
+	constexpr int cRestTitleY = 50;
+	constexpr int cRestOptionX = 150;
+	constexpr int cRestOptionY1 = 300;
+	constexpr int cRestOptionY2 = 400;
+	constexpr int cRestOptionY3 = 500;
+	constexpr int cRestOptionY4 = 600;
+	constexpr int cRestColor = 0x000000;
+	constexpr int cRestNotColor = 0xffffff;
+
+	constexpr int cLevelUpGraphX = -50;
+	constexpr int cLevelUpGraphY = 0;
+	constexpr int cLevelSelectX1 = 310;
+	constexpr int cLevelSelectY1 = 540;
+	constexpr int cLevelSelectY2 = 635;
+	constexpr int cLevelSelectY3 = 730;
+	constexpr int cLevelSelectY4 = 825;
+	constexpr int cLevelSelectX2 = 825;
+	constexpr int cLevelSelectY5 = 940;
+	constexpr float cGraphSize1 = 0.6f;
+	constexpr float cGraphSize2 = 0.9f;
+	constexpr int cLevelTextX = 90;
+	constexpr int cLevelTextY1 = 150;
+	constexpr int cLevelTextY2 = 250;
+	constexpr int cLevelTextY3 = 300;
+	constexpr int cStatusTextX = 290;
+	constexpr int cStatusTextY1 = 510;
+	constexpr int cStatusTextY2 = 605;
+	constexpr int cStatusTextY3 = 700;
+	constexpr int cStatusTextY4 = 795;
+	constexpr int cMaxStatusTextX = 600;
+	constexpr int cMaxStatusTextY1 = 200;
+	constexpr int cMaxStatusTextY2 = 400;
+	constexpr int cMaxStatusTextY3 = 600;
+	constexpr int cDecisionTextX = 750;
+	constexpr int cDecisionTextY = 900;
+	constexpr int cLevelUpTextColor = 0x000000;
+	constexpr int cLevelUpTextColor2 = 0xffffff;
+
+	constexpr int cBlueColor = 0x000fff;
+
+	constexpr int cCaveatGraphX = 600;
+	constexpr int cCaveatGraphY = 200;
+	constexpr int cCaveatTextX = 720;
+	constexpr int cCaveatTextY = 350;
+	constexpr int cCaveatTextColor = 0xffffff;
+
+	constexpr int cWeaponNameX = 400;
+	constexpr int cWeaponNameY = 100;
+	constexpr int cWeaponDescX = 400;
+	constexpr int cWeaponDescY1 = 300;
+	constexpr int cWeaponDescY2 = 450;
+	constexpr int cWeaponTextColor = 0xffffff;
+
+	constexpr int cShieldNameX = 400;
+	constexpr int cShieldNameY = 100;
+	constexpr int cShieldDescX = 400;
+	constexpr int cShieldDescY1 = 300;
+	constexpr int cShieldDescY2 = 450;
+	constexpr int cShieldTextColor = 0xffffff;
+
+	constexpr int cArmorNameX = 400;
+	constexpr int cArmorNameY = 100;
+	constexpr int cArmorDescX = 400;
+	constexpr int cArmorDescY1 = 300;
+	constexpr int cArmorDescY2 = 400;
+	constexpr int cArmorTextColor = 0xffffff;
 }
 
 /// <summary>
@@ -1511,93 +1589,93 @@ void Setting::EquipmentDraw(Player& player)
 /// </summary>
 void Setting::RestDraw(bool rest)
 {
-	DrawRotaGraph(300, 450, 1.5f, DX_PI_F / 2, m_rest, true);
+	DrawRotaGraph(cRestX, cRestY, cRestScale, DX_PI_F / 2, m_rest, true);
 
-	m_selectX = 300;
+	m_selectX = cRestSelectX;
 
-	DrawRotaGraph(m_selectX, m_selectY, 0.7f, 0.0f, m_selectUi, true);
+	DrawRotaGraph(m_selectX, m_selectY, cSelectUiScale, 0.0f, m_selectUi, true);
 
 	//ïÅí ÇÃãxëß
 	if (!rest)
 	{
 		if (m_pSelect->NowSelect == m_pSelect->Eight)
 		{
-			m_selectY = 330;
+			m_selectY = cRestSelectY1;
 
-			m_menuColor[0] = 0x000000;
-			m_menuColor[1] = 0xffffff;
-			m_menuColor[2] = 0xffffff;
+			m_menuColor[0] = cRestColor;
+			m_menuColor[1] = cRestNotColor;
+			m_menuColor[2] = cRestNotColor;
 		}
 		else if (m_pSelect->NowSelect == m_pSelect->Nine)
 		{
-			m_selectY = 430;
+			m_selectY = cRestSelectY2;
 
-			m_menuColor[0] = 0xffffff;
-			m_menuColor[1] = 0x000000;
-			m_menuColor[2] = 0xffffff;
+			m_menuColor[0] = cRestNotColor;
+			m_menuColor[1] = cRestColor;
+			m_menuColor[2] = cRestNotColor;
 		}
 		else if (m_pSelect->NowSelect == m_pSelect->Ten)
 		{
-			m_selectY = 530;
+			m_selectY = cRestSelectY3;
 
-			m_menuColor[0] = 0xffffff;
-			m_menuColor[1] = 0xffffff;
-			m_menuColor[2] = 0x000000;
+			m_menuColor[0] = cRestNotColor;
+			m_menuColor[1] = cRestNotColor;
+			m_menuColor[2] = cRestColor;
 		}
 
-		DrawStringToHandle(150, 50, "äªâ±", 0xffffff, m_pBigFont->GetHandle());
+		DrawStringToHandle(cRestTitleX, cRestTitleY, "äªâ±", 0xffffff, m_pBigFont->GetHandle());
 
-		DrawStringToHandle(150, 300, "ãxëß", m_menuColor[0], m_pFont->GetHandle());
-		DrawStringToHandle(150, 400, "ç∞äÌÇ÷ì]ëó", m_menuColor[1], m_pFont->GetHandle());
-		DrawStringToHandle(150, 500, "óßÇøãéÇÈ", m_menuColor[2], m_pFont->GetHandle());
+		DrawStringToHandle(cRestOptionX, cRestOptionY1, "ãxëß", m_menuColor[0], m_pFont->GetHandle());
+		DrawStringToHandle(cRestOptionX, cRestOptionY2, "ç∞äÌÇ÷ì]ëó", m_menuColor[1], m_pFont->GetHandle());
+		DrawStringToHandle(cRestOptionX, cRestOptionY3, "óßÇøãéÇÈ", m_menuColor[2], m_pFont->GetHandle());
 	}
 	//ÉåÉxÉãè„Ç∞ÇÁÇÍÇÈãxëß
 	else
 	{
 		if (m_pSelect->NowSelect == m_pSelect->Seven)
 		{
-			m_selectY = 330;
+			m_selectY = cRestSelectY1;
 
-			m_menuColor[0] = 0x000000;
-			m_menuColor[1] = 0xffffff;
-			m_menuColor[2] = 0xffffff;
-			m_menuColor[3] = 0xffffff;
+			m_menuColor[0] = cRestColor;
+			m_menuColor[1] = cRestNotColor;
+			m_menuColor[2] = cRestNotColor;
+			m_menuColor[3] = cRestNotColor;
 		}
 		else if (m_pSelect->NowSelect == m_pSelect->Eight)
 		{
-			m_selectY = 430;
+			m_selectY = cRestSelectY2;
 
-			m_menuColor[0] = 0xffffff;
-			m_menuColor[1] = 0x000000;
-			m_menuColor[2] = 0xffffff;
-			m_menuColor[3] = 0xffffff;
+			m_menuColor[0] = cRestNotColor;
+			m_menuColor[1] = cRestColor;
+			m_menuColor[2] = cRestNotColor;
+			m_menuColor[3] = cRestNotColor;
 		}
 		else if (m_pSelect->NowSelect == m_pSelect->Nine)
 		{
-			m_selectY = 530;
+			m_selectY = cRestSelectY3;
 
-			m_menuColor[0] = 0xffffff;
-			m_menuColor[1] = 0xffffff;
-			m_menuColor[2] = 0x000000;
-			m_menuColor[3] = 0xffffff;
+			m_menuColor[0] = cRestNotColor;
+			m_menuColor[1] = cRestNotColor;
+			m_menuColor[2] = cRestColor;
+			m_menuColor[3] = cRestNotColor;
 
 		}
 		else if (m_pSelect->NowSelect == m_pSelect->Ten)
 		{
-			m_selectY = 630;
+			m_selectY = cRestSelectY4;
 
-			m_menuColor[0] = 0xffffff;
-			m_menuColor[1] = 0xffffff;
-			m_menuColor[2] = 0xffffff;
-			m_menuColor[3] = 0x000000;
+			m_menuColor[0] = cRestNotColor;
+			m_menuColor[1] = cRestNotColor;
+			m_menuColor[2] = cRestNotColor;
+			m_menuColor[3] = cRestColor;
 		}
 
-		DrawStringToHandle(150, 50, "ç∞äÌ", 0xffffff, m_pBigFont->GetHandle());
+		DrawStringToHandle(cRestTitleX, cRestTitleY, "ç∞äÌ", 0xffffff, m_pBigFont->GetHandle());
 
-		DrawStringToHandle(150, 300, "ãxëß", m_menuColor[0], m_pFont->GetHandle());
-		DrawStringToHandle(150, 400, "ÉåÉxÉãè„Ç∞", m_menuColor[1], m_pFont->GetHandle());
-		DrawStringToHandle(150, 500, "ç∞äÌÇ÷ì]ëó", m_menuColor[2], m_pFont->GetHandle());
-		DrawStringToHandle(150, 600, "óßÇøãéÇÈ", m_menuColor[3], m_pFont->GetHandle());
+		DrawStringToHandle(cRestOptionX, cRestOptionY1, "ãxëß", m_menuColor[0], m_pFont->GetHandle());
+		DrawStringToHandle(cRestOptionX, cRestOptionY2, "ÉåÉxÉãè„Ç∞", m_menuColor[1], m_pFont->GetHandle());
+		DrawStringToHandle(cRestOptionX, cRestOptionY3, "ç∞äÌÇ÷ì]ëó", m_menuColor[2], m_pFont->GetHandle());
+		DrawStringToHandle(cRestOptionX, cRestOptionY4, "óßÇøãéÇÈ", m_menuColor[3], m_pFont->GetHandle());
 	}
 }
 
@@ -1608,96 +1686,89 @@ void Setting::RestDraw(bool rest)
 void Setting::LevelUpDraw(Player& player, CoreManager& core)
 {
 
-	DrawGraph(-50, 0, m_levelUp, true);
+	DrawGraph(cLevelUpGraphX, cLevelUpGraphY, m_levelUp, true);
 	DrawRotaGraph(m_selectX, m_selectY, cGraphSize, DX_PI_F, m_selectUi, true);
 
 	if (m_pSelect->NowSelect == m_pSelect->Six)
 	{
-		m_selectX = 300;
-		m_selectY = 540;
-		cGraphSize = 1.0f;
+		m_selectX = cLevelSelectX1;
+		m_selectY = cLevelSelectY1;
+		cGraphSize = cGraphSize1;
 
-		m_menuColor[0] = 0x000000;
-		m_menuColor[1] = 0xffffff;
-		m_menuColor[2] = 0xffffff;
-		m_menuColor[3] = 0xffffff;
-		m_menuColor[4] = 0xffffff;
+		m_menuColor[0] = cLevelUpTextColor;
+		m_menuColor[1] = cLevelUpTextColor2;
+		m_menuColor[2] = cLevelUpTextColor2;
+		m_menuColor[3] = cLevelUpTextColor2;
+		m_menuColor[4] = cLevelUpTextColor2;
 	}
 	else if (m_pSelect->NowSelect == m_pSelect->Seven)
 	{
-		m_selectX = 300;
-		m_selectY = 635;
-		cGraphSize = 1.0f;
+		m_selectX = cLevelSelectX1;
+		m_selectY = cLevelSelectY2;
+		cGraphSize = cGraphSize1;
 
-		m_menuColor[0] = 0xffffff;
-		m_menuColor[1] = 0x000000;
-		m_menuColor[2] = 0xffffff;
-		m_menuColor[3] = 0xffffff;
-		m_menuColor[4] = 0xffffff;
+		m_menuColor[0] = cLevelUpTextColor2;
+		m_menuColor[1] = cLevelUpTextColor;
+		m_menuColor[2] = cLevelUpTextColor2;
+		m_menuColor[3] = cLevelUpTextColor2;
+		m_menuColor[4] = cLevelUpTextColor2;
 	}
 	else if (m_pSelect->NowSelect == m_pSelect->Eight)
 	{
-		m_selectX = 300;
-		m_selectY = 730;
-		cGraphSize = 1.0f;
+		m_selectX = cLevelSelectX1;
+		m_selectY = cLevelSelectY3;
+		cGraphSize = cGraphSize1;
 
-		m_menuColor[0] = 0xffffff;
-		m_menuColor[1] = 0xffffff;
-		m_menuColor[2] = 0x000000;
-		m_menuColor[3] = 0xffffff;
-		m_menuColor[4] = 0xffffff;
+		m_menuColor[0] = cLevelUpTextColor2;
+		m_menuColor[1] = cLevelUpTextColor2;
+		m_menuColor[2] = cLevelUpTextColor;
+		m_menuColor[3] = cLevelUpTextColor2;
+		m_menuColor[4] = cLevelUpTextColor2;
 	}
 	else if (m_pSelect->NowSelect == m_pSelect->Nine)
 	{
-		m_selectX = 300;
-		m_selectY = 825;
-		cGraphSize = 1.0f;
+		m_selectX = cLevelSelectX1;
+		m_selectY = cLevelSelectY4;
+		cGraphSize = cGraphSize1;
 
-		m_menuColor[0] = 0xffffff;
-		m_menuColor[1] = 0xffffff;
-		m_menuColor[2] = 0xffffff;
-		m_menuColor[3] = 0x000000;
-		m_menuColor[4] = 0xffffff;
+		m_menuColor[0] = cLevelUpTextColor2;
+		m_menuColor[1] = cLevelUpTextColor2;
+		m_menuColor[2] = cLevelUpTextColor2;
+		m_menuColor[3] = cLevelUpTextColor;
+		m_menuColor[4] = cLevelUpTextColor2;
 	}
 	else if (m_pSelect->NowSelect == m_pSelect->Ten)
 	{
-		m_selectX = 815;
-		m_selectY = 930;
-		cGraphSize = 1.3f;
+		m_selectX = cLevelSelectX2;
+		m_selectY = cLevelSelectY5;
+		cGraphSize = cGraphSize2;
 
-		m_menuColor[0] = 0xffffff;
-		m_menuColor[1] = 0xffffff;
-		m_menuColor[2] = 0xffffff;
-		m_menuColor[3] = 0xffffff;
-		m_menuColor[4] = 0x000000;
+		m_menuColor[0] = cLevelUpTextColor2;
+		m_menuColor[1] = cLevelUpTextColor2;
+		m_menuColor[2] = cLevelUpTextColor2;
+		m_menuColor[3] = cLevelUpTextColor2;
+		m_menuColor[4] = cLevelUpTextColor;
 	}
 
+	DrawFormatStringToHandle(cLevelTextX, cLevelTextY1, cLevelUpTextColor2, m_pFont->GetHandle(), "ÉåÉxÉã      %d", ms_levelUP.sl_all);
+	DrawFormatStringToHandle(cLevelTextX, cLevelTextY2, cLevelUpTextColor2, m_pFont->GetHandle(), "èäéùÉRÉA  %d", m_core);
+	DrawFormatStringToHandle(cLevelTextX, cLevelTextY3, cLevelUpTextColor2, m_pFont->GetHandle(), "ïKóvÉRÉA  %d", core.NeedCore(ms_levelUP.sl_all));
 
-	//ÉtÉHÉìÉgÇÃÉTÉCÉYïœçX
-	SetFontSize(40);
 
-	DrawFormatString(90, 150, 0xffffff, "ÉåÉxÉã      %d", ms_levelUP.sl_all);
-	DrawFormatString(90, 250, 0xffffff, "èäéùÉRÉA  %d", m_core);
-	DrawFormatString(90, 300, 0xffffff, "ïKóvÉRÉA  %d", core.NeedCore(ms_levelUP.sl_all));
 
 	//ç∂ÇÃïœêîÇ™ÉåÉxÉãè„Ç∞ÇÈëOÇÃÉåÉxÉãÇ≈âEÇÃïœêîÇ™ÉåÉxÉãÇè„Ç∞ÇΩå„ÇÃÉåÉxÉã
-	DrawFormatString(290, 520, m_menuColor[0], "%d", ms_levelUP.sl_hp);
-	DrawFormatString(290, 615, m_menuColor[1], "%d", ms_levelUP.sl_stamina);
-	DrawFormatString(290, 710, m_menuColor[2], "%d", ms_levelUP.sl_muscle);
-	DrawFormatString(290, 805, m_menuColor[3], "%d", ms_levelUP.sl_skill);
+	DrawFormatStringToHandle(cStatusTextX, cStatusTextY1, m_menuColor[0], m_pFont->GetHandle(), "%d", ms_levelUP.sl_hp);
+	DrawFormatStringToHandle(cStatusTextX, cStatusTextY2, m_menuColor[1], m_pFont->GetHandle(), "%d", ms_levelUP.sl_stamina);
+	DrawFormatStringToHandle(cStatusTextX, cStatusTextY3, m_menuColor[2], m_pFont->GetHandle(), "%d", ms_levelUP.sl_muscle);
+	DrawFormatStringToHandle(cStatusTextX, cStatusTextY4, m_menuColor[3], m_pFont->GetHandle(), "%d", ms_levelUP.sl_skill);
 
 	//ÉåÉxÉãÇè„Ç∞ÇΩéûÇÃÉXÉeÅ[É^ÉXïœìÆ
-	DrawFormatString(600, 200, 0xffffff, "ç≈ëÂê∂ñΩóÕ :   %d", static_cast<int>(player.GetStatus().s_hp + ((ms_levelUP.sl_hp - 1) * 30.0f)));
-	DrawFormatString(600, 400, 0xffffff, "ç≈ëÂëÃóÕ   :   %d", static_cast<int>(player.GetStatus().s_stamina + ((ms_levelUP.sl_stamina - 1) * 10.0f)));
-	DrawFormatString(600, 600, 0xffffff, "çUåÇóÕ     :   %d", static_cast<int>(player.GetAttackDamage() + ((ms_levelUP.sl_muscle - 1) * player.GetAttackMuscle()) + ((ms_levelUP.sl_skill - 1) * player.GetAttackSkill())));
+	DrawFormatStringToHandle(cMaxStatusTextX, cMaxStatusTextY1, cLevelUpTextColor2, m_pFont->GetHandle(), "ç≈ëÂê∂ñΩóÕ :   %d", static_cast<int>(player.GetStatus().s_hp + ((ms_levelUP.sl_hp - 1) * 30.0f)));
+	DrawFormatStringToHandle(cMaxStatusTextX, cMaxStatusTextY2, cLevelUpTextColor2, m_pFont->GetHandle(), "ç≈ëÂëÃóÕ   :   %d", static_cast<int>(player.GetStatus().s_stamina + ((ms_levelUP.sl_stamina - 1) * 10.0f)));
+	DrawFormatStringToHandle(cMaxStatusTextX, cMaxStatusTextY3, cLevelUpTextColor2, m_pFont->GetHandle(), "çUåÇóÕ     :   %d", static_cast<int>(player.GetAttackDamage() + ((ms_levelUP.sl_muscle - 1) * player.GetAttackMuscle()) + ((ms_levelUP.sl_skill - 1) * player.GetAttackSkill())));
 
-	//ÉtÉHÉìÉgÇÃÉTÉCÉYïœçX
-	SetFontSize(60);
+	DrawStringToHandle(cDecisionTextX, cDecisionTextY, "åàíË", m_menuColor[4], m_pBigFont->GetHandle());
 
-	DrawString(750, 900, "åàíË", m_menuColor[4]);
-
-	//ÉtÉHÉìÉgÇÃÉTÉCÉYïœçX
-	SetFontSize(40);
 }
 
 /// <summary>
@@ -1936,8 +2007,8 @@ void Setting::EquipmentDecisionDraw(ItemManager& item)
 		ArmorDraw(m_armorList, m_armor);
 	}
 
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
-	DrawBox(m_selectObject.oneX, m_selectObject.oneY, m_selectObject.secondX, m_selectObject.secondY, 0x000fff, true);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, cDrawAlpha);
+	DrawBox(m_selectObject.oneX, m_selectObject.oneY, m_selectObject.secondX, m_selectObject.secondY, cBlueColor, true);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
@@ -1952,9 +2023,8 @@ void Setting::CaveatDraw()
 		//éûä‘íÜíçà”èëÇ´Çï\é¶Ç∑ÇÈ
 		if (cTime <= cTimeMax)
 		{
-			DrawGraph(600, 200, m_rest, true);
-
-			DrawStringToHandle(720, 350, "ì]ëóÇ≈Ç´Ç»Ç¢", 0xffffff, m_pFont->GetHandle());
+			DrawGraph(cCaveatGraphX, cCaveatGraphY, m_rest, true);
+			DrawStringToHandle(cCaveatTextX, cCaveatTextY, "ì]ëóÇ≈Ç´Ç»Ç¢", cCaveatTextColor, m_pFont->GetHandle());
 		}
 		else
 		{
@@ -2239,9 +2309,8 @@ void Setting::WeaponDraw(std::list<std::string> list, int right)
 	//ëféËëIë
 	if (right == 0)
 	{
-		DrawStringToHandle(400, 100, "ëféË", 0xffffff, m_pBigFont->GetHandle());
-
-		DrawStringToHandle(400, 300, "êMÇ∂ÇÈÇ◊Ç´ÇÕå»ÇÃóÕÇÃÇ›", 0xffffff, m_pFont->GetHandle());
+		DrawStringToHandle(cWeaponNameX, cWeaponNameY, "ëféË", cWeaponTextColor, m_pBigFont->GetHandle());
+		DrawStringToHandle(cWeaponDescX, cWeaponDescY1, "êMÇ∂ÇÈÇ◊Ç´ÇÕå»ÇÃóÕÇÃÇ›", cWeaponTextColor, m_pFont->GetHandle());
 	}
 	//ïêäÌëIë
 	else if (right >= 1)
@@ -2253,23 +2322,18 @@ void Setting::WeaponDraw(std::list<std::string> list, int right)
 				//çïÇ¢åïëIë
 				if (item == "BlackSword")
 				{
-					DrawStringToHandle(400, 100, "çïåï", 0xffffff, m_pBigFont->GetHandle());
-
-					DrawStringToHandle(400, 300, "ÇªÇÃéΩçïÇÃênÇÕÅAÇ‹ÇÈÇ≈ñÈÇªÇÃÇ‡ÇÃÇ\níbÇ¶è„Ç∞ÇΩÇ©ÇÃÇÊÇ§Ç…åıÇãzÇ¢çûÇ›ÅA\níæñŸÇÃíÜÇ…ó‚ÇΩÇ¢ãPÇ´ÇèhÇ∑", 0xffffff, m_pFont->GetHandle());
-					DrawStringToHandle(400, 450, "Ç±ÇÃåïÇêUÇÈÇ§é“ÇÕÅA\nênÇ…îÈÇﬂÇÁÇÍÇΩê[ï£Çî`Ç´çûÇﬁÇ±Ç∆Ç∆Ç»ÇÈ\nñ¿Ç¢Ç»Ç´é“Ç…ÇÕíâé¿Ç»ênÇ∆Ç»ÇËÅA\nêSóhÇÁÇÆé“Ç…ÇÕîjñ≈ÇÃâeÇóéÇ∆Ç∑", 0xffffff, m_pFont->GetHandle());
+					DrawStringToHandle(cWeaponNameX, cWeaponNameY, "çïåï", cWeaponTextColor, m_pBigFont->GetHandle());
+					DrawStringToHandle(cWeaponDescX, cWeaponDescY1, "ÇªÇÃéΩçïÇÃênÇÕÅAÇ‹ÇÈÇ≈ñÈÇªÇÃÇ‡ÇÃÇ\níbÇ¶è„Ç∞ÇΩÇ©ÇÃÇÊÇ§Ç…åıÇãzÇ¢çûÇ›ÅA\níæñŸÇÃíÜÇ…ó‚ÇΩÇ¢ãPÇ´ÇèhÇ∑", cWeaponTextColor, m_pFont->GetHandle());
+					DrawStringToHandle(cWeaponDescX, cWeaponDescY2, "Ç±ÇÃåïÇêUÇÈÇ§é“ÇÕÅA\nênÇ…îÈÇﬂÇÁÇÍÇΩê[ï£Çî`Ç´çûÇﬁÇ±Ç∆Ç∆Ç»ÇÈ\nñ¿Ç¢Ç»Ç´é“Ç…ÇÕíâé¿Ç»ênÇ∆Ç»ÇËÅA\nêSóhÇÁÇÆé“Ç…ÇÕîjñ≈ÇÃâeÇóéÇ∆Ç∑", cWeaponTextColor, m_pFont->GetHandle());
 				}
 				//ñÿÇÃÉoÉbÉgëIë
 				if (item == "Bat")
 				{
-					DrawStringToHandle(400, 100, "ñÿÇÃûûñ_", 0xffffff, m_pBigFont->GetHandle());
-
-					DrawStringToHandle(400, 300, "êlå`ÇÃàÍïîÇçÌÇËèoÇµÇΩûûñ_\näÙêÁÇ‡ÇÃêÌÇ¢ÇëœÇ¶î≤Ç¢ÇΩñÿîßÇÕ\nç|Ç…Ç‡óÚÇÁÇ ã≠ìxÇå÷ÇÈ", 0xffffff, m_pFont->GetHandle());
-					DrawStringToHandle(400, 450, "Ç©Ç¬ÇƒÇÃêlå`ÇÃãLâØÇèhÇµÅA\néùÇøéÂÇÃéËÇ…ìÈêıÇﬁÇªÇÃä¥êGÇÕÅA\nïsévãcÇ»à¿êSä¥Ç∑ÇÁó^Ç¶ÇÈ", 0xffffff, m_pFont->GetHandle());
-
+					DrawStringToHandle(cWeaponNameX, cWeaponNameY, "ñÿÇÃûûñ_", cWeaponTextColor, m_pBigFont->GetHandle());
+					DrawStringToHandle(cWeaponDescX, cWeaponDescY1, "êlå`ÇÃàÍïîÇçÌÇËèoÇµÇΩûûñ_\näÙêÁÇ‡ÇÃêÌÇ¢ÇëœÇ¶î≤Ç¢ÇΩñÿîßÇÕ\nç|Ç…Ç‡óÚÇÁÇ ã≠ìxÇå÷ÇÈ", cWeaponTextColor, m_pFont->GetHandle());
+					DrawStringToHandle(cWeaponDescX, cWeaponDescY2, "Ç©Ç¬ÇƒÇÃêlå`ÇÃãLâØÇèhÇµÅA\néùÇøéÂÇÃéËÇ…ìÈêıÇﬁÇªÇÃä¥êGÇÕÅA\nïsévãcÇ»à¿êSä¥Ç∑ÇÁó^Ç¶ÇÈ", cWeaponTextColor, m_pFont->GetHandle());
 				}
-
 			}
-
 			select++;
 		}
 	}
@@ -2325,7 +2389,6 @@ void Setting::ShieldUpdate(std::list<std::string> list, Shield& shield, int left
 					shield.Init();
 
 					m_pSelect->NowSelect = 8;
-
 				}
 			}
 
@@ -2346,9 +2409,8 @@ void Setting::ShieldDraw(std::list<std::string> list, int left)
 	//ëféËëIë
 	if (left == 0)
 	{
-		DrawStringToHandle(400, 100, "ëféË", 0xffffff, m_pBigFont->GetHandle());
-
-		DrawStringToHandle(400, 300, "êMÇ∂ÇÈÇ◊Ç´ÇÕå»ÇÃóÕÇÃÇ›", 0xffffff, m_pFont->GetHandle());
+		DrawStringToHandle(cShieldNameX, cShieldNameY, "ëféË", cShieldTextColor, m_pBigFont->GetHandle());
+		DrawStringToHandle(cShieldDescX, cShieldDescY1, "êMÇ∂ÇÈÇ◊Ç´ÇÕå»ÇÃóÕÇÃÇ›", cShieldTextColor, m_pFont->GetHandle());
 	}
 	//èÇëIë
 	else if (left >= 1)
@@ -2360,24 +2422,18 @@ void Setting::ShieldDraw(std::list<std::string> list, int left)
 				//òcÇÒÇæèÇëIë
 				if (item == "Distorted")
 				{
-					DrawStringToHandle(400, 100, "äıèÇ", 0xffffff, m_pBigFont->GetHandle());
-
-					DrawStringToHandle(400, 300, "ê_Ç÷ÇÃîΩãtÇééÇ›ÇΩé“Ç™ï˘Ç∞ÇΩÅAéÙÇÌÇÍÇµèÇ\nêGÇÍÇÈé“ÇÃêSÇ…î˜Ç©Ç»öëÇ´ÇóéÇ∆Ç∑Ç∆Ç¢Ç§\nênÇ‡ñÇÇ‡íeÇ≠Ç™ÅAéùÇøéÂÇÃç∞ÇêIÇﬁ", 0xffffff, m_pFont->GetHandle());
-					DrawStringToHandle(400, 450, "ëIÇ‘ÇÃÇ»ÇÁäoåÂÇπÇÊÇ±ÇÃèÇÇÕÅA\néùÇ¬é“ÇéÁÇÈÇÃÇ≈ÇÕÇ»Ç≠ÅAééÇ∑ÇÃÇæÇ©ÇÁ", 0xffffff, m_pFont->GetHandle());
-
+					DrawStringToHandle(cShieldNameX, cShieldNameY, "äıèÇ", cShieldTextColor, m_pBigFont->GetHandle());
+					DrawStringToHandle(cShieldDescX, cShieldDescY1, "ê_Ç÷ÇÃîΩãtÇééÇ›ÇΩé“Ç™ï˘Ç∞ÇΩÅAéÙÇÌÇÍÇµèÇ\nêGÇÍÇÈé“ÇÃêSÇ…î˜Ç©Ç»öëÇ´ÇóéÇ∆Ç∑Ç∆Ç¢Ç§\nênÇ‡ñÇÇ‡íeÇ≠Ç™ÅAéùÇøéÂÇÃç∞ÇêIÇﬁ", cShieldTextColor, m_pFont->GetHandle());
+					DrawStringToHandle(cShieldDescX, cShieldDescY2, "ëIÇ‘ÇÃÇ»ÇÁäoåÂÇπÇÊÇ±ÇÃèÇÇÕÅA\néùÇ¬é“ÇéÁÇÈÇÃÇ≈ÇÕÇ»Ç≠ÅAééÇ∑ÇÃÇæÇ©ÇÁ", cShieldTextColor, m_pFont->GetHandle());
 				}
 				//ñÿÇÃèÇëIë
 				if (item == "WoodShield")
 				{
-					DrawStringToHandle(400, 100, "ñÿÇÃèÇ", 0xffffff, m_pBigFont->GetHandle());
-
-					DrawStringToHandle(400, 300, "êlå`ÇÃàÍïîÇçÌÇËèoÇµÇΩèÇ\nÇªÇÃñÿñ⁄Ç…ÇÕÇ©Ç¬ÇƒÇÃóíÇ∆êÌâŒÇ\nëœÇ¶î≤Ç¢ÇΩå÷ÇËÇ™çèÇ‹ÇÍÇƒÇ¢ÇÈ", 0xffffff, m_pFont->GetHandle());
-					DrawStringToHandle(400, 450, "åïÇÇ‡íeÇ≠åòòSÇ≥Ç∆ÅA\nÇµÇ»Ç‚Ç©Ç…è’åÇÇéÛÇØó¨Ç∑è_ìÓÇ≥ÇåìÇÀîıÇ¶ÅA\néùÇøéÂÇê√Ç©Ç…ÅAÇµÇ©ÇµämÇ©Ç…éÁÇËë±ÇØÇÈ", 0xffffff, m_pFont->GetHandle());
-
+					DrawStringToHandle(cShieldNameX, cShieldNameY, "ñÿÇÃèÇ", cShieldTextColor, m_pBigFont->GetHandle());
+					DrawStringToHandle(cShieldDescX, cShieldDescY1, "êlå`ÇÃàÍïîÇçÌÇËèoÇµÇΩèÇ\nÇªÇÃñÿñ⁄Ç…ÇÕÇ©Ç¬ÇƒÇÃóíÇ∆êÌâŒÇ\nëœÇ¶î≤Ç¢ÇΩå÷ÇËÇ™çèÇ‹ÇÍÇƒÇ¢ÇÈ", cShieldTextColor, m_pFont->GetHandle());
+					DrawStringToHandle(cShieldDescX, cShieldDescY2, "åïÇÇ‡íeÇ≠åòòSÇ≥Ç∆ÅA\nÇµÇ»Ç‚Ç©Ç…è’åÇÇéÛÇØó¨Ç∑è_ìÓÇ≥ÇåìÇÀîıÇ¶ÅA\néùÇøéÂÇê√Ç©Ç…ÅAÇµÇ©ÇµämÇ©Ç…éÁÇËë±ÇØÇÈ", cShieldTextColor, m_pFont->GetHandle());
 				}
-
 			}
-
 			select++;
 		}
 	}
@@ -2413,7 +2469,6 @@ void Setting::ArmorUpdate(std::list<std::string> list, Armor& armor, int body)
 					armor.Init();
 
 					m_pSelect->NowSelect = 9;
-
 				}
 			}
 
@@ -2434,9 +2489,8 @@ void Setting::ArmorDraw(std::list<std::string> list, int body)
 	//óáëÃëIë
 	if (body == 0)
 	{
-		DrawStringToHandle(400, 100, "óáëÃ", 0xffffff, m_pBigFont->GetHandle());
-
-		DrawStringToHandle(400, 300, "êMÇ∂ÇÈÇ◊Ç´ÇÕå»ÇÃóÕÇÃÇ›", 0xffffff, m_pFont->GetHandle());
+		DrawStringToHandle(cArmorNameX, cArmorNameY, "óáëÃ", cArmorTextColor, m_pBigFont->GetHandle());
+		DrawStringToHandle(cArmorDescX, cArmorDescY1, "êMÇ∂ÇÈÇ◊Ç´ÇÕå»ÇÃóÕÇÃÇ›", cArmorTextColor, m_pFont->GetHandle());
 	}
 	//ñhãÔëIë
 	else if (body >= 1)
@@ -2445,18 +2499,14 @@ void Setting::ArmorDraw(std::list<std::string> list, int body)
 		{
 			if (body == select)
 			{
-				//òcÇÒÇæèÇëIë
+				//ïÅí ÇÃäZëIë
 				if (item == "ArmorNormal")
 				{
-					DrawStringToHandle(400, 100, "ÉmÉNÉ^Å[ÉjÉXï∫ÇÃäZ", 0xffffff, m_pBigFont->GetHandle());
-
-					DrawStringToHandle(400, 300, "ÉmÉNÉ^Å[ÉjÉXèÈÇéÁåÏÇ∑ÇÈï∫ÇΩÇøÇÃäZ\nê‚ñ]ÇãzÇ¢çûÇ›ÅAê√é‚ÇìZÇ§", 0xffffff, m_pFont->GetHandle());
-					DrawStringToHandle(400, 400, "íbÇ¶è„Ç∞ÇÁÇÍÇΩç|ÇÕåïÇíeÇ´ÅAñÇÇãëÇﬁ\nñÈÇ™èIÇÌÇÈÇ‹Ç≈êÌÇ¢ë±ÇØÇÈ\nÇªÇÍÇ™ÉmÉNÉ^Å[ÉjÉXï∫ÇÃèhñΩÇ≈Ç†ÇÈ", 0xffffff, m_pFont->GetHandle());
-
+					DrawStringToHandle(cArmorNameX, cArmorNameY, "ÉmÉNÉ^Å[ÉjÉXï∫ÇÃäZ", cArmorTextColor, m_pBigFont->GetHandle());
+					DrawStringToHandle(cArmorDescX, cArmorDescY1, "ÉmÉNÉ^Å[ÉjÉXèÈÇéÁåÏÇ∑ÇÈï∫ÇΩÇøÇÃäZ\nê‚ñ]ÇãzÇ¢çûÇ›ÅAê√é‚ÇìZÇ§", cArmorTextColor, m_pFont->GetHandle());
+					DrawStringToHandle(cArmorDescX, cArmorDescY2, "íbÇ¶è„Ç∞ÇÁÇÍÇΩç|ÇÕåïÇíeÇ´ÅAñÇÇãëÇﬁ\nñÈÇ™èIÇÌÇÈÇ‹Ç≈êÌÇ¢ë±ÇØÇÈ\nÇªÇÍÇ™ÉmÉNÉ^Å[ÉjÉXï∫ÇÃèhñΩÇ≈Ç†ÇÈ", cArmorTextColor, m_pFont->GetHandle());
 				}
-
 			}
-
 			select++;
 		}
 	}
