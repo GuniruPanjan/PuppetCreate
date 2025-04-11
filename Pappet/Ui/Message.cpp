@@ -8,6 +8,59 @@ namespace
 {
 	//シングルトン
 	auto& cEffect = EffectManager::GetInstance();
+
+	//定数の定義
+	const int cEffectTimeThreshold = 50;
+	const int cBackgroundX = 130;
+	const int cBackgroundY = 100;
+	const int cTextColor = 0xffffff;
+	const int cFontSize = 50;
+	const int cLStickX = 200;
+	const int cLStickY = 150;
+	const int cAButtonX = 180;
+	const int cAButtonY = 340;
+	const int cStaminaBarX = 370;
+	const int cStaminaBarY = 660;
+	const int cRStickX = 180;
+	const int cRStickY = 270;
+	const int cRBButtonX = 180;
+	const int cRBButtonY = 200;
+	const int cRTButtonX = 180;
+	const int cRTButtonY = 450;
+	const int cYButtonX = 180;
+	const int cYButtonY = 200;
+	const int cStartButtonX = 180;
+	const int cStartButtonY = 450;
+	const int cLBButtonX = 180;
+	const int cLBButtonY = 300;
+	const int cXButtonX = 200;
+	const int cXButtonY = 250;
+	const int cItemX = 200;
+	const int cItemY = 500;
+	const int cBearTextX = 450;
+	const int cBearTextY = 400;
+	const int cDrawStringX1 = 400;
+	const int cDrawStringY1 = 150;
+	const int cDrawStringY2 = 250;
+	const int cDrawStringX2 = 500;
+	const int cDrawStringY3 = 350;
+	const int cDrawStringY4 = 450;
+	const int cDrawStringY5 = 550;
+	const int cDrawStringX3 = 700;
+	const int cDrawStringY6 = 650;
+	const int cDrawStringY7 = 180;
+	const int cDrawStringX4 = 350;
+	const int cDrawStringY8 = 600;
+	const int cDrawStringY9 = 400;
+	const int cDrawStringX5 = 250;
+	const int cDrawStringX6 = 600;
+	const int cDrawStringY10 = 200;
+	const int cDrawStringY11 = 270;
+	const int cDrawStringY12 = 300;
+	const int cDrawStringY13 = 480;
+	const int cDrawStringY14 = 580;
+	const int cDrawStringY15 = 320;
+	const int cDrawStringY16 = 520;
 }
 
 Message::Message() :
@@ -57,7 +110,7 @@ void Message::Init(float posX, float posY, float posZ, int official, int one, in
 	m_two = two;
 	m_three = three;
 
-	m_pFont->FontInit(50);
+	m_pFont->FontInit(cFontSize);
 }
 
 void Message::Update(Player& player)
@@ -86,7 +139,7 @@ void Message::Update(Player& player)
 
 void Message::Draw()
 {
-	if (m_effectTime >= 50)
+	if (m_effectTime >= cEffectTimeThreshold)
 	{
 		cEffect.EffectCreate("Message", m_centerPos.ConversionToVECTOR());
 
@@ -107,124 +160,124 @@ void Message::DrawString()
 		if (m_official == 1)
 		{
 			//背景描画
-			DrawGraph(130, 100, m_messageUI, false);
+			DrawGraph(cBackgroundX, cBackgroundY, m_messageUI, false);
 
-			DrawStringToHandle(400, 150, "目の前の大釜では特殊な休息ができ", 0xffffff, m_pFont->GetHandle());
-			DrawStringToHandle(400, 250, "右下にある取得したコアを使って", 0xffffff, m_pFont->GetHandle());
-			DrawStringToHandle(500, 350, "レベルを上げることが可能", 0xffffff, m_pFont->GetHandle());
-			DrawStringToHandle(500, 450, "レベルを上げ各地に居座る", 0xffffff, m_pFont->GetHandle());
-			DrawStringToHandle(400, 550, "強大なコアを持った人形達を倒し", 0xffffff, m_pFont->GetHandle());
-			DrawStringToHandle(700, 650, "頂点に立て", 0xffffff, m_pFont->GetHandle());
+			DrawStringToHandle(cDrawStringX1, cDrawStringY1, "目の前の大釜では特殊な休息ができ", cTextColor, m_pFont->GetHandle());
+			DrawStringToHandle(cDrawStringX1, cDrawStringY2, "右下にある取得したコアを使って", cTextColor, m_pFont->GetHandle());
+			DrawStringToHandle(cDrawStringX2, cDrawStringY3, "レベルを上げることが可能", cTextColor, m_pFont->GetHandle());
+			DrawStringToHandle(cDrawStringX2, cDrawStringY4, "レベルを上げ各地に居座る", cTextColor, m_pFont->GetHandle());
+			DrawStringToHandle(cDrawStringX1, cDrawStringY5, "強大なコアを持った人形達を倒し", cTextColor, m_pFont->GetHandle());
+			DrawStringToHandle(cDrawStringX3, cDrawStringY6, "頂点に立て", cTextColor, m_pFont->GetHandle());
 		}
 		//移動チュートリアル
 		else if (m_official == 2)
 		{
 			//背景描画
-			DrawGraph(130, 100, m_messageUI, false);
+			DrawGraph(cBackgroundX, cBackgroundY, m_messageUI, false);
 
 			//左スティック描画
-			DrawGraph(200, 150, m_lStick, true);
-			DrawStringToHandle(400, 180, "Lスティック　：　移動", 0xffffff, m_pFont->GetHandle());
+			DrawGraph(cLStickX, cLStickY, m_lStick, true);
+			DrawStringToHandle(cDrawStringX1, cDrawStringY7, "Lスティック　：　移動", cTextColor, m_pFont->GetHandle());
 			
 			//Bボタン描画
-			DrawGraph(180, 340, m_aButton, true);
-			DrawStringToHandle(400, 350, "Aボタン単押し　：　回避", 0xffffff, m_pFont->GetHandle());
-			DrawStringToHandle(400, 450, "Aボタン長押し　：　走る", 0xffffff, m_pFont->GetHandle());
+			DrawGraph(cAButtonX, cAButtonY, m_aButton, true);
+			DrawStringToHandle(cDrawStringX1, cDrawStringY3, "Aボタン単押し　：　回避", cTextColor, m_pFont->GetHandle());
+			DrawStringToHandle(cDrawStringX1, cDrawStringY4, "Aボタン長押し　：　走る", cTextColor, m_pFont->GetHandle());
 
 			//スタミナ描画
-			DrawGraph(370, 660, m_staminaBar, true);
-			DrawStringToHandle(350, 600, "回避と走る行動にはスタミナを消費する", 0xffffff, m_pFont->GetHandle());
+			DrawGraph(cStaminaBarX, cStaminaBarY, m_staminaBar, true);
+			DrawStringToHandle(cDrawStringX4, cDrawStringY8, "回避と走る行動にはスタミナを消費する", cTextColor, m_pFont->GetHandle());
 		}
 		//カメラチュートリアル
 		else if (m_official == 3)
 		{
 			//背景描画
-			DrawGraph(130, 100, m_messageUI, false);
+			DrawGraph(cBackgroundX, cBackgroundY, m_messageUI, false);
 
 			//右スティック描画
-			DrawGraph(180, 270, m_rStick, true);
-			DrawStringToHandle(400, 250, "Rスティック　：　カメラ移動", 0xffffff, m_pFont->GetHandle());
-			DrawStringToHandle(400, 400, "Rスティック押し込み　：　ターゲット集中", 0xffffff, m_pFont->GetHandle());
+			DrawGraph(cRStickX, cRStickY, m_rStick, true);
+			DrawStringToHandle(cDrawStringX1, cDrawStringY2, "Rスティック　：　カメラ移動", cTextColor, m_pFont->GetHandle());
+			DrawStringToHandle(cDrawStringX1, cDrawStringY9, "Rスティック押し込み　：　ターゲット集中", cTextColor, m_pFont->GetHandle());
 
-			DrawStringToHandle(250, 600, "ターゲット集中の間にRスティックを動かすと\n　　　　　　　ターゲット変更", 0xffffff, m_pFont->GetHandle());
+			DrawStringToHandle(cDrawStringX5, cDrawStringY8, "ターゲット集中の間にRスティックを動かすと\n　　　　　　　ターゲット変更", cTextColor, m_pFont->GetHandle());
 
 		}
 		//攻撃チュートリアル
 		else if (m_official == 4)
 		{
 			//背景描画
-			DrawGraph(130, 100, m_messageUI, false);
+			DrawGraph(cBackgroundX, cBackgroundY, m_messageUI, false);
 
 			//RBボタン描画
-			DrawGraph(180, 200, m_rbButton, true);
-			DrawStringToHandle(600, 200, "RBボタン　：　攻撃", 0xffffff, m_pFont->GetHandle());
-			DrawStringToHandle(500, 270, "攻撃中にもう一度攻撃を押すと\n　　最大３回コンボできる", 0xffffff, m_pFont->GetHandle());
+			DrawGraph(cRBButtonX, cRBButtonY, m_rbButton, true);
+			DrawStringToHandle(cDrawStringX6, cDrawStringY10, "RBボタン　：　攻撃", cTextColor, m_pFont->GetHandle());
+			DrawStringToHandle(cDrawStringX2, cDrawStringY11, "攻撃中にもう一度攻撃を押すと\n　　最大３回コンボできる", cTextColor, m_pFont->GetHandle());
 
 			//RTボタン描画
-			DrawGraph(180, 450, m_rtButton, true);
-			DrawStringToHandle(600, 450, "RTボタン　：　強攻撃", 0xffffff, m_pFont->GetHandle());
+			DrawGraph(cRTButtonX, cRTButtonY, m_rtButton, true);
+			DrawStringToHandle(cDrawStringX6, cDrawStringY4, "RTボタン　：　強攻撃", cTextColor, m_pFont->GetHandle());
 
 			//スタミナ描画
-			DrawGraph(370, 660, m_staminaBar, true);
-			DrawStringToHandle(400, 600, "攻撃行動ではスタミナを消費する", 0xffffff, m_pFont->GetHandle());
+			DrawGraph(cStaminaBarX, cStaminaBarY, m_staminaBar, true);
+			DrawStringToHandle(cDrawStringX1, cDrawStringY8, "攻撃行動ではスタミナを消費する", cTextColor, m_pFont->GetHandle());
 		}
 		//アイテム関係チュートリアル
 		else if (m_official == 5)
 		{
 			//背景描画
-			DrawGraph(130, 100, m_messageUI, false);
+			DrawGraph(cBackgroundX, cBackgroundY, m_messageUI, false);
 
 			//Yボタン描画
-			DrawGraph(180, 200, m_yButton, true);
-			DrawStringToHandle(400, 200, "マップで光る物はアイテムとして入手できる", 0xffffff, m_pFont->GetHandle());
-			DrawStringToHandle(600, 300, "Yボタン　：　アイテム入手", 0xffffff, m_pFont->GetHandle());
+			DrawGraph(cYButtonX, cYButtonY, m_yButton, true);
+			DrawStringToHandle(cDrawStringX1, cDrawStringY10, "マップで光る物はアイテムとして入手できる", cTextColor, m_pFont->GetHandle());
+			DrawStringToHandle(cDrawStringX6, cDrawStringY12, "Yボタン　：　アイテム入手", cTextColor, m_pFont->GetHandle());
 
 			//STARTボタン描画
-			DrawGraph(180, 450, m_startButton, true);
-			DrawStringToHandle(500, 480, "STARTボタン　：　メニューを開く", 0xffffff, m_pFont->GetHandle());
-			DrawStringToHandle(400, 580, "メニューでは装備の変更やタイトルに戻れる", 0xffffff, m_pFont->GetHandle());
+			DrawGraph(cStartButtonX, cStartButtonY, m_startButton, true);
+			DrawStringToHandle(cDrawStringX2, cDrawStringY13, "STARTボタン　：　メニューを開く", cTextColor, m_pFont->GetHandle());
+			DrawStringToHandle(cDrawStringX1, cDrawStringY14, "メニューでは装備の変更やタイトルに戻れる", cTextColor, m_pFont->GetHandle());
 
 		}
 		//防御チュートリアル
 		else if (m_official == 6)
 		{
 			//背景描画
-			DrawGraph(130, 100, m_messageUI, false);
+			DrawGraph(cBackgroundX, cBackgroundY, m_messageUI, false);
 
 			//LBボタン描画
-			DrawGraph(180, 300, m_lbButton, true);
-			DrawStringToHandle(400, 150, "盾を装備しているときは\n敵の攻撃を防ぐことができる", 0xffffff, m_pFont->GetHandle());
-			DrawStringToHandle(600, 320, "LBボタン　：　ガード", 0xffffff, m_pFont->GetHandle());
+			DrawGraph(cLBButtonX, cLBButtonY, m_lbButton, true);
+			DrawStringToHandle(cDrawStringX1, cDrawStringY1, "盾を装備しているときは\n敵の攻撃を防ぐことができる", cTextColor, m_pFont->GetHandle());
+			DrawStringToHandle(cDrawStringX6, cDrawStringY15, "LBボタン　：　ガード", cTextColor, m_pFont->GetHandle());
 
 			//スタミナ描画
-			DrawGraph(370, 660, m_staminaBar, true);
-			DrawStringToHandle(400, 550, "防御行動ではスタミナを消費する\n防御中はスタミナの回復が遅くなる", 0xffffff, m_pFont->GetHandle());
+			DrawGraph(cStaminaBarX, cStaminaBarY, m_staminaBar, true);
+			DrawStringToHandle(cDrawStringX1, cDrawStringY5, "防御行動ではスタミナを消費する\n防御中はスタミナの回復が遅くなる", cTextColor, m_pFont->GetHandle());
 		}
 		//休息チュートリアル
 		else if (m_official == 7)
 		{
 			//背景描画
-			DrawGraph(130, 100, m_messageUI, false);
+			DrawGraph(cBackgroundX, cBackgroundY, m_messageUI, false);
 
 			//Yボタン描画
-			DrawGraph(200, 250, m_yButton, true);
-			DrawStringToHandle(400, 150, "　　棺桶のようなオブジェクトは\n　　　　　　　休息が可能、\n休息をするとリスポーン地点を固定する", 0xffffff, m_pFont->GetHandle());
-			DrawStringToHandle(600, 320, "Yボタン　：　休息", 0xffffff, m_pFont->GetHandle());
+			DrawGraph(cXButtonX, cXButtonY, m_yButton, true);
+			DrawStringToHandle(cDrawStringX1, cDrawStringY1, "　　棺桶のようなオブジェクトは\n　　　　　　　休息が可能、\n休息をするとリスポーン地点を固定する", cTextColor, m_pFont->GetHandle());
+			DrawStringToHandle(cDrawStringX6, cDrawStringY15, "Yボタン　：　休息", cTextColor, m_pFont->GetHandle());
 
 			//アイテム描画
-			DrawGraph(200, 500, m_xButton, true);
-			DrawStringToHandle(600, 520, "Xボタン　：　アイテム使用", 0xffffff, m_pFont->GetHandle());
-			DrawStringToHandle(600, 600, "アイテムは使用すると消費する", 0xffffff, m_pFont->GetHandle());
+			DrawGraph(cItemX, cItemY, m_xButton, true);
+			DrawStringToHandle(cDrawStringX6, cDrawStringY16, "Xボタン　：　アイテム使用", cTextColor, m_pFont->GetHandle());
+			DrawStringToHandle(cDrawStringX6, cDrawStringY8, "アイテムは使用すると消費する", cTextColor, m_pFont->GetHandle());
 
 		}
 		//熊のエリアに誘導する
 		else if(m_official == 8)
 		{
 			//背景描画
-			DrawGraph(130, 100, m_messageUI, false);
+			DrawGraph(cBackgroundX, cBackgroundY, m_messageUI, false);
 
 			//熊の説明文
-			DrawStringToHandle(450, 400, "熊の傀儡人形この先の墓場に眠る\n　　　　　HARIBO", 0xffffff, m_pFont->GetHandle());
+			DrawStringToHandle(cBearTextX, cBearTextY, "熊の傀儡人形この先の墓場に眠る\n　　　　　HARIBO", cTextColor, m_pFont->GetHandle());
 		}
 
 		

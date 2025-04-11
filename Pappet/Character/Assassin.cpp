@@ -100,6 +100,10 @@ namespace
 	constexpr float cAttackFrame15 = 18.0f;
 	constexpr float cAttackFrame16 = 20.0f;
 
+	// ランダムアクションの範囲
+	constexpr int cRandomActionMax = 6;
+	constexpr int cActionFixed = 5;
+
 }
 
 /// <summary>
@@ -985,13 +989,13 @@ void Assassin::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se,
 			// プレイヤーが見えている時
 			if (cPlayerLook)
 			{
-				m_randomAction = GetRand(6);
+				m_randomAction = GetRand(cRandomActionMax);
 			}
 			// プレイヤーが見えていない時
 			else
 			{
 				// 回避するようにする
-				m_randomAction = 5;
+				m_randomAction = cActionFixed;
 			}
 		}
 
@@ -1402,13 +1406,13 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 		// プレイヤーが見えている時
 		if (cPlayerLook)
 		{
-			m_randomAction = GetRand(6);
+			m_randomAction = GetRand(cRandomActionMax);
 		}
 		// プレイヤーが見えていない時
 		else
 		{
 			// 回避するようにする
-			m_randomAction = 5;
+			m_randomAction = cActionFixed;
 		}
 	}
 

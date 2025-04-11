@@ -3,8 +3,6 @@
 #include "Manager/EffectManager.h"
 #include "Manager/SEManager.h"
 
-//アタックのCollidableが登録されていない
-
 namespace
 {
 	//キャラクター名
@@ -32,6 +30,19 @@ namespace
 
 	//シングルトン
 	EffectManager& cEffect = EffectManager::GetInstance();
+
+	// アニメーションフレーム
+	constexpr float cAttackStartFrame = 5.0f;
+	constexpr float cAttackHitFrame = 22.0f;
+	constexpr float cAttackEndFrame = 35.0f;
+	constexpr float cDeathSoundFrame = 50.0f;
+
+	// スピード
+	constexpr float cWalkSpeed = 0.01f;
+	constexpr float cRunSpeed = 0.3f;
+
+	// ランダムアクションの範囲
+	constexpr int cRandomActionMax = 2;
 }
 
 /// <summary>
@@ -110,8 +121,6 @@ void Immortal::Init(float posX, float posY, float posZ, std::shared_ptr<MyLibrar
 
 	//最大HPを取得
 	m_maxHP = m_status.s_hp;
-
-	//m_status.s_hp = 1.0f;
 
 	//死をfalseにする
 	m_anim.s_isDead = false;
@@ -292,7 +301,7 @@ void Immortal::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 
 		Death();
 
-		if (m_nowFrame == 50)
+		if (m_nowFrame == cDeathSoundFrame)
 		{
 			//死亡SE再生
 			PlaySoundMem(se.GetDiedSE(), DX_PLAYTYPE_BACK, true);
@@ -335,7 +344,7 @@ void Immortal::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 				//歩くアニメーション
 				m_anim.s_moveflag = true;
 
-				m_status.s_speed = 0.01f;
+				m_status.s_speed = cWalkSpeed;
 
 				m_move = VScale(m_difPlayer, m_status.s_speed);
 			}
@@ -343,7 +352,7 @@ void Immortal::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 		//近くに行った時の行動
 		else if (m_difPSize <= cNear)
 		{
-			m_status.s_speed = 0.3f;
+			m_status.s_speed = cRunSpeed;
 
 			m_move = VNorm(m_difPlayer);
 
@@ -383,20 +392,20 @@ void Immortal::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 				AttackUpdate("Attack1", 5);
 				
 
-				if (m_nowFrame == 5)
+				if (m_nowFrame == cAttackStartFrame)
 				{
 					InitAttack(cAttackRadius);
 					InitAttackDamage(m_status.s_attack);
 				}
 				//アニメーションフレーム中に攻撃判定を出す
-				if (m_nowFrame == 22)
+				if (m_nowFrame == cAttackHitFrame)
 				{
 					//攻撃SE再生
 					PlaySoundMem(se.GetAttackSE(), DX_PLAYTYPE_BACK, true);
 
 					InitAttackUpdate(m_status.s_attack);
 				}
-				else if (m_nowFrame >= 35.0f)
+				else if (m_nowFrame >= cAttackEndFrame)
 				{
 					InitAttackDamage(0.0f);
 					//判定をリセット
@@ -410,7 +419,7 @@ void Immortal::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 		//アニメーションが終わる度にランダムな行動を行う
 		if (m_isAnimationFinish)
 		{
-			m_randomAction = GetRand(2);
+			m_randomAction = GetRand(cRandomActionMax);
 		}
 
 		//移動方向
