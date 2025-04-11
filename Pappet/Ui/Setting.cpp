@@ -878,11 +878,12 @@ void Setting::RestUpdate(Player& player, CoreManager& core, bool rest, SEManager
 				cWaitTime = 0;
 			}
 
-			//Aƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚ç‹x‘§‚ð‚â‚ß‚é
+			//Bƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚ç‹x‘§‚ð‚â‚ß‚é
 			if (m_xpad.Buttons[13] == 1)
 			{
 				PlaySoundMem(se.GetButtonSE(), DX_PLAYTYPE_BACK, true);
 
+				player.SetRoll(0);
 				player.SetNotRest(false);
 			}
 		}
@@ -949,11 +950,12 @@ void Setting::RestUpdate(Player& player, CoreManager& core, bool rest, SEManager
 				cWaitTime = 0;
 			}
 
-			//Aƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚ç‹x‘§‚ð‚â‚ß‚é
+			//Bƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚ç‹x‘§‚ð‚â‚ß‚é
 			if (m_xpad.Buttons[13] == 1)
 			{
 				PlaySoundMem(se.GetButtonSE(), DX_PLAYTYPE_BACK, true);
 
+				player.SetRoll(0);
 				player.SetNotRest(false);
 			}
 

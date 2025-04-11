@@ -90,7 +90,7 @@ void Message::Init(float posX, float posY, float posZ, int official, int one, in
 	m_messageUI = MyLoadGraph("Data/UI/Operation.png", 3, 3);
 	m_lStick = MyLoadGraph("Data/UI/LStick.png", 1, 1);
 	m_rStick = MyLoadGraph("Data/UI/RStick.png", 1, 1);
-	m_aButton = MyLoadGraph("Data/UI/AButton.png", 1, 1);
+	m_bButton = MyLoadGraph("Data/UI/BButton.png", 1, 1);
 	m_yButton = MyLoadGraph("Data/UI/YButton.png", 1, 1);
 	m_xButton = MyLoadGraph("Data/UI/XButton.png", 1, 1);
 	m_staminaBar = MyLoadGraph("Data/UI/StaminaBar.png", 1, 2);
@@ -180,9 +180,9 @@ void Message::DrawString()
 			DrawStringToHandle(cDrawStringX1, cDrawStringY7, "Lスティック　：　移動", cTextColor, m_pFont->GetHandle());
 			
 			//Bボタン描画
-			DrawGraph(cAButtonX, cAButtonY, m_aButton, true);
-			DrawStringToHandle(cDrawStringX1, cDrawStringY3, "Aボタン単押し　：　回避", cTextColor, m_pFont->GetHandle());
-			DrawStringToHandle(cDrawStringX1, cDrawStringY4, "Aボタン長押し　：　走る", cTextColor, m_pFont->GetHandle());
+			DrawGraph(cAButtonX, cAButtonY, m_bButton, true);
+			DrawStringToHandle(cDrawStringX1, cDrawStringY3, "Bボタン単押し　：　回避", cTextColor, m_pFont->GetHandle());
+			DrawStringToHandle(cDrawStringX1, cDrawStringY4, "Bボタン長押し　：　走る", cTextColor, m_pFont->GetHandle());
 
 			//スタミナ描画
 			DrawGraph(cStaminaBarX, cStaminaBarY, m_staminaBar, true);

@@ -290,6 +290,8 @@ void UI::Draw(Player& player, EnemyManager& enemy, Setting& eq, MapManager& map,
 			item.m_uiItem.u_Bat = 0;
 			item.m_uiItem.u_WoodShield = 0;
 
+			player.SetRoll(0);
+
 			cItemTakingUi = false;
 		}
 	}
@@ -300,6 +302,8 @@ void UI::Draw(Player& player, EnemyManager& enemy, Setting& eq, MapManager& map,
 		DrawGraph(cActionUiX + cActionUiXOffset, cButtonY, m_bButton, true);
 
 		DrawStringToHandle(cOkTextX, cOkTextY, "O K", cTextColor, m_pFont->GetHandle());
+
+		player.SetRoll(0);
 	}
 
 	//ƒRƒA”•`‰æ

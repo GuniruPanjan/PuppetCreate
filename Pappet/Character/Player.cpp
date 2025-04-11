@@ -786,7 +786,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 
 	//判定の更新
 	m_pSearch->Update(centerPos);
-	//m_pAttack->Update(attackPos);
 	m_pLigAttack->Update(ligAttackPos1, ligAttackPos2);
 	m_pStrengthAttack->Update(StrengthAttackPos);
 	m_pShield->Update(m_shieldPos, m_shieldSize);
@@ -796,7 +795,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	if (m_anim.s_hit)
 	{
 		//攻撃判定リセット
-		//m_pAttack->CollisionEnd();
 		m_pLigAttack->CollisionEnd();
 	}
 
@@ -1172,9 +1170,9 @@ void Player::Action(VECTOR restpos, Tool& tool, Shield& shield, SEManager& se, b
 	}
 	
 
-	//Aボタンが押されたらダッシュか回避
+	//Bボタンが押されたらダッシュか回避
 	//スタミナがあれば
-	if (m_xpad.Buttons[12] == 1 && !m_anim.s_attack && !m_staminaBreak)
+	if (m_xpad.Buttons[13] == 1 && !m_anim.s_attack && !m_staminaBreak)
 	{
 		//ダッシュ
 		if (cAbutton > 30)
@@ -1220,6 +1218,12 @@ void Player::Action(VECTOR restpos, Tool& tool, Shield& shield, SEManager& se, b
 		
 
 		cAbutton = 0;
+	}
+
+	//Aボタンを押したらジャンプ
+	if (m_xpad.Buttons[12] == 1 && m_status.s_stamina >= 20.0f)
+	{
+
 	}
 
 	//攻撃に必要なスタミナがある場合
