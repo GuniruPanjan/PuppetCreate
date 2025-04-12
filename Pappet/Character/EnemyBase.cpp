@@ -341,10 +341,10 @@ void EnemyBase::LoadDataInit(std::string name)
 /// <param name="isUseGravity">èdóÕÇó^Ç¶ÇÈÇ©ó^Ç¶Ç»Ç¢Ç©</param>
 void EnemyBase::InitRigidbody(float posX, float posY, float posZ, bool isUseGravity)
 {
-	rigidbody.Init(isUseGravity);
-	rigidbody.SetPos(MyLibrary::LibVec3(posX, posY, posZ));
-	rigidbody.SetNextPos(rigidbody.GetPos());
-	m_collisionPos = rigidbody.GetPos();
+	rigidbody->Init(isUseGravity);
+	rigidbody->SetPos(MyLibrary::LibVec3(posX, posY, posZ));
+	rigidbody->SetNextPos(rigidbody->GetPos());
+	m_collisionPos = rigidbody->GetPos();
 }
 
 /// <summary>
@@ -354,7 +354,7 @@ void EnemyBase::InitRigidbody(float posX, float posY, float posZ, bool isUseGrav
 /// <param name="modelSize">ÉÇÉfÉãÇÃägëÂó¶</param>
 void EnemyBase::CalculationCenterPos(float modeldefaultSize, float modelSize)
 {
-	m_centerPos = rigidbody.GetPos();
+	m_centerPos = rigidbody->GetPos();
 	m_centerPos.y -= (modeldefaultSize * modelSize) / 2;
 }
 
@@ -486,9 +486,9 @@ void EnemyBase::AngleUpdate(MyLibrary::LibVec3 playerPos)
 /// </summary>
 void EnemyBase::MoveUpdate()
 {
-	MyLibrary::LibVec3 prevVelocity = rigidbody.GetVelocity();
+	MyLibrary::LibVec3 prevVelocity = rigidbody->GetVelocity();
 	MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(m_moveVec.x, prevVelocity.y, m_moveVec.z);
-	rigidbody.SetVelocity(newVelocity);
+	rigidbody->SetVelocity(newVelocity);
 }
 
 /// <summary>
@@ -497,9 +497,9 @@ void EnemyBase::MoveUpdate()
 /// <param name="move"></param>
 void EnemyBase::MoveAnimUpdate(VECTOR move)
 {
-	MyLibrary::LibVec3 prevVelocity = rigidbody.GetVelocity();
+	MyLibrary::LibVec3 prevVelocity = rigidbody->GetVelocity();
 	MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(-move.x, prevVelocity.y, -move.z);
-	rigidbody.SetVelocity(newVelocity);
+	rigidbody->SetVelocity(newVelocity);
 }
 
 /// <summary>
@@ -692,8 +692,8 @@ void EnemyBase::UpdateAnimationBlend()
 /// <param name="offset"></param>
 void EnemyBase::SetDrawModelPos(float posY)
 {
-	rigidbody.SetPos(rigidbody.GetNextPos());
-	m_collisionPos = rigidbody.GetPos();
+	rigidbody->SetPos(rigidbody->GetNextPos());
+	m_collisionPos = rigidbody->GetPos();
 	SetModelPos();
 	MV1SetPosition(m_modelHandle, VSub(m_modelPos.ConversionToVECTOR(), VGet(0.0f, posY, 0.0f)));
 }

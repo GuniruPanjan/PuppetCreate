@@ -8,6 +8,7 @@ namespace
 
 CharacterBase::CharacterBase(Priority priority, ObjectTag tag) :
 	Collidable(priority, tag),
+	m_characterName(),
 	m_anim(),
 	m_effect(),
 	m_modelHandle(-1),
@@ -15,6 +16,7 @@ CharacterBase::CharacterBase(Priority priority, ObjectTag tag) :
 	m_collisionPos(),
 	m_status(),
 	m_moveVec(),
+	m_cameraAngle(0.0f),
 	m_nowPos(VGet(0.0f,0.0f,0.0f)),
 	m_nowAnimNo(-1),
 	m_equipAnimNo(-1),
@@ -32,7 +34,9 @@ CharacterBase::CharacterBase(Priority priority, ObjectTag tag) :
 	m_attackRadius(0.0f),
 	m_searchRadius(0.0f),
 	m_heel(0),
-	m_maxHeel(0)
+	m_maxHeel(0),
+	m_preAnimIdx(0),
+	m_currentAnimNo(0)
 {
 	for (int i = 0; i < ANIMATION_MAX; i++)
 	{
@@ -157,6 +161,37 @@ void CharacterBase::ChangeAnim(int animIndex, bool& one, bool (&all)[30], float 
 		one = true;
 	}
 	
+}
+
+void CharacterBase::ChangeStateAnim(int animIndex, float animSpeed, bool reverse = false)
+{
+	//さらに古いアニメーションがアタッチされている場合はこの時点で消しておく
+	if (m_prevAnimNo != -1)
+	{
+		MV1DetachAnim(m_modelHandle, m_prevAnimNo);
+	}
+
+	m_preAnimIdx = m_nowAnimIdx;
+	m_nowAnimIdx = animIndex;
+
+	//現在再生中の待機アニメーションは変更目のアニメーションの扱いにする
+	m_prevAnimNo = m_currentAnimNo;
+
+	//変更後のアニメーションとして攻撃アニメーションを改めて設定する
+	m_currentAnimNo = MV1AttachAnim(m_modelHandle, animIndex);
+
+	//切り替えの瞬間は変更前のアニメーションが再生される状態にする
+	m_animBlendRate = 0.0f;
+
+	m_animTime = animSpeed;
+
+	//アニメーションを逆再生させるかどうか
+	m_animReverse = reverse;
+
+	//変更前のアニメーション100%
+	MV1SetAttachAnimBlendRate(m_modelHandle, m_prevAnimNo, 1.0f - m_animBlendRate);
+	//変更後のアニメーション0%
+	MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAnimNo, m_animBlendRate);
 }
 
 void CharacterBase::FrameChangeAnim(int animIndex, bool& one, bool& two, int frame)

@@ -145,7 +145,7 @@ public:
 	float GetAttackMuscle() { return m_equipmentMuscle; }
 	float GetAttackSkill() { return m_equipmentSkill; }
 
-	const MyLibrary::LibVec3 GetPos() const { return rigidbody.GetPos(); }
+	const MyLibrary::LibVec3 GetPos() const { return rigidbody->GetPos(); }
 	const MyLibrary::LibVec3 GetShieldPos() const { return m_shieldPos; }
 
 private:
@@ -165,7 +165,6 @@ private:
 
 	XINPUT_STATE m_xpad;                //パッド入力
 	int m_mapNow;                       //現在のマップ
-	float m_cameraAngle;                //カメラ情報
 	float m_searchRadius;               //索敵範囲
 	float m_lockAngle;                  //ロックオンしたときのアングル
 	float m_updateX;                    //休息したときの初期化位置X

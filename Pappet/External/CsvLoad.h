@@ -116,6 +116,8 @@ public:
 
 	//アニメーション情報ロード
 	void AnimDataLoad(std::string charaName, std::map<std::string, int>& anim);
+	//State用のアニメ情報ロード
+	int GetAnimData(std::string charaName, std::string animID);
 
 	//アイテム生成情報ロード
 	void ItemDataLoad(std::list<std::shared_ptr<ItemManager::ItemGenerateInfo>>& pGenerateInfo);

@@ -33,14 +33,14 @@ void SearchObject::Init(std::shared_ptr<MyLibrary::Physics> physics, MyLibrary::
 
 	Collidable::Init(m_pPhysics);
 
-	rigidbody.Init();
-	rigidbody.SetPos(pos);
+	rigidbody->Init();
+	rigidbody->SetPos(pos);
 }
 
 void SearchObject::Update(MyLibrary::LibVec3 pos)
 {
 	m_isTriggerStay = false;
-	rigidbody.SetPos(pos);
+	rigidbody->SetPos(pos);
 }
 
 void SearchObject::Finalize(std::shared_ptr<MyLibrary::Physics> physics)

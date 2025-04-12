@@ -25,14 +25,14 @@ void PlayerSearchObject::Init(std::shared_ptr<MyLibrary::Physics> physics, MyLib
 
 	Collidable::Init(m_pPhysics);
 
-	rigidbody.Init();
-	rigidbody.SetPos(pos);
+	rigidbody->Init();
+	rigidbody->SetPos(pos);
 }
 
 void PlayerSearchObject::Update(MyLibrary::LibVec3 pos)
 {
 	m_isTriggerStay = false;
-	rigidbody.SetPos(pos);
+	rigidbody->SetPos(pos);
 }
 
 void PlayerSearchObject::Finalize(std::shared_ptr<MyLibrary::Physics> physics)

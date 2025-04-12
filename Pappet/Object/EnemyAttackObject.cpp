@@ -23,12 +23,12 @@ void EnemyAttackObject::Init(std::shared_ptr<MyLibrary::Physics> physics)
 
 	Collidable::Init(m_pPhysics);
 
-	rigidbody.Init();
+	rigidbody->Init();
 }
 
 void EnemyAttackObject::Update(MyLibrary::LibVec3 pos)
 {
-	rigidbody.SetPos(pos);
+	rigidbody->SetPos(pos);
 
 }
 

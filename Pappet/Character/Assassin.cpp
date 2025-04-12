@@ -504,7 +504,7 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 	{
 		m_status.s_hp -= m_col->GetAttack() - m_status.s_defense;
 		// Hitエフェクト
-		cEffect.EffectCreate("Hit", VGet(rigidbody.GetPos().x, rigidbody.GetPos().y + cHitEffectOffsetY, rigidbody.GetPos().z));
+		cEffect.EffectCreate("Hit", VGet(rigidbody->GetPos().x, rigidbody->GetPos().y + cHitEffectOffsetY, rigidbody->GetPos().z));
 		// HitSE再生
 		PlaySoundMem(se.GetHitSE(), DX_PLAYTYPE_BACK, true);
 
@@ -519,7 +519,7 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 		m_status.s_hp -= m_strengthCol->GetAttack() - m_status.s_defense;
 
 		// Hitエフェクト
-		cEffect.EffectCreate("Hit", VGet(rigidbody.GetPos().x, rigidbody.GetPos().y + cStrongHitEffectOffsetY, rigidbody.GetPos().z));
+		cEffect.EffectCreate("Hit", VGet(rigidbody->GetPos().x, rigidbody->GetPos().y + cStrongHitEffectOffsetY, rigidbody->GetPos().z));
 
 		// HitSE再生
 		PlaySoundMem(se.GetHitSE(), DX_PLAYTYPE_BACK, true);
@@ -553,7 +553,7 @@ void Assassin::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 	HitTriggerUpdate();
 
 	// 判定の更新
-	MyLibrary::LibVec3 centerPos = rigidbody.GetPos();
+	MyLibrary::LibVec3 centerPos = rigidbody->GetPos();
 	m_pSearch->Update(centerPos);
 
 	// チュートリアルだった場合

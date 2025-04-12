@@ -25,13 +25,13 @@ void EnemyAttackLigObject::Init(std::shared_ptr<MyLibrary::Physics> physics)
 
 	Collidable::Init(m_pPhysics);
 
-	rigidbody.Init();
+	rigidbody->Init();
 }
 
 void EnemyAttackLigObject::Update(MyLibrary::LibVec3 pos1, MyLibrary::LibVec3 pos2)
 {
-	rigidbody.SetAttackPos1(pos1);
-	rigidbody.SetAttackPos2(pos2);
+	rigidbody->SetAttackPos1(pos1);
+	rigidbody->SetAttackPos2(pos2);
 }
 
 void EnemyAttackLigObject::Finalize(std::shared_ptr<MyLibrary::Physics> physics)

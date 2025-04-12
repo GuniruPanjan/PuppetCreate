@@ -27,15 +27,15 @@ void RectObjectTrigger::Init(std::shared_ptr<MyLibrary::Physics> physics, MyLibr
 
     Collidable::Init(m_pPhysics);
 
-    rigidbody.Init();
-    rigidbody.SetPos(pos);
+    rigidbody->Init();
+    rigidbody->SetPos(pos);
 }
 
 void RectObjectTrigger::Update(MyLibrary::LibVec3 pos, MyLibrary::LibVec3::Size size)
 {
     m_isTriggerStay = false;
-    rigidbody.SetPos(pos);
-    rigidbody.SetSize(size);
+    rigidbody->SetPos(pos);
+    rigidbody->SetSize(size);
 }
 
 void RectObjectTrigger::Finalize(const std::shared_ptr<MyLibrary::Physics> physics)

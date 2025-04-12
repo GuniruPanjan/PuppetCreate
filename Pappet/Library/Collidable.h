@@ -60,7 +60,7 @@ namespace MyLibrary
 
 	protected:
 		//•¨—ƒf[ƒ^
-		Rigidbody rigidbody;
+		std::shared_ptr<Rigidbody> rigidbody;
 		//“–‚½‚è”»’èî•ñ
 		std::list<std::shared_ptr<CollidableData>> m_colliders;
 

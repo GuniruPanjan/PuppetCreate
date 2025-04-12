@@ -76,6 +76,24 @@
     <Filter Include="ヘッダー ファイル\Item">
       <UniqueIdentifier>{43456884-ce10-405d-b4ab-474f1fbfb76d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\Character\State">
+      <UniqueIdentifier>{93b18397-c9d9-43f9-87e9-f20f7135c3a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Character\State\Player">
+      <UniqueIdentifier>{4e2475b7-d12c-498e-bac2-de6fd15dcf7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Character\State">
+      <UniqueIdentifier>{6d7d5aee-ca18-4654-90b2-c55541ad0823}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Character\State\Player">
+      <UniqueIdentifier>{3bd54daa-d804-4a12-96c4-0f9acec467a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Input">
+      <UniqueIdentifier>{ddbf18b0-95a9-4cb2-97e1-5cf615c587d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Input">
+      <UniqueIdentifier>{984d25e6-07a6-4980-b115-2b2a204f7463}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -263,6 +281,21 @@
     </ClCompile>
     <ClCompile Include="Manager\FadeManager.cpp">
       <Filter>ソース ファイル\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\StateBase.cpp">
+      <Filter>ソース ファイル\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\State\Player\PlayerStateIdle.cpp">
+      <Filter>ソース ファイル\Character\State\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\Input.cpp">
+      <Filter>ソース ファイル\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\State\Player\PlayerStateWalk.cpp">
+      <Filter>ソース ファイル\Character\State\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\State\Player\PlayerStateDash.cpp">
+      <Filter>ソース ファイル\Character\State\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -463,6 +496,21 @@
     </ClInclude>
     <ClInclude Include="Manager\FadeManager.h">
       <Filter>ヘッダー ファイル\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\StateBase.h">
+      <Filter>ヘッダー ファイル\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\State\Player\PlayerStateIdle.h">
+      <Filter>ヘッダー ファイル\Character\State\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\Input.h">
+      <Filter>ヘッダー ファイル\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\State\Player\PlayerStateWalk.h">
+      <Filter>ヘッダー ファイル\Character\State\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\State\Player\PlayerStateDash.h">
+      <Filter>ヘッダー ファイル\Character\State\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -23,14 +23,14 @@ void ItemObject::Init(std::shared_ptr<MyLibrary::Physics> physics, MyLibrary::Li
 
 	Collidable::Init(m_pPhysics);
 
-	rigidbody.Init();
-	rigidbody.SetPos(pos);
+	rigidbody->Init();
+	rigidbody->SetPos(pos);
 }
 
 void ItemObject::Update(MyLibrary::LibVec3 pos)
 {
 	m_isTriggerStay = false;
-	rigidbody.SetPos(pos);
+	rigidbody->SetPos(pos);
 }
 
 void ItemObject::Finalize(std::shared_ptr<MyLibrary::Physics> physics)

@@ -11,6 +11,7 @@ MyLibrary::Collidable::Collidable(Priority priority, ObjectTag tag):
 	priority(priority),
 	tag(tag)
 {
+	rigidbody = std::make_shared<MyLibrary::Rigidbody>();
 }
 
 /// <summary>

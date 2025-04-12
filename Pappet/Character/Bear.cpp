@@ -300,7 +300,7 @@ void Bear::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos, bo
 	{
 		m_status.s_hp -= m_col->GetAttack() - m_status.s_defense;
 		//Hitエフェクト
-		cEffect.EffectCreate("Hit", VGet(rigidbody.GetPos().x, rigidbody.GetPos().y + cHitEffectOffsetY, rigidbody.GetPos().z));
+		cEffect.EffectCreate("Hit", VGet(rigidbody->GetPos().x, rigidbody->GetPos().y + cHitEffectOffsetY, rigidbody->GetPos().z));
 		//HitSE再生
 		PlaySoundMem(se.GetHitSE(), DX_PLAYTYPE_BACK, true);
 
@@ -315,7 +315,7 @@ void Bear::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos, bo
 		m_status.s_hp -= m_strengthCol->GetAttack() - m_status.s_defense;
 
 		//Hitエフェクト
-		cEffect.EffectCreate("Hit", VGet(rigidbody.GetPos().x, rigidbody.GetPos().y + cStrengthHitEffectOffsetY, rigidbody.GetPos().z));
+		cEffect.EffectCreate("Hit", VGet(rigidbody->GetPos().x, rigidbody->GetPos().y + cStrengthHitEffectOffsetY, rigidbody->GetPos().z));
 
 		//HitSE再生
 		PlaySoundMem(se.GetHitSE(), DX_PLAYTYPE_BACK, true);
@@ -337,7 +337,7 @@ void Bear::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos, bo
 	HitTriggerUpdate();
 
 	//判定の更新
-	MyLibrary::LibVec3 centerPos = rigidbody.GetPos();
+	MyLibrary::LibVec3 centerPos = rigidbody->GetPos();
 	m_pSearch->Update(centerPos);
 
 	//死んだ時
@@ -633,7 +633,7 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 			else if (m_nowFrame > cAttackFrame1)
 			{
 				//攻撃判定の更新
-				m_attackPos = MyLibrary::LibVec3(rigidbody.GetPos().x, rigidbody.GetPos().y, rigidbody.GetPos().z);
+				m_attackPos = MyLibrary::LibVec3(rigidbody->GetPos().x, rigidbody->GetPos().y, rigidbody->GetPos().z);
 				m_pAttack->Update(m_attackPos);
 			}
 
@@ -643,7 +643,7 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 				//攻撃SE再生
 				PlaySoundMem(se.GetBossAttackSE3(), DX_PLAYTYPE_BACK, true);
 
-				cEffect.EffectCreate("BearLance", VGet(rigidbody.GetPos().x, rigidbody.GetPos().y - 25.0f, rigidbody.GetPos().z));
+				cEffect.EffectCreate("BearLance", VGet(rigidbody->GetPos().x, rigidbody->GetPos().y - 25.0f, rigidbody->GetPos().z));
 			}
 
 			//アニメーションフレーム中に攻撃判定を出す

@@ -28,15 +28,15 @@ void ShieldObject::Init(std::shared_ptr<MyLibrary::Physics> physics, MyLibrary::
 
     Collidable::Init(m_pPhysics);
 
-    rigidbody.Init();
-    rigidbody.SetPos(pos);
+    rigidbody->Init();
+    rigidbody->SetPos(pos);
 }
 
 void ShieldObject::Update(MyLibrary::LibVec3 pos, MyLibrary::LibVec3::Size size)
 {
     m_isTriggerStay = false;
-    rigidbody.SetPos(pos);
-    rigidbody.SetSize(size);
+    rigidbody->SetPos(pos);
+    rigidbody->SetSize(size);
 }
 
 void ShieldObject::Finalize(const std::shared_ptr<MyLibrary::Physics> physics)

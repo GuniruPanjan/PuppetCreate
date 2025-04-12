@@ -24,12 +24,12 @@ void AttackObject::Init(std::shared_ptr<MyLibrary::Physics> physics)
 
 	Collidable::Init(m_pPhysics);
 
-	rigidbody.Init();
+	rigidbody->Init();
 }
 
 void AttackObject::Update(MyLibrary::LibVec3 pos)
 {
-	rigidbody.SetPos(pos);
+	rigidbody->SetPos(pos);
 }
 
 void AttackObject::Finalize(std::shared_ptr<MyLibrary::Physics> physics)

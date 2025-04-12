@@ -253,7 +253,7 @@ void Immortal::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 		m_status.s_hp -= m_col->GetAttack() - m_status.s_defense;
 
 		//Hitエフェクト
-		cEffect.EffectCreate("Hit", VGet(rigidbody.GetPos().x, rigidbody.GetPos().y + 20.0f, rigidbody.GetPos().z));
+		cEffect.EffectCreate("Hit", VGet(rigidbody->GetPos().x, rigidbody->GetPos().y + 20.0f, rigidbody->GetPos().z));
 
 		//HitSE再生
 		PlaySoundMem(se.GetHitSE(), DX_PLAYTYPE_BACK, true);
@@ -269,7 +269,7 @@ void Immortal::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 		m_status.s_hp -= m_strengthCol->GetAttack() - m_status.s_defense;
 
 		//Hitエフェクト
-		cEffect.EffectCreate("Hit", VGet(rigidbody.GetPos().x, rigidbody.GetPos().y + 20.0f, rigidbody.GetPos().z));
+		cEffect.EffectCreate("Hit", VGet(rigidbody->GetPos().x, rigidbody->GetPos().y + 20.0f, rigidbody->GetPos().z));
 
 		//HitSE再生
 		PlaySoundMem(se.GetHitSE(), DX_PLAYTYPE_BACK, true);
@@ -286,8 +286,8 @@ void Immortal::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 
 
 	//判定の更新
-	MyLibrary::LibVec3 centerPos = rigidbody.GetPos();
-	MyLibrary::LibVec3 attackPos = MyLibrary::LibVec3(rigidbody.GetPos().x + sinf(m_angle) * -25.0f, rigidbody.GetPos().y, rigidbody.GetPos().z - cosf(m_angle) * 25.0f);
+	MyLibrary::LibVec3 centerPos = rigidbody->GetPos();
+	MyLibrary::LibVec3 attackPos = MyLibrary::LibVec3(rigidbody->GetPos().x + sinf(m_angle) * -25.0f, rigidbody->GetPos().y, rigidbody->GetPos().z - cosf(m_angle) * 25.0f);
 	m_pSearch->Update(centerPos);
 	m_pAttack->Update(attackPos);
 
@@ -464,6 +464,6 @@ void Immortal::DrawUI(UI& ui)
 	if (m_pSearch->GetIsStay())
 	{
 		//HPバーの描画
-		ui.EnemyHPDraw(rigidbody.GetPos().GetVector(), m_status.s_hp, m_maxHP);
+		ui.EnemyHPDraw(rigidbody->GetPos().GetVector(), m_status.s_hp, m_maxHP);
 	}
 }

@@ -28,7 +28,7 @@ public:
 		float s_defense;     //防御力
 		float s_speed;       //速度
 		int s_core;          //コア
-	};
+	}m_status;
 
 	//アニメーション関係の構造体
 	struct AnimationChange
@@ -52,20 +52,33 @@ public:
 	//衝突したとき
 	virtual void OnCollideEnter(const std::shared_ptr<Collidable>& colider) = 0;
 
-protected:
+public:
 	//アニメーションの更新
 	bool UpdateAnim(int attachNo, int max, float startTime = 0.0f);
 	//アニメーションの変更
 	void ChangeAnim(int animIndex, bool& one, bool(&all)[30], float animSpeed = 0.5f, bool reverse = false, float resetTime = 0.0f);
+	//Stateでのアニメーション変更
+	void ChangeStateAnim(int animIndex, float animSpeed = 0.5f, bool reverse = false);
 	//アニメーションのフレームブレンド変更
 	void FrameChangeAnim(int animIndex, bool& one, bool& two, int frame);
 	//アニメーションのフレームブレンド変更
 	void FrameEndAnim(int animIndex, bool& one, bool& two, int frame);
 	//アニメーションの未初期化
 	void NotInitAnim(bool init = false);
+	//キャラクター名を取得
+	const std::string GetCharacterName() const { return m_characterName; }
 
+	//ステータス取得
+	Status GetStatus() { return m_status; }
+	//カメラアングル取得
+	float GetAngle() { return m_cameraAngle; }
+
+	//物理データを取得
+	std::shared_ptr<MyLibrary::Rigidbody> GetRigidbody() { return rigidbody; }
 
 protected:
+	//キャラクター名 
+	std::string m_characterName;	
 	//物理クラスのポインタ
 	std::shared_ptr<MyLibrary::Physics> m_pPhysics;
 	//モデルハンドル
@@ -100,12 +113,17 @@ protected:
 	bool m_animReverse;       //アニメーションを逆再生させるかどうか
 	VECTOR m_nowPos;        //現在のフレームの座標を取得する
 
+	int m_currentAnimNo;		//現在のアニメーション
+	int m_preAnimIdx;
+
+
 	//使う変数
 	float m_angle;            //キャラのアングル
 	float m_attackRadius;     //攻撃の当たり判定
 	float m_searchRadius;     //索敵の当たり判定
 	int m_heel;               //HPに追加する回復分
 	int m_maxHeel;            //HPの最大回復量
+	float m_cameraAngle;      //カメラ情報
 	
 };
 

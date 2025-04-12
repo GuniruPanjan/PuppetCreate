@@ -120,7 +120,6 @@ Player::Player() :
 	m_attackLig2(0),
 	m_moveAnimShieldFrameIndex(0),
 	m_moveAnimShieldFrameHandIndex(0),
-	m_cameraAngle(0.0f),
 	m_lockAngle(0.0f),
 	m_avoidanceNow(false),
 	m_shieldNow(false),
@@ -170,6 +169,9 @@ Player::Player() :
 	m_animChange.sa_imapact = false;
 	m_animChange.sa_strengthAttack = false;
 	
+	//キャラクター名を設定
+	m_characterName = "Player";
+
 	//エフェクトの初期化
 	m_effect.s_heel = false;
 
@@ -211,7 +213,7 @@ void Player::Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* mana
 	Collidable::Init(m_pPhysics);
 
 	//プレイヤーの初期位置設定
-	rigidbody.Init(true);
+	rigidbody->Init(true);
 	if (manager->GetThisMapName() == 0)
 	{
 		m_updateX = -200.0f;
@@ -231,10 +233,10 @@ void Player::Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* mana
 		m_updateZ = 0.0f;
 	}
 	
-	rigidbody.SetPos(MyLibrary::LibVec3(m_updateX, m_updateY, m_updateZ));
-	rigidbody.SetNextPos(rigidbody.GetPos());
-	rigidbody.SetVec(MyLibrary::LibVec3(0.0f, 40.0f, 0.0f));
-	m_collisionPos = rigidbody.GetPos();
+	rigidbody->SetPos(MyLibrary::LibVec3(m_updateX, m_updateY, m_updateZ));
+	rigidbody->SetNextPos(rigidbody->GetPos());
+	rigidbody->SetVec(MyLibrary::LibVec3(0.0f, 40.0f, 0.0f));
+	m_collisionPos = rigidbody->GetPos();
 	SetModelPos();
 	MV1SetPosition(m_modelHandle, m_modelPos.ConversionToVECTOR());
 
@@ -250,7 +252,7 @@ void Player::Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* mana
 	m_pLigAttack = std::make_shared<AttackLigObject>(MyLibrary::LibVec3(m_attackLigPos1.x, m_attackLigPos1.y, m_attackLigPos1.z), MyLibrary::LibVec3(m_attackLigPos2.x, m_attackLigPos2.y, m_attackLigPos2.z), cFistAttackRadius);
 
 	m_pSearch = std::make_shared<PlayerSearchObject>(m_searchRadius);
-	m_pSearch->Init(m_pPhysics, rigidbody.GetPos());
+	m_pSearch->Init(m_pPhysics, rigidbody->GetPos());
 
 	m_shieldSize = MyLibrary::LibVec3::Size(cShieldWidth, cShieldHight, cShieldDepht);
 
@@ -302,7 +304,7 @@ void Player::GameInit(std::shared_ptr<MyLibrary::Physics> physics)
 	if (m_anim.s_isDead)
 	{
 		Collidable::Init(m_pPhysics);
-		m_pSearch->Init(m_pPhysics, rigidbody.GetPos());
+		m_pSearch->Init(m_pPhysics, rigidbody->GetPos());
 
 		m_anim.s_isDead = false;
 	}
@@ -310,11 +312,11 @@ void Player::GameInit(std::shared_ptr<MyLibrary::Physics> physics)
 	CsvLoad::GetInstance().StatusLoad(m_status, "Player");
 
 	//プレイヤーの初期位置設定
-	rigidbody.Init(true);
-	rigidbody.SetPos(MyLibrary::LibVec3(m_updateX, m_updateY, m_updateZ));
-	rigidbody.SetNextPos(rigidbody.GetPos());
-	rigidbody.SetVec(MyLibrary::LibVec3(0.0f, 40.0f, 0.0f));
-	m_collisionPos = rigidbody.GetPos();
+	rigidbody->Init(true);
+	rigidbody->SetPos(MyLibrary::LibVec3(m_updateX, m_updateY, m_updateZ));
+	rigidbody->SetNextPos(rigidbody->GetPos());
+	rigidbody->SetVec(MyLibrary::LibVec3(0.0f, 40.0f, 0.0f));
+	m_collisionPos = rigidbody->GetPos();
 	SetModelPos();
 	MV1SetPosition(m_modelHandle, m_modelPos.ConversionToVECTOR());
 
@@ -501,9 +503,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	//回避してないとき
 	if (!m_animChange.sa_avoidance && !m_anim.s_attack)
 	{
-		MyLibrary::LibVec3 prevVelocity = rigidbody.GetVelocity();
+		MyLibrary::LibVec3 prevVelocity = rigidbody->GetVelocity();
 		MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(m_moveVec.x, prevVelocity.y, m_moveVec.z);
-		rigidbody.SetVelocity(newVelocity);
+		rigidbody->SetVelocity(newVelocity);
 	}
 	//回避してるとき
 	else if(m_animChange.sa_avoidance)
@@ -512,9 +514,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		m_rollMove = VScale(VGet(sinf(m_angle), 0.0f, cosf(m_angle)), cAvoidanceMove);
 
 		//アングルの方向に一定距離移動させたい
-		MyLibrary::LibVec3 prevVelocity = rigidbody.GetVelocity();
+		MyLibrary::LibVec3 prevVelocity = rigidbody->GetVelocity();
 		MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(-m_rollMove.x, prevVelocity.y, -m_rollMove.z);
-		rigidbody.SetVelocity(newVelocity);
+		rigidbody->SetVelocity(newVelocity);
 	}
 	//攻撃してるとき
 	else if (m_anim.s_attack)
@@ -522,9 +524,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		m_attackMove = VScale(VGet(sinf(m_angle), 0.0f, cosf(m_angle)), cAttackMove);
 
 		//攻撃の方向に一定距離移動させたい
-		MyLibrary::LibVec3 prevVelocity = rigidbody.GetVelocity();
+		MyLibrary::LibVec3 prevVelocity = rigidbody->GetVelocity();
 		MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(-m_attackMove.x, prevVelocity.y, -m_attackMove.z);
-		rigidbody.SetVelocity(newVelocity);
+		rigidbody->SetVelocity(newVelocity);
 	}
 
 	//装備していないとき
@@ -567,7 +569,7 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	}
 
 	//盾の索敵のポジション更新
-	m_shieldSearchPos = MyLibrary::LibVec3(rigidbody.GetPos().x + sinf(m_angle) * -100.0f, rigidbody.GetPos().y + 15.0f, rigidbody.GetPos().z - cosf(m_angle) * 100.0f);
+	m_shieldSearchPos = MyLibrary::LibVec3(rigidbody->GetPos().x + sinf(m_angle) * -100.0f, rigidbody->GetPos().y + 15.0f, rigidbody->GetPos().z - cosf(m_angle) * 100.0f);
 
 
 	//プレイヤーが生きている時だけ
@@ -614,7 +616,7 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 				}
 			}
 			//Hitエフェクト
-			cEffect.EffectCreate("Hit", VGet(rigidbody.GetPos().x, rigidbody.GetPos().y + 20.0f, rigidbody.GetPos().z));
+			cEffect.EffectCreate("Hit", VGet(rigidbody->GetPos().x, rigidbody->GetPos().y + 20.0f, rigidbody->GetPos().z));
 			//HitSe再生
 			PlaySoundMem(se.GetPlayerHitSE(), DX_PLAYTYPE_BACK, true);
 
@@ -750,12 +752,12 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	}
 
 	//判定のポジション更新
-	MyLibrary::LibVec3 centerPos = rigidbody.GetPos();
-	MyLibrary::LibVec3 attackPos = MyLibrary::LibVec3(rigidbody.GetPos().x + sinf(m_angle) * -25.0f, rigidbody.GetPos().y + 15.0f, rigidbody.GetPos().z - cosf(m_angle) * 25.0f);
+	MyLibrary::LibVec3 centerPos = rigidbody->GetPos();
+	MyLibrary::LibVec3 attackPos = MyLibrary::LibVec3(rigidbody->GetPos().x + sinf(m_angle) * -25.0f, rigidbody->GetPos().y + 15.0f, rigidbody->GetPos().z - cosf(m_angle) * 25.0f);
 	MyLibrary::LibVec3 ligAttackPos1 = MyLibrary::LibVec3(m_attackLigPos1.x, m_attackLigPos1.y, m_attackLigPos1.z);
 	MyLibrary::LibVec3 ligAttackPos2 = MyLibrary::LibVec3(m_attackLigPos2.x, m_attackLigPos2.y, m_attackLigPos2.z);
-	MyLibrary::LibVec3 StrengthAttackPos = MyLibrary::LibVec3(rigidbody.GetPos().x, rigidbody.GetPos().y, rigidbody.GetPos().z);
-	m_shieldPos = MyLibrary::LibVec3(rigidbody.GetPos().x + sinf(m_angle) * -15.0f, rigidbody.GetPos().y + 25.0f, rigidbody.GetPos().z - cosf(m_angle) * 15.0f);
+	MyLibrary::LibVec3 StrengthAttackPos = MyLibrary::LibVec3(rigidbody->GetPos().x, rigidbody->GetPos().y, rigidbody->GetPos().z);
+	m_shieldPos = MyLibrary::LibVec3(rigidbody->GetPos().x + sinf(m_angle) * -15.0f, rigidbody->GetPos().y + 25.0f, rigidbody->GetPos().z - cosf(m_angle) * 15.0f);
 
 	//sinでX軸のwidthのサイズを出す
 	if (sinf(m_angle) > 0)
@@ -995,7 +997,7 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			//攻撃SE再生
 			PlaySoundMem(se.GetBossAttackSE3(), DX_PLAYTYPE_BACK, true);
 
-			cEffect.EffectCreate("BearLance", VGet(rigidbody.GetPos().x, rigidbody.GetPos().y - 12.0f, rigidbody.GetPos().z));
+			cEffect.EffectCreate("BearLance", VGet(rigidbody->GetPos().x, rigidbody->GetPos().y - 12.0f, rigidbody->GetPos().z));
 		}
 
 		//フレーム中に攻撃を発生
@@ -1051,14 +1053,14 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			//最初のステージ
 			if (m_mapNow == 1)
 			{
-				rigidbody.SetPos(MyLibrary::LibVec3(15.0f, 12.0f, 0.0f));
+				rigidbody->SetPos(MyLibrary::LibVec3(15.0f, 12.0f, 0.0f));
 
 				m_angle = 1.5f;
 			}
 			//チュートリアルステージ
 			else if (m_mapNow == 6)
 			{
-				rigidbody.SetPos(MyLibrary::LibVec3(-30.0f, 12.0f, 0.0f));
+				rigidbody->SetPos(MyLibrary::LibVec3(-30.0f, 12.0f, 0.0f));
 
 				m_angle = -1.5f;
 			}
@@ -1073,9 +1075,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		m_moveVector = VScale(VGet(sinf(m_angle), 0.0f, cosf(m_angle)), cMove);
 
 		//アングルの方向に一定距離移動させたい
-		MyLibrary::LibVec3 prevVelocity = rigidbody.GetVelocity();
+		MyLibrary::LibVec3 prevVelocity = rigidbody->GetVelocity();
 		MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(-m_moveVector.x, prevVelocity.y, -m_moveVector.z);
-		rigidbody.SetVelocity(newVelocity);
+		rigidbody->SetVelocity(newVelocity);
 	}
 
 	//アイテム取得終了
@@ -1724,8 +1726,8 @@ void Player::WeaponAnimation(Shield& shield)
 /// </summary>
 void Player::Draw(Armor& armor, int font)
 {
-	rigidbody.SetPos(rigidbody.GetNextPos());
-	m_collisionPos = rigidbody.GetPos();
+	rigidbody->SetPos(rigidbody->GetNextPos());
+	m_collisionPos = rigidbody->GetPos();
 
 #if false
 	DrawFormatString(1000, 600, 0xffffff, "move : %d", m_anim.s_moveflag);
@@ -1744,9 +1746,9 @@ void Player::Draw(Armor& armor, int font)
 	DrawFormatString(1000, 650, 0xffffff, "touch : %d", m_animChange.sa_touch);
 #endif
 #if false
-	DrawFormatString(1000, 150, 0xffffff, "posx : %f", rigidbody.GetPos().x);   //15   -700
-	DrawFormatString(1000, 200, 0xffffff, "posy : %f", rigidbody.GetPos().y);   //12   
-	DrawFormatString(1000, 250, 0xffffff, "posz : %f", rigidbody.GetPos().z);   //0    370
+	DrawFormatString(1000, 150, 0xffffff, "posx : %f", rigidbody->GetPos().x);   //15   -700
+	DrawFormatString(1000, 200, 0xffffff, "posy : %f", rigidbody->GetPos().y);   //12   
+	DrawFormatString(1000, 250, 0xffffff, "posz : %f", rigidbody->GetPos().z);   //0    370
 	DrawFormatString(1000, 300, 0xffffff, "m_angle : %f", m_angle);             //1.5
 #endif
 
