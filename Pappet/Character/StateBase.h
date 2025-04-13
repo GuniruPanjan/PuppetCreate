@@ -17,9 +17,11 @@ public:
 		Roll,        //回避
 		Dash,        //走る
 		Jump,        //ジャンプ
+
 		Attack,      //攻撃
 		StrongAttack,//強攻撃
 		Shield,      //盾
+
 		Parry,       //パリィ
 		Damage,      //ダメージ
 		Item,        //回復など

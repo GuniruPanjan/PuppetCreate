@@ -303,6 +303,21 @@
     <ClCompile Include="Character\State\Player\PlayerStateDeath.cpp">
       <Filter>ソース ファイル\Character\State\Player</Filter>
     </ClCompile>
+    <ClCompile Include="Character\State\Player\PlayerStateEnterBoss.cpp">
+      <Filter>ソース ファイル\Character\State\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\State\Player\PlayerStateItem.cpp">
+      <Filter>ソース ファイル\Character\State\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\State\Player\PlayerStateTaking.cpp">
+      <Filter>ソース ファイル\Character\State\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\State\Player\PlayerStateDamage.cpp">
+      <Filter>ソース ファイル\Character\State\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\State\Player\PlayerStateAttack.cpp">
+      <Filter>ソース ファイル\Character\State\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Icon\Icon.h">
@@ -522,6 +537,21 @@
       <Filter>ヘッダー ファイル\Character\State\Player</Filter>
     </ClInclude>
     <ClInclude Include="Character\State\Player\PlayerStateDeath.h">
+      <Filter>ヘッダー ファイル\Character\State\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\State\Player\PlayerStateEnterBoss.h">
+      <Filter>ヘッダー ファイル\Character\State\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\State\Player\PlayerStateItem.h">
+      <Filter>ヘッダー ファイル\Character\State\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\State\Player\PlayerStateTaking.h">
+      <Filter>ヘッダー ファイル\Character\State\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\State\Player\PlayerStateDamage.h">
+      <Filter>ヘッダー ファイル\Character\State\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\State\Player\PlayerStateAttack.h">
       <Filter>ヘッダー ファイル\Character\State\Player</Filter>
     </ClInclude>
   </ItemGroup>

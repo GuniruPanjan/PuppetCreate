@@ -157,6 +157,13 @@ void PlayerStateRoll::Update()
 			return;
 		}
 
+		//アイテムボタンが押されたらアイテムを使用する
+		if (Input::GetInstance().IsTriggered("X"))
+		{
+			ChangeState(StateKind::Item);
+			return;
+		}
+
 		cOneAvoidance = false;
 	}
 }

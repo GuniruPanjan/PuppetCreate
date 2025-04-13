@@ -1071,7 +1071,7 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		}
 
 
-		//回避で移動する距離
+		//ボス部屋に入る行動で移動する距離
 		m_moveVector = VScale(VGet(sinf(m_angle), 0.0f, cosf(m_angle)), cMove);
 
 		//アングルの方向に一定距離移動させたい

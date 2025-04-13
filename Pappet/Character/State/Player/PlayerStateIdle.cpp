@@ -72,10 +72,24 @@ void PlayerStateIdle::Update()
 		return;
 	}
 
+	//強攻撃ボタンが押されていたらStateを強攻撃にする
+	if (Input::GetInstance().GetIsPushedTriggerButton(true) || Input::GetInstance().GetIsPushedTriggerButton(true))
+	{
+		ChangeState(StateKind::StrongAttack);
+		return;
+	}
+
 	//回避ボタンが押されたらStateを回避にする
 	if (Input::GetInstance().IsTriggered("Input_Roll"))
 	{
 		ChangeState(StateKind::Roll);
+		return;
+	}
+
+	//アイテムボタンが押されたらアイテムを使用する
+	if (Input::GetInstance().IsTriggered("X"))
+	{
+		ChangeState(StateKind::Item);
 		return;
 	}
 
