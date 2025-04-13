@@ -297,6 +297,12 @@
     <ClCompile Include="Character\State\Player\PlayerStateDash.cpp">
       <Filter>ソース ファイル\Character\State\Player</Filter>
     </ClCompile>
+    <ClCompile Include="Character\State\Player\PlayerStateRoll.cpp">
+      <Filter>ソース ファイル\Character\State\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\State\Player\PlayerStateDeath.cpp">
+      <Filter>ソース ファイル\Character\State\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Icon\Icon.h">
@@ -510,6 +516,12 @@
       <Filter>ヘッダー ファイル\Character\State\Player</Filter>
     </ClInclude>
     <ClInclude Include="Character\State\Player\PlayerStateDash.h">
+      <Filter>ヘッダー ファイル\Character\State\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\State\Player\PlayerStateRoll.h">
+      <Filter>ヘッダー ファイル\Character\State\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\State\Player\PlayerStateDeath.h">
       <Filter>ヘッダー ファイル\Character\State\Player</Filter>
     </ClInclude>
   </ItemGroup>

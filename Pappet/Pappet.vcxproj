@@ -148,7 +148,9 @@
     <ClCompile Include="Character\Player.cpp" />
     <ClCompile Include="Character\StateBase.cpp" />
     <ClCompile Include="Character\State\Player\PlayerStateDash.cpp" />
+    <ClCompile Include="Character\State\Player\PlayerStateDeath.cpp" />
     <ClCompile Include="Character\State\Player\PlayerStateIdle.cpp" />
+    <ClCompile Include="Character\State\Player\PlayerStateRoll.cpp" />
     <ClCompile Include="Character\State\Player\PlayerStateWalk.cpp" />
     <ClCompile Include="External\CsvLoad.cpp" />
     <ClCompile Include="External\Font.cpp" />
@@ -217,7 +219,9 @@
     <ClInclude Include="Character\Player.h" />
     <ClInclude Include="Character\StateBase.h" />
     <ClInclude Include="Character\State\Player\PlayerStateDash.h" />
+    <ClInclude Include="Character\State\Player\PlayerStateDeath.h" />
     <ClInclude Include="Character\State\Player\PlayerStateIdle.h" />
+    <ClInclude Include="Character\State\Player\PlayerStateRoll.h" />
     <ClInclude Include="Character\State\Player\PlayerStateWalk.h" />
     <ClInclude Include="External\CsvLoad.h" />
     <ClInclude Include="External\Font.h" />

@@ -13,6 +13,9 @@ namespace
 	constexpr float cAnalogInputMax = 1000.0f;	//アナログスティックから入力されるベクトルの最大
 
 	constexpr float cWalkAnimSpeed = 0.5f;
+
+	//歩きにより代入される速度
+	constexpr float cWalkSpeed = 1.5f;
 }
 
 /// <summary>
@@ -22,7 +25,6 @@ namespace
 PlayerStateWalk::PlayerStateWalk(std::shared_ptr<CharacterBase> chara) :
 	StateBase(chara),
 	m_dir(),
-	m_noInputFrame(0),
 	m_walkCount(0),
 	m_targetState(false),
 	m_equipmentState(false)
@@ -35,6 +37,8 @@ PlayerStateWalk::PlayerStateWalk(std::shared_ptr<CharacterBase> chara) :
 	m_dir = GetDirection(input.first, -input.second);
 	auto animName = GetWalkAnim(m_dir);
 	m_pChara.lock()->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), animName));
+	//速度を決める
+	chara->SetSpeed(cWalkSpeed);
 }
 
 /// <summary>
@@ -65,19 +69,12 @@ void PlayerStateWalk::Update()
 	auto own = std::dynamic_pointer_cast<Player>(m_pChara.lock());
 
 	//左スティックが入力されていなかったらStateをIdleにする
-	if (Input::GetInstance().IsStickNeutral(false))
+	//左スティックが入力されてなかったらStateをIdleにする
+	if (Input::GetInstance().GetInputStick(false).first == 0.0f ||
+		Input::GetInstance().GetInputStick(false).second == 0.0f)
 	{
-		if (m_noInputFrame == 2)
-		{
-			ChangeState(StateKind::Idle);
-			return;
-		}
-
-		m_noInputFrame++;
-	}
-	else
-	{
-		m_noInputFrame = 0;
+		ChangeState(StateKind::Idle);
+		return;
 	}
 
 	//ジャンプボタンが押されていたらStateをJumpにする
@@ -90,7 +87,7 @@ void PlayerStateWalk::Update()
 	//攻撃ボタンが押されていたらStateを攻撃にする
 	if (Input::GetInstance().IsTriggered("Input_Attack"))
 	{
-		ChangeState(StateKind::Attack1);
+		ChangeState(StateKind::Attack);
 		return;
 	}
 
@@ -102,7 +99,7 @@ void PlayerStateWalk::Update()
 	}
 
 	//ダッシュボタンが押されたらStateをダッシュにする
-	if (Input::GetInstance().IsTriggered("Input_Dash"))
+	if (Input::GetInstance().IsPushed("Input_Dash"))
 	{
 		ChangeState(StateKind::Dash);
 		return;
@@ -143,11 +140,19 @@ void PlayerStateWalk::Update()
 
 	//cameraの角度から
 	//コントローラーによる移動方向を決定する
-	MATRIX mtx = MGetRotY(own->GetAngle() + DX_PI_F);
+	MATRIX mtx = MGetRotY(own->GetCameraAngle() + DX_PI_F);
 	moveVec.GetVector() = VTransform(moveVec.ConversionToVECTOR(), mtx);
 
 	//ライブラリのベクターに変換する
 	MyLibrary::LibVec3 move = MyLibrary::LibVec3(static_cast<float>(moveVec.x), static_cast<float>(moveVec.y), static_cast<float>(moveVec.z));
+
+	//ターゲットしていない時
+	if (!m_targetState)
+	{
+		//キャラクターのアングルを決める
+		own->SetAngle(atan2f(-moveVec.z, moveVec.x) - DX_PI_F / 2);
+	}
+	
 
 	//移動速度を決定する
 	MyLibrary::LibVec3 prevVelocity = own->GetRigidbody()->GetVelocity();

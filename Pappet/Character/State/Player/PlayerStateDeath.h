@@ -2,18 +2,19 @@
 #include "Character/StateBase.h"
 
 /// <summary>
-/// プレイヤーのダッシュ状態
+/// プレイヤーの死亡状態
 /// </summary>
-class PlayerStateDash : public StateBase
+class PlayerStateDeath : public StateBase
 {
 public:
 	//コンストラクタ
-	PlayerStateDash(std::shared_ptr<CharacterBase> chara);
+	PlayerStateDeath(std::shared_ptr<CharacterBase> chara);
 	//デストラクタ
-	~PlayerStateDash() override;
+	~PlayerStateDeath();
 	//初期化
 	void Init(std::string md) override;
 	//更新
 	virtual void Update() override;
+
 };
 

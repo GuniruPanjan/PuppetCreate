@@ -40,12 +40,22 @@ void PlayerStateIdle::Update()
 	//持ち主がプレイヤーかどうかをチェックする
 	if (!CheckState()) return;
 
-	//左スティックが入力されていたらStateをWalkにする
+	//左スティックが入力されていたらStateをWalkかDashにする
 	if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
 		Input::GetInstance().GetInputStick(false).second != 0.0f)
 	{
-		ChangeState(StateKind::Walk);
-		return;
+		//ダッシュボタンが長押しされてたらダッシュ
+		if (Input::GetInstance().IsPushed("Input_Dash"))
+		{
+			ChangeState(StateKind::Dash);
+			return;
+		}
+		//押されていなかったらWalk
+		else
+		{
+			ChangeState(StateKind::Walk);
+			return;
+		}
 	}
 
 	//ジャンプボタンが押されていたらStateをJumpにする
@@ -58,7 +68,7 @@ void PlayerStateIdle::Update()
 	//攻撃ボタンが押されていたらStateを攻撃にする
 	if (Input::GetInstance().IsTriggered("Input_Attack"))
 	{
-		ChangeState(StateKind::Attack1);
+		ChangeState(StateKind::Attack);
 		return;
 	}
 

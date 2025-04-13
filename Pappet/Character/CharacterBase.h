@@ -28,7 +28,7 @@ public:
 		float s_defense;     //防御力
 		float s_speed;       //速度
 		int s_core;          //コア
-	}m_status;
+	};
 
 	//アニメーション関係の構造体
 	struct AnimationChange
@@ -70,8 +70,20 @@ public:
 
 	//ステータス取得
 	Status GetStatus() { return m_status; }
+	//フレームを取得する
+	float GetFrame() { return m_nowFrame; }
+	//キャラクターのアングルを取得する
+	float GetAngle() { return m_angle; }
 	//カメラアングル取得
-	float GetAngle() { return m_cameraAngle; }
+	float GetCameraAngle() { return m_cameraAngle; }
+	//アニメーション終了を取得する
+	bool GetEndAnim() { return m_isAnimationFinish; }
+
+	//スピードを設定する
+	int SetSpeed(int set) { return m_status.s_speed = set; }
+	//キャラクターアングルを決める
+	float SetAngle(int set) { return m_angle = set; }
+	
 
 	//物理データを取得
 	std::shared_ptr<MyLibrary::Rigidbody> GetRigidbody() { return rigidbody; }

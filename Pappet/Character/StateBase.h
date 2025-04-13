@@ -17,13 +17,14 @@ public:
 		Roll,        //回避
 		Dash,        //走る
 		Jump,        //ジャンプ
-		Attack1,     //攻撃1
-		Attack2,     //攻撃2
-		Attack3,     //攻撃3
+		Attack,      //攻撃
 		StrongAttack,//強攻撃
 		Shield,      //盾
 		Parry,       //パリィ
 		Damage,      //ダメージ
+		Item,        //回復など
+		Taking,      //アイテム取得
+		EnterBoss,   //ボス部屋に入るモーション
 		Death,       //死亡
 	};
 

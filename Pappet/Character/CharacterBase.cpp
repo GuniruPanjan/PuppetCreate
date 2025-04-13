@@ -163,7 +163,7 @@ void CharacterBase::ChangeAnim(int animIndex, bool& one, bool (&all)[30], float 
 	
 }
 
-void CharacterBase::ChangeStateAnim(int animIndex, float animSpeed, bool reverse = false)
+void CharacterBase::ChangeStateAnim(int animIndex, float animSpeed, bool reverse)
 {
 	//さらに古いアニメーションがアタッチされている場合はこの時点で消しておく
 	if (m_prevAnimNo != -1)
