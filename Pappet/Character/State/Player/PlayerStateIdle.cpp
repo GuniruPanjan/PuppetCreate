@@ -40,6 +40,13 @@ void PlayerStateIdle::Update()
 	//持ち主がプレイヤーかどうかをチェックする
 	if (!CheckState()) return;
 
+	//持っているキャラクターベースクラスをプレイヤークラスにキャストする(ダウンキャスト)
+	auto own = std::dynamic_pointer_cast<Player>(m_pChara.lock());
+
+	//プレイヤーの速度を0にする
+	auto prevVel = own->GetRigidbody()->GetVelocity();
+	own->GetRigidbody()->SetVelocity(MyLibrary::LibVec3(0.0f, prevVel.y, 0.0f));
+
 	//左スティックが入力されていたらStateをWalkかDashにする
 	if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
 		Input::GetInstance().GetInputStick(false).second != 0.0f)
@@ -92,11 +99,4 @@ void PlayerStateIdle::Update()
 		ChangeState(StateKind::Item);
 		return;
 	}
-
-	//持っているキャラクターベースクラスをプレイヤークラスにキャストする(ダウンキャスト)
-	auto own = std::dynamic_pointer_cast<Player>(m_pChara.lock());
-
-	//プレイヤーの速度を0にする
-	auto prevVel = own->GetRigidbody()->GetVelocity();
-	own->GetRigidbody()->SetVelocity(MyLibrary::LibVec3(0.0f, prevVel.y, 0.0f));
 }

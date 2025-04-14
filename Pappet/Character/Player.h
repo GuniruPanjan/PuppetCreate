@@ -74,6 +74,9 @@ public:
 	//レベル関係のステータス
 	void ChangeStatus();
 
+	//フレームを取得
+	int GetShieldFrame() { return m_moveAnimShieldFrameIndex; }
+
 	//プレイヤーが生きているかを取得
 	const bool IsGetPlayerDead() const { return m_anim.s_isDead; }
 
