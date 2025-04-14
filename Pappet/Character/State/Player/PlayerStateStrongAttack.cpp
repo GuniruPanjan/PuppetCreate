@@ -27,7 +27,7 @@ PlayerStateStrongAttack::~PlayerStateStrongAttack()
 /// 初期化
 /// </summary>
 /// <param name="md"></param>
-void PlayerStateStrongAttack::Init(std::string md)
+void PlayerStateStrongAttack::Init(int md)
 {
 	m_stageCol = md;
 }
@@ -109,6 +109,13 @@ void PlayerStateStrongAttack::Update()
 		if (Input::GetInstance().IsTriggered("X"))
 		{
 			ChangeState(StateKind::Item);
+			return;
+		}
+
+		//ガードボタンを押したらStateをガードにする
+		if (Input::GetInstance().IsTriggered("Input_Shield"))
+		{
+			ChangeState(StateKind::Guard);
 			return;
 		}
 	}

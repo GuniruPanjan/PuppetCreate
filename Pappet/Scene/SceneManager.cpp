@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include "SceneTitle.h"
+#include "Input/Input.h"
 
 /// <summary>
 /// コンストラクタ
@@ -32,6 +33,8 @@ void SceneManager::Init()
 /// </summary>
 void SceneManager::Update()
 {
+	Input::GetInstance().Update();
+
 	std::shared_ptr<SceneBase> pNext = m_pScene->Update();
 	if (pNext != m_pScene)
 	{

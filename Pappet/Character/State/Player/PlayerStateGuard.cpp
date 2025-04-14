@@ -15,6 +15,9 @@ namespace
 
 	//歩きにより代入される速度
 	constexpr float cWalkSpeed = 1.5f;
+
+	//一回だけ行う
+	bool cOne = false;
 }
 
 /// <summary>
@@ -28,6 +31,8 @@ PlayerStateGuard::PlayerStateGuard(std::shared_ptr<CharacterBase> chara) :
 	//現在のステートを待機状態にする
 	m_nowState = StateKind::Guard;
 	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "ShieldStart"));
+
+	cOne = false;
 }
 
 /// <summary>
@@ -41,7 +46,7 @@ PlayerStateGuard::~PlayerStateGuard()
 /// 初期化
 /// </summary>
 /// <param name="md"></param>
-void PlayerStateGuard::Init(std::string md)
+void PlayerStateGuard::Init(int md)
 {
 	m_stageCol = md;
 }
@@ -56,6 +61,24 @@ void PlayerStateGuard::Update()
 
 	//持っているキャラクターベースクラスをプレイヤークラスにキャストする(ダウンキャスト)
 	auto own = std::dynamic_pointer_cast<Player>(m_pChara.lock());
+
+	//動いていなかったら
+	if (Input::GetInstance().GetInputStick(false).first == 0.0f ||
+		Input::GetInstance().GetInputStick(false).second == 0.0f)
+	{
+		//シールドの構え始めが終わったら
+		if (own->GetEndAnim())
+		{
+			//一回だけ行う
+			if (!cOne)
+			{
+				own->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldIdle"));
+
+				cOne = true;
+			}
+		}
+	}
+	
 
 	//盾を構えた状態で左スティックが入力されていたらシールドを構えた状態にする
 	if (Input::GetInstance().GetInputStick(false).first != 0.0f ||

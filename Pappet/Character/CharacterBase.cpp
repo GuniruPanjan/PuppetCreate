@@ -36,7 +36,8 @@ CharacterBase::CharacterBase(Priority priority, ObjectTag tag) :
 	m_heel(0),
 	m_maxHeel(0),
 	m_preAnimIdx(0),
-	m_currentAnimNo(0)
+	m_currentAnimNo(-1),
+	m_pState()
 {
 	for (int i = 0; i < ANIMATION_MAX; i++)
 	{
@@ -108,6 +109,63 @@ bool CharacterBase::UpdateAnim(int attachNo, int max, float startTime)
 		MV1SetAttachAnimTime(m_modelHandle, attachNo, m_animSpeed);
 	}
 	
+	m_animSpeed = m_nowFrame;
+
+	return isLoop;
+}
+
+bool CharacterBase::UpdateStateAnim(int attachNo, float startTime)
+{
+	//アニメーションが設定されていなかったら早期リターン
+	if (attachNo == -1) return false;
+
+	//現在再生中のアニメーションの総カウントを取得する
+	float totalAnimFrame = MV1GetAttachAnimTotalTime(m_modelHandle, attachNo);
+	bool isLoop = false;
+
+	//アニメーションを進行させる
+	if (!m_animReverse)
+	{
+		m_nowFrame += m_animTime;
+	}
+	//アニメーションを逆進行させる
+	else if (m_animReverse)
+	{
+		m_nowFrame -= m_animTime;
+	}
+
+	//ここが問題になっている
+	//アニメーションを再生させる時
+	if (!m_animReverse)
+	{
+		while (totalAnimFrame <= m_nowFrame)
+		{
+			m_nowFrame -= totalAnimFrame;
+			m_nowFrame += startTime;
+			isLoop = true;
+		}
+	}
+	//アニメーションを逆再生させる時
+	else if (m_animReverse)
+	{
+		while (m_nowFrame <= 0.0f)
+		{
+			m_nowFrame += totalAnimFrame;
+			m_nowFrame -= startTime;
+			isLoop = true;
+		}
+	}
+
+	if (!m_animInit)
+	{
+		//進めた時間に設定
+		MV1SetAttachAnimTime(m_modelHandle, attachNo, m_nowFrame);
+	}
+	else if (m_animInit)
+	{
+		MV1SetAttachAnimTime(m_modelHandle, attachNo, m_animSpeed);
+	}
+
 	m_animSpeed = m_nowFrame;
 
 	return isLoop;
@@ -271,4 +329,9 @@ void CharacterBase::FrameEndAnim(int animIndex, bool& one, bool& two, int frame)
 void CharacterBase::NotInitAnim(bool init)
 {
 	m_animInit = init;
+}
+
+void CharacterBase::ChangeState(std::shared_ptr<StateBase> next)
+{
+	m_pState = next;
 }

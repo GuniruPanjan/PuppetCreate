@@ -28,7 +28,7 @@ PlayerStateDamage::~PlayerStateDamage()
 /// 初期化
 /// </summary>
 /// <param name="md"></param>
-void PlayerStateDamage::Init(std::string md)
+void PlayerStateDamage::Init(int md)
 {
 	m_stageCol = md;
 }
@@ -110,6 +110,13 @@ void PlayerStateDamage::Update()
 		if (Input::GetInstance().IsTriggered("X"))
 		{
 			ChangeState(StateKind::Item);
+			return;
+		}
+
+		//ガードボタンを押したらStateをガードにする
+		if (Input::GetInstance().IsTriggered("Input_Shield"))
+		{
+			ChangeState(StateKind::Guard);
 			return;
 		}
 	}

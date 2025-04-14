@@ -26,8 +26,7 @@ PlayerStateWalk::PlayerStateWalk(std::shared_ptr<CharacterBase> chara) :
 	StateBase(chara),
 	m_dir(),
 	m_walkCount(0),
-	m_targetState(false),
-	m_equipmentState(false)
+	m_noInputFrame(0)
 {
 	//現在のステートを歩き状態にする
 	m_nowState = StateKind::Walk;
@@ -52,7 +51,7 @@ PlayerStateWalk::~PlayerStateWalk()
 /// 初期化
 /// </summary>
 /// <param name="md"></param>
-void PlayerStateWalk::Init(std::string md)
+void PlayerStateWalk::Init(int md)
 {
 	m_stageCol = md;
 }
@@ -70,11 +69,20 @@ void PlayerStateWalk::Update()
 
 	//左スティックが入力されていなかったらStateをIdleにする
 	//左スティックが入力されてなかったらStateをIdleにする
-	if (Input::GetInstance().GetInputStick(false).first == 0.0f ||
+	if (Input::GetInstance().GetInputStick(false).first == 0.0f &&
 		Input::GetInstance().GetInputStick(false).second == 0.0f)
 	{
-		ChangeState(StateKind::Idle);
-		return;
+		if (m_noInputFrame == 5)
+		{
+			ChangeState(StateKind::Idle);
+			return;
+		}
+
+		m_noInputFrame++;
+	}
+	else
+	{
+		m_noInputFrame = 0;
 	}
 
 	//ジャンプボタンが押されていたらStateをJumpにする
@@ -119,6 +127,13 @@ void PlayerStateWalk::Update()
 		return;
 	}
 
+	//ガードボタンを押したらStateをガードにする
+	if (Input::GetInstance().IsTriggered("Input_Shield"))
+	{
+		ChangeState(StateKind::Guard);
+		return;
+	}
+
 	//コントローラーの左スティックの入力を取得
 	auto input = Input::GetInstance().GetInputStick(false);
 	auto dirLog = m_dir;
@@ -133,9 +148,13 @@ void PlayerStateWalk::Update()
 	}
 
 	//移動方向を決定する
-	auto moveDir = MyLibrary::LibVec3(input.first, 0.0f, -input.second);
+	//auto moveDir = MyLibrary::LibVec3(input.first, 0.0f, -input.second);
 	//移動ベクトルの長さを取得する
-	float len = moveDir.Length();
+	//float len = moveDir.Length();
+
+	auto moveDir = VGet(static_cast<float>(-input.first), 0.0f, static_cast<float>(input.second));
+
+	float len = VSize(moveDir);
 
 	//ベクトルの長さを0.0～1.0の割合に変換する
 	float rate = len / cAnalogInputMax;
@@ -146,16 +165,16 @@ void PlayerStateWalk::Update()
 	rate = max(rate, 0.0f);
 
 	//速度が決定できるので移動ベクトルに反映する
-	moveDir = moveDir.Normalize();
+	moveDir = VNorm(moveDir);
 	float speed = own->GetStatus().s_speed * rate;
 
 	//方向ベクトルと移動力をかけて移動ベクトルを生成する
-	auto moveVec = moveDir * speed;
+	auto moveVec = VScale(moveDir, speed);
 
 	//cameraの角度から
 	//コントローラーによる移動方向を決定する
 	MATRIX mtx = MGetRotY(own->GetCameraAngle() + DX_PI_F);
-	moveVec.GetVector() = VTransform(moveVec.ConversionToVECTOR(), mtx);
+	moveVec = VTransform(moveVec, mtx);
 
 	//ライブラリのベクターに変換する
 	MyLibrary::LibVec3 move = MyLibrary::LibVec3(static_cast<float>(moveVec.x), static_cast<float>(moveVec.y), static_cast<float>(moveVec.z));
@@ -164,15 +183,13 @@ void PlayerStateWalk::Update()
 	if (!m_targetState)
 	{
 		//キャラクターのアングルを決める
-		own->SetAngle(atan2f(-moveVec.z, moveVec.x) - DX_PI_F / 2);
+		own->SetModelAngle(atan2f(-moveVec.z, moveVec.x) - DX_PI_F / 2);
 	}
-	
 
 	//移動速度を決定する
 	MyLibrary::LibVec3 prevVelocity = own->GetRigidbody()->GetVelocity();
 	MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(move.x, prevVelocity.y, move.z);
 	own->GetRigidbody()->SetVelocity(newVelocity);
-
 }
 
 /// <summary>

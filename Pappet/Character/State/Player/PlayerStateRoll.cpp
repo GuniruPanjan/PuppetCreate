@@ -46,7 +46,7 @@ PlayerStateRoll::~PlayerStateRoll()
 /// 初期化
 /// </summary>
 /// <param name="md"></param>
-void PlayerStateRoll::Init(std::string md)
+void PlayerStateRoll::Init(int md)
 {
 	m_stageCol = md;
 }
@@ -153,7 +153,7 @@ void PlayerStateRoll::Update()
 		}
 
 		//左スティックが入力されてなかったらStateをIdleにする
-		if (Input::GetInstance().GetInputStick(false).first == 0.0f ||
+		if (Input::GetInstance().GetInputStick(false).first == 0.0f &&
 			Input::GetInstance().GetInputStick(false).second == 0.0f)
 		{
 			ChangeState(StateKind::Idle);
@@ -199,6 +199,13 @@ void PlayerStateRoll::Update()
 		if (Input::GetInstance().IsTriggered("X"))
 		{
 			ChangeState(StateKind::Item);
+			return;
+		}
+
+		//ガードボタンを押したらStateをガードにする
+		if (Input::GetInstance().IsTriggered("Input_Shield"))
+		{
+			ChangeState(StateKind::Guard);
 			return;
 		}
 	}

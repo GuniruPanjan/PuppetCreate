@@ -51,8 +51,8 @@ public:
 	Player();
 	virtual ~Player();
 
-	void Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* manager, Weapon& weapon, Shield& shield, Armor& armor, bool anim);
-	void GameInit(std::shared_ptr<MyLibrary::Physics> physics);
+	void Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* manager, Weapon& weapon, Shield& shield, Armor& armor, bool anim, int colData);
+	void GameInit(std::shared_ptr<MyLibrary::Physics> physics, int colData);
 	void Finalize();
 	void Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& enemy, CoreManager& core, VECTOR restpos, Tool& tool, SEManager& se, bool boss, bool dead, std::shared_ptr<MyLibrary::Physics> physics);
 	void Action(VECTOR restpos, Tool& tool, Shield& shield, SEManager& se, bool boss, bool dead);
@@ -81,7 +81,9 @@ public:
 	const bool IsGetPlayerDead() const { return m_anim.s_isDead; }
 
 	//ÉJÉÅÉâä÷åW
-	void SetCameraAngle(float angle) { m_cameraAngle = angle; }
+	float GetCameraAngle() { return m_cameraAngle; }
+	float SetCameraAngle(float angle) { return m_cameraAngle = angle; }
+	float SetModelAngle(float angle) { return m_angle = angle; }
 	float SetAngle(float angle) { return m_lockAngle = angle; }
 	bool GetLock() { return m_lockonTarget; }
 	float GetSearch() { return m_searchRadius; }

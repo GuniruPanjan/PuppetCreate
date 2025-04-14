@@ -12,21 +12,16 @@ public:
 	//デストラクタ
 	~PlayerStateWalk() override;
 	//初期化
-	void Init(std::string md) override;
+	void Init(int md) override;
 	//更新
 	virtual void Update() override;
 
 	//入力方向から歩きアニメーションを取得する
 	std::string GetWalkAnim(eDir dir);
-	//ターゲット状態だとアニメーションが変わる
-	bool SetTarget(bool set) { m_targetState = set; }
-	//装備を付けているとアニメーションが変わる
-	bool SetEquipment(bool set) { m_equipmentState = set; }
 
 private:
 	eDir m_dir;
 	int m_walkCount;
-	bool m_targetState;
-	bool m_equipmentState;
+	int m_noInputFrame;
 };
 

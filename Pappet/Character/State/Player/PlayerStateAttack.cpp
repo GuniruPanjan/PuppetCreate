@@ -48,7 +48,7 @@ PlayerStateAttack::~PlayerStateAttack()
 /// ‰Šú‰»
 /// </summary>
 /// <param name="md"></param>
-void PlayerStateAttack::Init(std::string md)
+void PlayerStateAttack::Init(int md)
 {
 	m_stageCol = md;
 }
@@ -253,6 +253,13 @@ void PlayerStateAttack::Update()
 			ChangeState(StateKind::Item);
 			return;
 		}
+
+		//ƒK[ƒhƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½‚çState‚ğƒK[ƒh‚É‚·‚é
+		if (Input::GetInstance().IsTriggered("Input_Shield"))
+		{
+			ChangeState(StateKind::Guard);
+			return;
+		}
 	}
 
 }
@@ -266,8 +273,9 @@ std::string PlayerStateAttack::GetAttackAnim()
 	//‘•”õ‚ªŒ•‚È‚Ç‚Ìê‡
 	if (m_equipmentSword)
 	{
-		//UŒ‚
-		return std::string("Attack1");
+		
 	}
 
+	//UŒ‚
+	return std::string("Attack1");
 }

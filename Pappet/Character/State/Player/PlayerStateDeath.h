@@ -10,9 +10,9 @@ public:
 	//コンストラクタ
 	PlayerStateDeath(std::shared_ptr<CharacterBase> chara);
 	//デストラクタ
-	~PlayerStateDeath();
+	~PlayerStateDeath() override;
 	//初期化
-	void Init(std::string md) override;
+	void Init(int md) override;
 	//更新
 	virtual void Update() override;
 

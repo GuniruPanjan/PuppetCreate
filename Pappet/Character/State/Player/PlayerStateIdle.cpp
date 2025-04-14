@@ -27,7 +27,7 @@ PlayerStateIdle::~PlayerStateIdle()
 /// 初期化処理
 /// </summary>
 /// <param name="md"></param>
-void PlayerStateIdle::Init(std::string md)
+void PlayerStateIdle::Init(int md)
 {
 	m_stageCol = md;
 }
@@ -97,6 +97,13 @@ void PlayerStateIdle::Update()
 	if (Input::GetInstance().IsTriggered("X"))
 	{
 		ChangeState(StateKind::Item);
+		return;
+	}
+
+	//ガードボタンを押したらStateをガードにする
+	if (Input::GetInstance().IsTriggered("Input_Shield"))
+	{
+		ChangeState(StateKind::Guard);
 		return;
 	}
 }

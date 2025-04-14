@@ -100,7 +100,7 @@ void GameManager::Init()
 	cEffect.Init();
 
 	m_pPlayer = std::make_shared<Player>();
-	m_pPlayer->Init(m_pPhysics, this, *m_pWeapon, *m_pShield, *m_pArmor, true);
+	m_pPlayer->Init(m_pPhysics, this, *m_pWeapon, *m_pShield, *m_pArmor, true, m_pMap->GetCollisionMap());
 	m_pPlayer->SetMapNow(GetThisMapName());
 	m_pEnemy = std::make_shared<EnemyManager>();
 	m_pEnemy->Init(m_nowMap);
@@ -160,7 +160,7 @@ void GameManager::GameInit()
 	m_pMap->Init(m_pPhysics);
 	cEffect.Init();
 
-	m_pPlayer->Init(m_pPhysics, this, *m_pWeapon, *m_pShield, *m_pArmor, false);
+	m_pPlayer->Init(m_pPhysics, this, *m_pWeapon, *m_pShield, *m_pArmor, false, m_pMap->GetCollisionMap());
 	m_pEnemy->Init(m_nowMap);
 	m_pItem->GameInit(m_pPhysics, this);
 	m_pMessage->Init();
@@ -425,7 +425,7 @@ void GameManager::Update()
 				//ˆê‰ñ‚¾‚¯ŽÀs
 				if (m_deadInit == true)
 				{
-					m_pPlayer->GameInit(m_pPhysics);
+					m_pPlayer->GameInit(m_pPhysics, m_pMap->GetCollisionMap());
 					m_pEnemy->GameInit(m_pPhysics, this, *m_pEnemyWeapon, m_deadInit, cTutorial);
 					m_pMap->TriggerReset();
 					m_pUi->Init();
@@ -472,7 +472,7 @@ void GameManager::Update()
 					if (m_pFade->GetOut())
 					{
 						//ˆê‰ñ‚¾‚¯ŽÀs
-						m_pPlayer->GameInit(m_pPhysics);
+						m_pPlayer->GameInit(m_pPhysics, m_pMap->GetCollisionMap());
 						m_pPlayer->ChangeStatus();
 						m_pTool->Init();
 

@@ -27,7 +27,7 @@ PlayerStateDeath::~PlayerStateDeath()
 /// ‰Šú‰»
 /// </summary>
 /// <param name="md"></param>
-void PlayerStateDeath::Init(std::string md)
+void PlayerStateDeath::Init(int md)
 {
 	m_stageCol = md;
 }

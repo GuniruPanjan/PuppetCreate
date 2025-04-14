@@ -12,7 +12,7 @@ PlayerStateTaking::PlayerStateTaking(std::shared_ptr<CharacterBase> chara) :
 	StateBase(chara)
 {
 	//現在のステートをアイテム取得状態にする
-	m_nowState = StateKind::Idle;
+	m_nowState = StateKind::Taking;
 	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Taking"));
 }
 
@@ -27,7 +27,7 @@ PlayerStateTaking::~PlayerStateTaking()
 /// 初期化
 /// </summary>
 /// <param name="md"></param>
-void PlayerStateTaking::Init(std::string md)
+void PlayerStateTaking::Init(int md)
 {
 	m_stageCol = md;
 }
@@ -109,6 +109,13 @@ void PlayerStateTaking::Update()
 		if (Input::GetInstance().IsTriggered("X"))
 		{
 			ChangeState(StateKind::Item);
+			return;
+		}
+
+		//ガードボタンを押したらStateをガードにする
+		if (Input::GetInstance().IsTriggered("Input_Shield"))
+		{
+			ChangeState(StateKind::Guard);
 			return;
 		}
 	}

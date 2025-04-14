@@ -7,6 +7,7 @@
 #include "Object/ShieldObject.h"
 #include "Object/AttackLigObject.h"
 #include "Object/EnemyAttackLigObject.h"
+#include "StateBase.h"
 #include <map>
 #include <string>
 #define ANIMATION_MAX   30
@@ -55,6 +56,8 @@ public:
 public:
 	//アニメーションの更新
 	bool UpdateAnim(int attachNo, int max, float startTime = 0.0f);
+	//アニメーションの更新
+	bool UpdateStateAnim(int attachNo, float startTime = 0.0f);
 	//アニメーションの変更
 	void ChangeAnim(int animIndex, bool& one, bool(&all)[30], float animSpeed = 0.5f, bool reverse = false, float resetTime = 0.0f);
 	//Stateでのアニメーション変更
@@ -69,6 +72,8 @@ public:
 	void FrameEndAnim(int animIndex, bool& one, bool& two, int frame);
 	//アニメーションの未初期化
 	void NotInitAnim(bool init = false);
+	//自身のステートクラスから呼ぶ専用
+	void ChangeState(std::shared_ptr<StateBase> next);
 	//キャラクター名を取得
 	const std::string GetCharacterName() const { return m_characterName; }
 
@@ -78,8 +83,6 @@ public:
 	float GetFrame() { return m_nowFrame; }
 	//キャラクターのアングルを取得する
 	float GetAngle() { return m_angle; }
-	//カメラアングル取得
-	float GetCameraAngle() { return m_cameraAngle; }
 	//アニメーション終了を取得する
 	bool GetEndAnim() { return m_isAnimationFinish; }
 
@@ -140,6 +143,8 @@ protected:
 	int m_heel;               //HPに追加する回復分
 	int m_maxHeel;            //HPの最大回復量
 	float m_cameraAngle;      //カメラ情報
-	
+	//Stateパターン
+	std::shared_ptr<StateBase> m_pState;      
+
 };
 

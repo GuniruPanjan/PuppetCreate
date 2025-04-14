@@ -11,6 +11,8 @@
 #include "Manager/GameManager.h"
 #include "Manager/SEManager.h"
 
+#include "State/Player/PlayerStateIdle.h"
+
 #include <cassert>
 
 namespace
@@ -205,7 +207,7 @@ Player::~Player()
 /// 初期化処理
 /// </summary>
 /// <param name="physics">物理クラスのポインタ</param>
-void Player::Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* manager, Weapon& weapon, Shield& shield, Armor& armor, bool anim)
+void Player::Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* manager, Weapon& weapon, Shield& shield, Armor& armor, bool anim, int colData)
 {
 	m_pPhysics = physics;
 
@@ -259,12 +261,18 @@ void Player::Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* mana
 	m_pShield = std::make_shared<ShieldObject>(cShieldWidth, cShieldHight, cShieldDepht);
 	m_pShieldSearch = std::make_shared<PlayerSearchObject>(cShieldSearchRadius);
 
-	if (anim)
-	{
-		//待機アニメーション設定
-		m_nowAnimNo = MV1AttachAnim(m_modelHandle, m_animIdx["Idle"]);
-		m_nowAnimIdx = m_animIdx["Idle"];
-	}
+	//ステートパターンの初期化
+	m_pState = std::make_shared<PlayerStateIdle>(std::dynamic_pointer_cast<Player>(shared_from_this()));
+	m_pState->SetNextKind(StateBase::StateKind::Idle);
+	m_pState->Init(colData);
+
+
+	//if (anim)
+	//{
+	//	//待機アニメーション設定
+	//	m_nowAnimNo = MV1AttachAnim(m_modelHandle, m_animIdx["Idle"]);
+	//	m_nowAnimIdx = m_animIdx["Idle"];
+	//}
 
 	//HPの最大回復量
 	m_maxHeel = 80;
@@ -294,7 +302,7 @@ void Player::Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* mana
 /// ゲームの仕様上で初期化処理
 /// </summary>
 /// <param name="physics"></param>
-void Player::GameInit(std::shared_ptr<MyLibrary::Physics> physics)
+void Player::GameInit(std::shared_ptr<MyLibrary::Physics> physics, int colData)
 {
 	m_pPhysics = physics;
 
@@ -320,6 +328,11 @@ void Player::GameInit(std::shared_ptr<MyLibrary::Physics> physics)
 	SetModelPos();
 	MV1SetPosition(m_modelHandle, m_modelPos.ConversionToVECTOR());
 
+	//ステートパターンの初期化
+	m_pState = std::make_shared<PlayerStateIdle>(std::dynamic_pointer_cast<Player>(shared_from_this()));
+	m_pState->SetNextKind(StateBase::StateKind::Idle);
+	m_pState->Init(colData);
+
 	m_deadReset = false;
 	m_staminaBreak = false;
 
@@ -339,6 +352,9 @@ void Player::Finalize()
 
 void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& enemy, CoreManager& core, VECTOR restpos, Tool& tool, SEManager& se, bool boss, bool dead, std::shared_ptr<MyLibrary::Physics> physics)
 {
+	//ステートの更新
+	m_pState->Update();
+
 	//とりあえずやっとく
 	m_status.s_core = core.GetCore();
 	m_levelStatus.sl_all = m_levelStatus.sl_hp + m_levelStatus.sl_muscle + m_levelStatus.sl_skill + m_levelStatus.sl_stamina;
@@ -390,7 +406,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 
 		//アニメーションのブレンド率を設定する
 		MV1SetAttachAnimBlendRate(m_modelHandle, m_prevAnimNo, cAnimBlendRateMax - m_animBlendRate);
-		MV1SetAttachAnimBlendRate(m_modelHandle, m_nowAnimNo, m_animBlendRate);
+		//MV1SetAttachAnimBlendRate(m_modelHandle, m_nowAnimNo, m_animBlendRate);
+		MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAnimNo, m_animBlendRate);
+
 	}
 
 	//死んだ時のアニメーション
@@ -415,123 +433,124 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		m_deadReset = true;
 	}
 
-	//アナログスティックを使って移動
-	int analogX = 0;
-	int analogY = 0;
+	////アナログスティックを使って移動
+	//int analogX = 0;
+	//int analogY = 0;
 
-	float SetAngleX = 0.0f;
-	float SetAngleY = 0.0f;
+	//float SetAngleX = 0.0f;
+	//float SetAngleY = 0.0f;
 
-	if (!m_anim.s_isDead && !m_animChange.sa_avoidance && !m_anim.s_attack && !m_animChange.sa_recovery && !m_anim.s_hit && !m_animChange.sa_bossEnter
-		&& !m_animChange.sa_imapact && !m_rest && !m_animChange.sa_taking && !m_animChange.sa_strengthAttack)
-	{
-		GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
+	//if (!m_anim.s_isDead && !m_animChange.sa_avoidance && !m_anim.s_attack && !m_animChange.sa_recovery && !m_anim.s_hit && !m_animChange.sa_bossEnter
+	//	&& !m_animChange.sa_imapact && !m_rest && !m_animChange.sa_taking && !m_animChange.sa_strengthAttack)
+	//{
+	//	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
 
-		cOneAvoidance = false;
-	}
+	//	cOneAvoidance = false;
+	//}
 
-	if (m_animChange.sa_avoidance && !cOneAvoidance)
-	{
-		GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
+	//if (m_animChange.sa_avoidance && !cOneAvoidance)
+	//{
+	//	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
 
-		cOneAvoidance = true;
-	}
+	//	cOneAvoidance = true;
+	//}
 
-	//アナログスティックの入力を格納
-	cAnX = analogX;
-	cAnY = analogY;
+	////アナログスティックの入力を格納
+	//cAnX = analogX;
+	//cAnY = analogY;
 
-	//移動方向を設定する
-	auto moveVec = VGet(static_cast<float>(-analogX), 0.0f, static_cast<float>(analogY));    //ベクトルの長さ
+	////移動方向を設定する
+	//auto moveVec = VGet(static_cast<float>(-analogX), 0.0f, static_cast<float>(analogY));    //ベクトルの長さ
 
-	//ベクトルの長さを取得する
-	float len = VSize(moveVec);
-	//ベクトルの長さを0.0～1.0の割合に変換する
-	float rate = len / 1000.0f;
-	//アナログスティック無効な範囲を除外する
-	rate = (rate - 0.1f) / (0.8f - 0.1f);
-	rate = min(rate, 1.0f);
-	rate = max(rate, 0.0f);
+	////ベクトルの長さを取得する
+	//float len = VSize(moveVec);
+	////ベクトルの長さを0.0～1.0の割合に変換する
+	//float rate = len / 1000.0f;
+	////アナログスティック無効な範囲を除外する
+	//rate = (rate - 0.1f) / (0.8f - 0.1f);
+	//rate = min(rate, 1.0f);
+	//rate = max(rate, 0.0f);
 
-	//速度が決定できるので移動ベクトルに反映する
-	moveVec = VNorm(moveVec);
-	float speed = m_status.s_speed * rate;
+	////速度が決定できるので移動ベクトルに反映する
+	//moveVec = VNorm(moveVec);
+	//float speed = m_status.s_speed * rate;
 
-	moveVec = VScale(moveVec, speed);
+	//moveVec = VScale(moveVec, speed);
 
-	//cameraの角度から
-	//コントローラーによる移動方向を決定する
-	MATRIX mtx = MGetRotY(m_cameraAngle + DX_PI_F);
-	moveVec = VTransform(moveVec, mtx);
+	////cameraの角度から
+	////コントローラーによる移動方向を決定する
+	//MATRIX mtx = MGetRotY(m_cameraAngle + DX_PI_F);
+	//moveVec = VTransform(moveVec, mtx);
 
-	//ライブラリのベクターに変換する
-	m_moveVec = MyLibrary::LibVec3(static_cast<float>(moveVec.x), static_cast<float>(moveVec.y), static_cast<float>(moveVec.z));
+	////ライブラリのベクターに変換する
+	//m_moveVec = MyLibrary::LibVec3(static_cast<float>(moveVec.x), static_cast<float>(moveVec.y), static_cast<float>(moveVec.z));
 
-	//移動方向からプレイヤーへの向く方向を決定する
-	//移動していない場合(ゼロベクトル)の場合は変更しない
-	if (VSquareSize(moveVec) > 0.0f)
-	{
-		//ロックオンしてない時と走ったときのアングル
-		if (!m_lockonTarget || m_animChange.sa_dashMove && !m_animChange.sa_avoidance)
-		{
-			//アングルを決定
-			m_angle = atan2f(-moveVec.z, moveVec.x) - DX_PI_F / 2;
-		}
-		//ロックオンした時のアングル
-		else if (m_lockonTarget && !m_animChange.sa_avoidance)
-		{
-			//アングルを決定
-			m_angle = m_lockAngle;
-		}
-		//回避するとき
-		else if (m_animChange.sa_avoidance)
-		{
-			//アングルを決定
-			m_angle = atan2f(-moveVec.z, moveVec.x) - DX_PI_F / 2;
-		}
+	////移動方向からプレイヤーへの向く方向を決定する
+	////移動していない場合(ゼロベクトル)の場合は変更しない
+	//if (VSquareSize(moveVec) > 0.0f)
+	//{
+	//	//ロックオンしてない時と走ったときのアングル
+	//	if (!m_lockonTarget || m_animChange.sa_dashMove && !m_animChange.sa_avoidance)
+	//	{
+	//		//アングルを決定
+	//		m_angle = atan2f(-moveVec.z, moveVec.x) - DX_PI_F / 2;
+	//	}
+	//	//ロックオンした時のアングル
+	//	else if (m_lockonTarget && !m_animChange.sa_avoidance)
+	//	{
+	//		//アングルを決定
+	//		m_angle = m_lockAngle;
+	//	}
+	//	//回避するとき
+	//	else if (m_animChange.sa_avoidance)
+	//	{
+	//		//アングルを決定
+	//		m_angle = atan2f(-moveVec.z, moveVec.x) - DX_PI_F / 2;
+	//	}
 
-		//プレイヤーが動いたら
-		m_anim.s_moveflag = true;
-	}
-	//プレイヤーが動いてなかったら
-	else if (VSquareSize(moveVec) <= 0.0f)
-	{
-		m_anim.s_moveflag = false;
-	}
-	
+	//	//プレイヤーが動いたら
+	//	m_anim.s_moveflag = true;
+	//}
+	////プレイヤーが動いてなかったら
+	//else if (VSquareSize(moveVec) <= 0.0f)
+	//{
+	//	m_anim.s_moveflag = false;
+	//}
+	//
 
-	//回避してないとき
-	if (!m_animChange.sa_avoidance && !m_anim.s_attack)
-	{
-		MyLibrary::LibVec3 prevVelocity = rigidbody->GetVelocity();
-		MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(m_moveVec.x, prevVelocity.y, m_moveVec.z);
-		rigidbody->SetVelocity(newVelocity);
-	}
-	//回避してるとき
-	else if(m_animChange.sa_avoidance)
-	{
-		//回避で移動する距離
-		m_rollMove = VScale(VGet(sinf(m_angle), 0.0f, cosf(m_angle)), cAvoidanceMove);
+	////回避してないとき
+	//if (!m_animChange.sa_avoidance && !m_anim.s_attack)
+	//{
+	//	MyLibrary::LibVec3 prevVelocity = rigidbody->GetVelocity();
+	//	MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(m_moveVec.x, prevVelocity.y, m_moveVec.z);
+	//	rigidbody->SetVelocity(newVelocity);
+	//}
+	////回避してるとき
+	//else if(m_animChange.sa_avoidance)
+	//{
+	//	//回避で移動する距離
+	//	m_rollMove = VScale(VGet(sinf(m_angle), 0.0f, cosf(m_angle)), cAvoidanceMove);
 
-		//アングルの方向に一定距離移動させたい
-		MyLibrary::LibVec3 prevVelocity = rigidbody->GetVelocity();
-		MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(-m_rollMove.x, prevVelocity.y, -m_rollMove.z);
-		rigidbody->SetVelocity(newVelocity);
-	}
-	//攻撃してるとき
-	else if (m_anim.s_attack)
-	{
-		m_attackMove = VScale(VGet(sinf(m_angle), 0.0f, cosf(m_angle)), cAttackMove);
+	//	//アングルの方向に一定距離移動させたい
+	//	MyLibrary::LibVec3 prevVelocity = rigidbody->GetVelocity();
+	//	MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(-m_rollMove.x, prevVelocity.y, -m_rollMove.z);
+	//	rigidbody->SetVelocity(newVelocity);
+	//}
+	////攻撃してるとき
+	//else if (m_anim.s_attack)
+	//{
+	//	m_attackMove = VScale(VGet(sinf(m_angle), 0.0f, cosf(m_angle)), cAttackMove);
 
-		//攻撃の方向に一定距離移動させたい
-		MyLibrary::LibVec3 prevVelocity = rigidbody->GetVelocity();
-		MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(-m_attackMove.x, prevVelocity.y, -m_attackMove.z);
-		rigidbody->SetVelocity(newVelocity);
-	}
+	//	//攻撃の方向に一定距離移動させたい
+	//	MyLibrary::LibVec3 prevVelocity = rigidbody->GetVelocity();
+	//	MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(-m_attackMove.x, prevVelocity.y, -m_attackMove.z);
+	//	rigidbody->SetVelocity(newVelocity);
+	//}
 
 	//装備していないとき
 	if (weapon.GetFist() && shield.GetFist())
 	{
+		
 		//後ろ歩き
 		if (m_lockonTarget && !m_animChange.sa_dashMove && cAnY > 0 && cAnX < 500 && cAnX > -500)
 		{
@@ -657,11 +676,19 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		if (weapon.GetFist() && shield.GetFist())
 		{
 			NotWeaponAnimation();
+
+			//装備をしているアニメーションかを判定する
+			m_pState->SetEquipment(false);
+			m_pState->SetSword(true);
 		}
 		//装備したときのアニメーション
 		else if (!weapon.GetFist() || !shield.GetFist())
 		{
 			WeaponAnimation(shield);
+
+			//装備をしているアニメーションかを判定する
+			m_pState->SetEquipment(true);
+			m_pState->SetSword(true);
 		}
 
 		AllAnimation();
@@ -682,12 +709,16 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	if (!m_anim.s_isDead)
 	{
 		//アニメーションの更新
-		m_isAnimationFinish = UpdateAnim(m_nowAnimNo, ANIMATION_MAX);
+		//m_isAnimationFinish = UpdateAnim(m_nowAnimNo, ANIMATION_MAX);
+
+		m_isAnimationFinish = UpdateStateAnim(m_currentAnimNo);
 	}
 	//死亡したときのアニメーション更新
 	else if (m_anim.s_isDead && m_nowFrame <= 68.0f)
 	{
-		m_isAnimationFinish = UpdateAnim(m_nowAnimNo, ANIMATION_MAX);
+		//m_isAnimationFinish = UpdateAnim(m_nowAnimNo, ANIMATION_MAX);
+
+		m_isAnimationFinish = UpdateStateAnim(m_currentAnimNo);
 	}
 
 	//プレイヤーのポジションを入れる
@@ -1069,13 +1100,13 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		}
 
 
-		//ボス部屋に入る行動で移動する距離
-		m_moveVector = VScale(VGet(sinf(m_angle), 0.0f, cosf(m_angle)), cMove);
+		////ボス部屋に入る行動で移動する距離
+		//m_moveVector = VScale(VGet(sinf(m_angle), 0.0f, cosf(m_angle)), cMove);
 
-		//アングルの方向に一定距離移動させたい
-		MyLibrary::LibVec3 prevVelocity = rigidbody->GetVelocity();
-		MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(-m_moveVector.x, prevVelocity.y, -m_moveVector.z);
-		rigidbody->SetVelocity(newVelocity);
+		////アングルの方向に一定距離移動させたい
+		//MyLibrary::LibVec3 prevVelocity = rigidbody->GetVelocity();
+		//MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(-m_moveVector.x, prevVelocity.y, -m_moveVector.z);
+		//rigidbody->SetVelocity(newVelocity);
 	}
 
 	//アイテム取得終了
@@ -1478,60 +1509,60 @@ void Player::WarpMap()
 /// </summary>
 void Player::NotWeaponAnimation()
 {
-	//攻撃が当たってない時
-	//ボス部屋に入っていない時
-	if (!m_anim.s_hit && !m_animChange.sa_bossEnter && !m_animChange.sa_imapact)
-	{
-		//走り
-		if (m_animChange.sa_dashMove && m_anim.s_moveflag)
-		{
-			m_nowAnimIdx = m_animIdx["Run"];
-			ChangeAnim(m_nowAnimIdx, m_animOne[1], m_animOne);
-			NotInitAnim(false);
+	////攻撃が当たってない時
+	////ボス部屋に入っていない時
+	//if (!m_anim.s_hit && !m_animChange.sa_bossEnter && !m_animChange.sa_imapact)
+	//{
+	//	//走り
+	//	if (m_animChange.sa_dashMove && m_anim.s_moveflag)
+	//	{
+	//		m_nowAnimIdx = m_animIdx["Run"];
+	//		ChangeAnim(m_nowAnimIdx, m_animOne[1], m_animOne);
+	//		NotInitAnim(false);
 
-		}
-		//歩き
-		else if (m_anim.s_moveflag)
-		{
-			//ターゲットしているとき
-			if (!m_lockonTarget)
-			{
-				m_nowAnimIdx = m_animIdx["Walk"];
-				ChangeAnim(m_nowAnimIdx, m_animOne[2], m_animOne);
-				NotInitAnim(false);
+	//	}
+	//	//歩き
+	//	else if (m_anim.s_moveflag)
+	//	{
+	//		//ターゲットしているとき
+	//		if (!m_lockonTarget)
+	//		{
+	//			m_nowAnimIdx = m_animIdx["Walk"];
+	//			ChangeAnim(m_nowAnimIdx, m_animOne[2], m_animOne);
+	//			NotInitAnim(false);
 
-			}
-			//ターゲットしているとき
-			else if (m_lockonTarget)
-			{
-				//左歩き
-				if (cAnX < -500)
-				{
-					m_nowAnimIdx = m_animIdx["LeftWalk"];
-					ChangeAnim(m_nowAnimIdx, m_animOne[3], m_animOne);
-					NotInitAnim(false);
+	//		}
+	//		//ターゲットしているとき
+	//		else if (m_lockonTarget)
+	//		{
+	//			//左歩き
+	//			if (cAnX < -500)
+	//			{
+	//				m_nowAnimIdx = m_animIdx["LeftWalk"];
+	//				ChangeAnim(m_nowAnimIdx, m_animOne[3], m_animOne);
+	//				NotInitAnim(false);
 
-				}
-				//右歩き
-				else if (cAnX > 500)
-				{
-					m_nowAnimIdx = m_animIdx["RightWalk"];
-					ChangeAnim(m_nowAnimIdx, m_animOne[4], m_animOne);
-					NotInitAnim(false);
+	//			}
+	//			//右歩き
+	//			else if (cAnX > 500)
+	//			{
+	//				m_nowAnimIdx = m_animIdx["RightWalk"];
+	//				ChangeAnim(m_nowAnimIdx, m_animOne[4], m_animOne);
+	//				NotInitAnim(false);
 
-				}
-				//後ろ歩きor歩き
-				if (cAnX < 500 && cAnX > -500)
-				{
-					m_nowAnimIdx = m_animIdx["Walk"];
-					ChangeAnim(m_nowAnimIdx, m_animOne[2], m_animOne, cAnimWalkTime, m_animReverse, cAnimWalkReverseTimeInit);
-					NotInitAnim(false);
+	//			}
+	//			//後ろ歩きor歩き
+	//			if (cAnX < 500 && cAnX > -500)
+	//			{
+	//				m_nowAnimIdx = m_animIdx["Walk"];
+	//				ChangeAnim(m_nowAnimIdx, m_animOne[2], m_animOne, cAnimWalkTime, m_animReverse, cAnimWalkReverseTimeInit);
+	//				NotInitAnim(false);
 
-				}
-			}
-			
-		}
-	}
+	//			}
+	//		}
+	//		
+	//	}
+	//}
 }
 
 /// <summary>
@@ -1539,84 +1570,84 @@ void Player::NotWeaponAnimation()
 /// </summary>
 void Player::AllAnimation()
 {
-	//プレイヤーが生きているときだけ
-	if (!m_anim.s_isDead)
-	{
-		//攻撃が当たった時
-		//ボス部屋に入った時
-		if (m_anim.s_hit && !m_animChange.sa_bossEnter && !m_animChange.sa_imapact)
-		{
-			m_nowAnimIdx = m_animIdx["Hit"];
-			ChangeAnim(m_nowAnimIdx, m_animOne[5], m_animOne);
-			NotInitAnim(false);
+	////プレイヤーが生きているときだけ
+	//if (!m_anim.s_isDead)
+	//{
+	//	//攻撃が当たった時
+	//	//ボス部屋に入った時
+	//	if (m_anim.s_hit && !m_animChange.sa_bossEnter && !m_animChange.sa_imapact)
+	//	{
+	//		m_nowAnimIdx = m_animIdx["Hit"];
+	//		ChangeAnim(m_nowAnimIdx, m_animOne[5], m_animOne);
+	//		NotInitAnim(false);
 
-		}
-		//攻撃が当たってないとき
-		//ボス部屋に入った時
-		else if (!m_anim.s_hit && !m_animChange.sa_bossEnter && !m_animChange.sa_imapact)
-		{
-			//動いてない時
-			if (!m_anim.s_moveflag && !m_animChange.sa_avoidance && !m_anim.s_attack && !m_animChange.sa_recovery && 
-				!m_shieldNow && !m_animChange.sa_taking && !m_animChange.sa_strengthAttack)
-			{
-				m_nowAnimIdx = m_animIdx["Idle"];
-				ChangeAnim(m_nowAnimIdx, m_animOne[6], m_animOne);
-				NotInitAnim(false);
+	//	}
+	//	//攻撃が当たってないとき
+	//	//ボス部屋に入った時
+	//	else if (!m_anim.s_hit && !m_animChange.sa_bossEnter && !m_animChange.sa_imapact)
+	//	{
+	//		//動いてない時
+	//		if (!m_anim.s_moveflag && !m_animChange.sa_avoidance && !m_anim.s_attack && !m_animChange.sa_recovery && 
+	//			!m_shieldNow && !m_animChange.sa_taking && !m_animChange.sa_strengthAttack)
+	//		{
+	//			m_nowAnimIdx = m_animIdx["Idle"];
+	//			ChangeAnim(m_nowAnimIdx, m_animOne[6], m_animOne);
+	//			NotInitAnim(false);
 
-			}
-			//回避
-			else if (m_animChange.sa_avoidance)
-			{
-				m_nowAnimIdx = m_animIdx["Roll"];
-				ChangeAnim(m_nowAnimIdx, m_animOne[7], m_animOne, 0.8f);
-				NotInitAnim(true);
-			}
-			//攻撃
-			else if (m_anim.s_attack && !m_animChange.sa_avoidance && !m_animChange.sa_recovery)
-			{
-				m_nowAnimIdx = m_animIdx["Attack1"];
-				ChangeAnim(m_nowAnimIdx, m_animOne[8], m_animOne, 1.0f);
-				NotInitAnim(false);
-			}
-			//強攻撃
-			else if (m_animChange.sa_strengthAttack && !m_animChange.sa_avoidance && !m_animChange.sa_recovery)
-			{
-				m_nowAnimIdx = m_animIdx["Attack2"];
-				ChangeAnim(m_nowAnimIdx, m_animOne[9], m_animOne, 0.5f);
-				NotInitAnim(false);
-			}
-			//回復
-			else if (m_animChange.sa_recovery)
-			{
-				m_nowAnimIdx = m_animIdx["Recovery"];
-				ChangeAnim(m_nowAnimIdx, m_animOne[10], m_animOne);
-				NotInitAnim(false);
+	//		}
+	//		//回避
+	//		else if (m_animChange.sa_avoidance)
+	//		{
+	//			m_nowAnimIdx = m_animIdx["Roll"];
+	//			ChangeAnim(m_nowAnimIdx, m_animOne[7], m_animOne, 0.8f);
+	//			NotInitAnim(true);
+	//		}
+	//		//攻撃
+	//		else if (m_anim.s_attack && !m_animChange.sa_avoidance && !m_animChange.sa_recovery)
+	//		{
+	//			m_nowAnimIdx = m_animIdx["Attack1"];
+	//			ChangeAnim(m_nowAnimIdx, m_animOne[8], m_animOne, 1.0f);
+	//			NotInitAnim(false);
+	//		}
+	//		//強攻撃
+	//		else if (m_animChange.sa_strengthAttack && !m_animChange.sa_avoidance && !m_animChange.sa_recovery)
+	//		{
+	//			m_nowAnimIdx = m_animIdx["Attack2"];
+	//			ChangeAnim(m_nowAnimIdx, m_animOne[9], m_animOne, 0.5f);
+	//			NotInitAnim(false);
+	//		}
+	//		//回復
+	//		else if (m_animChange.sa_recovery)
+	//		{
+	//			m_nowAnimIdx = m_animIdx["Recovery"];
+	//			ChangeAnim(m_nowAnimIdx, m_animOne[10], m_animOne);
+	//			NotInitAnim(false);
 
-			}
-			//アイテムを取得するとき
-			else if (m_animChange.sa_taking)
-			{
-				m_nowAnimIdx = m_animIdx["Taking"];
-				ChangeAnim(m_nowAnimIdx, m_animOne[11], m_animOne);
-				NotInitAnim(false);
+	//		}
+	//		//アイテムを取得するとき
+	//		else if (m_animChange.sa_taking)
+	//		{
+	//			m_nowAnimIdx = m_animIdx["Taking"];
+	//			ChangeAnim(m_nowAnimIdx, m_animOne[11], m_animOne);
+	//			NotInitAnim(false);
 
-			}
-			//ギミックを作動させるとき
-			else if (m_animChange.sa_touch)
-			{
-				m_nowAnimIdx = m_animIdx["Touch"];
-				ChangeAnim(m_nowAnimIdx, m_animOne[12], m_animOne);
-				NotInitAnim(false);
-			}
-		}
-		//ボス部屋入り口に入るとき
-		else if (m_animChange.sa_bossEnter && !m_anim.s_hit && !m_animChange.sa_imapact)
-		{
-			m_nowAnimIdx = m_animIdx["BossEnter"];
-			ChangeAnim(m_nowAnimIdx, m_animOne[13], m_animOne);
-			NotInitAnim(true);
-		}
-	}
+	//		}
+	//		//ギミックを作動させるとき
+	//		else if (m_animChange.sa_touch)
+	//		{
+	//			m_nowAnimIdx = m_animIdx["Touch"];
+	//			ChangeAnim(m_nowAnimIdx, m_animOne[12], m_animOne);
+	//			NotInitAnim(false);
+	//		}
+	//	}
+	//	//ボス部屋入り口に入るとき
+	//	else if (m_animChange.sa_bossEnter && !m_anim.s_hit && !m_animChange.sa_imapact)
+	//	{
+	//		m_nowAnimIdx = m_animIdx["BossEnter"];
+	//		ChangeAnim(m_nowAnimIdx, m_animOne[13], m_animOne);
+	//		NotInitAnim(true);
+	//	}
+	//}
 }
 
 /// <summary>
@@ -1624,96 +1655,96 @@ void Player::AllAnimation()
 /// </summary>
 void Player::WeaponAnimation(Shield& shield)
 {
-	//プレイヤーが生きている時だけ
-	if (!m_anim.s_isDead)
-	{
-		//盾受けしたとき
-		if (m_animChange.sa_imapact)
-		{
-			m_nowAnimIdx = m_animIdx["ShieldImpact"];
-			ChangeAnim(m_nowAnimIdx, m_animOne[14], m_animOne);
-			NotInitAnim(true);
-		}
-		//攻撃が当たってない時盾受けしていないとき
-		else if (!m_anim.s_hit && !m_animChange.sa_imapact)
-		{
-			//走り
-			if (m_animChange.sa_dashMove && m_anim.s_moveflag)
-			{
-				m_nowAnimIdx = m_animIdx["ShieldRun"];
-				ChangeAnim(m_nowAnimIdx, m_animOne[15], m_animOne);
-				NotInitAnim(false);
-			}
-			//歩き
-			else if (m_anim.s_moveflag)
-			{
-				//ターゲットしていないとき
-				if (!m_lockonTarget)
-				{
-					m_nowAnimIdx = m_animIdx["ShieldWalk"];
-					ChangeAnim(m_nowAnimIdx, m_animOne[16], m_animOne);
-					NotInitAnim(false);
-				}
-				//ターゲットしているとき
-				else if (m_lockonTarget)
-				{
-					//左右歩き
-					if (cAnX < -500 || cAnX > 500)
-					{
-						m_nowAnimIdx = m_animIdx["ShieldSideWalk"];
-						ChangeAnim(m_nowAnimIdx, m_animOne[17], m_animOne, cAnimWalkTime, m_animReverse);
-						NotInitAnim(false);
+	////プレイヤーが生きている時だけ
+	//if (!m_anim.s_isDead)
+	//{
+	//	//盾受けしたとき
+	//	if (m_animChange.sa_imapact)
+	//	{
+	//		m_nowAnimIdx = m_animIdx["ShieldImpact"];
+	//		ChangeAnim(m_nowAnimIdx, m_animOne[14], m_animOne);
+	//		NotInitAnim(true);
+	//	}
+	//	//攻撃が当たってない時盾受けしていないとき
+	//	else if (!m_anim.s_hit && !m_animChange.sa_imapact)
+	//	{
+	//		//走り
+	//		if (m_animChange.sa_dashMove && m_anim.s_moveflag)
+	//		{
+	//			m_nowAnimIdx = m_animIdx["ShieldRun"];
+	//			ChangeAnim(m_nowAnimIdx, m_animOne[15], m_animOne);
+	//			NotInitAnim(false);
+	//		}
+	//		//歩き
+	//		else if (m_anim.s_moveflag)
+	//		{
+	//			//ターゲットしていないとき
+	//			if (!m_lockonTarget)
+	//			{
+	//				m_nowAnimIdx = m_animIdx["ShieldWalk"];
+	//				ChangeAnim(m_nowAnimIdx, m_animOne[16], m_animOne);
+	//				NotInitAnim(false);
+	//			}
+	//			//ターゲットしているとき
+	//			else if (m_lockonTarget)
+	//			{
+	//				//左右歩き
+	//				if (cAnX < -500 || cAnX > 500)
+	//				{
+	//					m_nowAnimIdx = m_animIdx["ShieldSideWalk"];
+	//					ChangeAnim(m_nowAnimIdx, m_animOne[17], m_animOne, cAnimWalkTime, m_animReverse);
+	//					NotInitAnim(false);
 
-					}
-					//後ろ歩きor歩き
-					else if (cAnX < 500 && cAnX > -500)
-					{
-						m_nowAnimIdx = m_animIdx["ShieldWalk"];
-						ChangeAnim(m_nowAnimIdx, m_animOne[16], m_animOne, cAnimWalkTime, m_animReverse, cAnimWalkReverseTimeInit);
-						NotInitAnim(false);
+	//				}
+	//				//後ろ歩きor歩き
+	//				else if (cAnX < 500 && cAnX > -500)
+	//				{
+	//					m_nowAnimIdx = m_animIdx["ShieldWalk"];
+	//					ChangeAnim(m_nowAnimIdx, m_animOne[16], m_animOne, cAnimWalkTime, m_animReverse, cAnimWalkReverseTimeInit);
+	//					NotInitAnim(false);
 
-					}
-				}
-			}
-			//盾があるとき
-			if (!shield.GetFist())
-			{
-				//防御開始と防御終了
-				if (m_animChange.sa_enterShield)
-				{
-					//キャラが動いていない時
-					if (!m_anim.s_moveflag)
-					{
-						m_nowAnimIdx = m_animIdx["ShieldStart"];
-						ChangeAnim(m_nowAnimIdx, m_animOne[18], m_animOne, 1.0f);
-						NotInitAnim(true);
-					}
-					
-				}
-				//防御中
-				if (m_animChange.sa_shieldIdle)
-				{
-					//キャラが動いていないとき
-					if (!m_anim.s_moveflag)
-					{
-						FrameEndAnim(cAnimIdx, cOne, cTwo, m_moveAnimShieldFrameIndex);
-						m_nowAnimIdx = m_animIdx["ShieldIdle"];
-						ChangeAnim(m_nowAnimIdx, m_animOne[19], m_animOne);
-						NotInitAnim(false);
-					}
-					//キャラが動いているとき
-					else
-					{
-						
-						cAnimIdx = m_animIdx["ShieldTransition"];
-						FrameChangeAnim(cAnimIdx, cOne, cTwo, m_moveAnimShieldFrameIndex);
-					}
-					
-				}
-				
-			}
-		}
-	}
+	//				}
+	//			}
+	//		}
+	//		//盾があるとき
+	//		if (!shield.GetFist())
+	//		{
+	//			//防御開始と防御終了
+	//			if (m_animChange.sa_enterShield)
+	//			{
+	//				//キャラが動いていない時
+	//				if (!m_anim.s_moveflag)
+	//				{
+	//					m_nowAnimIdx = m_animIdx["ShieldStart"];
+	//					ChangeAnim(m_nowAnimIdx, m_animOne[18], m_animOne, 1.0f);
+	//					NotInitAnim(true);
+	//				}
+	//				
+	//			}
+	//			//防御中
+	//			if (m_animChange.sa_shieldIdle)
+	//			{
+	//				//キャラが動いていないとき
+	//				if (!m_anim.s_moveflag)
+	//				{
+	//					FrameEndAnim(cAnimIdx, cOne, cTwo, m_moveAnimShieldFrameIndex);
+	//					m_nowAnimIdx = m_animIdx["ShieldIdle"];
+	//					ChangeAnim(m_nowAnimIdx, m_animOne[19], m_animOne);
+	//					NotInitAnim(false);
+	//				}
+	//				//キャラが動いているとき
+	//				else
+	//				{
+	//					
+	//					cAnimIdx = m_animIdx["ShieldTransition"];
+	//					FrameChangeAnim(cAnimIdx, cOne, cTwo, m_moveAnimShieldFrameIndex);
+	//				}
+	//				
+	//			}
+	//			
+	//		}
+	//	}
+	//}
 }
 
 /// <summary>
@@ -1774,6 +1805,8 @@ void Player::Draw(Armor& armor, int font)
 	MV1SetRotationXYZ(m_modelHandle, VGet(0.0f, m_angle, 0.0f));
 	//描画
 	MV1DrawModel(m_modelHandle);
+
+	DrawFormatString(200, 400, 0xffffff, "aniim : %d", m_nowAnimIdx);
 	
 }
 
@@ -1849,6 +1882,7 @@ void Player::OnTriggerEnter(const std::shared_ptr<Collidable>& collidable)
 			if (!m_avoidanceNow && !m_anim.s_hit && !m_animChange.sa_bossEnter && !m_animChange.sa_imapact)
 			{
 				cHit = true;
+				m_pState->SetHit(true);
 
 				m_anim.s_hit = true;
 			}
