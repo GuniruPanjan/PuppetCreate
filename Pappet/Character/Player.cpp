@@ -847,8 +847,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	//攻撃中
 	if (!m_isAnimationFinish && m_anim.s_attack)
 	{
-		
-
 		//一段階目の攻撃
 		if (m_nowFrame <= 40.0f)
 		{
@@ -1626,9 +1624,6 @@ void Player::AllAnimation()
 /// </summary>
 void Player::WeaponAnimation(Shield& shield)
 {
-	//とりあえず
-	//m_animChange.sa_imapact = false;
-
 	//プレイヤーが生きている時だけ
 	if (!m_anim.s_isDead)
 	{

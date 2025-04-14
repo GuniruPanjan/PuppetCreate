@@ -61,6 +61,10 @@ public:
 	void ChangeStateAnim(int animIndex, float animSpeed = 0.5f, bool reverse = false);
 	//アニメーションのフレームブレンド変更
 	void FrameChangeAnim(int animIndex, bool& one, bool& two, int frame);
+	//アニメーションのフレームブレンド変更(ステート)
+	void FrameStateChangeAnim(int animIndex, int frame);
+	//アニメーションのフレームブレンド変更(ステート)
+	void FrameEndStateAnim(int animIndex, int frame);
 	//アニメーションのフレームブレンド変更
 	void FrameEndAnim(int animIndex, bool& one, bool& two, int frame);
 	//アニメーションの未初期化

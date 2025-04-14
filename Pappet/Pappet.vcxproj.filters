@@ -318,6 +318,12 @@
     <ClCompile Include="Character\State\Player\PlayerStateAttack.cpp">
       <Filter>ソース ファイル\Character\State\Player</Filter>
     </ClCompile>
+    <ClCompile Include="Character\State\Player\PlayerStateStrongAttack.cpp">
+      <Filter>ソース ファイル\Character\State\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Character\State\Player\PlayerStateGuard.cpp">
+      <Filter>ソース ファイル\Character\State\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Icon\Icon.h">
@@ -552,6 +558,12 @@
       <Filter>ヘッダー ファイル\Character\State\Player</Filter>
     </ClInclude>
     <ClInclude Include="Character\State\Player\PlayerStateAttack.h">
+      <Filter>ヘッダー ファイル\Character\State\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\State\Player\PlayerStateStrongAttack.h">
+      <Filter>ヘッダー ファイル\Character\State\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\State\Player\PlayerStateGuard.h">
       <Filter>ヘッダー ファイル\Character\State\Player</Filter>
     </ClInclude>
   </ItemGroup>

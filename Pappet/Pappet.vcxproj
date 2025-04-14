@@ -152,9 +152,11 @@
     <ClCompile Include="Character\State\Player\PlayerStateDash.cpp" />
     <ClCompile Include="Character\State\Player\PlayerStateDeath.cpp" />
     <ClCompile Include="Character\State\Player\PlayerStateEnterBoss.cpp" />
+    <ClCompile Include="Character\State\Player\PlayerStateGuard.cpp" />
     <ClCompile Include="Character\State\Player\PlayerStateIdle.cpp" />
     <ClCompile Include="Character\State\Player\PlayerStateItem.cpp" />
     <ClCompile Include="Character\State\Player\PlayerStateRoll.cpp" />
+    <ClCompile Include="Character\State\Player\PlayerStateStrongAttack.cpp" />
     <ClCompile Include="Character\State\Player\PlayerStateTaking.cpp" />
     <ClCompile Include="Character\State\Player\PlayerStateWalk.cpp" />
     <ClCompile Include="External\CsvLoad.cpp" />
@@ -228,9 +230,11 @@
     <ClInclude Include="Character\State\Player\PlayerStateDash.h" />
     <ClInclude Include="Character\State\Player\PlayerStateDeath.h" />
     <ClInclude Include="Character\State\Player\PlayerStateEnterBoss.h" />
+    <ClInclude Include="Character\State\Player\PlayerStateGuard.h" />
     <ClInclude Include="Character\State\Player\PlayerStateIdle.h" />
     <ClInclude Include="Character\State\Player\PlayerStateItem.h" />
     <ClInclude Include="Character\State\Player\PlayerStateRoll.h" />
+    <ClInclude Include="Character\State\Player\PlayerStateStrongAttack.h" />
     <ClInclude Include="Character\State\Player\PlayerStateTaking.h" />
     <ClInclude Include="Character\State\Player\PlayerStateWalk.h" />
     <ClInclude Include="External\CsvLoad.h" />

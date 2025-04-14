@@ -1,4 +1,4 @@
-#include "PlayerStateDamage.h"
+#include "PlayerStateStrongAttack.h"
 #include "Character/CharacterBase.h"
 #include "External/CsvLoad.h"
 #include "Input/Input.h"
@@ -8,19 +8,18 @@
 /// コンストラクタ
 /// </summary>
 /// <param name="chara"></param>
-PlayerStateDamage::PlayerStateDamage(std::shared_ptr<CharacterBase> chara) :
+PlayerStateStrongAttack::PlayerStateStrongAttack(std::shared_ptr<CharacterBase> chara) :
 	StateBase(chara)
 {
-	//現在のステートを攻撃ヒット状態にする
-	m_nowState = StateKind::Damage;
-	auto animName = GetHitAnim();
-	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), animName));
+	//現在のステートを強攻撃状態にする
+	m_nowState = StateKind::StrongAttack;
+	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Attack2"));
 }
 
 /// <summary>
 /// デストラクタ
 /// </summary>
-PlayerStateDamage::~PlayerStateDamage()
+PlayerStateStrongAttack::~PlayerStateStrongAttack()
 {
 }
 
@@ -28,7 +27,7 @@ PlayerStateDamage::~PlayerStateDamage()
 /// 初期化
 /// </summary>
 /// <param name="md"></param>
-void PlayerStateDamage::Init(std::string md)
+void PlayerStateStrongAttack::Init(std::string md)
 {
 	m_stageCol = md;
 }
@@ -36,7 +35,7 @@ void PlayerStateDamage::Init(std::string md)
 /// <summary>
 /// 更新
 /// </summary>
-void PlayerStateDamage::Update()
+void PlayerStateStrongAttack::Update()
 {
 	//持ち主がプレイヤーかどうかをチェックする
 	if (!CheckState()) return;
@@ -112,17 +111,5 @@ void PlayerStateDamage::Update()
 			ChangeState(StateKind::Item);
 			return;
 		}
-	}
-}
-
-std::string PlayerStateDamage::GetHitAnim()
-{
-	if (m_hit)
-	{
-		return std::string("Hit");
-	}
-	else
-	{
-		return std::string("ShieldImpact");
 	}
 }

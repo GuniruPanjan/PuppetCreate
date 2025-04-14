@@ -16,13 +16,15 @@ public:
 		Walk,        //歩く
 		Roll,        //回避
 		Dash,        //走る
-		Jump,        //ジャンプ
-
+		
+		Jump,        //ジャンプ  //まだやっていない
+		
 		Attack,      //攻撃
 		StrongAttack,//強攻撃
-		Shield,      //盾
+		Guard,      //盾
 
-		Parry,       //パリィ
+		Parry,       //パリィ   //まだやっていない
+		
 		Damage,      //ダメージ
 		Item,        //回復など
 		Taking,      //アイテム取得

@@ -216,6 +216,39 @@ void CharacterBase::FrameChangeAnim(int animIndex, bool& one, bool& two, int fra
 	two = false;
 }
 
+/// <summary>
+/// ステートでのアニメーションフレームブレンド
+/// </summary>
+/// <param name="animIndex"></param>
+/// <param name="frame"></param>
+void CharacterBase::FrameStateChangeAnim(int animIndex, int frame)
+{
+	m_frameAnimNo = MV1AttachAnim(m_modelHandle, animIndex);
+
+	//フレームだけのアニメーション
+	MV1SetAttachAnimBlendRate(m_modelHandle, m_frameAnimNo, 0.0f);
+	//フレームだけアニメーション
+	MV1SetAttachAnimBlendRateToFrame(m_modelHandle, m_currentAnimNo, frame, 0.0f);
+	MV1SetAttachAnimBlendRateToFrame(m_modelHandle, m_frameAnimNo, frame, 1.0f);
+
+	//進めた時間に設定
+	MV1SetAttachAnimTime(m_modelHandle, m_frameAnimNo, m_nowFrame);
+}
+
+/// <summary>
+/// ステートでのアニメーションフレームブレンド
+/// </summary>
+/// <param name="animIndex"></param>
+/// <param name="frame"></param>
+void CharacterBase::FrameEndStateAnim(int animIndex, int frame)
+{
+	MV1DetachAnim(m_modelHandle, animIndex);
+
+	//フレームだけアニメーション
+	MV1SetAttachAnimBlendRateToFrame(m_modelHandle, m_currentAnimNo, frame, 1.0f);
+	MV1SetAttachAnimBlendRateToFrame(m_modelHandle, m_frameAnimNo, frame, 0.0f);
+}
+
 void CharacterBase::FrameEndAnim(int animIndex, bool& one, bool& two, int frame)
 {
 	if (one || two)
