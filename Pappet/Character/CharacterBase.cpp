@@ -29,6 +29,9 @@ CharacterBase::CharacterBase(Priority priority, ObjectTag tag) :
 	m_isAnimationFinish(false),
 	m_animInit(false),
 	m_animReverse(false),
+	m_sword(false),
+	m_equipment(false),
+	m_shield(false),
 	m_angle(0.0f),
 	m_animSpeed(0.0f),
 	m_attackRadius(0.0f),
@@ -221,7 +224,7 @@ void CharacterBase::ChangeAnim(int animIndex, bool& one, bool (&all)[30], float 
 	
 }
 
-void CharacterBase::ChangeStateAnim(int animIndex, float animSpeed, bool reverse, float resetTime)
+void CharacterBase::ChangeStateAnim(int animIndex, bool init, float animSpeed, bool reverse, float resetTime)
 {
 	//さらに古いアニメーションがアタッチされている場合はこの時点で消しておく
 	if (m_prevAnimNo != -1)
@@ -241,7 +244,11 @@ void CharacterBase::ChangeStateAnim(int animIndex, float animSpeed, bool reverse
 	//切り替えの瞬間は変更前のアニメーションが再生される状態にする
 	m_animBlendRate = 0.0f;
 
-	m_nowFrame = resetTime;
+	//アニメーションをタイムを初期化するかどうか
+	if (init)
+	{
+		m_nowFrame = resetTime;
+	}
 
 	m_animTime = animSpeed;
 

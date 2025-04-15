@@ -146,6 +146,23 @@ bool Input::IsPushed(const char* command) const
 	}
 	return (m_inputData.at(command) && m_lastInputData.at(command));
 }
+
+/// <summary>
+/// 指定のコマンドが離された瞬間をとる
+/// </summary>
+/// <param name="command"></param>
+/// <returns></returns>
+bool Input::IsReleased(const char* command) const
+{
+	auto it = m_inputData.find(command);
+	if (it == m_inputData.end())  //情報がなければfalseを返す
+	{
+		assert(0 && "指定されたコマンドが登録されていません");
+		return false;
+	}
+	return (!m_inputData.at(command) && m_lastInputData.at(command) &&
+		m_lastInputData.at(command) && !m_inputData.at(command));
+}
 /// <summary>
 /// スティックの入力情報を取得
 /// </summary>

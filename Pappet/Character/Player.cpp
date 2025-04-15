@@ -12,6 +12,7 @@
 #include "Manager/SEManager.h"
 
 #include "State/Player/PlayerStateIdle.h"
+#include "State/Player/PlayerStateTaking.h"
 
 #include <cassert>
 
@@ -352,8 +353,12 @@ void Player::Finalize()
 
 void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& enemy, CoreManager& core, VECTOR restpos, Tool& tool, SEManager& se, bool boss, bool dead, std::shared_ptr<MyLibrary::Physics> physics)
 {
-	//ステートの更新
-	m_pState->Update();
+	//死んでないときのステートの更新
+	if (!m_anim.s_isDead)
+	{
+		//ステートの更新
+		m_pState->Update();
+	}
 
 	//とりあえずやっとく
 	m_status.s_core = core.GetCore();
@@ -388,9 +393,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	m_moveWeaponFrameMatrix = MV1GetFrameLocalWorldMatrix(m_modelHandle, m_moveAnimFrameRight);
 	m_moveShieldFrameMatrix = MV1GetFrameLocalWorldMatrix(m_modelHandle, m_moveAnimShieldFrameHandIndex);
 
-	
-
-
 	//パッド入力取得
 	GetJoypadXInputState(DX_INPUT_KEY_PAD1, &m_xpad);
 
@@ -406,7 +408,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 
 		//アニメーションのブレンド率を設定する
 		MV1SetAttachAnimBlendRate(m_modelHandle, m_prevAnimNo, cAnimBlendRateMax - m_animBlendRate);
-		//MV1SetAttachAnimBlendRate(m_modelHandle, m_nowAnimNo, m_animBlendRate);
 		MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAnimNo, m_animBlendRate);
 
 	}
@@ -418,9 +419,10 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		{
 			m_anim.s_isDead = true;
 
-			m_nowAnimIdx = m_animIdx["Death"];
+			//m_nowAnimIdx = m_animIdx["Death"];
+			m_pState->ChangeState(StateBase::StateKind::Death);
 
-			ChangeAnim(m_nowAnimIdx, m_animOne[0], m_animOne);
+			//ChangeAnim(m_nowAnimIdx, m_animOne[0], m_animOne);
 			m_lockonTarget = false;
 
 			Finalize();
@@ -627,6 +629,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		//ダメージを食らう処理
 		if (cHit && !m_animChange.sa_imapact)
 		{
+			//ダメージを受けるアニメーション
+			m_pState->ChangeState(StateBase::StateKind::Damage);
+
 			for (auto damage : enemy.GetEnemyDamage())
 			{
 				if (damage > 0)
@@ -678,8 +683,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			NotWeaponAnimation();
 
 			//装備をしているアニメーションかを判定する
-			m_pState->SetEquipment(false);
-			m_pState->SetSword(true);
+			m_sword = true;
+			m_equipment = false;
+			m_shield = false;
 		}
 		//装備したときのアニメーション
 		else if (!weapon.GetFist() || !shield.GetFist())
@@ -687,8 +693,17 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			WeaponAnimation(shield);
 
 			//装備をしているアニメーションかを判定する
-			m_pState->SetEquipment(true);
-			m_pState->SetSword(true);
+			m_sword = true;
+			m_equipment = true;
+			//盾だけ分ける
+			if (!shield.GetFist())
+			{
+				m_shield = true;
+			}
+			else
+			{
+				m_shield = false;
+			}
 		}
 
 		AllAnimation();
@@ -1094,15 +1109,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 
 			cEnterPos = false;
 		}
-
-
-		////ボス部屋に入る行動で移動する距離
-		//m_moveVector = VScale(VGet(sinf(m_angle), 0.0f, cosf(m_angle)), cMove);
-
-		////アングルの方向に一定距離移動させたい
-		//MyLibrary::LibVec3 prevVelocity = rigidbody->GetVelocity();
-		//MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(-m_moveVector.x, prevVelocity.y, -m_moveVector.z);
-		//rigidbody->SetVelocity(newVelocity);
 	}
 
 	//アイテム取得終了
@@ -1245,12 +1251,6 @@ void Player::Action(VECTOR restpos, Tool& tool, Shield& shield, SEManager& se, b
 		
 
 		cAbutton = 0;
-	}
-
-	//Aボタンを押したらジャンプ
-	if (m_xpad.Buttons[12] == 1 && m_status.s_stamina >= 20.0f)
-	{
-
 	}
 
 	//攻撃に必要なスタミナがある場合
@@ -1427,6 +1427,8 @@ void Player::Action(VECTOR restpos, Tool& tool, Shield& shield, SEManager& se, b
 		//Yボタンを押したら
 		if (m_xpad.Buttons[15] == 1)
 		{
+			m_pState->ChangeState(StateBase::StateKind::EnterBoss);
+
 			m_animChange.sa_bossEnter = true;
 
 			cEnterPos = true;
@@ -1445,6 +1447,8 @@ void Player::Action(VECTOR restpos, Tool& tool, Shield& shield, SEManager& se, b
 				//アイテム取得SE再生
 				PlaySoundMem(se.GetItemSE(), DX_PLAYTYPE_BACK, true);
 
+				//アイテムを取る
+				m_pState->ChangeState(StateBase::StateKind::Taking);
 				m_animChange.sa_taking = true;
 
 			}
@@ -1875,7 +1879,6 @@ void Player::OnTriggerEnter(const std::shared_ptr<Collidable>& collidable)
 			if (!m_avoidanceNow && !m_anim.s_hit && !m_animChange.sa_bossEnter && !m_animChange.sa_imapact)
 			{
 				cHit = true;
-				m_pState->SetHit(true);
 
 				m_anim.s_hit = true;
 			}

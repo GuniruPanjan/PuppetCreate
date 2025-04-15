@@ -61,7 +61,7 @@ public:
 	//アニメーションの変更
 	void ChangeAnim(int animIndex, bool& one, bool(&all)[30], float animSpeed = 0.5f, bool reverse = false, float resetTime = 0.0f);
 	//Stateでのアニメーション変更
-	void ChangeStateAnim(int animIndex, float animSpeed = 0.5f, bool reverse = false, float resetTime = 0.0f);
+	void ChangeStateAnim(int animIndex, bool init, float animSpeed = 0.5f, bool reverse = false, float resetTime = 0.0f);
 	//アニメーションのフレームブレンド変更
 	void FrameChangeAnim(int animIndex, bool& one, bool& two, int frame);
 	//アニメーションのフレームブレンド変更(ステート)
@@ -83,6 +83,13 @@ public:
 	float GetFrame() { return m_nowFrame; }
 	//アニメーション終了を取得する
 	bool GetEndAnim() { return m_isAnimationFinish; }
+	//キャラクターのヒット状態を得る
+	bool GetHit() { return m_anim.s_hit; }
+
+	//装備関係
+	bool GetSword() { return m_sword; }
+	bool GetEquipment() { return m_equipment; }
+	bool GetShield() { return m_shield; }
 
 	//スピードを設定する
 	int SetSpeed(int set) { return m_status.s_speed = set; }
@@ -130,6 +137,10 @@ protected:
 	int m_currentAnimNo;		//現在のアニメーション
 	int m_preAnimIdx;
 
+	//装備関係
+	bool m_equipment;
+	bool m_shield;
+	bool m_sword;
 
 	//使う変数
 	float m_angle;            //キャラのアングル

@@ -13,7 +13,7 @@ PlayerStateItem::PlayerStateItem(std::shared_ptr<CharacterBase> chara) :
 {
 	//現在のステートをアイテム使用状態にする
 	m_nowState = StateKind::Item;
-	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Recovery"));
+	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Recovery"), true);
 	chara->NotInitAnim(false);
 }
 

@@ -13,7 +13,7 @@ PlayerStateDeath::PlayerStateDeath(std::shared_ptr<CharacterBase> chara) :
 {
 	//現在のステートを死亡状態にする
 	m_nowState = StateKind::Death;
-	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Death"));
+	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Death"), true);
 }
 
 /// <summary>

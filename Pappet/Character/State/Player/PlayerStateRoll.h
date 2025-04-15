@@ -19,6 +19,6 @@ public:
 private:
 	float m_leftX, m_leftZ;
 	float m_avoidanceMove;
-	MyLibrary::LibVec3 m_rollMove;
+	VECTOR m_rollMove;
 };
 

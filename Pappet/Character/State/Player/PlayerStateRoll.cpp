@@ -7,9 +7,11 @@
 namespace
 {
 	/*アナログスティックによる移動関連*/
-	constexpr float cAnalogRangeMin = 0.1f;		//アナログスティックの入力判定最小範囲
+	constexpr float cAnalogRangeMin = 0.0f;		//アナログスティックの入力判定最小範囲
 	constexpr float cAnalogRangeMax = 0.8f;		//アナログスティックの入力判定最大範囲
 	constexpr float cAnalogInputMax = 1000.0f;	//アナログスティックから入力されるベクトルの最大
+
+	constexpr float cAvoidanceSpeed = 0.8f;
 
 	//回避での移動距離
 	constexpr float cAvoidanceMove1 = 4.0f;
@@ -32,7 +34,7 @@ PlayerStateRoll::PlayerStateRoll(std::shared_ptr<CharacterBase> chara) :
 {
 	//現在のステートを回避状態にする
 	m_nowState = StateKind::Roll;
-	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Roll"));
+	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Roll"), true, cAvoidanceSpeed);
 	chara->NotInitAnim(true);
 }
 
@@ -77,9 +79,9 @@ void PlayerStateRoll::Update()
 	
 
 	//移動方向を決定する
-	auto moveDir = MyLibrary::LibVec3(m_leftX, 0.0f, -m_leftZ);
+	auto moveDir = VGet(m_leftX, 0.0f, -m_leftZ);
 	//移動ベクトルの長さを取得する
-	float len = moveDir.Length();
+	float len = VSize(moveDir);
 
 	//ベクトルの長さを0.0～1.0の割合に変換する
 	float rate = len / cAnalogInputMax;
@@ -90,16 +92,16 @@ void PlayerStateRoll::Update()
 	rate = max(rate, 0.0f);
 
 	//速度が決定できるので移動ベクトルに反映する
-	moveDir = moveDir.Normalize();
+	moveDir = VNorm(moveDir);
 	float speed = own->GetStatus().s_speed * rate;
 
 	//方向ベクトルと移動力をかけて移動ベクトルを生成する
-	auto moveVec = moveDir * speed;
+	auto moveVec = VScale(moveDir, speed);
 
 	//cameraの角度から
 	//コントローラーによる移動方向を決定する
 	MATRIX mtx = MGetRotY(own->GetCameraAngle() + DX_PI_F);
-	moveVec.GetVector() = VTransform(moveVec.ConversionToVECTOR(), mtx);
+	moveVec = VTransform(moveVec, mtx);
 
 	//ライブラリのベクターに変換する
 	MyLibrary::LibVec3 move = MyLibrary::LibVec3(static_cast<float>(moveVec.x), static_cast<float>(moveVec.y), static_cast<float>(moveVec.z));
@@ -121,12 +123,7 @@ void PlayerStateRoll::Update()
 	}
 
 
-	m_rollMove.ConversionToVECTOR() = VScale(VGet(sinf(own->GetAngle()), 0.0f, cosf(own->GetAngle())), m_avoidanceMove);
-
-	//移動速度を決定する
-	MyLibrary::LibVec3 prevVelocity = own->GetRigidbody()->GetVelocity();
-	MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(-m_rollMove.x, prevVelocity.y, -m_rollMove.z);
-	own->GetRigidbody()->SetVelocity(newVelocity);
+	m_rollMove = VScale(VGet(sinf(own->GetAngle()), 0.0f, cosf(own->GetAngle())), m_avoidanceMove);
 
 	//アニメーションが終了したら
 	if (own->GetEndAnim())
@@ -210,4 +207,9 @@ void PlayerStateRoll::Update()
 			return;
 		}
 	}
+
+	//移動速度を決定する
+	MyLibrary::LibVec3 prevVelocity = own->GetRigidbody()->GetVelocity();
+	MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(-m_rollMove.x, prevVelocity.y, -m_rollMove.z);
+	own->GetRigidbody()->SetVelocity(newVelocity);
 }

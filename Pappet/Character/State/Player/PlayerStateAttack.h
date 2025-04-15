@@ -26,7 +26,7 @@ private:
 	//アニメーションが段階毎に終わったか
 	bool m_endAnim;
 	//アタック時動くベクター
-	MyLibrary::LibVec3 m_attackMove;
+	VECTOR m_attackMove;
 	//動くスピード
 	float m_move;
 };

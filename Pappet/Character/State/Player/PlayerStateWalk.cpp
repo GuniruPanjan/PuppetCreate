@@ -39,7 +39,7 @@ PlayerStateWalk::PlayerStateWalk(std::shared_ptr<CharacterBase> chara) :
 	auto input = Input::GetInstance().GetInputStick(false);
 	m_dir = GetDirection(input.first, -input.second);
 	auto animName = GetWalkAnim(m_dir);
-	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), animName));
+	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), animName), false);
 	chara->NotInitAnim(false);
 	//速度を決める
 	chara->SetSpeed(cWalkSpeed);
@@ -112,12 +112,12 @@ void PlayerStateWalk::Update()
 	}
 
 	//回避ボタンが押されたらStateを回避にする
-	//if (Input::GetInstance().IsTriggered("Input_Roll"))
-	//{
-	//	ChangeState(StateKind::Roll);
-	//	return;
-	//}
-
+	if (Input::GetInstance().IsReleased("Input_Roll"))
+	{
+		ChangeState(StateKind::Roll);
+		return;
+	}
+	
 	//ダッシュボタンが押されたらStateをダッシュにする
 	if (Input::GetInstance().IsPushed("Input_Dash"))
 	{
@@ -152,7 +152,7 @@ void PlayerStateWalk::Update()
 		{
 			//アニメーションを変更する
 			auto animName = GetWalkAnim(m_dir);
-			own->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", animName), cWalkAnimSpeed, m_revese);
+			own->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", animName), false, cWalkAnimSpeed, m_revese);
 			own->NotInitAnim(false);
 		}
 

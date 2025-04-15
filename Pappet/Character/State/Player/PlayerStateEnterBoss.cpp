@@ -20,7 +20,7 @@ PlayerStateEnterBoss::PlayerStateEnterBoss(std::shared_ptr<CharacterBase> chara)
 {
 	//現在のステートをボス部屋に入る状態にする
 	m_nowState = StateKind::EnterBoss;
-	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "BossEnter"));
+	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "BossEnter"), true);
 	chara->NotInitAnim(true);
 }
 
@@ -52,7 +52,7 @@ void PlayerStateEnterBoss::Update()
 	auto own = std::dynamic_pointer_cast<Player>(m_pChara.lock());
 
 	//ボス部屋に入る行動で移動する距離
-	m_moveVector.ConversionToVECTOR() = VScale(VGet(sinf(own->GetAngle()), 0.0f, cosf(own->GetAngle())), cMove);
+	m_moveVector = VScale(VGet(sinf(own->GetAngle()), 0.0f, cosf(own->GetAngle())), cMove);
 
 	//アングルの方向に一定距離移動させたい
 	MyLibrary::LibVec3 prevVelocity = own->GetRigidbody()->GetVelocity();

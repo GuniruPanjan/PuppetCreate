@@ -16,6 +16,6 @@ public:
 	//çXêV
 	virtual void Update() override;
 private:
-	MyLibrary::LibVec3 m_moveVector;
+	VECTOR m_moveVector;
 };
 

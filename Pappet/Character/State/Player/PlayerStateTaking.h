@@ -15,5 +15,7 @@ public:
 	void Init (int md) override;
 	//XV
 	virtual void Update() override;
+private:
+	bool m_animEnd;
 };
 

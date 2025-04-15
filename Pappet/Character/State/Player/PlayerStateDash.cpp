@@ -25,7 +25,7 @@ PlayerStateDash::PlayerStateDash(std::shared_ptr<CharacterBase> chara) :
 {
 	//現在のステートをダッシュ状態にする
 	m_nowState = StateKind::Dash;
-	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Run"));
+	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Run"), false);
 	chara->NotInitAnim(false);
 	//速度を設定する
 	chara->SetSpeed(cDashSpeed);

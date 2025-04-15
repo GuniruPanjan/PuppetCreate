@@ -13,7 +13,7 @@ PlayerStateStrongAttack::PlayerStateStrongAttack(std::shared_ptr<CharacterBase> 
 {
 	//現在のステートを強攻撃状態にする
 	m_nowState = StateKind::StrongAttack;
-	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Attack2"));
+	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Attack2"), true);
 	chara->NotInitAnim(false);
 }
 

@@ -95,7 +95,7 @@ protected:
 	bool m_targetState;
 	bool m_equipmentState;
 	//攻撃がプレイヤーにヒットしたかの判定
-	bool m_hit = false;
+	bool m_hit;
 	//どの種類の装備をしているか
 	bool m_equipmentSword = false;
 

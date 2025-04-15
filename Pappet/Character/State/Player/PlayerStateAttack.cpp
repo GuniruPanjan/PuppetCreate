@@ -15,6 +15,8 @@ namespace
 	constexpr float cAttackMove1 = 0.5f;
 	constexpr float cAttackMove2 = 0.3f;
 	constexpr float cAttackMove3 = 0.2f;
+	//攻撃速度
+	constexpr float cAttackSpeed = 1.0f;
 }
 
 /// <summary>
@@ -31,10 +33,13 @@ PlayerStateAttack::PlayerStateAttack(std::shared_ptr<CharacterBase> chara) :
 	m_attackMove(),
 	m_move(0.0f)
 {
+	//装備判定を返す
+	m_equipmentSword = chara->GetSword();
+	m_equipmentState = chara->GetEquipment();
 	//現在のステートを攻撃状態にする
 	m_nowState = StateKind::Attack;
 	auto animName = GetAttackAnim();
-	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), animName));
+	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), animName), true, cAttackSpeed);
 	chara->NotInitAnim(false);
 }
 
@@ -64,18 +69,19 @@ void PlayerStateAttack::Update()
 
 	//持っているキャラクターベースクラスをプレイヤークラスにキャストする
 	auto own = std::dynamic_pointer_cast<Player>(m_pChara.lock());
+
 	//装備が剣などの場合
 	if (m_equipmentSword)
 	{
 		//攻撃一段階目
-		if (own->GetNowFrame() <= 40.0f)
+		if (own->GetFrame() <= 40.0f)
 		{
 			//入力受付時間
-			if (own->GetNowFrame() == 0.0f) m_input = true;
-			if (own->GetNowFrame() == 5.0f) m_input = false;
+			if (own->GetFrame() == 0.0f) m_input = true;
+			if (own->GetFrame() == 5.0f) m_input = false;
 
 			//攻撃入力時間
-			if (own->GetNowFrame() >= 20.0f)
+			if (own->GetFrame() >= 20.0f)
 			{
 				//Rを入力すると次の攻撃につながる
 				if (Input::GetInstance().IsTriggered("Input_Attack"))
@@ -85,25 +91,26 @@ void PlayerStateAttack::Update()
 			}
 
 			//攻撃による移動速度設定
-			if (own->GetNowFrame() == 25.0f) m_move = cAttackMove1;
-			if (own->GetNowFrame() == 35.0f) m_move = cAttackMove2;
-			if (own->GetNowFrame() == 40.0f) m_move = 0.0f;
+			if (own->GetFrame() <= 25.0f) m_move = 0.0f;
+			if (own->GetFrame() >= 25.0f && own->GetFrame() < 35.0f) m_move = cAttackMove1;
+			if (own->GetFrame() >= 35.0f && own->GetFrame() < 40.0f) m_move = cAttackMove2;
+			if (own->GetFrame() == 40.0f) m_move = 0.0f;
 
 			//攻撃一段階目終了
-			if (own->GetNowFrame() >= 40.0f && m_attackNumber != 1)
+			if (own->GetFrame() >= 38.0f && m_attackNumber != 1)
 			{
 				m_endAnim = true;
 			}
 		}
 		//攻撃二段階目
-		else if (own->GetNowFrame() <= 70.0f && m_attackNumber == 1)
+		else if (own->GetFrame() <= 70.0f && own->GetFrame() > 40.0f && m_attackNumber == 1)
 		{
 			//入力受付時間
-			if (own->GetNowFrame() == 40.0f) m_input = true;
-			if (own->GetNowFrame() == 45.0f) m_input = false;
+			if (own->GetFrame() == 40.0f) m_input = true;
+			if (own->GetFrame() == 45.0f) m_input = false;
 
 			//攻撃入力時間
-			if (own->GetNowFrame() >= 50.0f)
+			if (own->GetFrame() >= 50.0f)
 			{
 				//Rを入力すると次の攻撃につながる
 				if (Input::GetInstance().IsTriggered("Input_Attack"))
@@ -113,30 +120,32 @@ void PlayerStateAttack::Update()
 			}
 
 			//攻撃による移動速度設定
-			if (own->GetNowFrame() == 55.0f) m_move = cAttackMove1;
-			if (own->GetNowFrame() == 65.0f) m_move = cAttackMove3;
-			if (own->GetNowFrame() == 70.0f) m_move = 0.0f;
+			if (own->GetFrame() <= 55.0F) m_move = 0.0f;
+			if (own->GetFrame() >= 55.0f && own->GetFrame() <= 65.0f) m_move = cAttackMove1;
+			if (own->GetFrame() >= 65.0f && own->GetFrame() <= 70.0f) m_move = cAttackMove3;
+			if (own->GetFrame() == 70.0f) m_move = 0.0f;
 
 			//攻撃二段回目終了
-			if (own->GetNowFrame() >= 70.0f && m_attackNumber != 2)
+			if (own->GetFrame() >= 68.0f && m_attackNumber != 2)
 			{
 				m_endAnim = true;
 			}
 		}
 		//攻撃三段階目
-		else if (own->GetNowFrame() <= 70.0f && m_attackNumber == 2)
+		else if (own->GetFrame() <= 112.0f && own->GetFrame() > 70.0f && m_attackNumber == 2)
 		{
 			//入力受付時間
-			if (own->GetNowFrame() == 70.0f) m_input = true;
-			if (own->GetNowFrame() == 75.0f) m_input = false;
+			if (own->GetFrame() == 70.0f) m_input = true;
+			if (own->GetFrame() == 75.0f) m_input = false;
 
 			//攻撃による移動速度設定
-			if (own->GetNowFrame() == 85.0f) m_move = cAttackMove1;
-			if (own->GetNowFrame() == 95.0f) m_move = cAttackMove3;
-			if (own->GetNowFrame() == 110.0f) m_move = 0.0f;
+			if (own->GetFrame() <= 85.0f) m_move = 0.0f;
+			if (own->GetFrame() >= 85.0f && own->GetFrame() <= 95.0f) m_move = cAttackMove1;
+			if (own->GetFrame() >= 95.0f && own->GetFrame() <= 110.0f) m_move = cAttackMove3;
+			if (own->GetFrame() == 110.0f) m_move = 0.0f;
 
 			//攻撃三段回目終了
-			if (own->GetNowFrame() >= 115.0f)
+			if (own->GetFrame() >= 110.0f)
 			{
 				m_endAnim = true;
 			}
@@ -154,9 +163,9 @@ void PlayerStateAttack::Update()
 	}
 
 	//移動方向を決定する
-	auto moveDir = MyLibrary::LibVec3(m_leftX, 0.0f, -m_leftZ);
+	auto moveDir = VGet(m_leftX, 0.0f, -m_leftZ);
 	//移動ベクトルの長さを取得する
-	float len = moveDir.Length();
+	float len = VSize(moveDir);
 
 	//ベクトルの長さを0.0～1.0の割合に変換する
 	float rate = len / cAnalogInputMax;
@@ -167,23 +176,23 @@ void PlayerStateAttack::Update()
 	rate = max(rate, 0.0f);
 
 	//速度が決定できるので移動ベクトルに反映する
-	moveDir = moveDir.Normalize();
+	moveDir = VNorm(moveDir);
 	float speed = own->GetStatus().s_speed * rate;
 
 	//方向ベクトルと移動力をかけて移動ベクトルを生成する
-	auto moveVec = moveDir * speed;
+	auto moveVec = VScale(moveDir, speed);
 
 	//cameraの角度から
 	//コントローラーによる移動方向を決定する
 	MATRIX mtx = MGetRotY(own->GetCameraAngle() + DX_PI_F);
-	moveVec.GetVector() = VTransform(moveVec.ConversionToVECTOR(), mtx);
+	moveVec = VTransform(moveVec, mtx);
 
 	//ライブラリのベクターに変換する
 	MyLibrary::LibVec3 move = MyLibrary::LibVec3(static_cast<float>(moveVec.x), static_cast<float>(moveVec.y), static_cast<float>(moveVec.z));
 	//キャラクターのアングルを決める
 	own->SetAngle(atan2f(-moveVec.z, moveVec.x) - DX_PI_F / 2);
 
-	m_attackMove.ConversionToVECTOR() = VScale(VGet(sinf(own->GetAngle()), 0.0f, cosf(own->GetAngle())), m_move);
+	m_attackMove = VScale(VGet(sinf(own->GetAngle()), 0.0f, cosf(own->GetAngle())), m_move);
 
 	//移動速度を決定する
 	MyLibrary::LibVec3 prevVelocity = own->GetRigidbody()->GetVelocity();
@@ -193,6 +202,8 @@ void PlayerStateAttack::Update()
 	//アニメーション終了後
 	if (m_endAnim)
 	{
+		int a = 1;
+
 		//左スティックが入力されていたらStateをWalkにする
 		if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
 			Input::GetInstance().GetInputStick(false).second != 0.0f)
@@ -274,9 +285,7 @@ std::string PlayerStateAttack::GetAttackAnim()
 	//装備が剣などの場合
 	if (m_equipmentSword)
 	{
-		
+		//攻撃
+		return std::string("Attack1");
 	}
-
-	//攻撃
-	return std::string("Attack1");
 }

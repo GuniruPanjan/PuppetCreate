@@ -30,7 +30,7 @@ PlayerStateGuard::PlayerStateGuard(std::shared_ptr<CharacterBase> chara) :
 {
 	//現在のステートを待機状態にする
 	m_nowState = StateKind::Guard;
-	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "ShieldStart"));
+	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "ShieldStart"), true);
 	chara->NotInitAnim(true);
 
 	cOne = false;
@@ -73,7 +73,7 @@ void PlayerStateGuard::Update()
 			//一回だけ行う
 			if (!cOne)
 			{
-				own->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldIdle"));
+				own->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldIdle"), true);
 				own->NotInitAnim(false);
 
 				cOne = true;
@@ -167,7 +167,7 @@ void PlayerStateGuard::Update()
 	{
 		//アニメーションを変更する
 		auto animName = GetGuardAnim(m_dir);
-		own->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", animName), cWalkAnimSpeed, m_revese);
+		own->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", animName), false, cWalkAnimSpeed, m_revese);
 	}
 
 	//移動方向を決定する

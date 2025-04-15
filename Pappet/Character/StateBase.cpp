@@ -22,6 +22,7 @@ StateBase::StateBase(std::shared_ptr<CharacterBase> chara) :
 	m_nowState(StateKind::Null),
 	m_nextState(StateKind::Null),
 	m_targetState(false),
+	m_hit(),
 	m_equipmentState(false)
 {
 }

@@ -11,10 +11,12 @@
 PlayerStateDamage::PlayerStateDamage(std::shared_ptr<CharacterBase> chara) :
 	StateBase(chara)
 {
+	//最初にヒット状態を入れる
+	m_hit = chara->GetHit();
 	//現在のステートを攻撃ヒット状態にする
 	m_nowState = StateKind::Damage;
 	auto animName = GetHitAnim();
-	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), animName));
+	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), animName), true);
 	chara->NotInitAnim(false);
 }
 

@@ -9,11 +9,12 @@
 /// </summary>
 /// <param name="chara"></param>
 PlayerStateTaking::PlayerStateTaking(std::shared_ptr<CharacterBase> chara) :
-	StateBase(chara)
+	StateBase(chara),
+	m_animEnd(false)
 {
 	//現在のステートをアイテム取得状態にする
 	m_nowState = StateKind::Taking;
-	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Taking"));
+	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Taking"), true);
 	chara->NotInitAnim(false);
 }
 
@@ -48,8 +49,13 @@ void PlayerStateTaking::Update()
 	auto prevVel = own->GetRigidbody()->GetVelocity();
 	own->GetRigidbody()->SetVelocity(MyLibrary::LibVec3(0.0f, prevVel.y, 0.0f));
 
+	if (own->GetFrame() >= 60.0f)
+	{
+		m_animEnd = true;
+	}
+
 	//アニメーションが終了したら
-	if (own->GetEndAnim())
+	if (m_animEnd)
 	{
 		//左スティックが入力されていたらStateをWalkにする
 		if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
@@ -59,12 +65,14 @@ void PlayerStateTaking::Update()
 			if (Input::GetInstance().IsPushed("Input_Dash"))
 			{
 				ChangeState(StateKind::Dash);
+				m_animEnd = false;
 				return;
 			}
 			//押されていなかったらwalkにする
 			else
 			{
 				ChangeState(StateKind::Walk);
+				m_animEnd = false;
 				return;
 			}
 
@@ -75,6 +83,7 @@ void PlayerStateTaking::Update()
 			Input::GetInstance().GetInputStick(false).second == 0.0f)
 		{
 			ChangeState(StateKind::Idle);
+			m_animEnd = false;
 			return;
 		}
 
@@ -82,6 +91,7 @@ void PlayerStateTaking::Update()
 		if (Input::GetInstance().IsTriggered("Input_Jump"))
 		{
 			ChangeState(StateKind::Jump);
+			m_animEnd = false;
 			return;
 		}
 
@@ -89,6 +99,7 @@ void PlayerStateTaking::Update()
 		if (Input::GetInstance().IsTriggered("Input_Attack"))
 		{
 			ChangeState(StateKind::Attack);
+			m_animEnd = false;
 			return;
 		}
 
@@ -96,6 +107,7 @@ void PlayerStateTaking::Update()
 		if (Input::GetInstance().GetIsPushedTriggerButton(true) || Input::GetInstance().GetIsPushedTriggerButton(true))
 		{
 			ChangeState(StateKind::StrongAttack);
+			m_animEnd = false;
 			return;
 		}
 
@@ -103,6 +115,7 @@ void PlayerStateTaking::Update()
 		if (Input::GetInstance().IsTriggered("Input_Roll"))
 		{
 			ChangeState(StateKind::Roll);
+			m_animEnd = false;
 			return;
 		}
 
@@ -110,6 +123,7 @@ void PlayerStateTaking::Update()
 		if (Input::GetInstance().IsTriggered("X"))
 		{
 			ChangeState(StateKind::Item);
+			m_animEnd = false;
 			return;
 		}
 
@@ -117,6 +131,7 @@ void PlayerStateTaking::Update()
 		if (Input::GetInstance().IsTriggered("Input_Shield"))
 		{
 			ChangeState(StateKind::Guard);
+			m_animEnd = false;
 			return;
 		}
 	}

@@ -63,6 +63,8 @@ public:
 	bool IsTriggered(const char* command) const;
 	//指定のコマンドが押し続けられているかどうか
 	bool IsPushed(const char* command) const;
+	//指定のコマンドが離されたかどうか
+	bool IsReleased(const char* command) const;
 	//スティックの入力情報を取得
 	std::pair<float, float> GetInputStick(bool isRight) const;
 	//ZR,ZLボタンの入力情報を取得

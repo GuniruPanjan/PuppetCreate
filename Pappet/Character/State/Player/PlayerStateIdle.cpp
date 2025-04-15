@@ -14,7 +14,7 @@ PlayerStateIdle::PlayerStateIdle(std::shared_ptr<CharacterBase> chara) :
 {
 	//現在のステートを待機状態にする
 	m_nowState = StateKind::Idle;
-	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Idle"));
+	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Idle"), false);
 	chara->NotInitAnim(false);
 }
 
@@ -93,11 +93,11 @@ void PlayerStateIdle::Update()
 	}
 
 	//回避ボタンが押されたらStateを回避にする
-	//if (Input::GetInstance().IsTriggered("Input_Roll"))
-	//{
-	//	ChangeState(StateKind::Roll);
-	//	return;
-	//}
+	if (Input::GetInstance().IsReleased("Input_Roll"))
+	{
+		ChangeState(StateKind::Roll);
+		return;
+	}
 
 	//アイテムボタンが押されたらアイテムを使用する
 	if (Input::GetInstance().IsTriggered("X"))
