@@ -33,6 +33,7 @@ PlayerStateRoll::PlayerStateRoll(std::shared_ptr<CharacterBase> chara) :
 	//現在のステートを回避状態にする
 	m_nowState = StateKind::Roll;
 	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Roll"));
+	chara->NotInitAnim(true);
 }
 
 /// <summary>

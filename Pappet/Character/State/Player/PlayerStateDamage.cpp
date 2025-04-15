@@ -15,6 +15,7 @@ PlayerStateDamage::PlayerStateDamage(std::shared_ptr<CharacterBase> chara) :
 	m_nowState = StateKind::Damage;
 	auto animName = GetHitAnim();
 	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), animName));
+	chara->NotInitAnim(false);
 }
 
 /// <summary>

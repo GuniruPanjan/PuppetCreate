@@ -21,6 +21,7 @@ PlayerStateEnterBoss::PlayerStateEnterBoss(std::shared_ptr<CharacterBase> chara)
 	//現在のステートをボス部屋に入る状態にする
 	m_nowState = StateKind::EnterBoss;
 	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "BossEnter"));
+	chara->NotInitAnim(true);
 }
 
 /// <summary>

@@ -61,7 +61,7 @@ public:
 	//アニメーションの変更
 	void ChangeAnim(int animIndex, bool& one, bool(&all)[30], float animSpeed = 0.5f, bool reverse = false, float resetTime = 0.0f);
 	//Stateでのアニメーション変更
-	void ChangeStateAnim(int animIndex, float animSpeed = 0.5f, bool reverse = false);
+	void ChangeStateAnim(int animIndex, float animSpeed = 0.5f, bool reverse = false, float resetTime = 0.0f);
 	//アニメーションのフレームブレンド変更
 	void FrameChangeAnim(int animIndex, bool& one, bool& two, int frame);
 	//アニメーションのフレームブレンド変更(ステート)
@@ -81,16 +81,11 @@ public:
 	Status GetStatus() { return m_status; }
 	//フレームを取得する
 	float GetFrame() { return m_nowFrame; }
-	//キャラクターのアングルを取得する
-	float GetAngle() { return m_angle; }
 	//アニメーション終了を取得する
 	bool GetEndAnim() { return m_isAnimationFinish; }
 
 	//スピードを設定する
 	int SetSpeed(int set) { return m_status.s_speed = set; }
-	//キャラクターアングルを決める
-	float SetAngle(int set) { return m_angle = set; }
-	
 
 	//物理データを取得
 	std::shared_ptr<MyLibrary::Rigidbody> GetRigidbody() { return rigidbody; }

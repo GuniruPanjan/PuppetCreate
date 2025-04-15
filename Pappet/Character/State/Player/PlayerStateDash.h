@@ -15,5 +15,8 @@ public:
 	void Init(int md) override;
 	//XV
 	virtual void Update() override;
+
+private:
+	int m_noInputFrame;
 };
 

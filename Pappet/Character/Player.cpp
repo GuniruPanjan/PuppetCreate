@@ -709,15 +709,11 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	if (!m_anim.s_isDead)
 	{
 		//アニメーションの更新
-		//m_isAnimationFinish = UpdateAnim(m_nowAnimNo, ANIMATION_MAX);
-
 		m_isAnimationFinish = UpdateStateAnim(m_currentAnimNo);
 	}
 	//死亡したときのアニメーション更新
 	else if (m_anim.s_isDead && m_nowFrame <= 68.0f)
 	{
-		//m_isAnimationFinish = UpdateAnim(m_nowAnimNo, ANIMATION_MAX);
-
 		m_isAnimationFinish = UpdateStateAnim(m_currentAnimNo);
 	}
 
@@ -1805,9 +1801,6 @@ void Player::Draw(Armor& armor, int font)
 	MV1SetRotationXYZ(m_modelHandle, VGet(0.0f, m_angle, 0.0f));
 	//描画
 	MV1DrawModel(m_modelHandle);
-
-	DrawFormatString(200, 400, 0xffffff, "aniim : %d", m_nowAnimIdx);
-	
 }
 
 void Player::End()

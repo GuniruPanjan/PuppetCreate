@@ -35,6 +35,7 @@ PlayerStateAttack::PlayerStateAttack(std::shared_ptr<CharacterBase> chara) :
 	m_nowState = StateKind::Attack;
 	auto animName = GetAttackAnim();
 	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), animName));
+	chara->NotInitAnim(false);
 }
 
 /// <summary>

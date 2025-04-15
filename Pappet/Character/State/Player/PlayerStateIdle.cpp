@@ -9,11 +9,13 @@
 /// </summary>
 /// <param name="chara"></param>
 PlayerStateIdle::PlayerStateIdle(std::shared_ptr<CharacterBase> chara) :
-	StateBase(chara)
+	StateBase(chara),
+	m_noInputFrame(0)
 {
 	//現在のステートを待機状態にする
 	m_nowState = StateKind::Idle;
 	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Idle"));
+	chara->NotInitAnim(false);
 }
 
 /// <summary>
@@ -64,6 +66,10 @@ void PlayerStateIdle::Update()
 			return;
 		}
 	}
+	else
+	{
+		m_noInputFrame = 0;
+	}
 
 	//ジャンプボタンが押されていたらStateをJumpにする
 	if (Input::GetInstance().IsTriggered("Input_Jump"))
@@ -87,11 +93,11 @@ void PlayerStateIdle::Update()
 	}
 
 	//回避ボタンが押されたらStateを回避にする
-	if (Input::GetInstance().IsTriggered("Input_Roll"))
-	{
-		ChangeState(StateKind::Roll);
-		return;
-	}
+	//if (Input::GetInstance().IsTriggered("Input_Roll"))
+	//{
+	//	ChangeState(StateKind::Roll);
+	//	return;
+	//}
 
 	//アイテムボタンが押されたらアイテムを使用する
 	if (Input::GetInstance().IsTriggered("X"))

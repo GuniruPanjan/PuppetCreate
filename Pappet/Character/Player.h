@@ -80,10 +80,14 @@ public:
 	//プレイヤーが生きているかを取得
 	const bool IsGetPlayerDead() const { return m_anim.s_isDead; }
 
+	//アングル関係
+	float GetAngle() { return m_angle; }
+	float SetModelAngle(float angle) { return m_angle = angle; }
+
+
 	//カメラ関係
 	float GetCameraAngle() { return m_cameraAngle; }
 	float SetCameraAngle(float angle) { return m_cameraAngle = angle; }
-	float SetModelAngle(float angle) { return m_angle = angle; }
 	float SetAngle(float angle) { return m_lockAngle = angle; }
 	bool GetLock() { return m_lockonTarget; }
 	float GetSearch() { return m_searchRadius; }

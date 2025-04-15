@@ -16,6 +16,6 @@ public:
 	//XVˆ—
 	virtual void Update() override;
 private:
-	
+	int m_noInputFrame;
 };
 

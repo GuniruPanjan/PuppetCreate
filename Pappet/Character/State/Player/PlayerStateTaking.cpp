@@ -14,6 +14,7 @@ PlayerStateTaking::PlayerStateTaking(std::shared_ptr<CharacterBase> chara) :
 	//現在のステートをアイテム取得状態にする
 	m_nowState = StateKind::Taking;
 	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Taking"));
+	chara->NotInitAnim(false);
 }
 
 /// <summary>

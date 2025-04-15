@@ -7,7 +7,7 @@
 namespace
 {
 	/*アナログスティックによる移動関連*/
-	constexpr float cAnalogRangeMin = 0.1f;		//アナログスティックの入力判定最小範囲
+	constexpr float cAnalogRangeMin = 0.0f;		//アナログスティックの入力判定最小範囲
 	constexpr float cAnalogRangeMax = 0.8f;		//アナログスティックの入力判定最大範囲
 	constexpr float cAnalogInputMax = 1000.0f;	//アナログスティックから入力されるベクトルの最大
 
@@ -20,11 +20,13 @@ namespace
 /// </summary>
 /// <param name="chara"></param>
 PlayerStateDash::PlayerStateDash(std::shared_ptr<CharacterBase> chara) :
-	StateBase(chara)
+	StateBase(chara),
+	m_noInputFrame(0)
 {
 	//現在のステートをダッシュ状態にする
 	m_nowState = StateKind::Dash;
 	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Run"));
+	chara->NotInitAnim(false);
 	//速度を設定する
 	chara->SetSpeed(cDashSpeed);
 }
@@ -57,11 +59,20 @@ void PlayerStateDash::Update()
 	auto own = std::dynamic_pointer_cast<Player>(m_pChara.lock());
 
 	//左スティックが入力されてなかったらStateをIdleにする
-	if (Input::GetInstance().GetInputStick(false).first == 0.0f ||
+	if (Input::GetInstance().GetInputStick(false).first == 0.0f &&
 		Input::GetInstance().GetInputStick(false).second == 0.0f)
 	{
-		ChangeState(StateKind::Idle);
-		return;
+		if (m_noInputFrame == 2)
+		{
+			ChangeState(StateKind::Idle);
+			return;
+		}
+
+		m_noInputFrame++;
+	}
+	else
+	{
+		m_noInputFrame = 0;
 	}
 
 	//ジャンプボタンが押されていたらStateをJumpにする
@@ -86,11 +97,11 @@ void PlayerStateDash::Update()
 	}
 
 	//回避ボタンが押されたらStateを回避にする
-	if (Input::GetInstance().IsTriggered("Input_Roll"))
-	{
-		ChangeState(StateKind::Roll);
-		return;
-	}
+	//if (Input::GetInstance().IsTriggered("Input_Roll"))
+	//{
+	//	ChangeState(StateKind::Roll);
+	//	return;
+	//}
 
 	//ダッシュボタンが押されてなかったらStateをWalkにする
 	if (!Input::GetInstance().IsPushed("Input_Dash"))
@@ -113,41 +124,51 @@ void PlayerStateDash::Update()
 		return;
 	}
 
-	//コントローラーの左スティックの入力を取得
-	auto input = Input::GetInstance().GetInputStick(false);
+	if (m_noInputFrame == 0)
+	{
+		//コントローラーの左スティックの入力を取得
+		auto input = Input::GetInstance().GetInputStick(false);
 
-	//移動方向を決定する
-	auto moveDir = MyLibrary::LibVec3(input.first, 0.0f, -input.second);
-	//移動ベクトルの長さを取得する
-	float len = moveDir.Length();
+		//移動方向を決定する
+		auto moveDir = VGet(-input.first, 0.0f, input.second);
+		//移動ベクトルの長さを取得する
+		float len = VSize(moveDir);
 
-	//ベクトルの長さを0.0～1.0の割合に変換する
-	float rate = len / cAnalogInputMax;
+		//ベクトルの長さを0.0～1.0の割合に変換する
+		float rate = len / cAnalogInputMax;
 
-	//アナログスティック無効な範囲を除外する(デッドゾーン)
-	rate = (rate - cAnalogRangeMin) / (cAnalogRangeMax - cAnalogRangeMin);
-	rate = min(rate, 1.0f);
-	rate = max(rate, 0.0f);
+		//アナログスティック無効な範囲を除外する(デッドゾーン)
+		rate = (rate - cAnalogRangeMin) / (cAnalogRangeMax - cAnalogRangeMin);
+		rate = min(rate, 1.0f);
+		rate = max(rate, 0.0f);
 
-	//速度が決定できるので移動ベクトルに反映する
-	moveDir = moveDir.Normalize();
-	float speed = own->GetStatus().s_speed * rate;
+		//速度が決定できるので移動ベクトルに反映する
+		moveDir = VNorm(moveDir);
+		float speed = own->GetStatus().s_speed * rate;
 
-	//方向ベクトルと移動力をかけて移動ベクトルを生成する
-	auto moveVec = moveDir * speed;
+		//方向ベクトルと移動力をかけて移動ベクトルを生成する
+		auto moveVec = VScale(moveDir, speed);
 
-	//cameraの角度から
-	//コントローラーによる移動方向を決定する
-	MATRIX mtx = MGetRotY(own->GetCameraAngle() + DX_PI_F);
-	moveVec.GetVector() = VTransform(moveVec.ConversionToVECTOR(), mtx);
+		//cameraの角度から
+		//コントローラーによる移動方向を決定する
+		MATRIX mtx = MGetRotY(own->GetCameraAngle() + DX_PI_F);
+		moveVec = VTransform(moveVec, mtx);
 
-	//ライブラリのベクターに変換する
-	MyLibrary::LibVec3 move = MyLibrary::LibVec3(static_cast<float>(moveVec.x), static_cast<float>(moveVec.y), static_cast<float>(moveVec.z));
-	//キャラクターのアングルを決める
-	own->SetAngle(atan2f(-moveVec.z, moveVec.x) - DX_PI_F / 2);
+		//ライブラリのベクターに変換する
+		MyLibrary::LibVec3 move = MyLibrary::LibVec3(static_cast<float>(moveVec.x), static_cast<float>(moveVec.y), static_cast<float>(moveVec.z));
+		//キャラクターのアングルを決める
+		own->SetModelAngle(atan2f(-moveVec.z, moveVec.x) - DX_PI_F / 2);
 
-	//移動速度を決定する
-	MyLibrary::LibVec3 prevVelocity = own->GetRigidbody()->GetVelocity();
-	MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(move.x, prevVelocity.y, move.z);
-	own->GetRigidbody()->SetVelocity(newVelocity);
+		//移動速度を決定する
+		MyLibrary::LibVec3 prevVelocity = own->GetRigidbody()->GetVelocity();
+		MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(move.x, prevVelocity.y, move.z);
+		own->GetRigidbody()->SetVelocity(newVelocity);
+	}
+	else
+	{
+		//プレイヤーの速度を0にする
+		auto prevVel = own->GetRigidbody()->GetVelocity();
+		own->GetRigidbody()->SetVelocity(MyLibrary::LibVec3(0.0f, prevVel.y, 0.0f));
+	}
+	
 }

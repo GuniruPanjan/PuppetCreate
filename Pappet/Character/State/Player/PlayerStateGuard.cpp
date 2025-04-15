@@ -31,6 +31,7 @@ PlayerStateGuard::PlayerStateGuard(std::shared_ptr<CharacterBase> chara) :
 	//現在のステートを待機状態にする
 	m_nowState = StateKind::Guard;
 	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "ShieldStart"));
+	chara->NotInitAnim(true);
 
 	cOne = false;
 }
@@ -73,6 +74,7 @@ void PlayerStateGuard::Update()
 			if (!cOne)
 			{
 				own->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldIdle"));
+				own->NotInitAnim(false);
 
 				cOne = true;
 			}

@@ -221,7 +221,7 @@ void CharacterBase::ChangeAnim(int animIndex, bool& one, bool (&all)[30], float 
 	
 }
 
-void CharacterBase::ChangeStateAnim(int animIndex, float animSpeed, bool reverse)
+void CharacterBase::ChangeStateAnim(int animIndex, float animSpeed, bool reverse, float resetTime)
 {
 	//さらに古いアニメーションがアタッチされている場合はこの時点で消しておく
 	if (m_prevAnimNo != -1)
@@ -240,6 +240,8 @@ void CharacterBase::ChangeStateAnim(int animIndex, float animSpeed, bool reverse
 
 	//切り替えの瞬間は変更前のアニメーションが再生される状態にする
 	m_animBlendRate = 0.0f;
+
+	m_nowFrame = resetTime;
 
 	m_animTime = animSpeed;
 
