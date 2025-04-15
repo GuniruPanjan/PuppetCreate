@@ -324,6 +324,9 @@
     <ClCompile Include="Character\State\Player\PlayerStateGuard.cpp">
       <Filter>ソース ファイル\Character\State\Player</Filter>
     </ClCompile>
+    <ClCompile Include="Character\State\Player\PlayerStateJump.cpp">
+      <Filter>ソース ファイル\Character\State\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Icon\Icon.h">
@@ -564,6 +567,9 @@
       <Filter>ヘッダー ファイル\Character\State\Player</Filter>
     </ClInclude>
     <ClInclude Include="Character\State\Player\PlayerStateGuard.h">
+      <Filter>ヘッダー ファイル\Character\State\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Character\State\Player\PlayerStateJump.h">
       <Filter>ヘッダー ファイル\Character\State\Player</Filter>
     </ClInclude>
   </ItemGroup>

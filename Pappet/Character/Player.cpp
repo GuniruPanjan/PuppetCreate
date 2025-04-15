@@ -150,6 +150,9 @@ Player::Player() :
 	capsuleCol->m_radius = 12.0f;
 	capsuleCol->m_vec = MyLibrary::LibVec3(0.0f, capsuleCol->m_vec.y + 2.0f, 0.0f);
 
+	m_capsuleY = capsuleCol->m_vec.y;
+	m_capsuleRadius = capsuleCol->m_radius;
+
 	//ƒŒƒxƒ‹‚Ì‰Šú‰»
 	m_levelStatus.sl_hp = 1;
 	m_levelStatus.sl_stamina = 1;

@@ -85,6 +85,10 @@ public:
 	bool GetEndAnim() { return m_isAnimationFinish; }
 	//キャラクターのヒット状態を得る
 	bool GetHit() { return m_anim.s_hit; }
+	//カプセルのY座標の大きさを得る
+	float GetCapsuleY() { return m_capsuleY; }
+	//カプセルの半径を得る
+	float GetCapsuleRadius() { return m_capsuleRadius; }
 
 	//装備関係
 	bool GetSword() { return m_sword; }
@@ -146,6 +150,8 @@ protected:
 	float m_angle;            //キャラのアングル
 	float m_attackRadius;     //攻撃の当たり判定
 	float m_searchRadius;     //索敵の当たり判定
+	float m_capsuleY;         //カプセルのY座標
+	float m_capsuleRadius;    //カプセルの半径
 	int m_heel;               //HPに追加する回復分
 	int m_maxHeel;            //HPの最大回復量
 	float m_cameraAngle;      //カメラ情報

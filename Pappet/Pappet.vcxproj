@@ -155,6 +155,7 @@
     <ClCompile Include="Character\State\Player\PlayerStateGuard.cpp" />
     <ClCompile Include="Character\State\Player\PlayerStateIdle.cpp" />
     <ClCompile Include="Character\State\Player\PlayerStateItem.cpp" />
+    <ClCompile Include="Character\State\Player\PlayerStateJump.cpp" />
     <ClCompile Include="Character\State\Player\PlayerStateRoll.cpp" />
     <ClCompile Include="Character\State\Player\PlayerStateStrongAttack.cpp" />
     <ClCompile Include="Character\State\Player\PlayerStateTaking.cpp" />
@@ -233,6 +234,7 @@
     <ClInclude Include="Character\State\Player\PlayerStateGuard.h" />
     <ClInclude Include="Character\State\Player\PlayerStateIdle.h" />
     <ClInclude Include="Character\State\Player\PlayerStateItem.h" />
+    <ClInclude Include="Character\State\Player\PlayerStateJump.h" />
     <ClInclude Include="Character\State\Player\PlayerStateRoll.h" />
     <ClInclude Include="Character\State\Player\PlayerStateStrongAttack.h" />
     <ClInclude Include="Character\State\Player\PlayerStateTaking.h" />
