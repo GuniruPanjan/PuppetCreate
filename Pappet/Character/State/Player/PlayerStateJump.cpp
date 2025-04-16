@@ -19,9 +19,10 @@ namespace
 /// <param name="chara"></param>
 PlayerStateJump::PlayerStateJump(std::shared_ptr<CharacterBase> chara) :
 	StateBase(chara),
+	m_updateFund(),
 	m_jumpFrame(0)
 {
-	//現在のステートをダッシュ状態にする
+	//現在のステートをジャンプ状態にする
 	m_nowState = StateKind::Jump;
 
 	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Jump"), true);
@@ -70,7 +71,7 @@ void PlayerStateJump::UpUpdate()
 	//ジャンプフレームが上昇アニメーションの終了フレーム以上ならジャンプ中状態にする
 	if (m_jumpFrame >= m_pChara.lock()->GetEndAnim() * 0.98f)
 	{
-		//アニメーション
+		//アニメーション変更
 		m_pChara.lock()->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", "Jumping"), true);
 		//ジャンプフレームを初期化する
 		m_jumpFrame = 0;
@@ -114,6 +115,8 @@ void PlayerStateJump::LoopUpdate()
 		}
 	
 	}
+	//フレーム更新
+	m_jumpFrame++;
 }
 
 /// <summary>
@@ -125,7 +128,7 @@ void PlayerStateJump::DownUpdate()
 	auto own = std::dynamic_pointer_cast<Player>(m_pChara.lock());
 
 	//ジャンプフレームが上昇アニメーションの終了フレーム以上なら入力に応じてステートを変更する
-	if (m_jumpFrame >= m_pChara.lock()->GetEndFrame() * 0.6f)
+	if (m_jumpFrame >= m_pChara.lock()->GetEndAnim() * 0.6f)
 	{
 		//左スティックが入力されていなかったらStateをIdleにする
 		if (Input::GetInstance().GetInputStick(false).first == 0.0f &&
@@ -135,12 +138,22 @@ void PlayerStateJump::DownUpdate()
 			return;
 		}
 
-		//左スティックが入力されていたらStateをWalkにする
+		//左スティックが入力されていたらStateをWalkかDashにする
 		if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
 			Input::GetInstance().GetInputStick(false).second != 0.0f)
 		{
-			ChangeState(StateKind::Walk);
-			return;
+			//ダッシュボタンが長押しされてたらダッシュ
+			if (Input::GetInstance().IsPushed("Input_Dash"))
+			{
+				ChangeState(StateKind::Dash);
+				return;
+			}
+			//押されていなかったらWalk
+			else
+			{
+				ChangeState(StateKind::Walk);
+				return;
+			}
 		}
 	}
 

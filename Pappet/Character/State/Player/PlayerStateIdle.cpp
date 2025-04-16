@@ -9,8 +9,7 @@
 /// </summary>
 /// <param name="chara"></param>
 PlayerStateIdle::PlayerStateIdle(std::shared_ptr<CharacterBase> chara) :
-	StateBase(chara),
-	m_noInputFrame(0)
+	StateBase(chara)
 {
 	//現在のステートを待機状態にする
 	m_nowState = StateKind::Idle;
@@ -65,10 +64,6 @@ void PlayerStateIdle::Update()
 			ChangeState(StateKind::Walk);
 			return;
 		}
-	}
-	else
-	{
-		m_noInputFrame = 0;
 	}
 
 	//ジャンプボタンが押されていたらStateをJumpにする

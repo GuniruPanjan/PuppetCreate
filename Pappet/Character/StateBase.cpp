@@ -15,6 +15,7 @@
 #include "State/Player/PlayerStateStrongAttack.h"
 #include "State/Player/PlayerStateTaking.h"
 #include "State/Player/PlayerStateWalk.h"
+#include "State/Player/PlayerStateJump.h"
 
 StateBase::StateBase(std::shared_ptr<CharacterBase> chara) :
 	m_pChara(chara),
@@ -78,10 +79,14 @@ void StateBase::ChangeState(StateKind kind)
 			return;
 		}
 		//ƒWƒƒƒ“ƒvó‘Ô
-		//else if (kind == StateKind::Jump)
-		//{
+		else if (kind == StateKind::Jump)
+		{
+			auto pNext = std::make_shared<PlayerStateJump>(m_pChara.lock());
+			pNext->Init(m_stageCol);
 
-		//}
+			m_pChara.lock()->ChangeState(pNext);
+			return;
+		}
 		//UŒ‚ó‘Ô
 		else if (kind == StateKind::Attack)
 		{
