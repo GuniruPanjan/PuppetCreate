@@ -140,7 +140,10 @@ Player::Player() :
 	m_shieldPos(),
 	m_shieldSize(),
 	m_shieldSearchPos(),
-	m_notRoll(0)
+	m_notRoll(0),
+	m_start(0.0f),
+	m_reset(0.0f),
+	m_loop(false)
 {
 
 	//カプセル型
@@ -717,7 +720,7 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	if (!m_anim.s_isDead)
 	{
 		//アニメーションの更新
-		m_isAnimationFinish = UpdateStateAnim(m_currentAnimNo);
+		m_isAnimationFinish = UpdateStateAnim(m_currentAnimNo, m_start, m_reset, m_loop);
 	}
 	//死亡したときのアニメーション更新
 	else if (m_anim.s_isDead && m_nowFrame <= 68.0f)

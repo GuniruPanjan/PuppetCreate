@@ -57,7 +57,7 @@ public:
 	//アニメーションの更新
 	bool UpdateAnim(int attachNo, int max, float startTime = 0.0f);
 	//アニメーションの更新
-	bool UpdateStateAnim(int attachNo, float startTime = 0.0f);
+	bool UpdateStateAnim(int attachNo, float startTime = 0.0f, float resetTime = 0.0f, bool loop = false);
 	//アニメーションの変更
 	void ChangeAnim(int animIndex, bool& one, bool(&all)[30], float animSpeed = 0.5f, bool reverse = false, float resetTime = 0.0f);
 	//Stateでのアニメーション変更

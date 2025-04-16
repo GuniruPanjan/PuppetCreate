@@ -7,7 +7,7 @@
 namespace
 {
 	//ジャンプ力
-	constexpr float cJumpPower = 3.0f;
+	constexpr float cJumpPower = 2.0f;
 
 	//ジャンプフレーム数
 	constexpr int cJumpFrame = 32;
@@ -28,11 +28,11 @@ PlayerStateJump::PlayerStateJump(std::shared_ptr<CharacterBase> chara) :
 	//現在のステートをジャンプ状態にする
 	m_nowState = StateKind::Jump;
 
-	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "JumpUp"), true, 1.0f);
+	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "JumpUp"), true, 0.6f, false, 22.0f);
 
 	//このステートに入った瞬間ジャンプ力を足す
 	auto vel = chara->GetRigidbody()->GetVelocity();
-	vel.y += cJumpPower;
+	vel = MyLibrary::LibVec3(vel.x / 2, vel.y + cJumpPower, vel.z / 2);
 	chara->GetRigidbody()->SetVelocity(vel);
 	//ジャンプ状態にする
 	chara->GetRigidbody()->SetJump(true);
@@ -87,15 +87,29 @@ void PlayerStateJump::UpUpdate()
 	////ジャンプフレームを更新する
 	//m_jumpFrame++;
 
-	if (m_pChara.lock()->GetEndAnim())
+	//if (m_pChara.lock()->GetEndAnim())
+	//{
+	//	//アニメーション変更
+	//	m_pChara.lock()->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", "Jumping"), true, 0.01f);
+	//	//ジャンプフレームを初期化する
+	//	m_jumpFrame = 0;
+	//	//ジャンプ中状態にする
+	//	m_updateFund = &PlayerStateJump::LoopUpdate;
+	//}
+
+	//ジャンプフレームが上昇したアニメーションの終了フレーム以上ならジャンプ中状態にする
+	if (m_jumpFrame >= 18)
 	{
 		//アニメーション変更
-		m_pChara.lock()->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", "Jumping"), true, 0.01f);
+		m_pChara.lock()->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", "JumpUp"), true, 0.01f, false, 31.0f);
 		//ジャンプフレームを初期化する
 		m_jumpFrame = 0;
 		//ジャンプ中状態にする
 		m_updateFund = &PlayerStateJump::LoopUpdate;
 	}
+
+	//ジャンプフレームを更新する
+	m_jumpFrame++;
 
 }
 
@@ -119,13 +133,21 @@ void PlayerStateJump::LoopUpdate()
 		//ステージとのカプセルとで当たり判定を取る
 		auto hit = MV1CollCheck_Line(m_stageCol, -1, modelBottomPos.ConversionToVECTOR(), underPos.ConversionToVECTOR());
 
+		own->SetStart(31.0f);
+		own->SetReset(33.0f);
+		own->SetLoop(true);
+
 		//ステージとカプセルが当たっていたらジャンプ下降状態にする
 		if (hit.HitFlag)
 		{
-			//アニメーションを変える
-			own->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", "JumpDown"), true, cLandingAnimSpeed);
+			//アニメーション変更
+			m_pChara.lock()->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", "JumpUp"), true, 0.5f, false, 33.0f);
 			//ジャンプフレームを初期化する
 			m_jumpFrame = 0;
+			own->SetStart(0.0f);
+			own->SetReset(0.0f);
+			//ループしなくする
+			own->SetLoop(false);
 			//ジャンプ下降状態にする
 			m_updateFund = &PlayerStateJump::DownUpdate;
 		}
@@ -179,7 +201,7 @@ void PlayerStateJump::DownUpdate()
 	////ジャンプフレームを更新する
 	//m_jumpFrame++;
 
-	if (m_jumpFrame >= 26.0f)
+	if (m_jumpFrame >= 15.0f)
 	{
 
 		//ジャンプ終了

@@ -84,6 +84,10 @@ public:
 	float GetAngle() { return m_angle; }
 	float SetModelAngle(float angle) { return m_angle = angle; }
 
+	//ジャンプ関係
+	float SetStart(float set) { return m_start = set; }
+	float SetReset(float set) { return m_reset = set; }
+	bool SetLoop(bool set) { return m_loop = set; }
 
 	//カメラ関係
 	float GetCameraAngle() { return m_cameraAngle; }
@@ -211,6 +215,11 @@ private:
 	int m_moveAnimShieldFrameIndex;     //盾を構えるときのアニメーションのフレーム取得
 	int m_moveAnimShieldFrameHandIndex;
 	int m_notRoll;                      //ローリングできないようにする
+
+	float m_start;                      //スタートタイムを設定する
+	float m_reset;                      //リセットタイムを設定する
+	bool m_loop;                        //ループ設定する
+
 	MATRIX m_moveWeaponFrameMatrix;     //武器をアタッチするフレームのローカル座標をワールド変換行列を取得する
 	MATRIX m_moveShieldFrameMatrix;
 	VECTOR m_attackLigPos1;             //攻撃判定リグのポジション1

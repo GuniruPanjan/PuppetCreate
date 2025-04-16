@@ -119,7 +119,7 @@ bool CharacterBase::UpdateAnim(int attachNo, int max, float startTime)
 	return isLoop;
 }
 
-bool CharacterBase::UpdateStateAnim(int attachNo, float startTime)
+bool CharacterBase::UpdateStateAnim(int attachNo, float startTime, float resetTime, bool loop)
 {
 	//アニメーションが設定されていなかったら早期リターン
 	if (attachNo == -1) return false;
@@ -143,12 +143,27 @@ bool CharacterBase::UpdateStateAnim(int attachNo, float startTime)
 	//アニメーションを再生させる時
 	if (!m_animReverse)
 	{
-		while (totalAnimFrame <= m_nowFrame)
+		//一部分をループさせない
+		if (!loop)
 		{
-			m_nowFrame -= totalAnimFrame;
-			m_nowFrame += startTime;
-			isLoop = true;
+			while (totalAnimFrame <= m_nowFrame)
+			{
+				m_nowFrame -= totalAnimFrame;
+				m_nowFrame += startTime;
+				isLoop = true;
+			}
 		}
+		//一部分をループさせる
+		else
+		{
+			while (resetTime <= m_nowFrame)
+			{
+				m_nowFrame -= resetTime;
+				m_nowFrame += startTime;
+				isLoop = true;
+			}
+		}
+		
 	}
 	//アニメーションを逆再生させる時
 	else if (m_animReverse)

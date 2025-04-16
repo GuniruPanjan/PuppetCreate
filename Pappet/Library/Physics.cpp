@@ -1396,11 +1396,11 @@ void MyLibrary::Physics::FixPositionWithWall(std::shared_ptr<Collidable>& col)
 
 			VECTOR ret;
 			ret = VCross(col->rigidbody->GetVelocityVECTOR(), m_pPoly->Normal);
+			SlideVec = MyLibrary::LibVec3(ret.x, ret.y, ret.z);
 
-			m_ret = VScale(m_pPoly->Normal, 3.0f);
-
+			ret = VCross(m_pPoly->Normal, SlideVec.ConversionToVECTOR());
 			//進行方向ベクトルと壁ポリゴンの法線ベクトルに垂直なベクトルを算出
-			SlideVec = MyLibrary::LibVec3(ret.x, 0, ret.z);
+			SlideVec = MyLibrary::LibVec3(ret.x, ret.y, ret.z);
 
 			//それを移動前の座標に足したものを新たな座標とする
 			col->rigidbody->SetNextPos(col->rigidbody->GetPos() + SlideVec);
@@ -1691,11 +1691,11 @@ void MyLibrary::Physics::FixPositionWithWallEnemy(std::shared_ptr<Collidable>& c
 
 			VECTOR ret;
 			ret = VCross(col->rigidbody->GetVelocityVECTOR(), m_pPoly->Normal);
+			SlideVec = MyLibrary::LibVec3(ret.x, ret.y, ret.z);
 
-			m_ret = VScale(m_pPoly->Normal, 3.0f);
-
+			ret = VCross(m_pPoly->Normal, SlideVec.ConversionToVECTOR());
 			//進行方向ベクトルと壁ポリゴンの法線ベクトルに垂直なベクトルを算出
-			SlideVec = MyLibrary::LibVec3(ret.x, 0, ret.z);
+			SlideVec = MyLibrary::LibVec3(ret.x, ret.y, ret.z);
 
 			//それを移動前の座標に足したものを新たな座標とする
 			col->rigidbody->SetPos(col->rigidbody->GetPos() + SlideVec);
@@ -1884,9 +1884,9 @@ void MyLibrary::Physics::FixNowPositionWithFloorEnemy(std::shared_ptr<Collidable
 	//床ポリゴンの当たり判定かつ、ジャンプ力が0よりも小さい(下降中の場合)どうかで処理を分岐
 	if (m_isHitEnemyFlag)
 	{
-		//接触したポリゴンで一番高いY座標をプレイヤーのY座標にする
+		//接触したポリゴンで一番高いY座標をエネミーのY座標にする
 		auto set = col->rigidbody->GetNextPos();
 		set.y = PolyMaxPosY + radius;
-		col->rigidbody->SetPos(set);
+		col->rigidbody->SetNextPos(set);
 	}
 }
