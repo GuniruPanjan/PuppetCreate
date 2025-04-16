@@ -73,7 +73,7 @@ namespace
 	//敵からのダメージ取得
 	float cDamage = 0.0f;
 	//人形のモデルパス
-	constexpr const char* cPath = "Data/Player/PlayerModelPuppet.mv1";
+	constexpr const char* cPath = "Data/Player/PlayerModel.mv1";
 	//装備を一回だけ初期化する
 	bool cEquipmentOne = false;
 	//光の中に入る時のポジション設定

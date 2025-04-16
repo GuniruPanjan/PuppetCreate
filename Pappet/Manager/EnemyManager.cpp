@@ -203,10 +203,10 @@ void EnemyManager::Update(std::shared_ptr<MyLibrary::Physics> physics, GameManag
 		//敵の更新する
 		for (auto& enemy : m_pEnemys)
 		{
+			enemy->Update(playerPos, shieldPos, isPlayerChase, se, physics, weapon);
+
 			//物理判定更新
 			physics->CheckEnemyUpdate();
-
-			enemy->Update(playerPos, shieldPos, isPlayerChase, se, physics, weapon);
 
 			m_enemyPos.emplace_back(enemy->GetPos());
 			m_enemyTarget.emplace_back(enemy->GetTarget());

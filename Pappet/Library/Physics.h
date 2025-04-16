@@ -144,6 +144,8 @@ namespace MyLibrary
 		bool m_isMoveFlag = false;
 		//ポリゴンに当たったかどうか
 		bool m_isHitFlag = false;
+		//ポリゴンにあたったかどうか(Enemy)
+		bool m_isHitEnemyFlag = false;
 		//壁ポリゴンに当たったかどうか
 		bool m_isHitWallFlag;
 		//壁ポリゴンと判断されたポリゴン数
@@ -155,6 +157,8 @@ namespace MyLibrary
 
 		//当たり判定結果構造体
 		MV1_COLL_RESULT_POLY_DIM m_hitDim{};
+		//当たり判定結果構造体
+		MV1_COLL_RESULT_POLY_DIM m_hitEnemyDim{};
 		//壁ポリゴンと判断されたポリゴンの構造体のアドレスを保存しておくためのポインタ配列
 		MV1_COLL_RESULT_POLY* m_pWallPoly[ColInfo::kMaxColHitPoly]{};
 		//床ポリゴンと判断されたポリゴンの構造体のアドレスを保存しておくためのポインタ配列
