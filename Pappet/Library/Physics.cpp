@@ -794,73 +794,87 @@ bool MyLibrary::Physics::IsCollide(const Rigidbody& rigidA, const Rigidbody& rig
 	//カプセル同士の当たり判定
 	if (kindA == MyLibrary::CollidableData::Kind::Capsule && kindB == MyLibrary::CollidableData::Kind::Capsule)
 	{
-		auto colA = dynamic_cast<MyLibrary::CollidableDataCapsule*>(colliderA);
-		auto colB = dynamic_cast<MyLibrary::CollidableDataCapsule*>(colliderB);
+		//auto colA = dynamic_cast<MyLibrary::CollidableDataCapsule*>(colliderA);
+		//auto colB = dynamic_cast<MyLibrary::CollidableDataCapsule*>(colliderB);
 
-		auto atob = rigidA.GetNextPos() - rigidB.GetNextPos();
-		auto atobLength = atob.Length();
+		//auto atob = rigidA.GetNextPos() - rigidB.GetNextPos();
+		//auto atobLength = atob.Length();
 
-		//自身の向いてる方向に伸びているベクトルを作成
-		LibVec3 sDirVec = colA->m_vec.GetNormalized() * colA->m_len * 0.5f;
-		//対象の向いてる方向に伸びているベクトルを作成
-		LibVec3 tDirVec = colB->m_vec.GetNormalized() * colB->m_len * 0.5f;
+		////自身の向いてる方向に伸びているベクトルを作成
+		//LibVec3 sDirVec = colA->m_vec.GetNormalized() * colA->m_len * 0.5f;
+		////対象の向いてる方向に伸びているベクトルを作成
+		//LibVec3 tDirVec = colB->m_vec.GetNormalized() * colB->m_len * 0.5f;
 
-		//相対ベクトル
-		LibVec3 vec = rigidA.GetPos() - rigidB.GetPos();
+		////相対ベクトル
+		//LibVec3 vec = rigidA.GetPos() - rigidB.GetPos();
 
-		//法線ベクトル
-		LibVec3 norm = norm.Cross(sDirVec, tDirVec);
+		////法線ベクトル
+		//LibVec3 norm = norm.Cross(sDirVec, tDirVec);
 
-		//平行判定
-		bool isParallel = norm.SqLength() < 0.001f;
+		////平行判定
+		//bool isParallel = norm.SqLength() < 0.001f;
 
-		float s, t;
-		//平行でない場合
-		if (!isParallel)
-		{
-			//単位行列
-			LibMatrix3 mat;
-			mat.Init();
+		//float s, t;
+		////平行でない場合
+		//if (!isParallel)
+		//{
+		//	//単位行列
+		//	LibMatrix3 mat;
+		//	mat.Init();
 
-			//値の代入
-			mat.SetLine(0, sDirVec);
-			mat.SetLine(1, tDirVec.Reverse());
-			mat.SetLine(2, norm);
+		//	//値の代入
+		//	mat.SetLine(0, sDirVec);
+		//	mat.SetLine(1, tDirVec.Reverse());
+		//	mat.SetLine(2, norm);
 
-			//逆行列
-			mat = mat.GetInverse();
+		//	//逆行列
+		//	mat = mat.GetInverse();
 
-			s = norm.Dot(mat.GetRow(0), vec);
-			t = norm.Dot(mat.GetRow(1), vec);
-		}
-		//平行の場合
-		else
-		{
-			s = norm.Dot(sDirVec, vec) / sDirVec.SqLength();
-			t = norm.Dot(tDirVec, vec) / tDirVec.SqLength();
-		}
+		//	s = norm.Dot(mat.GetRow(0), vec);
+		//	t = norm.Dot(mat.GetRow(1), vec);
+		//}
+		////平行の場合
+		//else
+		//{
+		//	s = norm.Dot(sDirVec, vec) / sDirVec.SqLength();
+		//	t = norm.Dot(tDirVec, vec) / tDirVec.SqLength();
+		//}
 
-		//範囲の制限
-		if (s < -1.0f) s = -1.0f;   //下限
-		if (s > 1.0f) s = 1.0f;     //上限
-		if (t < -1.0f) t = -1.0f;   //下限
-		if (t > 1.0f) t = 1.0f;     //上限
+		////範囲の制限
+		//if (s < -1.0f) s = -1.0f;   //下限
+		//if (s > 1.0f) s = 1.0f;     //上限
+		//if (t < -1.0f) t = -1.0f;   //下限
+		//if (t > 1.0f) t = 1.0f;     //上限
 
-		//線分上での最短距離
-		LibVec3 minPos1 = sDirVec * s + rigidA.GetPos();
-		LibVec3 minPos2 = tDirVec * t + rigidB.GetPos();
-		//大きさ2乗
-		float sqLen = (minPos1 - minPos2).SqLength();
-		//それぞれの半径の合計の2乗
-		float ar = colA->m_radius + colB->m_radius;
+		////線分上での最短距離
+		//LibVec3 minPos1 = sDirVec * s + rigidA.GetPos();
+		//LibVec3 minPos2 = tDirVec * t + rigidB.GetPos();
+		////大きさ2乗
+		//float sqLen = (minPos1 - minPos2).SqLength();
+		////それぞれの半径の合計の2乗
+		//float ar = colA->m_radius + colB->m_radius;
 
-		ar = ar * ar;
+		//ar = ar * ar;
 
-		isCollide = sqLen < ar;
+		//isCollide = sqLen < ar;
+
+
+		auto primaryCol = dynamic_cast<MyLibrary::CollidableDataCapsule*>(colliderA);
+		auto secondaryCol = dynamic_cast<MyLibrary::CollidableDataCapsule*>(colliderB);
+
+		//二つのカプセルの直線部分同士の最近接点間の距離が二つの半径を足した距離になるようにする
+		auto primaryCenter = rigidA.GetNextPos();
+		auto primaryPos1 = VGet(primaryCenter.x, primaryCenter.y + primaryCol->m_len, primaryCenter.z);
+		auto primaryPos2 = VGet(primaryCenter.x, primaryCenter.y - primaryCol->m_len, primaryCenter.z);
+
+		auto secondaryCenter = rigidB.GetNextPos();
+		auto secondaryPos1 = VGet(secondaryCenter.x, secondaryCenter.y + secondaryCol->m_len, secondaryCenter.z);
+		auto secondaryPos2 = VGet(secondaryCenter.x, secondaryCenter.y - secondaryCol->m_len, secondaryCenter.z);
+
+		auto minLength = Segment_Segment_MinLength(primaryPos1, primaryPos2, secondaryPos1, secondaryPos2);
+
+		isCollide = (minLength < primaryCol->m_radius + secondaryCol->m_radius);
 	}
-	
-	
-	
 
 	return isCollide;
 }
@@ -1119,17 +1133,64 @@ void MyLibrary::Physics::FixNextPosition(const Rigidbody& primaryRigid, Rigidbod
 
 	if (primaryKind == MyLibrary::CollidableData::Kind::Capsule && secondaryKind == MyLibrary::CollidableData::Kind::Capsule)
 	{
-		auto primaryToSecondary = secondaryRigid.GetNextPos() - primaryRigid.GetNextPos();
-		auto primaryToSecondaryN = primaryToSecondary.Normalize();
+		//auto primaryToSecondary = secondaryRigid.GetNextPos() - primaryRigid.GetNextPos();
+		//auto primaryToSecondaryN = primaryToSecondary.Normalize();
 
-		auto primaryColliderData = dynamic_cast<MyLibrary::CollidableDataCapsule*>(primaryCollider);
-		auto secondaryColliderData = dynamic_cast<MyLibrary::CollidableDataCapsule*>(secondaryCollider);
-		auto awayDist = primaryColliderData->m_radius + secondaryColliderData->m_radius + 0.0001f; //そのままだとあたる位置になるから余分に離す
-		auto primaryToNewSecondaryPos = primaryToSecondaryN * awayDist;
-		auto fixedPos = primaryRigid.GetNextPos() + primaryToNewSecondaryPos;
+		//auto primaryColliderData = dynamic_cast<MyLibrary::CollidableDataCapsule*>(primaryCollider);
+		//auto secondaryColliderData = dynamic_cast<MyLibrary::CollidableDataCapsule*>(secondaryCollider);
+		//auto awayDist = primaryColliderData->m_radius + secondaryColliderData->m_radius + 0.0001f; //そのままだとあたる位置になるから余分に離す
+		//auto primaryToNewSecondaryPos = primaryToSecondaryN * awayDist;
+		//auto fixedPos = primaryRigid.GetNextPos() + primaryToNewSecondaryPos;
+		//fixedPos.y = secondaryRigid.GetPos().y;
+		//secondaryRigid.SetNextPos(fixedPos);
+
+		auto primary = dynamic_cast<MyLibrary::CollidableDataCapsule*>(primaryCollider);
+		auto secondary = dynamic_cast<MyLibrary::CollidableDataCapsule*>(secondaryCollider);
+
+		//二つのカプセルの直線部分同士の最近接点間の距離が二つの半径を足した距離になるようにする
+		auto primaryCenter = primaryRigid.GetNextPos();
+		auto primaryPos1 = MyLibrary::LibVec3(primaryCenter.x, primaryCenter.y + primary->m_len, primaryCenter.z);
+		auto primaryTopVec = primaryPos1 - primaryCenter;
+
+		auto secondaryCenter = secondaryRigid.GetNextPos();
+		auto secondaryPos1 = MyLibrary::LibVec3(secondaryCenter.x, secondaryCenter.y + secondary->m_len, secondaryCenter.z);
+		auto secondaryTopVec = secondaryPos1 - secondaryCenter;
+
+		//それぞれのカプセルの線分上の最近接点を計算
+		//結果格納用変数
+		LibVec3 nearPosOnALine, nearPosOnBLine;
+		
+		// 相対ベクトル
+		LibVec3 vec = secondaryCenter - primaryCenter;
+
+		float s, t;
+
+		s = primaryCenter.Dot(primaryTopVec, vec) / primaryTopVec.SqLength();
+		t = secondaryCenter.Dot(secondaryTopVec, LibVec3(-vec.x, -vec.y, -vec.z)) / secondaryTopVec.SqLength();
+
+		// 範囲の制限
+		s = std::min<float>(std::max<float>(s, -1.0f), 1.0f);
+		t = std::min<float>(std::max<float>(t, -1.0f), 1.0f);
+
+		nearPosOnALine = primaryTopVec * s + primaryCenter;
+		nearPosOnBLine = secondaryTopVec * t + secondaryCenter;
+
+		//カプセルAのカプセルBとの最近接点からカプセルBのカプセルAとの最近接点に向かうベクトルを取得
+		auto nearPosToNearPos = nearPosOnBLine - nearPosOnALine;
+		//正規化して方向ベクトルにする
+		nearPosToNearPos = nearPosToNearPos.Normalize();
+		//離す距離を計算(カプセルと級の半径を足した距離+余分)
+		auto awayDist = primary->m_radius + secondary->m_radius + 0.2f;
+		//最近接点の修正座標を計算
+		auto fixedNearPos = nearPosOnALine + nearPosToNearPos * awayDist;
+
+		//カプセルBの最近接点からカプセルBの中心座標に向かうベクトルを計算
+		auto nearPosToCenterB = secondaryCenter - nearPosOnBLine;
+
+		auto fixedPos = fixedNearPos + nearPosToCenterB;
 		fixedPos.y = secondaryRigid.GetPos().y;
+		//修正座標を設定
 		secondaryRigid.SetNextPos(fixedPos);
-
 	}
 	//矩形とカプセルとの当たり判定
 	else if (primaryKind == MyLibrary::CollidableData::Kind::Rect && secondaryKind == MyLibrary::CollidableData::Kind::Capsule)
