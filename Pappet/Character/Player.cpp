@@ -267,16 +267,8 @@ void Player::Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* mana
 
 	//ステートパターンの初期化
 	m_pState = std::make_shared<PlayerStateIdle>(std::dynamic_pointer_cast<Player>(shared_from_this()));
-	m_pState->SetNextKind(StateBase::StateKind::Idle);
+	m_pState->ChangeState(StateBase::StateKind::Idle);
 	m_pState->Init(colData);
-
-
-	//if (anim)
-	//{
-	//	//待機アニメーション設定
-	//	m_nowAnimNo = MV1AttachAnim(m_modelHandle, m_animIdx["Idle"]);
-	//	m_nowAnimIdx = m_animIdx["Idle"];
-	//}
 
 	//HPの最大回復量
 	m_maxHeel = 80;
@@ -334,7 +326,7 @@ void Player::GameInit(std::shared_ptr<MyLibrary::Physics> physics, int colData)
 
 	//ステートパターンの初期化
 	m_pState = std::make_shared<PlayerStateIdle>(std::dynamic_pointer_cast<Player>(shared_from_this()));
-	m_pState->SetNextKind(StateBase::StateKind::Idle);
+	m_pState->ChangeState(StateBase::StateKind::Idle);
 	m_pState->Init(colData);
 
 	m_deadReset = false;
@@ -422,10 +414,8 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		{
 			m_anim.s_isDead = true;
 
-			//m_nowAnimIdx = m_animIdx["Death"];
 			m_pState->ChangeState(StateBase::StateKind::Death);
 
-			//ChangeAnim(m_nowAnimIdx, m_animOne[0], m_animOne);
 			m_lockonTarget = false;
 
 			Finalize();
@@ -1808,6 +1798,10 @@ void Player::Draw(Armor& armor, int font)
 	MV1SetRotationXYZ(m_modelHandle, VGet(0.0f, m_angle, 0.0f));
 	//描画
 	MV1DrawModel(m_modelHandle);
+
+	DrawFormatString(200, 300, 0xffffff, "x : %f", rigidbody->GetVelocity().x);
+	DrawFormatString(200, 400, 0xffffff, "y : %f", rigidbody->GetVelocity().y);
+	DrawFormatString(200, 500, 0xffffff, "z : %f", rigidbody->GetVelocity().z);
 }
 
 void Player::End()

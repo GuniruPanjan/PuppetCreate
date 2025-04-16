@@ -16,9 +16,9 @@ namespace
 	constexpr float kWallPolyHeight = 1.0f;
 
 	//重力
-	constexpr float kGravity = -0.018f;
+	constexpr float kGravity = -0.04f;
 	//最大重力加速度
-	constexpr float kMaxGravity = -2.0f;
+	constexpr float kMaxGravity = -1.5f;
 
 	//補正前情報色
 	const int kBeforeColor = 0xffffff;
@@ -271,7 +271,6 @@ void MyLibrary::Physics::CheckEnemyUpdate()
 
 				modelHandle = m_stageCollisionHandle;
 			}
-			//m_hitDim = MV1CollCheck_Sphere(modelHandle, -1, item->rigidbody->GetNextPosVECTOR(), rad);
 			m_hitDim = MV1CollCheck_Capsule(modelHandle, -1, VAdd(item->rigidbody->GetNextPosVECTOR(), item->rigidbody->GetVec()),
 				VSub(item->rigidbody->GetNextPosVECTOR(), item->rigidbody->GetVec()), rad);
 		}
