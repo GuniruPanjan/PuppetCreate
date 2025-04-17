@@ -73,7 +73,7 @@ namespace
 	//敵からのダメージ取得
 	float cDamage = 0.0f;
 	//人形のモデルパス
-	constexpr const char* cPath = "Data/Player/PlayerModel.mv1";
+	constexpr const char* cPath = "Data/Player/PuppetModel.mv1";
 	//装備を一回だけ初期化する
 	bool cEquipmentOne = false;
 	//光の中に入る時のポジション設定
@@ -88,6 +88,7 @@ namespace
 
 	bool cOne = false;
 	bool cTwo = false;
+	bool cAngle = false;
 
 	bool cHit = false;         //攻撃を体に受けるときの判定
 	bool cShieldHit = false;   //攻撃を盾に受けるときの判定
@@ -351,6 +352,30 @@ void Player::Finalize()
 
 void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& enemy, CoreManager& core, VECTOR restpos, Tool& tool, SEManager& se, bool boss, bool dead, std::shared_ptr<MyLibrary::Physics> physics)
 {
+	//ターゲットを代入する
+	m_pState->SetTarget(m_lockonTarget);
+	//ロックオン時アングルを変える
+	if (m_lockonTarget)
+	{
+		if (m_pState->GetState() == StateBase::StateKind::StrongAttack)
+		{
+			//一回だけ補正する
+			if (!cAngle)
+			{
+				m_angle = m_lockAngle;
+
+				cAngle = true;
+			}
+		}
+		else
+		{
+			cAngle = false;
+
+			m_angle = m_lockAngle;
+		}
+		
+	}
+
 	//死んでないときのステートの更新
 	if (!m_anim.s_isDead)
 	{
@@ -430,120 +455,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	{
 		m_deadReset = true;
 	}
-
-	////アナログスティックを使って移動
-	//int analogX = 0;
-	//int analogY = 0;
-
-	//float SetAngleX = 0.0f;
-	//float SetAngleY = 0.0f;
-
-	//if (!m_anim.s_isDead && !m_animChange.sa_avoidance && !m_anim.s_attack && !m_animChange.sa_recovery && !m_anim.s_hit && !m_animChange.sa_bossEnter
-	//	&& !m_animChange.sa_imapact && !m_rest && !m_animChange.sa_taking && !m_animChange.sa_strengthAttack)
-	//{
-	//	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
-
-	//	cOneAvoidance = false;
-	//}
-
-	//if (m_animChange.sa_avoidance && !cOneAvoidance)
-	//{
-	//	GetJoypadAnalogInput(&analogX, &analogY, DX_INPUT_PAD1);
-
-	//	cOneAvoidance = true;
-	//}
-
-	////アナログスティックの入力を格納
-	//cAnX = analogX;
-	//cAnY = analogY;
-
-	////移動方向を設定する
-	//auto moveVec = VGet(static_cast<float>(-analogX), 0.0f, static_cast<float>(analogY));    //ベクトルの長さ
-
-	////ベクトルの長さを取得する
-	//float len = VSize(moveVec);
-	////ベクトルの長さを0.0～1.0の割合に変換する
-	//float rate = len / 1000.0f;
-	////アナログスティック無効な範囲を除外する
-	//rate = (rate - 0.1f) / (0.8f - 0.1f);
-	//rate = min(rate, 1.0f);
-	//rate = max(rate, 0.0f);
-
-	////速度が決定できるので移動ベクトルに反映する
-	//moveVec = VNorm(moveVec);
-	//float speed = m_status.s_speed * rate;
-
-	//moveVec = VScale(moveVec, speed);
-
-	////cameraの角度から
-	////コントローラーによる移動方向を決定する
-	//MATRIX mtx = MGetRotY(m_cameraAngle + DX_PI_F);
-	//moveVec = VTransform(moveVec, mtx);
-
-	////ライブラリのベクターに変換する
-	//m_moveVec = MyLibrary::LibVec3(static_cast<float>(moveVec.x), static_cast<float>(moveVec.y), static_cast<float>(moveVec.z));
-
-	////移動方向からプレイヤーへの向く方向を決定する
-	////移動していない場合(ゼロベクトル)の場合は変更しない
-	//if (VSquareSize(moveVec) > 0.0f)
-	//{
-	//	//ロックオンしてない時と走ったときのアングル
-	//	if (!m_lockonTarget || m_animChange.sa_dashMove && !m_animChange.sa_avoidance)
-	//	{
-	//		//アングルを決定
-	//		m_angle = atan2f(-moveVec.z, moveVec.x) - DX_PI_F / 2;
-	//	}
-	//	//ロックオンした時のアングル
-	//	else if (m_lockonTarget && !m_animChange.sa_avoidance)
-	//	{
-	//		//アングルを決定
-	//		m_angle = m_lockAngle;
-	//	}
-	//	//回避するとき
-	//	else if (m_animChange.sa_avoidance)
-	//	{
-	//		//アングルを決定
-	//		m_angle = atan2f(-moveVec.z, moveVec.x) - DX_PI_F / 2;
-	//	}
-
-	//	//プレイヤーが動いたら
-	//	m_anim.s_moveflag = true;
-	//}
-	////プレイヤーが動いてなかったら
-	//else if (VSquareSize(moveVec) <= 0.0f)
-	//{
-	//	m_anim.s_moveflag = false;
-	//}
-	//
-
-	////回避してないとき
-	//if (!m_animChange.sa_avoidance && !m_anim.s_attack)
-	//{
-	//	MyLibrary::LibVec3 prevVelocity = rigidbody->GetVelocity();
-	//	MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(m_moveVec.x, prevVelocity.y, m_moveVec.z);
-	//	rigidbody->SetVelocity(newVelocity);
-	//}
-	////回避してるとき
-	//else if(m_animChange.sa_avoidance)
-	//{
-	//	//回避で移動する距離
-	//	m_rollMove = VScale(VGet(sinf(m_angle), 0.0f, cosf(m_angle)), cAvoidanceMove);
-
-	//	//アングルの方向に一定距離移動させたい
-	//	MyLibrary::LibVec3 prevVelocity = rigidbody->GetVelocity();
-	//	MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(-m_rollMove.x, prevVelocity.y, -m_rollMove.z);
-	//	rigidbody->SetVelocity(newVelocity);
-	//}
-	////攻撃してるとき
-	//else if (m_anim.s_attack)
-	//{
-	//	m_attackMove = VScale(VGet(sinf(m_angle), 0.0f, cosf(m_angle)), cAttackMove);
-
-	//	//攻撃の方向に一定距離移動させたい
-	//	MyLibrary::LibVec3 prevVelocity = rigidbody->GetVelocity();
-	//	MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(-m_attackMove.x, prevVelocity.y, -m_attackMove.z);
-	//	rigidbody->SetVelocity(newVelocity);
-	//}
 
 	//装備していないとき
 	if (weapon.GetFist() && shield.GetFist())
@@ -676,9 +587,8 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		//装備をしていない時のアニメーション
 		if (weapon.GetFist() && shield.GetFist())
 		{
-			NotWeaponAnimation();
-
 			//装備をしているアニメーションかを判定する
+			m_fist = true;
 			m_sword = true;
 			m_equipment = false;
 			m_shield = false;
@@ -686,12 +596,22 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		//装備したときのアニメーション
 		else if (!weapon.GetFist() || !shield.GetFist())
 		{
-			WeaponAnimation(shield);
-
 			//装備をしているアニメーションかを判定する
-			m_sword = true;
 			m_equipment = true;
-			//盾だけ分ける
+
+			//拳か武器かを判断する
+			if (!weapon.GetFist())
+			{
+				m_sword = true;
+				m_fist = false;
+			}
+			else
+			{
+				m_sword = false;
+				m_fist = true;
+			}
+			
+			//盾を判断する
 			if (!shield.GetFist())
 			{
 				m_shield = true;
@@ -1023,36 +943,36 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	}
 
 	//強攻撃
-	if (!m_isAnimationFinish && m_animChange.sa_strengthAttack)
-	{
-		m_pStrengthAttack->SetAttack(120.0f);
+	//if (!m_isAnimationFinish && m_animChange.sa_strengthAttack)
+	//{
+	//	m_pStrengthAttack->SetAttack(120.0f);
 
-		//エフェクトを出す
-		if (m_nowFrame == 25.0f)
-		{
-			//攻撃SE再生
-			PlaySoundMem(se.GetBossAttackSE3(), DX_PLAYTYPE_BACK, true);
+	//	//エフェクトを出す
+	//	if (m_nowFrame == 25.0f)
+	//	{
+	//		//攻撃SE再生
+	//		PlaySoundMem(se.GetBossAttackSE3(), DX_PLAYTYPE_BACK, true);
 
-			cEffect.EffectCreate("BearLance", VGet(rigidbody->GetPos().x, rigidbody->GetPos().y - 12.0f, rigidbody->GetPos().z));
-		}
+	//		cEffect.EffectCreate("BearLance", VGet(rigidbody->GetPos().x, rigidbody->GetPos().y - 12.0f, rigidbody->GetPos().z));
+	//	}
 
-		//フレーム中に攻撃を発生
-		if (m_nowFrame == 58.0f)
-		{
-			m_status.s_stamina -= 50.0f;
-			m_pStrengthAttack->Init(m_pPhysics);
-		}
-		else if (m_nowFrame >= 68.0f)
-		{
-			//判定リセット
-			m_pStrengthAttack->CollisionEnd();
-		}
-	}
-	//強攻撃終了
-	if (m_animChange.sa_strengthAttack && m_isAnimationFinish)
-	{
-		m_animChange.sa_strengthAttack = false;
-	}
+	//	//フレーム中に攻撃を発生
+	//	if (m_nowFrame == 58.0f)
+	//	{
+	//		m_status.s_stamina -= 50.0f;
+	//		m_pStrengthAttack->Init(m_pPhysics);
+	//	}
+	//	else if (m_nowFrame >= 68.0f)
+	//	{
+	//		//判定リセット
+	//		m_pStrengthAttack->CollisionEnd();
+	//	}
+	//}
+	////強攻撃終了
+	//if (m_animChange.sa_strengthAttack && m_isAnimationFinish)
+	//{
+	//	m_animChange.sa_strengthAttack = false;
+	//}
 
 
 	//回復する
@@ -1294,13 +1214,13 @@ void Player::Action(VECTOR restpos, Tool& tool, Shield& shield, SEManager& se, b
 	//強攻撃
 	//ZRボタン
 	//攻撃に必要なスタミナがあったら
-	if (m_status.s_stamina >= 50.0f && !m_staminaBreak)
-	{
-		if (m_xpad.RightTrigger)
-		{
-			m_animChange.sa_strengthAttack = true;
-		}
-	}
+	//if (m_status.s_stamina >= 50.0f && !m_staminaBreak)
+	//{
+	//	if (m_xpad.RightTrigger)
+	//	{
+	//		m_animChange.sa_strengthAttack = true;
+	//	}
+	//}
 	
 
 	//行動中は防御できない
@@ -1802,9 +1722,7 @@ void Player::Draw(Armor& armor, int font)
 	//描画
 	MV1DrawModel(m_modelHandle);
 
-	DrawFormatString(200, 300, 0xffffff, "x : %f", rigidbody->GetVelocity().x);
-	DrawFormatString(200, 400, 0xffffff, "y : %f", rigidbody->GetVelocity().y);
-	DrawFormatString(200, 500, 0xffffff, "z : %f", rigidbody->GetVelocity().z);
+	DrawFormatString(200, 300, 0xffffff, "frame : %f", m_nowFrame);
 }
 
 void Player::End()

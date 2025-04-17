@@ -27,8 +27,6 @@ namespace
 /// <param name="chara"></param>
 PlayerStateRoll::PlayerStateRoll(std::shared_ptr<CharacterBase> chara) :
 	StateBase(chara),
-	m_leftX(0.0f),
-	m_leftZ(0.0f),
 	m_avoidanceMove(0.0f),
 	m_rollMove()
 {

@@ -32,6 +32,7 @@ CharacterBase::CharacterBase(Priority priority, ObjectTag tag) :
 	m_sword(false),
 	m_equipment(false),
 	m_shield(false),
+	m_fist(false),
 	m_angle(0.0f),
 	m_animSpeed(0.0f),
 	m_attackRadius(0.0f),

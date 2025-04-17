@@ -16,9 +16,7 @@ public:
 		Walk,        //歩く
 		Roll,        //回避
 		Dash,        //走る
-		
-		Jump,        //ジャンプ  //まだやっていない
-		
+		Jump,        //ジャンプ
 		Attack,      //攻撃
 		StrongAttack,//強攻撃
 		Guard,      //盾
@@ -92,12 +90,16 @@ protected:
 	StateKind m_nowState;      //現在のステート
 	StateKind m_nextState;     //次のステート
 
+	float m_leftX, m_leftZ;
 	bool m_targetState;
 	bool m_equipmentState;
 	//攻撃がプレイヤーにヒットしたかの判定
 	bool m_hit;
 	//どの種類の装備をしているか
+	bool m_equipmentFist = false;
 	bool m_equipmentSword = false;
+	//ジャンプ中の判定
+	bool m_jumping = false; 
 
 	bool m_revese = false;     //アニメーションを逆再生させるかの判断
 };

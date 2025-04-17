@@ -92,6 +92,7 @@ public:
 
 	//‘•”õŠÖŒW
 	bool GetSword() { return m_sword; }
+	bool GetFist() { return m_fist; }
 	bool GetEquipment() { return m_equipment; }
 	bool GetShield() { return m_shield; }
 
@@ -143,6 +144,7 @@ protected:
 
 	//‘•”õŠÖŒW
 	bool m_equipment;
+	bool m_fist;
 	bool m_shield;
 	bool m_sword;
 

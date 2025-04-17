@@ -73,30 +73,6 @@ void PlayerStateJump::Update()
 /// </summary>
 void PlayerStateJump::UpUpdate()
 {
-	////ジャンプフレームが上昇アニメーションの終了フレーム以上ならジャンプ中状態にする
-	//if (m_jumpFrame >= m_pChara.lock()->GetEndAnim() * 0.98f)
-	//{
-	//	//アニメーション変更
-	//	m_pChara.lock()->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", "Jumping"), true, 0.01f);
-	//	//ジャンプフレームを初期化する
-	//	m_jumpFrame = 0;
-	//	//ジャンプ中状態にする
-	//	m_updateFund = &PlayerStateJump::LoopUpdate;
-	//}
-
-	////ジャンプフレームを更新する
-	//m_jumpFrame++;
-
-	//if (m_pChara.lock()->GetEndAnim())
-	//{
-	//	//アニメーション変更
-	//	m_pChara.lock()->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", "Jumping"), true, 0.01f);
-	//	//ジャンプフレームを初期化する
-	//	m_jumpFrame = 0;
-	//	//ジャンプ中状態にする
-	//	m_updateFund = &PlayerStateJump::LoopUpdate;
-	//}
-
 	//ジャンプフレームが上昇したアニメーションの終了フレーム以上ならジャンプ中状態にする
 	if (m_jumpFrame >= 18)
 	{
@@ -137,6 +113,19 @@ void PlayerStateJump::LoopUpdate()
 		own->SetReset(33.0f);
 		own->SetLoop(true);
 
+		//強攻撃ボタンが押されていたらStateを強攻撃にする
+		if (Input::GetInstance().GetIsPushedTriggerButton(true) || Input::GetInstance().GetIsPushedTriggerButton(true))
+		{
+			//フレームも初期化する
+			own->SetStart(0.0f);
+			own->SetReset(0.0f);
+			//アニメーションループをやめる
+			own->SetLoop(false);
+
+			ChangeState(StateKind::StrongAttack);
+			return;
+		}
+
 		//ステージとカプセルが当たっていたらジャンプ下降状態にする
 		if (hit.HitFlag)
 		{
@@ -165,41 +154,8 @@ void PlayerStateJump::DownUpdate()
 	//ダウンキャスト
 	auto own = std::dynamic_pointer_cast<Player>(m_pChara.lock());
 
-	////ジャンプフレームが上昇アニメーションの終了フレーム以上なら入力に応じてステートを変更する
-	//if (m_jumpFrame >= m_pChara.lock()->GetEndAnim() * 0.6f)
-	//{
-	//	//ジャンプ終了
-	//	own->GetRigidbody()->SetJump(false);
-
-	//	//左スティックが入力されていなかったらStateをIdleにする
-	//	if (Input::GetInstance().GetInputStick(false).first == 0.0f &&
-	//		Input::GetInstance().GetInputStick(false).second == 0.0f)
-	//	{
-	//		ChangeState(StateKind::Idle);
-	//		return;
-	//	}
-
-	//	//左スティックが入力されていたらStateをWalkかDashにする
-	//	if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
-	//		Input::GetInstance().GetInputStick(false).second != 0.0f)
-	//	{
-	//		//ダッシュボタンが長押しされてたらダッシュ
-	//		if (Input::GetInstance().IsPushed("Input_Dash"))
-	//		{
-	//			ChangeState(StateKind::Dash);
-	//			return;
-	//		}
-	//		//押されていなかったらWalk
-	//		else
-	//		{
-	//			ChangeState(StateKind::Walk);
-	//			return;
-	//		}
-	//	}
-	//}
-
-	////ジャンプフレームを更新する
-	//m_jumpFrame++;
+	//ジャンプ強攻撃を行えないようにする
+	m_jumping = false;
 
 	if (m_jumpFrame >= 15.0f)
 	{

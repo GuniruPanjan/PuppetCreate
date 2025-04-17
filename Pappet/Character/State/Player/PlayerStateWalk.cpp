@@ -38,6 +38,9 @@ PlayerStateWalk::PlayerStateWalk(std::shared_ptr<CharacterBase> chara) :
 	//‚±‚ÌƒV[ƒ“‚É‘JˆÚ‚µ‚½uŠÔ‚Ì¶ƒXƒeƒBƒbƒN‚Ì“ü—ÍŠp“x‚ğæ“¾‚µ‚Ä‚¨‚­
 	auto input = Input::GetInstance().GetInputStick(false);
 	m_dir = GetDirection(input.first, -input.second);
+
+	m_equipmentState = chara->GetEquipment();
+
 	auto animName = GetWalkAnim(m_dir);
 	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), animName), false);
 	chara->NotInitAnim(false);
@@ -145,7 +148,7 @@ void PlayerStateWalk::Update()
 		//ƒRƒ“ƒgƒ[ƒ‰[‚Ì¶ƒXƒeƒBƒbƒN‚Ì“ü—Í‚ğæ“¾
 		auto input = Input::GetInstance().GetInputStick(false);
 		auto dirLog = m_dir;
-		m_dir = GetDirection(input.first, -input.second);
+		m_dir = GetDirection(input.first, input.second);
 
 		//’¼‘O‚Ì“ü—Í•ûŒü‚ÆˆÙ‚È‚é‚Æ‚«
 		if (dirLog != m_dir)
@@ -219,27 +222,27 @@ std::string PlayerStateWalk::GetWalkAnim(eDir dir)
 		{
 			if (dir == eDir::Forward)
 			{
+				//‹tÄ¶‚·‚é‚©‚Ç‚¤‚©
+				m_revese = false;
 				return std::string("Walk");
+			}
+			else if (dir == eDir::Right || dir == eDir::ForwardRight || dir == eDir::BackRight)
+			{
 				//‹tÄ¶‚·‚é‚©‚Ç‚¤‚©
 				m_revese = false;
-			}
-			if (dir == eDir::Right)
-			{
 				return std::string("RightWalk");
-				//‹tÄ¶‚·‚é‚©‚Ç‚¤‚©
-				m_revese = false;
 			}
-			else if (dir == eDir::Left)
+			else if (dir == eDir::Left || dir == eDir::ForwardLeft || dir == eDir::BackLeft)
 			{
-				return std::string("LeftWalk");
 				//‹tÄ¶‚·‚é‚©‚Ç‚¤‚©
 				m_revese = false;
+				return std::string("LeftWalk");
 			}
 			else if (dir == eDir::Back)
 			{
-				return std::string("Walk");
 				//‹tÄ¶‚·‚é‚©‚Ç‚¤‚©
 				m_revese = true;
+				return std::string("Walk");
 			}
 		}
 		//‘•”õ‚ğ‚µ‚Ä‚¢‚é
@@ -247,27 +250,27 @@ std::string PlayerStateWalk::GetWalkAnim(eDir dir)
 		{
 			if (dir == eDir::Forward)
 			{
-				return std::string("ShieldWalk");
 				//‹tÄ¶‚·‚é‚©‚Ç‚¤‚©
 				m_revese = false;
+				return std::string("ShieldWalk");
 			}
-			if (dir == eDir::Right)
+			else if (dir == eDir::Right || dir == eDir::ForwardRight || dir == eDir::BackRight)
 			{
-				return std::string("ShieldSideWalk");
 				//‹tÄ¶‚·‚é‚©‚Ç‚¤‚©
 				m_revese = true;
-			}
-			else if (dir == eDir::Left)
-			{
 				return std::string("ShieldSideWalk");
+			}
+			else if (dir == eDir::Left || dir == eDir::ForwardLeft || dir == eDir::BackLeft)
+			{
 				//‹tÄ¶‚·‚é‚©‚Ç‚¤‚©
 				m_revese = false;
+				return std::string("ShieldSideWalk");
 			}
 			else if (dir == eDir::Back)
 			{
-				return std::string("ShieldWalk");
 				//‹tÄ¶‚·‚é‚©‚Ç‚¤‚©
 				m_revese = true;
+				return std::string("ShieldWalk");
 			}
 		}
 		

@@ -17,7 +17,6 @@ public:
 	virtual void Update() override;
 
 private:
-	float m_leftX, m_leftZ;
 	float m_avoidanceMove;
 	VECTOR m_rollMove;
 };
