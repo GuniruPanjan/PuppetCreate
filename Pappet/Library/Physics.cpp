@@ -9,14 +9,14 @@ namespace
 	//壁押し出し処理の最大試行回数
 	constexpr int kMaxColHitTry = 20;
 	//壁押し出し時にスライドさせる距離
-	constexpr float kColHitSlideLength = 0.1f;
+	constexpr float kColHitSlideLength = 1.0f;
 	//壁ポリゴンか床ポリゴンかを判断するための変数
 	constexpr float kWallPolyBorder = 0.4f;
 	//壁ポリゴンと判断するための高さ変数
 	constexpr float kWallPolyHeight = 1.0f;
 
 	//重力
-	constexpr float kGravity = -0.04f;
+	constexpr float kGravity = -0.4f;
 	//最大重力加速度
 	constexpr float kMaxGravity = -5.0f;
 
@@ -794,71 +794,6 @@ bool MyLibrary::Physics::IsCollide(const Rigidbody& rigidA, const Rigidbody& rig
 	//カプセル同士の当たり判定
 	if (kindA == MyLibrary::CollidableData::Kind::Capsule && kindB == MyLibrary::CollidableData::Kind::Capsule)
 	{
-		//auto colA = dynamic_cast<MyLibrary::CollidableDataCapsule*>(colliderA);
-		//auto colB = dynamic_cast<MyLibrary::CollidableDataCapsule*>(colliderB);
-
-		//auto atob = rigidA.GetNextPos() - rigidB.GetNextPos();
-		//auto atobLength = atob.Length();
-
-		////自身の向いてる方向に伸びているベクトルを作成
-		//LibVec3 sDirVec = colA->m_vec.GetNormalized() * colA->m_len * 0.5f;
-		////対象の向いてる方向に伸びているベクトルを作成
-		//LibVec3 tDirVec = colB->m_vec.GetNormalized() * colB->m_len * 0.5f;
-
-		////相対ベクトル
-		//LibVec3 vec = rigidA.GetPos() - rigidB.GetPos();
-
-		////法線ベクトル
-		//LibVec3 norm = norm.Cross(sDirVec, tDirVec);
-
-		////平行判定
-		//bool isParallel = norm.SqLength() < 0.001f;
-
-		//float s, t;
-		////平行でない場合
-		//if (!isParallel)
-		//{
-		//	//単位行列
-		//	LibMatrix3 mat;
-		//	mat.Init();
-
-		//	//値の代入
-		//	mat.SetLine(0, sDirVec);
-		//	mat.SetLine(1, tDirVec.Reverse());
-		//	mat.SetLine(2, norm);
-
-		//	//逆行列
-		//	mat = mat.GetInverse();
-
-		//	s = norm.Dot(mat.GetRow(0), vec);
-		//	t = norm.Dot(mat.GetRow(1), vec);
-		//}
-		////平行の場合
-		//else
-		//{
-		//	s = norm.Dot(sDirVec, vec) / sDirVec.SqLength();
-		//	t = norm.Dot(tDirVec, vec) / tDirVec.SqLength();
-		//}
-
-		////範囲の制限
-		//if (s < -1.0f) s = -1.0f;   //下限
-		//if (s > 1.0f) s = 1.0f;     //上限
-		//if (t < -1.0f) t = -1.0f;   //下限
-		//if (t > 1.0f) t = 1.0f;     //上限
-
-		////線分上での最短距離
-		//LibVec3 minPos1 = sDirVec * s + rigidA.GetPos();
-		//LibVec3 minPos2 = tDirVec * t + rigidB.GetPos();
-		////大きさ2乗
-		//float sqLen = (minPos1 - minPos2).SqLength();
-		////それぞれの半径の合計の2乗
-		//float ar = colA->m_radius + colB->m_radius;
-
-		//ar = ar * ar;
-
-		//isCollide = sqLen < ar;
-
-
 		auto primaryCol = dynamic_cast<MyLibrary::CollidableDataCapsule*>(colliderA);
 		auto secondaryCol = dynamic_cast<MyLibrary::CollidableDataCapsule*>(colliderB);
 
@@ -945,10 +880,6 @@ bool MyLibrary::Physics::IsCollide2(const Rigidbody& rigidA, const Rigidbody& ri
 		vec.y = fabs(vec.y);
 		vec.z = fabs(vec.z);
 
-		//float trw = colB->m_radius + (colA->m_size.width * 0.5f);
-		//float trh = colB->m_radius + (colA->m_size.height * 0.5f);
-		//float trd = colB->m_radius + (colA->m_size.depth * 0.5f);
-
 		float trw = colB->m_radius + (rigidA.GetSize().width * 0.5f);
 		float trh = colB->m_radius + (rigidA.GetSize().height * 0.5f);
 		float trd = colB->m_radius + (rigidA.GetSize().depth * 0.5f);
@@ -985,10 +916,6 @@ bool MyLibrary::Physics::IsCollide3(const Rigidbody& rigidA, const Rigidbody& ri
 		vec.x = fabs(vec.x);
 		vec.y = fabs(vec.y);
 		vec.z = fabs(vec.z);
-
-		//float trw = colB->m_radius + (colA->m_size.width * 0.5f);
-		//float trh = colB->m_radius + (colA->m_size.height * 0.5f);
-		//float trd = colB->m_radius + (colA->m_size.depth * 0.5f);
 
 		float trw = colB->m_radius + (rigidA.GetSize().width * 0.5f);
 		float trh = colB->m_radius + (rigidA.GetSize().height * 0.5f);
@@ -1133,17 +1060,6 @@ void MyLibrary::Physics::FixNextPosition(const Rigidbody& primaryRigid, Rigidbod
 
 	if (primaryKind == MyLibrary::CollidableData::Kind::Capsule && secondaryKind == MyLibrary::CollidableData::Kind::Capsule)
 	{
-		//auto primaryToSecondary = secondaryRigid.GetNextPos() - primaryRigid.GetNextPos();
-		//auto primaryToSecondaryN = primaryToSecondary.Normalize();
-
-		//auto primaryColliderData = dynamic_cast<MyLibrary::CollidableDataCapsule*>(primaryCollider);
-		//auto secondaryColliderData = dynamic_cast<MyLibrary::CollidableDataCapsule*>(secondaryCollider);
-		//auto awayDist = primaryColliderData->m_radius + secondaryColliderData->m_radius + 0.0001f; //そのままだとあたる位置になるから余分に離す
-		//auto primaryToNewSecondaryPos = primaryToSecondaryN * awayDist;
-		//auto fixedPos = primaryRigid.GetNextPos() + primaryToNewSecondaryPos;
-		//fixedPos.y = secondaryRigid.GetPos().y;
-		//secondaryRigid.SetNextPos(fixedPos);
-
 		auto primary = dynamic_cast<MyLibrary::CollidableDataCapsule*>(primaryCollider);
 		auto secondary = dynamic_cast<MyLibrary::CollidableDataCapsule*>(secondaryCollider);
 
@@ -1546,11 +1462,17 @@ void MyLibrary::Physics::FixPositionWithWallInternal(std::shared_ptr<Collidable>
 		vec = vec.GetNormalized() * len * 0.5f;
 	}
 
+	auto capsuleCenterPos = col->rigidbody->GetNextPosVECTOR();
+
+	auto nextPos = capsuleCenterPos;
+
 	//壁からの押し出し処理を試みる最大数だけ繰り返し
 	for (int i = 0; i < ColInfo::kMaxColHitTry; i++)
 	{
 		//当たる可能性のある壁ポリゴンを全て見る
 		bool isHitWall = false;
+
+
 		//壁ポリゴンの数だけ繰り返し
 		for (int j = 0; j < m_wallNum; j++)
 		{
@@ -1563,11 +1485,11 @@ void MyLibrary::Physics::FixPositionWithWallInternal(std::shared_ptr<Collidable>
 
 			auto ret = VAdd(col->rigidbody->GetNextPosVECTOR(), VScale(m_pPoly->Normal, kColHitSlideLength));
 
-			MyLibrary::LibVec3 set;
-			set = MyLibrary::LibVec3(ret.x, ret.y, ret.z);
+			
+			nextPos = VGet(ret.x, ret.y, ret.z);
 
 			//当たっていたら規定距離分プレイヤーを壁の法線方向に移動させる
-			col->rigidbody->SetNextPos(set);
+			col->rigidbody->SetNextPos(MyLibrary::LibVec3(nextPos.x, nextPos.y, nextPos.z));
 
 			//移動したうえで壁ポリゴンと接続しているかどうかを判定
 			for (int k = 0; k < m_wallNum; k++)
@@ -1590,6 +1512,8 @@ void MyLibrary::Physics::FixPositionWithWallInternal(std::shared_ptr<Collidable>
 		//ループ終了
 		if (!isHitWall) break;
 	}
+	//当たっていたら規定距離分プレイヤーを壁の法線方向に移動させる
+	col->rigidbody->SetNextPos(MyLibrary::LibVec3(nextPos.x, nextPos.y, nextPos.z));
 }
 
 /// <summary>

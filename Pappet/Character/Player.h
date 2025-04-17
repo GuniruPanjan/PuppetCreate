@@ -89,6 +89,11 @@ public:
 	float SetReset(float set) { return m_reset = set; }
 	bool SetLoop(bool set) { return m_loop = set; }
 
+	//攻撃関係
+	int SetAttackNumber(int set) { return m_attackNumber = set; }      //今の攻撃段階を決める
+	bool SetStrongAttack(bool set) { return m_attackStrong = set; }    //強攻撃をしたか決める
+	bool SetJumpAttack(bool set) { return m_jumpAttack = set; }        //ジャンプ攻撃をしたか決める
+
 	//カメラ関係
 	float GetCameraAngle() { return m_cameraAngle; }
 	float SetCameraAngle(float angle) { return m_cameraAngle = angle; }
@@ -166,6 +171,7 @@ private:
 private:
 	std::shared_ptr<AttackObject> m_pStrengthAttack;       //強攻撃判定
 	std::shared_ptr<AttackLigObject> m_pLigAttack;         //リグ毎の攻撃判定
+	std::shared_ptr<AttackLigObject> m_pLigLegAttack;      //足のリグ攻撃判定
 	std::shared_ptr<PlayerSearchObject> m_pSearch;         //索敵判定
 	std::shared_ptr<PlayerSearchObject> m_pShieldSearch;   //盾で防げるかの索敵判定
 	std::shared_ptr<ShieldObject> m_pShield;               //盾の判定
@@ -202,6 +208,8 @@ private:
 
 	//アニメーション用変数
 	int m_attackNumber;                 //現在の攻撃段階の代入
+	bool m_attackStrong;                //強攻撃をしたかの判定
+	bool m_jumpAttack;                  //ジャンプ攻撃をしたかの判定
 	bool m_avoidanceNow;                //フレーム回避中の判断
 	bool m_shieldNow;                   //防御中の判断
 	bool m_animReverse;                 //アニメーションを逆再生させるための判定
@@ -212,6 +220,8 @@ private:
 	int m_moveAnimFrameRight;
 	int m_attackLig1;                   //攻撃判定のリグ1
 	int m_attackLig2;                   //攻撃判定のリグ2
+	int m_legAttackLig1;                //足の攻撃判定のリグ1
+	int m_legAttackLig2;                //足の攻撃判定のリグ2
 	int m_moveAnimShieldFrameIndex;     //盾を構えるときのアニメーションのフレーム取得
 	int m_moveAnimShieldFrameHandIndex;
 	int m_notRoll;                      //ローリングできないようにする
@@ -224,6 +234,8 @@ private:
 	MATRIX m_moveShieldFrameMatrix;
 	VECTOR m_attackLigPos1;             //攻撃判定リグのポジション1
 	VECTOR m_attackLigPos2;             //攻撃判定リグのポジション2
+	VECTOR m_attackLegLigPos1;          //足での攻撃判定リグのポジション1
+	VECTOR m_attackLegLigPos2;          //足での攻撃判定リグのポジション2
 	VECTOR m_rollMove;                  //回避で移動する距離
 	VECTOR m_moveVector;                //モーション中の移動
 	VECTOR m_attackMove;                //攻撃で移動する距離

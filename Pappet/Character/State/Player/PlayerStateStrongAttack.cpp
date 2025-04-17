@@ -93,6 +93,9 @@ void PlayerStateStrongAttack::Update()
 	//素手の強攻撃
 	if (m_equipmentFist && !m_jumping)
 	{
+		//強攻撃判定を返す
+		own->SetStrongAttack(true);
+
 		//移動方向を決定する
 		auto moveDir = VGet(m_leftX, 0.0f, -m_leftZ);
 		//移動ベクトルの長さを取得する
@@ -148,9 +151,23 @@ void PlayerStateStrongAttack::Update()
 		MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(-m_strongMove.x, prevVelocity.y, -m_strongMove.z);
 		own->GetRigidbody()->SetVelocity(newVelocity);;
 	}
+	//武器の強攻撃
+	else if (m_equipmentSword && !m_jumping)
+	{
+		//強攻撃判定を返す
+		own->SetStrongAttack(true);
+
+		//移動速度を決定する
+		MyLibrary::LibVec3 prevVelocity = own->GetRigidbody()->GetVelocity();
+		MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(0.0f, prevVelocity.y, 0.0f);
+		own->GetRigidbody()->SetVelocity(newVelocity);
+	}
 	//ジャンプの強攻撃
 	else if (m_jumping)
 	{
+		//ジャンプ攻撃判定を返す
+		own->SetJumpAttack(true);
+
 		//移動方向を決定する
 		auto moveDir = VGet(m_leftX, 0.0f, -m_leftZ);
 		//移動ベクトルの長さを取得する
@@ -200,13 +217,17 @@ void PlayerStateStrongAttack::Update()
 
 		//移動速度を決定する
 		MyLibrary::LibVec3 prevVelocity = own->GetRigidbody()->GetVelocity();
-		MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(prevVelocity.x + -m_strongMove.x, prevVelocity.y, prevVelocity.z + -m_strongMove.z);
-		own->GetRigidbody()->SetVelocity(newVelocity);;
+		MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(-m_strongMove.x, prevVelocity.y, -m_strongMove.z);
+		own->GetRigidbody()->SetVelocity(newVelocity);
 	}
 
 	//アニメーションが終了したら
 	if (own->GetEndAnim())
 	{
+		//初期化する
+		own->SetStrongAttack(false);
+		own->SetJumpAttack(false);
+
 		//左スティックが入力されていたらStateをWalkにする
 		if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
 			Input::GetInstance().GetInputStick(false).second != 0.0f)

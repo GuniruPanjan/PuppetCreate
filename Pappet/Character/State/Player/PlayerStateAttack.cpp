@@ -35,6 +35,7 @@ PlayerStateAttack::PlayerStateAttack(std::shared_ptr<CharacterBase> chara) :
 {
 	//装備判定を返す
 	m_equipmentSword = chara->GetSword();
+	m_equipmentFist = chara->GetFist();
 	m_equipmentState = chara->GetEquipment();
 	//現在のステートを攻撃状態にする
 	m_nowState = StateKind::Attack;
@@ -71,11 +72,13 @@ void PlayerStateAttack::Update()
 	auto own = std::dynamic_pointer_cast<Player>(m_pChara.lock());
 
 	//装備が剣などの場合
-	if (m_equipmentSword)
+	if (m_equipmentSword || m_equipmentFist)
 	{
 		//攻撃一段階目
 		if (own->GetFrame() <= 40.0f)
 		{
+			own->SetAttackNumber(1);
+
 			//入力受付時間
 			if (own->GetFrame() == 0.0f) m_input = true;
 			if (own->GetFrame() == 5.0f) m_input = false;
@@ -105,6 +108,8 @@ void PlayerStateAttack::Update()
 		//攻撃二段階目
 		else if (own->GetFrame() <= 70.0f && own->GetFrame() > 40.0f && m_attackNumber == 1)
 		{
+			own->SetAttackNumber(2);
+
 			//入力受付時間
 			if (own->GetFrame() == 40.0f) m_input = true;
 			if (own->GetFrame() == 45.0f) m_input = false;
@@ -134,6 +139,8 @@ void PlayerStateAttack::Update()
 		//攻撃三段階目
 		else if (own->GetFrame() <= 112.0f && own->GetFrame() > 70.0f && m_attackNumber == 2)
 		{
+			own->SetAttackNumber(3);
+
 			//入力受付時間
 			if (own->GetFrame() == 70.0f) m_input = true;
 			if (own->GetFrame() == 75.0f) m_input = false;
@@ -202,7 +209,8 @@ void PlayerStateAttack::Update()
 	//アニメーション終了後
 	if (m_endAnim)
 	{
-		int a = 1;
+		//攻撃終了
+		own->SetAttackNumber(0);
 
 		//左スティックが入力されていたらStateをWalkにする
 		if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
@@ -283,7 +291,7 @@ void PlayerStateAttack::Update()
 std::string PlayerStateAttack::GetAttackAnim()
 {
 	//装備が剣などの場合
-	if (m_equipmentSword)
+	if (m_equipmentSword || m_equipmentFist)
 	{
 		//攻撃
 		return std::string("Attack1");

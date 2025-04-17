@@ -7,10 +7,10 @@
 namespace
 {
 	//ジャンプ力
-	constexpr float cJumpPower = 2.0f;
+	constexpr float cJumpPower = 7.0f;
 
 	//ジャンプフレーム数
-	constexpr int cJumpFrame = 32;
+	constexpr int cJumpFrame = 26;
 
 	//着地アニメーションの再生速度
 	constexpr float cLandingAnimSpeed = 1.0f;
@@ -28,7 +28,7 @@ PlayerStateJump::PlayerStateJump(std::shared_ptr<CharacterBase> chara) :
 	//現在のステートをジャンプ状態にする
 	m_nowState = StateKind::Jump;
 
-	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "JumpUp"), true, 0.6f, false, 22.0f);
+	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "JumpUp"), true, 1.0f, false, 22.0f);
 
 	//このステートに入った瞬間ジャンプ力を足す
 	auto vel = chara->GetRigidbody()->GetVelocity();
@@ -74,7 +74,7 @@ void PlayerStateJump::Update()
 void PlayerStateJump::UpUpdate()
 {
 	//ジャンプフレームが上昇したアニメーションの終了フレーム以上ならジャンプ中状態にする
-	if (m_jumpFrame >= 18)
+	if (m_jumpFrame >= 5)
 	{
 		//アニメーション変更
 		m_pChara.lock()->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", "JumpUp"), true, 0.01f, false, 31.0f);
@@ -113,6 +113,9 @@ void PlayerStateJump::LoopUpdate()
 		own->SetReset(33.0f);
 		own->SetLoop(true);
 
+		//ジャンプ終了
+		own->GetRigidbody()->SetJump(false);
+
 		//強攻撃ボタンが押されていたらStateを強攻撃にする
 		if (Input::GetInstance().GetIsPushedTriggerButton(true) || Input::GetInstance().GetIsPushedTriggerButton(true))
 		{
@@ -130,7 +133,7 @@ void PlayerStateJump::LoopUpdate()
 		if (hit.HitFlag)
 		{
 			//アニメーション変更
-			m_pChara.lock()->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", "JumpUp"), true, 0.5f, false, 33.0f);
+			m_pChara.lock()->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", "JumpUp"), true, 1.0f, false, 33.0f);
 			//ジャンプフレームを初期化する
 			m_jumpFrame = 0;
 			own->SetStart(0.0f);
