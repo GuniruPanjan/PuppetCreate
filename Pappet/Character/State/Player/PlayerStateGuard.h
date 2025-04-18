@@ -21,5 +21,7 @@ public:
 
 private:
 	eDir m_dir;
+	bool m_run;
+
 };
 

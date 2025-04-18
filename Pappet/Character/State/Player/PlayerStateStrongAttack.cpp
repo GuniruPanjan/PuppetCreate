@@ -30,21 +30,15 @@ PlayerStateStrongAttack::PlayerStateStrongAttack(std::shared_ptr<CharacterBase> 
 	m_move(0.0f),
 	m_strongMove()
 {
+	//ジャンプ状態から遷移してきたら可能にする　
+	m_jumping = chara->GetJumpCan();
+
 	//現在のステートを強攻撃状態にする
 	m_nowState = StateKind::StrongAttack;
 
-	//ジャンプ状態だったら
-	if (m_pChara.lock()->GetRigidbody()->GetJump())
-	{
-		//ジャンプ状態を終了する
-		m_pChara.lock()->GetRigidbody()->SetJump(false);
-
-		//ジャンプ攻撃をかのうにする　
-		m_jumping = true;
-	}
-
 	m_equipmentSword = chara->GetSword();
 	m_equipmentFist = chara->GetFist();
+	m_equipmentShield = chara->GetShield();
 
 	auto animName = GetStrongAnim();
 	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), animName), true);
@@ -306,8 +300,8 @@ void PlayerStateStrongAttack::Update()
 			return;
 		}
 
-		//ガードボタンを押したらStateをガードにする
-		if (Input::GetInstance().IsTriggered("Input_Shield"))
+		//シールドを装備していた場合ガードボタンを押したらStateをガードにする
+		if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield)
 		{
 			m_jumping = false;
 

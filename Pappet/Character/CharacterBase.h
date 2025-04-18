@@ -65,9 +65,9 @@ public:
 	//アニメーションのフレームブレンド変更
 	void FrameChangeAnim(int animIndex, bool& one, bool& two, int frame);
 	//アニメーションのフレームブレンド変更(ステート)
-	void FrameStateChangeAnim(int animIndex, int frame);
+	void FrameStateChangeAnim(int animIndex, int frame, bool& one);
 	//アニメーションのフレームブレンド変更(ステート)
-	void FrameEndStateAnim(int animIndex, int frame);
+	void FrameEndStateAnim(int animIndex, int frame, bool& one);
 	//アニメーションのフレームブレンド変更
 	void FrameEndAnim(int animIndex, bool& one, bool& two, int frame);
 	//アニメーションの未初期化
@@ -98,6 +98,10 @@ public:
 
 	//スピードを設定する
 	int SetSpeed(int set) { return m_status.s_speed = set; }
+
+	//ジャンプ関係
+	bool GetJumpCan() { return m_jumpCan; }                            //ジャンプ攻撃を可能にする
+
 
 	//物理データを取得
 	std::shared_ptr<MyLibrary::Rigidbody> GetRigidbody() { return rigidbody; }
@@ -157,6 +161,8 @@ protected:
 	int m_heel;               //HPに追加する回復分
 	int m_maxHeel;            //HPの最大回復量
 	float m_cameraAngle;      //カメラ情報
+	bool m_jumpCan;           //ジャンプ攻撃可能にする
+
 	//Stateパターン
 	std::shared_ptr<StateBase> m_pState;      
 

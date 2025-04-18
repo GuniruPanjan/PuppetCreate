@@ -37,6 +37,7 @@ PlayerStateAttack::PlayerStateAttack(std::shared_ptr<CharacterBase> chara) :
 	m_equipmentSword = chara->GetSword();
 	m_equipmentFist = chara->GetFist();
 	m_equipmentState = chara->GetEquipment();
+	m_equipmentShield = chara->GetShield();
 	//現在のステートを攻撃状態にする
 	m_nowState = StateKind::Attack;
 	auto animName = GetAttackAnim();
@@ -274,8 +275,8 @@ void PlayerStateAttack::Update()
 			return;
 		}
 
-		//ガードボタンを押したらStateをガードにする
-		if (Input::GetInstance().IsTriggered("Input_Shield"))
+		//シールドを装備していた場合ガードボタンを押したらStateをガードにする
+		if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield)
 		{
 			ChangeState(StateKind::Guard);
 			return;

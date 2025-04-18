@@ -94,6 +94,9 @@ public:
 	bool SetStrongAttack(bool set) { return m_attackStrong = set; }    //強攻撃をしたか決める
 	bool SetJumpAttack(bool set) { return m_jumpAttack = set; }        //ジャンプ攻撃をしたか決める
 
+	//回避関係
+	bool SetAvoidance(bool set) { return m_avoidanceNow = set; }
+
 	//カメラ関係
 	float GetCameraAngle() { return m_cameraAngle; }
 	float SetCameraAngle(float angle) { return m_cameraAngle = angle; }
@@ -212,7 +215,6 @@ private:
 	bool m_jumpAttack;                  //ジャンプ攻撃をしたかの判定
 	bool m_avoidanceNow;                //フレーム回避中の判断
 	bool m_shieldNow;                   //防御中の判断
-	bool m_animReverse;                 //アニメーションを逆再生させるための判定
 	bool m_deadReset;                   //死亡完了した判定
 
 	//フレーム用変数

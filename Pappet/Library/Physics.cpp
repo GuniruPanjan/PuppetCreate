@@ -323,6 +323,17 @@ void MyLibrary::Physics::CheckCollide()
 					{
 						if (!IsCollide(*objA->rigidbody, *objB->rigidbody, colA.get(), colB.get())) continue;
 
+						//Jump’†‚Ì‹““®‚ðC³‚·‚é‚½‚ß‚Ìˆ—
+						if (objA->GetTag() == ObjectTag::Player && objB->GetTag() == ObjectTag::Enemy)
+						{
+							if (objA->rigidbody->GetJump())
+							{
+								printfDx("Player‚ªJump’†‚ÉEnemy‚ÆÕ“Ë‚µ‚Ü‚µ‚½\n");
+
+								continue;
+							}
+						}
+
 						bool isTrigger = colA->IsTrigger() || colB->IsTrigger();
 
 						if (isTrigger)

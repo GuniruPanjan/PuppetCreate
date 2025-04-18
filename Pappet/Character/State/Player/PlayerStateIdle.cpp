@@ -11,6 +11,9 @@
 PlayerStateIdle::PlayerStateIdle(std::shared_ptr<CharacterBase> chara) :
 	StateBase(chara)
 {
+	//シールドを装備しているかどうか
+	m_equipmentShield = chara->GetShield();
+
 	//現在のステートを待機状態にする
 	m_nowState = StateKind::Idle;
 	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Idle"), false);
@@ -101,8 +104,8 @@ void PlayerStateIdle::Update()
 		return;
 	}
 
-	//ガードボタンを押したらStateをガードにする
-	if (Input::GetInstance().IsTriggered("Input_Shield"))
+	//シールドを装備していた場合ガードボタンを押したらStateをガードにする
+	if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield)
 	{
 		ChangeState(StateKind::Guard);
 		return;

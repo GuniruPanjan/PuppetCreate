@@ -11,6 +11,8 @@
 PlayerStateDamage::PlayerStateDamage(std::shared_ptr<CharacterBase> chara) :
 	StateBase(chara)
 {
+	m_equipmentShield = chara->GetShield();
+
 	//最初にヒット状態を入れる
 	m_hit = chara->GetHit();
 	//現在のステートを攻撃ヒット状態にする
@@ -46,6 +48,13 @@ void PlayerStateDamage::Update()
 
 	//持っているキャラクターベースクラスをプレイヤークラスにキャストする(ダウンキャスト)
 	auto own = std::dynamic_pointer_cast<Player>(m_pChara.lock());
+
+	//フレーム回避終了
+	own->SetAvoidance(false);
+
+	//攻撃などの判定を強制終了する
+	own->SetJumpAttack(false);
+	own->SetStrongAttack(false);
 
 	//プレイヤーの速度を0にする
 	auto prevVel = own->GetRigidbody()->GetVelocity();
@@ -116,8 +125,8 @@ void PlayerStateDamage::Update()
 			return;
 		}
 
-		//ガードボタンを押したらStateをガードにする
-		if (Input::GetInstance().IsTriggered("Input_Shield"))
+		//シールドを装備していた場合ガードボタンを押したらStateをガードにする
+		if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield)
 		{
 			ChangeState(StateKind::Guard);
 			return;

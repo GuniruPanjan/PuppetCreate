@@ -18,6 +18,8 @@ PlayerStateEnterBoss::PlayerStateEnterBoss(std::shared_ptr<CharacterBase> chara)
 	StateBase(chara),
 	m_moveVector()
 {
+	m_equipmentShield = chara->GetShield();
+
 	//現在のステートをボス部屋に入る状態にする
 	m_nowState = StateKind::EnterBoss;
 	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "BossEnter"), true);
@@ -125,7 +127,7 @@ void PlayerStateEnterBoss::Update()
 		}
 
 		//ガードボタンを押したらStateをガードにする
-		if (Input::GetInstance().IsTriggered("Input_Shield"))
+		if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield)
 		{
 			ChangeState(StateKind::Guard);
 			return;

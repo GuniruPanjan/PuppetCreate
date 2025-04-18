@@ -23,5 +23,6 @@ private:
 	eDir m_dir;
 	int m_walkCount;
 	int m_noInputFrame;
+	int m_input;
 };
 

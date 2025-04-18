@@ -94,11 +94,13 @@ void PlayerStateJump::UpUpdate()
 /// </summary>
 void PlayerStateJump::LoopUpdate()
 {
+	//自身の足元座標と移動速度でカプセルを作る
+	auto own = std::dynamic_pointer_cast<Player>(m_pChara.lock());
+
 	//ジャンプフレーム規定数以上なら
 	if (m_jumpFrame > cJumpFrame)
 	{
-		//自身の足元座標と移動速度でカプセルを作る
-		auto own = std::dynamic_pointer_cast<Player>(m_pChara.lock());
+		
 		auto pos = m_pChara.lock()->GetRigidbody()->GetPos();
 		auto vel = m_pChara.lock()->GetRigidbody()->GetVelocity();
 		auto modelBottomPos = pos;
@@ -116,24 +118,11 @@ void PlayerStateJump::LoopUpdate()
 		//ジャンプ終了
 		own->GetRigidbody()->SetJump(false);
 
-		//強攻撃ボタンが押されていたらStateを強攻撃にする
-		if (Input::GetInstance().GetIsPushedTriggerButton(true) || Input::GetInstance().GetIsPushedTriggerButton(true))
-		{
-			//フレームも初期化する
-			own->SetStart(0.0f);
-			own->SetReset(0.0f);
-			//アニメーションループをやめる
-			own->SetLoop(false);
-
-			ChangeState(StateKind::StrongAttack);
-			return;
-		}
-
 		//ステージとカプセルが当たっていたらジャンプ下降状態にする
 		if (hit.HitFlag)
 		{
 			//アニメーション変更
-			m_pChara.lock()->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", "JumpUp"), true, 1.0f, false, 33.0f);
+			m_pChara.lock()->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", "JumpUp"), true, 1.2f, false, 33.0f);
 			//ジャンプフレームを初期化する
 			m_jumpFrame = 0;
 			own->SetStart(0.0f);
@@ -145,6 +134,24 @@ void PlayerStateJump::LoopUpdate()
 		}
 	
 	}
+
+	//強攻撃ボタンが押されていたらStateを強攻撃にする
+	if (Input::GetInstance().GetIsPushedTriggerButton(true) || Input::GetInstance().GetIsPushedTriggerButton(true))
+	{
+		//ジャンプ終了
+		own->GetRigidbody()->SetJump(false);
+
+		//フレームも初期化する
+		own->SetStart(0.0f);
+		own->SetReset(0.0f);
+		//アニメーションループをやめる
+		own->SetLoop(false);
+
+		ChangeState(StateKind::StrongAttack);
+		return;
+	}
+
+
 	//フレーム更新
 	m_jumpFrame++;
 }
@@ -156,9 +163,6 @@ void PlayerStateJump::DownUpdate()
 {
 	//ダウンキャスト
 	auto own = std::dynamic_pointer_cast<Player>(m_pChara.lock());
-
-	//ジャンプ強攻撃を行えないようにする
-	m_jumping = false;
 
 	if (m_jumpFrame >= 15.0f)
 	{
@@ -190,6 +194,22 @@ void PlayerStateJump::DownUpdate()
 				ChangeState(StateKind::Walk);
 				return;
 			}
+		}
+
+		//ジャンプボタンを押したらジャンプへ遷移する
+		if (Input::GetInstance().IsPushed("Input_Jump"))
+		{
+			ChangeState(StateKind::Jump);
+			return;
+		}
+	}
+	else
+	{
+		//強攻撃ボタンが押されていたらStateを強攻撃にする
+		if (Input::GetInstance().GetIsPushedTriggerButton(true) || Input::GetInstance().GetIsPushedTriggerButton(true))
+		{
+			ChangeState(StateKind::StrongAttack);
+			return;
 		}
 	}
 

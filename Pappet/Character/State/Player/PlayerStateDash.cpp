@@ -23,9 +23,13 @@ PlayerStateDash::PlayerStateDash(std::shared_ptr<CharacterBase> chara) :
 	StateBase(chara),
 	m_noInputFrame(0)
 {
+	m_equipmentShield = chara->GetShield();
+	m_equipmentState = chara->GetEquipment();
+
 	//現在のステートをダッシュ状態にする
 	m_nowState = StateKind::Dash;
-	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Run"), false);
+	auto animName = GetRunAnim();
+	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), animName), false);
 	chara->NotInitAnim(false);
 	//速度を設定する
 	chara->SetSpeed(cDashSpeed);
@@ -96,13 +100,6 @@ void PlayerStateDash::Update()
 		return;
 	}
 
-	//回避ボタンが押されたらStateを回避にする
-	//if (Input::GetInstance().IsTriggered("Input_Roll"))
-	//{
-	//	ChangeState(StateKind::Roll);
-	//	return;
-	//}
-
 	//ダッシュボタンが押されてなかったらStateをWalkにする
 	if (!Input::GetInstance().IsPushed("Input_Dash"))
 	{
@@ -117,8 +114,8 @@ void PlayerStateDash::Update()
 		return;
 	}
 
-	//ガードボタンを押したらStateをガードにする
-	if (Input::GetInstance().IsTriggered("Input_Shield"))
+	//シールドを装備していた場合ガードボタンを押したらStateをガードにする
+	if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield)
 	{
 		ChangeState(StateKind::Guard);
 		return;
@@ -171,4 +168,18 @@ void PlayerStateDash::Update()
 		own->GetRigidbody()->SetVelocity(MyLibrary::LibVec3(0.0f, prevVel.y, 0.0f));
 	}
 	
+}
+
+std::string PlayerStateDash::GetRunAnim()
+{
+	//何か装備をしていた場合のアニメーション
+	if (m_equipmentState)
+	{
+		return std::string("ShieldRun");
+	}
+	//何も装備していない場合のアニメーション
+	else
+	{
+		return std::string("Run");
+	}
 }

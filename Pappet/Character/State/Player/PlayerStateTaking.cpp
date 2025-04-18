@@ -12,6 +12,8 @@ PlayerStateTaking::PlayerStateTaking(std::shared_ptr<CharacterBase> chara) :
 	StateBase(chara),
 	m_animEnd(false)
 {
+	m_equipmentShield = chara->GetShield();
+
 	//現在のステートをアイテム取得状態にする
 	m_nowState = StateKind::Taking;
 	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Taking"), true);
@@ -127,8 +129,8 @@ void PlayerStateTaking::Update()
 			return;
 		}
 
-		//ガードボタンを押したらStateをガードにする
-		if (Input::GetInstance().IsTriggered("Input_Shield"))
+		//シールドを装備していた場合ガードボタンを押したらStateをガードにする
+		if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield)
 		{
 			ChangeState(StateKind::Guard);
 			m_animEnd = false;

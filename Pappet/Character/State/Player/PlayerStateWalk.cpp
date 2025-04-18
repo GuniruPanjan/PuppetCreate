@@ -30,7 +30,8 @@ PlayerStateWalk::PlayerStateWalk(std::shared_ptr<CharacterBase> chara) :
 	StateBase(chara),
 	m_dir(),
 	m_walkCount(0),
-	m_noInputFrame(0)
+	m_noInputFrame(0),
+	m_input(0)
 {
 	//現在のステートを歩き状態にする
 	m_nowState = StateKind::Walk;
@@ -40,6 +41,7 @@ PlayerStateWalk::PlayerStateWalk(std::shared_ptr<CharacterBase> chara) :
 	m_dir = GetDirection(input.first, -input.second);
 
 	m_equipmentState = chara->GetEquipment();
+	m_equipmentShield = chara->GetShield();
 
 	auto animName = GetWalkAnim(m_dir);
 	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), animName), false);
@@ -114,18 +116,31 @@ void PlayerStateWalk::Update()
 		return;
 	}
 
-	//回避ボタンが押されたらStateを回避にする
-	if (Input::GetInstance().IsReleased("Input_Roll"))
+
+	if (m_input < 30)
 	{
-		ChangeState(StateKind::Roll);
-		return;
+		//回避ボタンが押されたらStateを回避にする
+		if (Input::GetInstance().IsReleased("Input_Roll"))
+		{
+			ChangeState(StateKind::Roll);
+			return;
+		}
 	}
 	
 	//ダッシュボタンが押されたらStateをダッシュにする
 	if (Input::GetInstance().IsPushed("Input_Dash"))
 	{
-		ChangeState(StateKind::Dash);
-		return;
+		m_input++;
+		if (m_input >= 30)
+		{
+			ChangeState(StateKind::Dash);
+			return;
+		}
+	}
+	else
+	{
+		//初期化する
+		m_input = 0;
 	}
 
 	//アイテムボタンが押されたらアイテムを使用する
@@ -135,8 +150,8 @@ void PlayerStateWalk::Update()
 		return;
 	}
 
-	//ガードボタンを押したらStateをガードにする
-	if (Input::GetInstance().IsTriggered("Input_Shield"))
+	//シールドを装備していた場合ガードボタンを押したらStateをガードにする
+	if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield)
 	{
 		ChangeState(StateKind::Guard);
 		return;

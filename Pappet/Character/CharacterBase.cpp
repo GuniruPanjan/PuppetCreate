@@ -43,7 +43,8 @@ CharacterBase::CharacterBase(Priority priority, ObjectTag tag) :
 	m_currentAnimNo(-1),
 	m_pState(),
 	m_capsuleY(0.0f),
-	m_capsuleRadius(0.0f)
+	m_capsuleRadius(0.0f),
+	m_jumpCan(false)
 {
 	for (int i = 0; i < ANIMATION_MAX; i++)
 	{
@@ -306,9 +307,14 @@ void CharacterBase::FrameChangeAnim(int animIndex, bool& one, bool& two, int fra
 /// </summary>
 /// <param name="animIndex"></param>
 /// <param name="frame"></param>
-void CharacterBase::FrameStateChangeAnim(int animIndex, int frame)
+void CharacterBase::FrameStateChangeAnim(int animIndex, int frame, bool& one)
 {
-	m_frameAnimNo = MV1AttachAnim(m_modelHandle, animIndex);
+	if (one == true)
+	{
+		m_frameAnimNo = MV1AttachAnim(m_modelHandle, animIndex);
+
+		one = false;
+	}
 
 	//フレームだけのアニメーション
 	MV1SetAttachAnimBlendRate(m_modelHandle, m_frameAnimNo, 0.0f);
@@ -325,9 +331,14 @@ void CharacterBase::FrameStateChangeAnim(int animIndex, int frame)
 /// </summary>
 /// <param name="animIndex"></param>
 /// <param name="frame"></param>
-void CharacterBase::FrameEndStateAnim(int animIndex, int frame)
+void CharacterBase::FrameEndStateAnim(int animIndex, int frame, bool& one)
 {
-	MV1DetachAnim(m_modelHandle, animIndex);
+	if (one == false)
+	{
+		MV1DetachAnim(m_modelHandle, animIndex);
+
+		one = true;
+	}
 
 	//フレームだけアニメーション
 	MV1SetAttachAnimBlendRateToFrame(m_modelHandle, m_currentAnimNo, frame, 1.0f);

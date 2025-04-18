@@ -98,6 +98,7 @@ protected:
 	//‚Ç‚ÌŽí—Þ‚Ì‘•”õ‚ð‚µ‚Ä‚¢‚é‚©
 	bool m_equipmentFist = false;
 	bool m_equipmentSword = false;
+	bool m_equipmentShield = false;
 	//ƒWƒƒƒ“ƒv’†‚Ì”»’è
 	bool m_jumping = false; 
 

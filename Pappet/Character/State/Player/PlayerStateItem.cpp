@@ -11,6 +11,8 @@
 PlayerStateItem::PlayerStateItem(std::shared_ptr<CharacterBase> chara) :
 	StateBase(chara)
 {
+	m_equipmentShield = chara->GetShield();
+
 	//現在のステートをアイテム使用状態にする
 	m_nowState = StateKind::Item;
 	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Recovery"), true);
@@ -113,8 +115,8 @@ void PlayerStateItem::Update()
 			return;
 		}
 
-		//ガードボタンを押したらStateをガードにする
-		if (Input::GetInstance().IsTriggered("Input_Shield"))
+		//シールド装備していた場合ガードボタンを押したらStateをガードにする
+		if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield)
 		{
 			ChangeState(StateKind::Guard);
 			return;

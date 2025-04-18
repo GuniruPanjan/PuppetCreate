@@ -160,8 +160,7 @@ bool Input::IsReleased(const char* command) const
 		assert(0 && "指定されたコマンドが登録されていません");
 		return false;
 	}
-	return (!m_inputData.at(command) && m_lastInputData.at(command) &&
-		m_lastInputData.at(command) && !m_inputData.at(command));
+	return (!m_inputData.at(command) && m_lastInputData.at(command));
 }
 /// <summary>
 /// スティックの入力情報を取得

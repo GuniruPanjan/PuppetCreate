@@ -130,7 +130,6 @@ Player::Player() :
 	m_avoidanceNow(false),
 	m_shieldNow(false),
 	m_shieldOne(false),
-	m_animReverse(false),
 	m_deadReset(false),
 	m_message(false),
 	m_read(false),
@@ -362,7 +361,7 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	//ターゲットを代入する
 	m_pState->SetTarget(m_lockonTarget);
 	//ロックオン時アングルを変える
-	if (m_lockonTarget)
+	if (m_lockonTarget && m_pState->GetState() != StateBase::StateKind::Roll)
 	{
 		if (m_pState->GetState() == StateBase::StateKind::StrongAttack)
 		{
@@ -388,6 +387,17 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	{
 		//ステートの更新
 		m_pState->Update();
+	}
+
+	if (m_pState->GetState() == StateBase::StateKind::Jump)
+	{
+		//ジャンプ攻撃を可能にする
+		m_jumpCan = true;
+	}
+	else
+	{
+		//ジャンプ攻撃を出来なくする
+		m_jumpCan = false;
 	}
 
 	//とりあえずやっとく
@@ -467,46 +477,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	if (m_anim.s_isDead && m_nowFrame >= 68.0f)
 	{
 		m_deadReset = true;
-	}
-
-	//装備していないとき
-	if (weapon.GetFist() && shield.GetFist())
-	{
-		
-		//後ろ歩き
-		if (m_lockonTarget && !m_animChange.sa_dashMove && cAnY > 0 && cAnX < 500 && cAnX > -500)
-		{
-			//逆再生を進める
-			m_animReverse = true;
-		}
-		else
-		{
-			m_animReverse = false;
-		}
-	}
-	//装備しているとき
-	else if (!weapon.GetFist() || !shield.GetFist())
-	{
-		//後ろ歩き
-		if (m_lockonTarget && !m_animChange.sa_dashMove && cAnY > 0 && cAnX < 500 && cAnX > -500)
-		{
-			//逆再生を進める
-			m_animReverse = true;
-		}
-		//右歩き
-		else if (m_lockonTarget && !m_animChange.sa_dashMove && cAnX > 500)
-		{
-			//逆再生を進める
-			m_animReverse = true;
-		}
-		else
-		{
-			m_animReverse = false;
-		}
-	}
-	else
-	{
-		m_animReverse = false;
 	}
 
 	//盾の索敵のポジション更新
@@ -787,35 +757,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		m_status.s_stamina -= 0.1f;
 	}
 
-	//回避行動中
-	if (!m_isAnimationFinish && m_animChange.sa_avoidance && !m_anim.s_hit)
-	{
-		//フレーム回避
-		if (m_nowFrame >= 0.0f && m_nowFrame <= 20.0f)
-		{
-			m_avoidanceNow = true;
-
-			cAvoidanceMove = 4.0f;
-		}
-		else if (m_nowFrame >= 20.0f && m_nowFrame <= 30.0f)
-		{
-			m_avoidanceNow = false;
-
-			cAvoidanceMove = 1.0f;
-		}
-		else
-		{
-			m_avoidanceNow = false;
-
-			cAvoidanceMove = 0.2f;
-		}
-	}
-	//回避終了
-	else if (m_isAnimationFinish && m_animChange.sa_avoidance)
-	{
-		m_animChange.sa_avoidance = false;
-	}
-
 	//攻撃力格納
 	m_attackDamage = (m_status.s_attack + (m_status.s_muscle * 0.5f) + (m_status.s_skill * 0.5f)) + (cEquipmentAttack + ((m_status.s_muscle - 1) * m_equipmentMuscle) + ((m_status.s_skill - 1) * m_equipmentSkill));
 
@@ -1076,57 +1017,6 @@ void Player::Action(VECTOR restpos, Tool& tool, Shield& shield, SEManager& se, b
 			m_lockonTarget = false;
 			cRstickButton = false;
 		}
-	}
-	
-
-	//Bボタンが押されたらダッシュか回避
-	//スタミナがあれば
-	if (m_xpad.Buttons[13] == 1 && !m_anim.s_attack && !m_staminaBreak)
-	{
-		//ダッシュ
-		if (cAbutton > 30)
-		{
-			m_animChange.sa_avoidance = false;
-
-			//ダッシ中
-			m_animChange.sa_dashMove = true;
-
-			m_status.s_speed = cDashSpeed;
-		}
-
-		if (cAbutton < 31)
-		{
-			cAbutton++;
-		}
-	}
-	else
-	{
-		m_animChange.sa_dashMove = false;
-
-		m_status.s_speed = cWalkSpeed;
-
-		if (m_notRoll >= 10)
-		{
-			//回避に必要なスタミナがある場合
-			if (m_status.s_stamina >= 20 && !m_staminaBreak)
-			{
-				//回避
-				//離した瞬間
-				if (cAbutton > 0 && cAbutton < 30 && m_animChange.sa_avoidance == false)
-				{
-					m_status.s_stamina -= 20;
-
-					m_animChange.sa_avoidance = true;
-				}
-			}
-		}
-		else
-		{
-			m_notRoll++;
-		}
-		
-
-		cAbutton = 0;
 	}
 
 	//行動中は防御できない
@@ -1628,7 +1518,7 @@ void Player::Draw(Armor& armor, int font)
 	//描画
 	MV1DrawModel(m_modelHandle);
 
-	DrawFormatString(200, 300, 0xffffff, "frame : %f", m_nowFrame);
+	DrawFormatString(200, 300, 0xffffff, "frame : %d", m_avoidanceNow);
 }
 
 void Player::End()

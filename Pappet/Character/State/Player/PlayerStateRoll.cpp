@@ -30,10 +30,15 @@ PlayerStateRoll::PlayerStateRoll(std::shared_ptr<CharacterBase> chara) :
 	m_avoidanceMove(0.0f),
 	m_rollMove()
 {
+	m_equipmentShield = chara->GetShield();
+
 	//現在のステートを回避状態にする
 	m_nowState = StateKind::Roll;
 	chara->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(chara->GetCharacterName(), "Roll"), true, cAvoidanceSpeed);
 	chara->NotInitAnim(true);
+
+	//初期化する
+	cOneAvoidance = false;
 }
 
 /// <summary>
@@ -74,59 +79,10 @@ void PlayerStateRoll::Update()
 
 		cOneAvoidance = true;
 	}
-	
-
-	//移動方向を決定する
-	auto moveDir = VGet(m_leftX, 0.0f, -m_leftZ);
-	//移動ベクトルの長さを取得する
-	float len = VSize(moveDir);
-
-	//ベクトルの長さを0.0～1.0の割合に変換する
-	float rate = len / cAnalogInputMax;
-
-	//アナログスティック無効な範囲を除外する(デッドゾーン)
-	rate = (rate - cAnalogRangeMin) / (cAnalogRangeMax - cAnalogRangeMin);
-	rate = min(rate, 1.0f);
-	rate = max(rate, 0.0f);
-
-	//速度が決定できるので移動ベクトルに反映する
-	moveDir = VNorm(moveDir);
-	float speed = own->GetStatus().s_speed * rate;
-
-	//方向ベクトルと移動力をかけて移動ベクトルを生成する
-	auto moveVec = VScale(moveDir, speed);
-
-	//cameraの角度から
-	//コントローラーによる移動方向を決定する
-	MATRIX mtx = MGetRotY(own->GetCameraAngle() + DX_PI_F);
-	moveVec = VTransform(moveVec, mtx);
-
-	//ライブラリのベクターに変換する
-	MyLibrary::LibVec3 move = MyLibrary::LibVec3(static_cast<float>(moveVec.x), static_cast<float>(moveVec.y), static_cast<float>(moveVec.z));
-	//キャラクターのアングルを決める
-	own->SetAngle(atan2f(-moveVec.z, moveVec.x) - DX_PI_F / 2);
-
-	//フレーム回避
-	if (own->GetFrame() >= 0.0f && own->GetFrame() <= 20.0f)
-	{
-		m_avoidanceMove = cAvoidanceMove1;
-	}
-	else if (own->GetFrame() >= 20.0f && own->GetFrame() <= 30.0f)
-	{
-		m_avoidanceMove = cAvoidanceMove2;
-	}
-	else
-	{
-		m_avoidanceMove = cAvoidanceMove3;
-	}
-
-
-	m_rollMove = VScale(VGet(sinf(own->GetAngle()), 0.0f, cosf(own->GetAngle())), m_avoidanceMove);
 
 	//アニメーションが終了したら
 	if (own->GetEndAnim())
 	{
-
 		cOneAvoidance = false;
 
 		//左スティックが入力されていたらStateをWalkにする
@@ -198,13 +154,64 @@ void PlayerStateRoll::Update()
 			return;
 		}
 
-		//ガードボタンを押したらStateをガードにする
-		if (Input::GetInstance().IsTriggered("Input_Shield"))
+		//シールドを装備していた場合ガードボタンを押したらStateをガードにする
+		if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield)
 		{
 			ChangeState(StateKind::Guard);
 			return;
 		}
 	}
+
+	//移動方向を決定する
+	auto moveDir = VGet(-m_leftX, 0.0f, m_leftZ);
+	//移動ベクトルの長さを取得する
+	float len = VSize(moveDir);
+
+	//ベクトルの長さを0.0～1.0の割合に変換する
+	float rate = len / cAnalogInputMax;
+
+	//アナログスティック無効な範囲を除外する(デッドゾーン)
+	rate = (rate - cAnalogRangeMin) / (cAnalogRangeMax - cAnalogRangeMin);
+	rate = min(rate, 1.0f);
+	rate = max(rate, 0.0f);
+
+	//速度が決定できるので移動ベクトルに反映する
+	moveDir = VNorm(moveDir);
+	float speed = own->GetStatus().s_speed * rate;
+
+	//方向ベクトルと移動力をかけて移動ベクトルを生成する
+	auto moveVec = VScale(moveDir, speed);
+
+	//cameraの角度から
+	//コントローラーによる移動方向を決定する
+	MATRIX mtx = MGetRotY(own->GetCameraAngle() + DX_PI_F);
+	moveVec = VTransform(moveVec, mtx);
+
+	//ライブラリのベクターに変換する
+	MyLibrary::LibVec3 move = MyLibrary::LibVec3(static_cast<float>(moveVec.x), static_cast<float>(moveVec.y), static_cast<float>(moveVec.z));
+	//キャラクターのアングルを決める
+	own->SetModelAngle(atan2f(-moveVec.z, moveVec.x) - DX_PI_F / 2);
+
+	//フレームで移動してフレームで回避する
+	if (own->GetFrame() >= 0.0f && own->GetFrame() <= 20.0f)
+	{
+		m_avoidanceMove = cAvoidanceMove1;
+		own->SetAvoidance(true);
+	}
+	else if (own->GetFrame() >= 20.0f && own->GetFrame() <= 30.0f)
+	{
+		m_avoidanceMove = cAvoidanceMove2;
+		own->SetAvoidance(false);
+
+	}
+	else
+	{
+		m_avoidanceMove = cAvoidanceMove3;
+		own->SetAvoidance(false);
+	}
+
+
+	m_rollMove = VScale(VGet(sinf(own->GetAngle()), 0.0f, cosf(own->GetAngle())), m_avoidanceMove);
 
 	//移動速度を決定する
 	MyLibrary::LibVec3 prevVelocity = own->GetRigidbody()->GetVelocity();
