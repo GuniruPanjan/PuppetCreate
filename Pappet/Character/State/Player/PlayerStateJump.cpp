@@ -36,6 +36,7 @@ PlayerStateJump::PlayerStateJump(std::shared_ptr<CharacterBase> chara) :
 	chara->GetRigidbody()->SetVelocity(vel);
 	//ジャンプ状態にする
 	chara->GetRigidbody()->SetJump(true);
+	chara->GetRigidbody()->SetJumpNow(true);
 }
 
 /// <summary>
@@ -140,7 +141,6 @@ void PlayerStateJump::LoopUpdate()
 	{
 		//ジャンプ終了
 		own->GetRigidbody()->SetJump(false);
-
 		//フレームも初期化する
 		own->SetStart(0.0f);
 		own->SetReset(0.0f);
@@ -169,6 +169,7 @@ void PlayerStateJump::DownUpdate()
 
 		//ジャンプ終了
 		own->GetRigidbody()->SetJump(false);
+		own->GetRigidbody()->SetJumpNow(false);
 
 		//左スティックが入力されていなかったらStateをIdleにする
 		if (Input::GetInstance().GetInputStick(false).first == 0.0f &&

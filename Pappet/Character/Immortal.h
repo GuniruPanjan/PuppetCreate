@@ -29,5 +29,9 @@ public:
 	void Draw(EnemyWeapon& weapon);
 	//UI描画
 	void DrawUI(UI& ui) override;
+
+private:
+	int m_frameRightHand[2];           //右手のフレーム
+	VECTOR m_ligRightPos[2];           //右手のポジション
 };
 

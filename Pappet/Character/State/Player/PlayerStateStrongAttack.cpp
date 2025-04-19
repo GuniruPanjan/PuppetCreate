@@ -221,6 +221,7 @@ void PlayerStateStrongAttack::Update()
 		//初期化する
 		own->SetStrongAttack(false);
 		own->SetJumpAttack(false);
+		own->GetRigidbody()->SetJumpNow(false);
 
 		//左スティックが入力されていたらStateをWalkにする
 		if (Input::GetInstance().GetInputStick(false).first != 0.0f ||

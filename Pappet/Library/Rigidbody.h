@@ -25,6 +25,8 @@ namespace MyLibrary
 		const LibVec3::Size& GetSize() const { return m_size; }
 		//ジャンプを所得
 		const bool GetJump() const { return m_jump; }
+		//敵との当たり判定様にジャンプ中かどうか所得
+		const bool GetJumpNow() const { return m_jumpNow; }
 		//移動予定座標
 		const LibVec3& GetNextPos() const { return m_nextPos; }
 		//向きを所得
@@ -58,6 +60,8 @@ namespace MyLibrary
 		void SetNextPos(const LibVec3& set) { m_nextPos = set; }
 		//ジャンプを設定
 		void SetJump(bool set) { m_jump = set; }
+		//ジャンプ中かを設定
+		void SetJumpNow(bool set) { m_jumpNow = set; }
 		//ベクターを設定
 		void SetVec(const LibVec3& set) { m_vec = set; }
 		//大きさを設定
@@ -89,6 +93,8 @@ namespace MyLibrary
 		bool m_useGravity;
 		//ジャンプしているかどうか確認する
 		bool m_jump;
+		//ジャンプ中かどうか確認する
+		bool m_jumpNow;
 		//高さが合わないため
 		LibVec3 m_higth = MyLibrary::LibVec3(0.0f, 50.0f, 0.0f);
 	};

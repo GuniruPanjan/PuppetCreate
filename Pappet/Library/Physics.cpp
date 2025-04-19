@@ -1,6 +1,8 @@
+#define NOMINMAX
 #include "MyLibrary.h"
 #include "DxLib.h"
 #include <cassert>
+#include <algorithm>
 
 namespace
 {
@@ -103,18 +105,48 @@ void MyLibrary::Physics::Update()
 		auto pos1 = item->rigidbody->GetAttackPos1();
 		auto pos2 = item->rigidbody->GetAttackPos2();
 
-		//重力を利用する設定なら、重力を追加
-		if (item->rigidbody->GetUseGravity())
+		//プレイヤーの場合
+		if (item->GetTag() == ObjectTag::Player)
 		{
-			velocity = velocity + LibVec3(0.0f, kGravity, 0.0f);
-
-			//最大重力より大きかったら
-			if (velocity.y < kMaxGravity)
+			//地面に触れてない時だけ重力を与える
+			if (!m_playerFloor)
 			{
-				velocity = LibVec3(velocity.x, kMaxGravity, velocity.z);
-			}
+				//重力を利用する設定なら、重力を追加
+				if (item->rigidbody->GetUseGravity())
+				{
+					velocity = velocity + LibVec3(0.0f, kGravity, 0.0f);
 
+					//最大重力より大きかったら
+					if (velocity.y < kMaxGravity)
+					{
+						velocity = LibVec3(velocity.x, kMaxGravity, velocity.z);
+					}
+
+				}
+			}
 		}
+		//エネミーの場合
+		else if(item->GetTag() == ObjectTag::Enemy)
+		{
+			//地面に触れていない時だけ
+			if (!m_enemyFloor)
+			{
+				//重力を利用する設定なら、重力を追加
+				if (item->rigidbody->GetUseGravity())
+				{
+					velocity = velocity + LibVec3(0.0f, kGravity, 0.0f);
+
+					//最大重力より大きかったら
+					if (velocity.y < kMaxGravity)
+					{
+						velocity = LibVec3(velocity.x, kMaxGravity, velocity.z);
+					}
+
+				}
+			}
+		}
+
+		
 
 		auto nextPos = pos + velocity;
 
@@ -323,17 +355,6 @@ void MyLibrary::Physics::CheckCollide()
 					{
 						if (!IsCollide(*objA->rigidbody, *objB->rigidbody, colA.get(), colB.get())) continue;
 
-						//Jump中の挙動を修正するための処理
-						if (objA->GetTag() == ObjectTag::Player && objB->GetTag() == ObjectTag::Enemy)
-						{
-							if (objA->rigidbody->GetJump())
-							{
-								printfDx("PlayerがJump中にEnemyと衝突しました\n");
-
-								continue;
-							}
-						}
-
 						bool isTrigger = colA->IsTrigger() || colB->IsTrigger();
 
 						if (isTrigger)
@@ -365,6 +386,19 @@ void MyLibrary::Physics::CheckCollide()
 							primaryCollider = colB;
 							secondaryCollider = colA;
 						}
+
+						//Jump中の挙動を修正するための処理
+						if (objA->GetTag() == ObjectTag::Player && objB->GetTag() == ObjectTag::Enemy)
+						{
+							//地面に触れていないジャンプ状態だった場合
+							if (objA->rigidbody->GetJumpNow())
+							{
+								FixJumpNextPosition(*primary->rigidbody, *secondary->rigidbody, primaryCollider.get(), secondaryCollider.get());
+
+								continue;
+							}
+						}
+
 
 						FixNextPosition(*primary->rigidbody, *secondary->rigidbody, primaryCollider.get(), secondaryCollider.get());
 						//位置補正をしたらもう一度初めから行う
@@ -1156,6 +1190,68 @@ void MyLibrary::Physics::FixNextPosition(const Rigidbody& primaryRigid, Rigidbod
 }
 
 /// <summary>
+/// ジャンプ中の移動座標修正
+/// </summary>
+/// <param name="primaryRigid"></param>
+/// <param name="secondaryRigid"></param>
+/// <param name="primaryCollider"></param>
+/// <param name="secondaryCollider"></param>
+void MyLibrary::Physics::FixJumpNextPosition(const Rigidbody& primaryRigid, Rigidbody& secondaryRigid, CollidableData* primaryCollider, CollidableData* secondaryCollider) const
+{
+	auto primary = dynamic_cast<MyLibrary::CollidableDataCapsule*>(primaryCollider);
+	auto secondary = dynamic_cast<MyLibrary::CollidableDataCapsule*>(secondaryCollider);
+
+	// 二つのカプセルの直線部分同士の最近接点間の距離が二つの半径を足した距離になるようにする
+	auto primaryCenter = primaryRigid.GetNextPos();
+	auto primaryPos1 = MyLibrary::LibVec3(primaryCenter.x, primaryCenter.y + primary->m_len, primaryCenter.z);
+	auto primaryTopVec = primaryPos1 - primaryCenter;
+
+	auto secondaryCenter = secondaryRigid.GetNextPos();
+	auto secondaryPos1 = MyLibrary::LibVec3(secondaryCenter.x, secondaryCenter.y + secondary->m_len, secondaryCenter.z);
+	auto secondaryTopVec = secondaryPos1 - secondaryCenter;
+
+	// それぞれのカプセルの線分上の最近接点を計算
+	LibVec3 nearPosOnALine, nearPosOnBLine;
+
+	// 相対ベクトル
+	LibVec3 vec = secondaryCenter - primaryCenter;
+
+	float s, t;
+
+	s = primaryCenter.Dot(primaryTopVec, vec) / primaryTopVec.SqLength();
+	t = secondaryCenter.Dot(secondaryTopVec, LibVec3(-vec.x, -vec.y, -vec.z)) / secondaryTopVec.SqLength();
+
+	// 範囲の制限
+	s = std::min<float>(std::max<float>(s, -1.0f), 1.0f);
+	t = std::min<float>(std::max<float>(t, -1.0f), 1.0f);
+
+	nearPosOnALine = primaryTopVec * s + primaryCenter;
+	nearPosOnBLine = secondaryTopVec * t + secondaryCenter;
+
+	// カプセルAのカプセルBとの最近接点からカプセルBのカプセルAとの最近接点に向かうベクトルを取得
+	auto nearPosToNearPos = nearPosOnBLine - nearPosOnALine;
+
+	// 正規化して方向ベクトルにする
+	nearPosToNearPos = nearPosToNearPos.Normalize();
+
+	// スライド方向を計算（Y成分を無視して水平方向にスライド）
+	LibVec3 slideDirection = nearPosToNearPos;
+	slideDirection.y = 0.0f; // 水平方向のみスライド
+
+	//スライド距離を調整する
+	float slideDistance = 3.0f;
+
+	// スライド移動後の位置を計算
+	auto fixedPos = secondaryCenter + slideDirection * slideDistance;
+
+	// Y座標はジャンプ中の挙動を維持
+	fixedPos.y = secondaryRigid.GetNextPos().y;
+
+	// 修正座標を設定
+	secondaryRigid.SetNextPos(fixedPos);
+}
+
+/// <summary>
 /// 種類毎に衝突通知を飛ばす配列に追加する
 /// </summary>
 /// <param name="preSendInfo">衝突したオブジェクトのリストのログ</param>
@@ -1590,10 +1686,18 @@ void MyLibrary::Physics::FixNowPositionWithFloor(std::shared_ptr<Collidable>& co
 	//床ポリゴンの当たり判定かつ、ジャンプ力が0よりも小さい(下降中の場合)どうかで処理を分岐
 	if (m_isHitFlag && !col->rigidbody->GetJump())
 	{
+		//地面に触れている
+		m_playerFloor = true;
+
 		//接触したポリゴンで一番高いY座標をプレイヤーのY座標にする
 		auto set = col->rigidbody->GetNextPos();
 		set.y = PolyMaxPosY + radius;
 		col->rigidbody->SetNextPos(set);
+	}
+	else
+	{
+		//地面に触れていない
+		m_playerFloor = false;
 	}
 }
 
@@ -1880,9 +1984,17 @@ void MyLibrary::Physics::FixNowPositionWithFloorEnemy(std::shared_ptr<Collidable
 	//床ポリゴンの当たり判定かつ、ジャンプ力が0よりも小さい(下降中の場合)どうかで処理を分岐
 	if (m_isHitEnemyFlag)
 	{
+		//地面に触れている
+		m_enemyFloor = true;
+
 		//接触したポリゴンで一番高いY座標をエネミーのY座標にする
 		auto set = col->rigidbody->GetNextPos();
 		set.y = PolyMaxPosY + radius;
 		col->rigidbody->SetNextPos(set);
+	}
+	else
+	{
+		//地面に触れていない
+		m_enemyFloor = false;
 	}
 }

@@ -64,6 +64,12 @@ Immortal::Immortal() :
 	m_anim.s_attack = false;
 	m_anim.s_moveflag = false;
 	m_anim.s_hit = false;
+
+	for (int i = 0; i < 2; i++)
+	{
+		m_frameRightHand[i] = -1;
+		m_ligRightPos[i] = VGet(0.0f, 0.0f, 0.0f);
+	}
 }
 
 /// <summary>
@@ -190,6 +196,12 @@ void Immortal::GameInit(float posX, float posY, float posZ, std::shared_ptr<MyLi
 /// <param name="isChase">プレイヤーと戦えるかどうか</param>
 void Immortal::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos, bool isChase, SEManager& se, std::shared_ptr<MyLibrary::Physics> physics, EnemyWeapon& weapon)
 {
+	//アニメーションで移動しているフレームの番号を検索する
+	m_frameRightHand[0] = MV1SearchFrame(m_modelHandle, "mixamorig:RightForeArm");
+	m_frameRightHand[1] = MV1SearchFrame(m_modelHandle, "mixamorig:RightHandThumb4");
+
+	m_ligRightPos[0] = MV1GetFramePosition(m_modelHandle, m_frameRightHand[0]);
+	m_ligRightPos[1] = MV1GetFramePosition(m_modelHandle, m_frameRightHand[1]);
 
 	float totalAnimFrame = MV1GetAttachAnimTotalTime(m_modelHandle, m_nowAnimNo);
 
@@ -245,9 +257,8 @@ void Immortal::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 
 	//ターゲット状態
 	TargetNow();
+
 	//攻撃を受けた時
-	//攻撃が当たっているとき
-	//怯んでいる時は当たらない
 	if (m_isEnterHit)
 	{
 		m_status.s_hp -= m_col->GetAttack() - m_status.s_defense;
@@ -257,6 +268,10 @@ void Immortal::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 
 		//HitSE再生
 		PlaySoundMem(se.GetHitSE(), DX_PLAYTYPE_BACK, true);
+
+		//判定をリセット
+		m_pAttack->CollisionEnd();
+		m_pLigAttack->CollisionEnd();
 
 		//HPが0になるとヒットしない
 		if (m_status.s_hp > 0.0f)
@@ -274,6 +289,10 @@ void Immortal::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 		//HitSE再生
 		PlaySoundMem(se.GetHitSE(), DX_PLAYTYPE_BACK, true);
 
+		//判定をリセット
+		m_pAttack->CollisionEnd();
+		m_pLigAttack->CollisionEnd();
+
 		//HPが0になるとヒットしない
 		if (m_status.s_hp > 0.0f)
 		{
@@ -287,9 +306,7 @@ void Immortal::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 
 	//判定の更新
 	MyLibrary::LibVec3 centerPos = rigidbody->GetPos();
-	MyLibrary::LibVec3 attackPos = MyLibrary::LibVec3(rigidbody->GetPos().x + sinf(m_angle) * -25.0f, rigidbody->GetPos().y, rigidbody->GetPos().z - cosf(m_angle) * 25.0f);
 	m_pSearch->Update(centerPos);
-	m_pAttack->Update(attackPos);
 
 	//死んだとき
 	if (m_status.s_hp <= 0.0f)
@@ -319,6 +336,10 @@ void Immortal::Update(MyLibrary::LibVec3 playerPos, MyLibrary::LibVec3 shieldPos
 /// <param name="isChase">プレイヤーと戦えるかどうか</param>
 void Immortal::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 {
+	MyLibrary::LibVec3 attackRightHandPos1 = MyLibrary::LibVec3(m_ligRightPos[0].x, m_ligRightPos[0].y, m_ligRightPos[0].z);
+	MyLibrary::LibVec3 attackRightHandPos2 = MyLibrary::LibVec3(m_ligRightPos[1].x, m_ligRightPos[1].y, m_ligRightPos[1].z);
+
+
 	//プレイヤーを見つけた時
 	if (m_pSearch->GetIsStay())
 	{
@@ -390,31 +411,39 @@ void Immortal::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 				m_move = VGet(0.0f, 0.0f, 0.0f);
 
 				AttackUpdate("Attack1", 5);
-				
-
-				if (m_nowFrame == cAttackStartFrame)
-				{
-					InitAttack(cAttackRadius);
-					InitAttackDamage(m_status.s_attack);
-				}
-				//アニメーションフレーム中に攻撃判定を出す
-				if (m_nowFrame == cAttackHitFrame)
-				{
-					//攻撃SE再生
-					PlaySoundMem(se.GetAttackSE(), DX_PLAYTYPE_BACK, true);
-
-					InitAttackUpdate(m_status.s_attack);
-				}
-				else if (m_nowFrame >= cAttackEndFrame)
-				{
-					InitAttackDamage(0.0f);
-					//判定をリセット
-					m_pAttack->CollisionEnd();
-				}
 
 				m_anim.s_moveflag = false;
 			}
+
 		}
+
+		//攻撃での判定
+		if (m_randomAction == 2 && m_anim.s_attack)
+		{
+			InitAttackLigUpdate(attackRightHandPos1, attackRightHandPos2);
+
+			if (m_nowFrame == cAttackStartFrame)
+			{
+				InitLigAttack(attackRightHandPos1, attackRightHandPos2, cAttackRadius);
+				InitAttackDamage(m_status.s_attack);
+			}
+			//アニメーションフレーム中に攻撃判定を出す
+			if (m_nowFrame == cAttackHitFrame)
+			{
+				//攻撃SE再生
+				PlaySoundMem(se.GetAttackSE(), DX_PLAYTYPE_BACK, true);
+
+				InitAttackUpdate(m_status.s_attack);
+			}
+			else if (m_nowFrame >= cAttackEndFrame)
+			{
+				InitAttackDamage(0.0f);
+				//判定をリセット
+				m_pAttack->CollisionEnd();
+				m_pLigAttack->CollisionEnd();
+			}
+		}
+
 
 		//アニメーションが終わる度にランダムな行動を行う
 		if (m_isAnimationFinish)
@@ -436,6 +465,7 @@ void Immortal::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 		m_anim.s_attack = false;
 		//判定をリセット
 		m_pAttack->CollisionEnd();
+		m_pLigAttack->CollisionEnd();
 
 		m_moveVec = MyLibrary::LibVec3(0.0f, 0.0f, 0.0f);
 	}

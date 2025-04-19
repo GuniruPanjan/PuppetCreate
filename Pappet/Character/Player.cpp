@@ -1517,8 +1517,6 @@ void Player::Draw(Armor& armor, int font)
 	MV1SetRotationXYZ(m_modelHandle, VGet(0.0f, m_angle, 0.0f));
 	//•`‰æ
 	MV1DrawModel(m_modelHandle);
-
-	DrawFormatString(200, 300, 0xffffff, "frame : %d", m_avoidanceNow);
 }
 
 void Player::End()
