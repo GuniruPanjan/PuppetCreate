@@ -19,6 +19,8 @@ namespace
 	constexpr float cAvoidanceMove3 = 0.2f;
 	//回避の方向を一回入れる
 	bool cOneAvoidance = false;
+	//回避の方向を一度決める
+	bool cOneDirection = false;
 }
 
 /// <summary>
@@ -28,7 +30,8 @@ namespace
 PlayerStateRoll::PlayerStateRoll(std::shared_ptr<CharacterBase> chara) :
 	StateBase(chara),
 	m_avoidanceMove(0.0f),
-	m_rollMove()
+	m_rollMove(),
+	m_rollDirection(VGet(0.0f,0.0f,0.0f))
 {
 	m_equipmentShield = chara->GetShield();
 
@@ -39,6 +42,7 @@ PlayerStateRoll::PlayerStateRoll(std::shared_ptr<CharacterBase> chara) :
 
 	//初期化する
 	cOneAvoidance = false;
+	cOneDirection = false;
 }
 
 /// <summary>
@@ -68,129 +72,175 @@ void PlayerStateRoll::Update()
 	//持っているキャラクターベースクラスをプレイヤークラスにキャストする
 	auto own = std::dynamic_pointer_cast<Player>(m_pChara.lock());
 
-	//一回だけ受け付ける
-	if (!cOneAvoidance)
-	{
-		//コントローラーの左スティックの入力を取得
-		auto input = Input::GetInstance().GetInputStick(false);
-
-		m_leftX = input.first;
-		m_leftZ = input.second;
-
-		cOneAvoidance = true;
-	}
-
 	//アニメーションが終了したら
 	if (own->GetEndAnim())
 	{
 		cOneAvoidance = false;
 
-		//左スティックが入力されていたらStateをWalkにする
-		if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
-			Input::GetInstance().GetInputStick(false).second != 0.0f)
+		//スタミナ切れじゃなかった場合
+		if (!own->GetStaminaBreak())
 		{
+			//左スティックが入力されていたらStateをWalkにする
+			if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
+				Input::GetInstance().GetInputStick(false).second != 0.0f)
+			{
+				//ダッシュボタンが押されたらStateをダッシュにする
+				if (Input::GetInstance().IsPushed("Input_Dash"))
+				{
+					ChangeState(StateKind::Dash);
+					return;
+				}
+				//押されていなかったらwalkにする
+				else
+				{
+					ChangeState(StateKind::Walk);
+					return;
+				}
+
+			}
+
+			//左スティックが入力されてなかったらStateをIdleにする
+			if (Input::GetInstance().GetInputStick(false).first == 0.0f &&
+				Input::GetInstance().GetInputStick(false).second == 0.0f)
+			{
+				ChangeState(StateKind::Idle);
+				return;
+			}
+
+			//ジャンプボタンが押されていたらStateをJumpにする
+			if (Input::GetInstance().IsTriggered("Input_Jump"))
+			{
+				ChangeState(StateKind::Jump);
+				return;
+			}
+
+			//攻撃ボタンが押されていたらStateを攻撃にする
+			if (Input::GetInstance().IsTriggered("Input_Attack"))
+			{
+				ChangeState(StateKind::Attack);
+				return;
+			}
+
+			//強攻撃ボタンが押されていたらStateを強攻撃にする
+			if (Input::GetInstance().GetIsPushedTriggerButton(true) || Input::GetInstance().GetIsPushedTriggerButton(true))
+			{
+				ChangeState(StateKind::StrongAttack);
+				return;
+			}
+
+			//回避ボタンが押されたらStateを回避にする
+			if (Input::GetInstance().IsTriggered("Input_Roll"))
+			{
+				ChangeState(StateKind::Roll);
+				return;
+			}
+
 			//ダッシュボタンが押されたらStateをダッシュにする
 			if (Input::GetInstance().IsPushed("Input_Dash"))
 			{
 				ChangeState(StateKind::Dash);
 				return;
 			}
-			//押されていなかったらwalkにする
-			else
+
+			//アイテムボタンが押されたらアイテムを使用する
+			if (Input::GetInstance().IsTriggered("X"))
+			{
+				ChangeState(StateKind::Item);
+				return;
+			}
+
+			//シールドを装備していた場合ガードボタンを押したらStateをガードにする
+			if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield)
+			{
+				ChangeState(StateKind::Guard);
+				return;
+			}
+		}
+		//スタミナ切れだった場合
+		else
+		{
+			//左スティックが入力されていたらStateをWalkにする
+			if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
+				Input::GetInstance().GetInputStick(false).second != 0.0f)
 			{
 				ChangeState(StateKind::Walk);
 				return;
+
 			}
-			
+
+			//左スティックが入力されてなかったらStateをIdleにする
+			if (Input::GetInstance().GetInputStick(false).first == 0.0f &&
+				Input::GetInstance().GetInputStick(false).second == 0.0f)
+			{
+				ChangeState(StateKind::Idle);
+				return;
+			}
+
+			//アイテムボタンが押されたらアイテムを使用する
+			if (Input::GetInstance().IsTriggered("X"))
+			{
+				ChangeState(StateKind::Item);
+				return;
+			}
+
+			//シールドを装備していた場合ガードボタンを押したらStateをガードにする
+			if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield)
+			{
+				ChangeState(StateKind::Guard);
+				return;
+			}
 		}
 
-		//左スティックが入力されてなかったらStateをIdleにする
-		if (Input::GetInstance().GetInputStick(false).first == 0.0f &&
-			Input::GetInstance().GetInputStick(false).second == 0.0f)
-		{
-			ChangeState(StateKind::Idle);
-			return;
-		}
-
-		//ジャンプボタンが押されていたらStateをJumpにする
-		if (Input::GetInstance().IsTriggered("Input_Jump"))
-		{
-			ChangeState(StateKind::Jump);
-			return;
-		}
-
-		//攻撃ボタンが押されていたらStateを攻撃にする
-		if (Input::GetInstance().IsTriggered("Input_Attack"))
-		{
-			ChangeState(StateKind::Attack);
-			return;
-		}
-
-		//強攻撃ボタンが押されていたらStateを強攻撃にする
-		if (Input::GetInstance().GetIsPushedTriggerButton(true) || Input::GetInstance().GetIsPushedTriggerButton(true))
-		{
-			ChangeState(StateKind::StrongAttack);
-			return;
-		}
-
-		//回避ボタンが押されたらStateを回避にする
-		if (Input::GetInstance().IsTriggered("Input_Roll"))
-		{
-			ChangeState(StateKind::Roll);
-			return;
-		}
-
-		//ダッシュボタンが押されたらStateをダッシュにする
-		if (Input::GetInstance().IsPushed("Input_Dash"))
-		{
-			ChangeState(StateKind::Dash);
-			return;
-		}
-
-		//アイテムボタンが押されたらアイテムを使用する
-		if (Input::GetInstance().IsTriggered("X"))
-		{
-			ChangeState(StateKind::Item);
-			return;
-		}
-
-		//シールドを装備していた場合ガードボタンを押したらStateをガードにする
-		if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield)
-		{
-			ChangeState(StateKind::Guard);
-			return;
-		}
+		
 	}
 
-	//移動方向を決定する
-	auto moveDir = VGet(-m_leftX, 0.0f, m_leftZ);
-	//移動ベクトルの長さを取得する
-	float len = VSize(moveDir);
 
-	//ベクトルの長さを0.0～1.0の割合に変換する
-	float rate = len / cAnalogInputMax;
+	//左スティックの入力があったら
+	if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
+		Input::GetInstance().GetInputStick(false).second != 0.0f)
+	{
+		//一回だけ受け付ける
+		if (!cOneAvoidance)
+		{
+			//コントローラーの左スティックの入力を取得
+			auto input = Input::GetInstance().GetInputStick(false);
 
-	//アナログスティック無効な範囲を除外する(デッドゾーン)
-	rate = (rate - cAnalogRangeMin) / (cAnalogRangeMax - cAnalogRangeMin);
-	rate = min(rate, 1.0f);
-	rate = max(rate, 0.0f);
+			m_leftX = input.first;
+			m_leftZ = input.second;
 
-	//速度が決定できるので移動ベクトルに反映する
-	moveDir = VNorm(moveDir);
-	float speed = own->GetStatus().s_speed * rate;
+			cOneAvoidance = true;
+		}
 
-	//方向ベクトルと移動力をかけて移動ベクトルを生成する
-	auto moveVec = VScale(moveDir, speed);
+		//移動方向を決定する
+		auto moveDir = VGet(-m_leftX, 0.0f, m_leftZ);
+		//移動ベクトルの長さを取得する
+		float len = VSize(moveDir);
 
-	//cameraの角度から
-	//コントローラーによる移動方向を決定する
-	MATRIX mtx = MGetRotY(own->GetCameraAngle() + DX_PI_F);
-	moveVec = VTransform(moveVec, mtx);
+		//ベクトルの長さを0.0～1.0の割合に変換する
+		float rate = len / cAnalogInputMax;
 
-	//ライブラリのベクターに変換する
-	MyLibrary::LibVec3 move = MyLibrary::LibVec3(static_cast<float>(moveVec.x), static_cast<float>(moveVec.y), static_cast<float>(moveVec.z));
-	//キャラクターのアングルを決める
-	own->SetModelAngle(atan2f(-moveVec.z, moveVec.x) - DX_PI_F / 2);
+		//アナログスティック無効な範囲を除外する(デッドゾーン)
+		rate = (rate - cAnalogRangeMin) / (cAnalogRangeMax - cAnalogRangeMin);
+		rate = min(rate, 1.0f);
+		rate = max(rate, 0.0f);
+
+		//速度が決定できるので移動ベクトルに反映する
+		moveDir = VNorm(moveDir);
+		float speed = own->GetStatus().s_speed * rate;
+
+		//方向ベクトルと移動力をかけて移動ベクトルを生成する
+		auto moveVec = VScale(moveDir, speed);
+
+		//cameraの角度から
+		//コントローラーによる移動方向を決定する
+		MATRIX mtx = MGetRotY(own->GetCameraAngle() + DX_PI_F);
+		moveVec = VTransform(moveVec, mtx);
+
+		//ライブラリのベクターに変換する
+		MyLibrary::LibVec3 move = MyLibrary::LibVec3(static_cast<float>(moveVec.x), static_cast<float>(moveVec.y), static_cast<float>(moveVec.z));
+		//キャラクターのアングルを決める
+		own->SetModelAngle(atan2f(-moveVec.z, moveVec.x) - DX_PI_F / 2);
+	}
 
 	//フレームで移動してフレームで回避する
 	if (own->GetFrame() >= 0.0f && own->GetFrame() <= 20.0f)
@@ -210,8 +260,15 @@ void PlayerStateRoll::Update()
 		own->SetAvoidance(false);
 	}
 
+	//一回だけ方向を入れる
+	if (!cOneDirection)
+	{
+		m_rollDirection = VGet(sinf(own->GetAngle()), 0.0f, cosf(own->GetAngle()));
 
-	m_rollMove = VScale(VGet(sinf(own->GetAngle()), 0.0f, cosf(own->GetAngle())), m_avoidanceMove);
+		cOneDirection = true;
+	}
+
+	m_rollMove = VScale(m_rollDirection, m_avoidanceMove);
 
 	//移動速度を決定する
 	MyLibrary::LibVec3 prevVelocity = own->GetRigidbody()->GetVelocity();

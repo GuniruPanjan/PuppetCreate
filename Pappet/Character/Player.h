@@ -148,6 +148,7 @@ public:
 	Status GetStatus() { return m_status; }
 	LevelUpStatus GetLevelStatus() { return m_levelStatus; }
 	MaxStatus GetMaxStatus() { return ms_maxStatus; }
+	bool GetStaminaBreak() { return m_staminaBreak; }
 
 	//アイテムなどのステータス関係
 	int GetLevel() { return m_levelStatus.sl_all; }
@@ -214,7 +215,6 @@ private:
 	bool m_attackStrong;                //強攻撃をしたかの判定
 	bool m_jumpAttack;                  //ジャンプ攻撃をしたかの判定
 	bool m_avoidanceNow;                //フレーム回避中の判断
-	bool m_shieldNow;                   //防御中の判断
 	bool m_deadReset;                   //死亡完了した判定
 
 	//フレーム用変数

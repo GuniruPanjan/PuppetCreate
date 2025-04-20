@@ -139,16 +139,20 @@ void PlayerStateJump::LoopUpdate()
 	//強攻撃ボタンが押されていたらStateを強攻撃にする
 	if (Input::GetInstance().GetIsPushedTriggerButton(true) || Input::GetInstance().GetIsPushedTriggerButton(true))
 	{
-		//ジャンプ終了
-		own->GetRigidbody()->SetJump(false);
-		//フレームも初期化する
-		own->SetStart(0.0f);
-		own->SetReset(0.0f);
-		//アニメーションループをやめる
-		own->SetLoop(false);
+		//スタミナ切れじゃなかった場合
+		if (!own->GetStaminaBreak())
+		{
+			//ジャンプ終了
+			own->GetRigidbody()->SetJump(false);
+			//フレームも初期化する
+			own->SetStart(0.0f);
+			own->SetReset(0.0f);
+			//アニメーションループをやめる
+			own->SetLoop(false);
 
-		ChangeState(StateKind::StrongAttack);
-		return;
+			ChangeState(StateKind::StrongAttack);
+			return;
+		}
 	}
 
 
@@ -184,7 +188,7 @@ void PlayerStateJump::DownUpdate()
 			Input::GetInstance().GetInputStick(false).second != 0.0f)
 		{
 			//ダッシュボタンが長押しされてたらダッシュ
-			if (Input::GetInstance().IsPushed("Input_Dash"))
+			if (Input::GetInstance().IsPushed("Input_Dash") && !own->GetStaminaBreak())
 			{
 				ChangeState(StateKind::Dash);
 				return;
@@ -198,7 +202,7 @@ void PlayerStateJump::DownUpdate()
 		}
 
 		//ジャンプボタンを押したらジャンプへ遷移する
-		if (Input::GetInstance().IsPushed("Input_Jump"))
+		if (Input::GetInstance().IsPushed("Input_Jump") && !own->GetStaminaBreak())
 		{
 			ChangeState(StateKind::Jump);
 			return;
@@ -209,8 +213,12 @@ void PlayerStateJump::DownUpdate()
 		//強攻撃ボタンが押されていたらStateを強攻撃にする
 		if (Input::GetInstance().GetIsPushedTriggerButton(true) || Input::GetInstance().GetIsPushedTriggerButton(true))
 		{
-			ChangeState(StateKind::StrongAttack);
-			return;
+			//スタミナ切れじゃなかった場合
+			if (!own->GetStaminaBreak())
+			{
+				ChangeState(StateKind::StrongAttack);
+				return;
+			}
 		}
 	}
 

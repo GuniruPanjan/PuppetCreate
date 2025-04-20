@@ -68,190 +68,231 @@ void PlayerStateGuard::Update()
 	//持っているキャラクターベースクラスをプレイヤークラスにキャストする(ダウンキャスト)
 	auto own = std::dynamic_pointer_cast<Player>(m_pChara.lock());
 
-	//動いていなかったら
-	if (Input::GetInstance().GetInputStick(false).first == 0.0f &&
-		Input::GetInstance().GetInputStick(false).second == 0.0f)
+	//休息中は動けなくする
+	if (!own->GetRest())
 	{
-		//シールドの構え始めが終わったら
-		if (own->GetEndAnim())
+		//動いていなかったら
+		if (Input::GetInstance().GetInputStick(false).first == 0.0f &&
+			Input::GetInstance().GetInputStick(false).second == 0.0f)
 		{
-			//一回だけ行う
-			if (!cOne)
+			//シールドの構え始めが終わったら
+			if (own->GetEndAnim())
 			{
-				own->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldIdle"), true);
-				own->NotInitAnim(false);
+				//一回だけ行う
+				if (!cOne)
+				{
+					own->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldIdle"), true);
+					own->NotInitAnim(false);
 
-				cOne = true;
+					cOne = true;
+				}
 			}
 		}
-	}
-	
 
-	//盾を構えた状態で左スティックが入力されていたらシールドを構えた状態にする
-	if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
-		Input::GetInstance().GetInputStick(false).second != 0.0f)
-	{
-		own->FrameStateChangeAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
-	}
-	//盾を構えた状態で止まった場合リグによるアニメーション分離をやめる
-	else if(Input::GetInstance().GetInputStick(false).first == 0.0f &&
-		Input::GetInstance().GetInputStick(false).second == 0.0f)
-	{
-		own->FrameEndStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
-	}
 
-	//盾を構えてる状態を外した場合
-	if (!Input::GetInstance().IsPushed("Input_Shield"))
-	{
-		//リグアニメーション分離をやめる
-		own->FrameEndStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
-
-		//左スティックが入力されていたらStateをWalkかDashにする
+		//盾を構えた状態で左スティックが入力されていたらシールドを構えた状態にする
 		if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
 			Input::GetInstance().GetInputStick(false).second != 0.0f)
 		{
-			//ダッシュボタンが長押しされてたらダッシュ
-			if (Input::GetInstance().IsPushed("Input_Dash"))
+			own->FrameStateChangeAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
+		}
+		//盾を構えた状態で止まった場合リグによるアニメーション分離をやめる
+		else if (Input::GetInstance().GetInputStick(false).first == 0.0f &&
+			Input::GetInstance().GetInputStick(false).second == 0.0f)
+		{
+			own->FrameEndStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
+		}
+
+		//盾を構えてる状態を外した場合とスタミナ切れじゃなかった場合
+		if (!Input::GetInstance().IsPushed("Input_Shield") && !own->GetStaminaBreak())
+		{
+			//リグアニメーション分離をやめる
+			own->FrameEndStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
+
+			//左スティックが入力されていたらStateをWalkかDashにする
+			if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
+				Input::GetInstance().GetInputStick(false).second != 0.0f)
 			{
-				ChangeState(StateKind::Dash);
+				//ダッシュボタンが長押しされてたらダッシュ
+				if (Input::GetInstance().IsPushed("Input_Dash"))
+				{
+					ChangeState(StateKind::Dash);
+					return;
+				}
+				//押されていなかったらWalk
+				else
+				{
+					ChangeState(StateKind::Walk);
+					return;
+				}
+			}
+			//アイドル状態にする
+			else
+			{
+				ChangeState(StateKind::Idle);
 				return;
 			}
-			//押されていなかったらWalk
-			else
+
+			//ジャンプボタンが押されていたらStateをJumpにする
+			if (Input::GetInstance().IsTriggered("Input_Jump"))
+			{
+				ChangeState(StateKind::Jump);
+				return;
+			}
+
+			//攻撃ボタンが押されていたらStateを攻撃にする
+			if (Input::GetInstance().IsTriggered("Input_Attack"))
+			{
+				ChangeState(StateKind::Attack);
+				return;
+			}
+
+			//強攻撃ボタンが押されていたらStateを強攻撃にする
+			if (Input::GetInstance().GetIsPushedTriggerButton(true) || Input::GetInstance().GetIsPushedTriggerButton(true))
+			{
+				ChangeState(StateKind::StrongAttack);
+				return;
+			}
+
+			//回避ボタンが押されたらStateを回避にする
+			if (Input::GetInstance().IsTriggered("Input_Roll"))
+			{
+				ChangeState(StateKind::Roll);
+				return;
+			}
+
+			//アイテムボタンが押されたらアイテムを使用する
+			if (Input::GetInstance().IsTriggered("X"))
+			{
+				ChangeState(StateKind::Item);
+				return;
+			}
+		}
+		//スタミナ切れだった場合
+		else if (own->GetStaminaBreak())
+		{
+			//リグアニメーション分離をやめる
+			own->FrameEndStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
+
+			//左スティックが入力されていたらStateをWalkかDashにする
+			if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
+				Input::GetInstance().GetInputStick(false).second != 0.0f)
 			{
 				ChangeState(StateKind::Walk);
 				return;
 			}
-		}
-		//アイドル状態にする
-		else
-		{
-			ChangeState(StateKind::Idle);
-			return;
-		}
+			//アイドル状態にする
+			else
+			{
+				ChangeState(StateKind::Idle);
+				return;
+			}
 
-		//ジャンプボタンが押されていたらStateをJumpにする
-		if (Input::GetInstance().IsTriggered("Input_Jump"))
-		{
-			ChangeState(StateKind::Jump);
-			return;
-		}
-
-		//攻撃ボタンが押されていたらStateを攻撃にする
-		if (Input::GetInstance().IsTriggered("Input_Attack"))
-		{
-			ChangeState(StateKind::Attack);
-			return;
+			//アイテムボタンが押されたらアイテムを使用する
+			if (Input::GetInstance().IsTriggered("X"))
+			{
+				ChangeState(StateKind::Item);
+				return;
+			}
 		}
 
-		//強攻撃ボタンが押されていたらStateを強攻撃にする
-		if (Input::GetInstance().GetIsPushedTriggerButton(true) || Input::GetInstance().GetIsPushedTriggerButton(true))
+		//コントローラーの左スティックの入力を取得
+		auto input = Input::GetInstance().GetInputStick(false);
+		auto dirLog = m_dir;
+		m_dir = GetDirection(input.first, input.second);
+
+		//直前の入力方向と異なるとき
+		if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
+			Input::GetInstance().GetInputStick(false).second != 0.0f)
 		{
-			ChangeState(StateKind::StrongAttack);
-			return;
+
+			//ダッシュボタンが長押しされてたらダッシュ
+			if (Input::GetInstance().IsPushed("Input_Dash"))
+			{
+				m_run = true;
+
+				//スピードを設定する
+				own->SetSpeed(cDashSpeed);
+			}
+			else
+			{
+				m_run = false;
+
+				//スピードを設定する
+				own->SetSpeed(cWalkSpeed);
+			}
+
+			//アニメーションを変更する
+			auto animName = GetGuardAnim(m_dir);
+			own->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", animName), false, cWalkAnimSpeed, m_revese);
+
+
+			//移動方向を決定する
+			auto moveDir = VGet(-input.first, 0.0f, input.second);
+			//移動ベクトルの長さを取得する
+			float len = VSize(moveDir);
+
+			//ベクトルの長さを0.0～1.0の割合に変換する
+			float rate = len / cAnalogInputMax;
+
+			//アナログスティック無効な範囲を除外する(デッドゾーン)
+			rate = (rate - cAnalogRangeMin) / (cAnalogRangeMax - cAnalogRangeMin);
+			rate = min(rate, 1.0f);
+			rate = max(rate, 0.0f);
+
+			//速度が決定できるので移動ベクトルに反映する
+			moveDir = VNorm(moveDir);
+			float speed = own->GetStatus().s_speed * rate;
+
+			//方向ベクトルと移動力をかけて移動ベクトルを生成する
+			auto moveVec = VScale(moveDir, speed);
+
+			//cameraの角度から
+			//コントローラーによる移動方向を決定する
+			MATRIX mtx = MGetRotY(own->GetCameraAngle() + DX_PI_F);
+			moveVec = VTransform(moveVec, mtx);
+
+			//ライブラリのベクターに変換する
+			MyLibrary::LibVec3 move = MyLibrary::LibVec3(static_cast<float>(moveVec.x), static_cast<float>(moveVec.y), static_cast<float>(moveVec.z));
+
+			//走ってるときとターゲットしていない時
+			if (!m_targetState || m_run)
+			{
+				//キャラクターのアングルを決める
+				own->SetModelAngle(atan2f(-moveVec.z, moveVec.x) - DX_PI_F / 2);
+			}
+
+
+			//移動速度を決定する
+			MyLibrary::LibVec3 prevVelocity = own->GetRigidbody()->GetVelocity();
+			MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(move.x, prevVelocity.y, move.z);
+			own->GetRigidbody()->SetVelocity(newVelocity);
+
 		}
-
-		//回避ボタンが押されたらStateを回避にする
-		if (Input::GetInstance().IsTriggered("Input_Roll"))
+		else if (Input::GetInstance().GetInputStick(false).first == 0.0f &&
+			Input::GetInstance().GetInputStick(false).second == 0.0f)
 		{
-			ChangeState(StateKind::Roll);
-			return;
-		}
 
-		//アイテムボタンが押されたらアイテムを使用する
-		if (Input::GetInstance().IsTriggered("X"))
-		{
-			ChangeState(StateKind::Item);
-			return;
-		}
-	}
-
-	//コントローラーの左スティックの入力を取得
-	auto input = Input::GetInstance().GetInputStick(false);
-	auto dirLog = m_dir;
-	m_dir = GetDirection(input.first, input.second);
-
-	//直前の入力方向と異なるとき
-	if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
-		Input::GetInstance().GetInputStick(false).second != 0.0f)
-	{
-
-		//ダッシュボタンが長押しされてたらダッシュ
-		if (Input::GetInstance().IsPushed("Input_Dash"))
-		{
-			m_run = true;
-
-			//スピードを設定する
-			own->SetSpeed(cDashSpeed);
-		}
-		else
-		{
 			m_run = false;
 
-			//スピードを設定する
-			own->SetSpeed(cWalkSpeed);
+			own->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", "ShieldIdle"), true, cWalkAnimSpeed, false);
+
+			//移動速度を0にする
+			MyLibrary::LibVec3 prevVelocity = own->GetRigidbody()->GetVelocity();
+			MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(0.0f, prevVelocity.y, 0.0f);
+			own->GetRigidbody()->SetVelocity(newVelocity);
 		}
-
-		//アニメーションを変更する
-		auto animName = GetGuardAnim(m_dir);
-		own->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", animName), false, cWalkAnimSpeed, m_revese);
-		
-
-		//移動方向を決定する
-		auto moveDir = VGet(-input.first, 0.0f, input.second);
-		//移動ベクトルの長さを取得する
-		float len = VSize(moveDir);
-
-		//ベクトルの長さを0.0～1.0の割合に変換する
-		float rate = len / cAnalogInputMax;
-
-		//アナログスティック無効な範囲を除外する(デッドゾーン)
-		rate = (rate - cAnalogRangeMin) / (cAnalogRangeMax - cAnalogRangeMin);
-		rate = min(rate, 1.0f);
-		rate = max(rate, 0.0f);
-
-		//速度が決定できるので移動ベクトルに反映する
-		moveDir = VNorm(moveDir);
-		float speed = own->GetStatus().s_speed * rate;
-
-		//方向ベクトルと移動力をかけて移動ベクトルを生成する
-		auto moveVec = VScale(moveDir, speed);
-
-		//cameraの角度から
-		//コントローラーによる移動方向を決定する
-		MATRIX mtx = MGetRotY(own->GetCameraAngle() + DX_PI_F);
-		moveVec = VTransform(moveVec, mtx);
-
-		//ライブラリのベクターに変換する
-		MyLibrary::LibVec3 move = MyLibrary::LibVec3(static_cast<float>(moveVec.x), static_cast<float>(moveVec.y), static_cast<float>(moveVec.z));
-
-		//走ってるときとターゲットしていない時
-		if (!m_targetState || m_run)
-		{
-			//キャラクターのアングルを決める
-			own->SetModelAngle(atan2f(-moveVec.z, moveVec.x) - DX_PI_F / 2);
-		}
-
-
-		//移動速度を決定する
-		MyLibrary::LibVec3 prevVelocity = own->GetRigidbody()->GetVelocity();
-		MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(move.x, prevVelocity.y, move.z);
-		own->GetRigidbody()->SetVelocity(newVelocity);
-
 	}
-	else if (Input::GetInstance().GetInputStick(false).first == 0.0f &&
-		Input::GetInstance().GetInputStick(false).second == 0.0f)
+	//休息中だった場合強制的にIdle状態にする
+	else
 	{
+		//リグアニメーション分離をやめる
+		own->FrameEndStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
 
-		m_run = false;
-
-		own->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", "ShieldIdle"), true, cWalkAnimSpeed, false);
-
-		//移動速度を0にする
-		MyLibrary::LibVec3 prevVelocity = own->GetRigidbody()->GetVelocity();
-		MyLibrary::LibVec3 newVelocity = MyLibrary::LibVec3(0.0f, prevVelocity.y, 0.0f);
-		own->GetRigidbody()->SetVelocity(newVelocity);
+		ChangeState(StateKind::Idle);
+		return;
 	}
+
 }
 
 std::string PlayerStateGuard::GetGuardAnim(eDir dir)

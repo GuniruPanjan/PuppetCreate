@@ -77,85 +77,121 @@ void PlayerStateWalk::Update()
 	//ダウンキャスト
 	auto own = std::dynamic_pointer_cast<Player>(m_pChara.lock());
 
-	//左スティックが入力されていなかったらStateをIdleにする
-	//左スティックが入力されてなかったらStateをIdleにする
-	if (Input::GetInstance().GetInputStick(false).first == 0.0f &&
-		Input::GetInstance().GetInputStick(false).second == 0.0f)
+	//休息中かスタミナ切れだった場合は動けなくする
+	if (!own->GetRest() && !own->GetStaminaBreak())
 	{
-		if (m_noInputFrame == 2)
+		//左スティックが入力されていなかったらStateをIdleにする
+		if (Input::GetInstance().GetInputStick(false).first == 0.0f &&
+			Input::GetInstance().GetInputStick(false).second == 0.0f)
 		{
-			ChangeState(StateKind::Idle);
+			if (m_noInputFrame == 2)
+			{
+				ChangeState(StateKind::Idle);
+				return;
+			}
+
+			m_noInputFrame++;
+		}
+		else
+		{
+			m_noInputFrame = 0;
+		}
+
+		//メニューが開かれていなくてジャンプボタンが押されていたらStateをJumpにする
+		if (Input::GetInstance().IsTriggered("Input_Jump") && !own->GetMenu())
+		{
+			ChangeState(StateKind::Jump);
 			return;
 		}
 
-		m_noInputFrame++;
-	}
-	else
-	{
-		m_noInputFrame = 0;
-	}
-
-	//ジャンプボタンが押されていたらStateをJumpにする
-	if (Input::GetInstance().IsTriggered("Input_Jump"))
-	{
-		ChangeState(StateKind::Jump);
-		return;
-	}
-
-	//攻撃ボタンが押されていたらStateを攻撃にする
-	if (Input::GetInstance().IsTriggered("Input_Attack"))
-	{
-		ChangeState(StateKind::Attack);
-		return;
-	}
-
-	//強攻撃ボタンが押されていたらStateを強攻撃にする
-	if (Input::GetInstance().GetIsPushedTriggerButton(true) || Input::GetInstance().GetIsPushedTriggerButton(true))
-	{
-		ChangeState(StateKind::StrongAttack);
-		return;
-	}
-
-
-	if (m_input < 30)
-	{
-		//回避ボタンが押されたらStateを回避にする
-		if (Input::GetInstance().IsReleased("Input_Roll"))
+		//メニューが開かれていなくて攻撃ボタンが押されていたらStateを攻撃にする
+		if (Input::GetInstance().IsTriggered("Input_Attack") && !own->GetMenu())
 		{
-			ChangeState(StateKind::Roll);
+			ChangeState(StateKind::Attack);
+			return;
+		}
+
+		//強攻撃ボタンが押されていたらStateを強攻撃にする
+		if (Input::GetInstance().GetIsPushedTriggerButton(true) || Input::GetInstance().GetIsPushedTriggerButton(true))
+		{
+			//メニューが開かれていなかったら
+			if (!own->GetMenu())
+			{
+				ChangeState(StateKind::StrongAttack);
+				return;
+			}
+
+		}
+
+
+		if (m_input < 30)
+		{
+			//メニューが開かれていなくて回避ボタンが押されたらStateを回避にする
+			if (Input::GetInstance().IsReleased("Input_Roll") && !own->GetMenu())
+			{
+				ChangeState(StateKind::Roll);
+				return;
+			}
+		}
+
+		//メニューが開かれていなくてダッシュボタンが押されたらStateをダッシュにする
+		if (Input::GetInstance().IsPushed("Input_Dash") && !own->GetMenu())
+		{
+			m_input++;
+			if (m_input >= 30)
+			{
+				ChangeState(StateKind::Dash);
+				return;
+			}
+		}
+		else
+		{
+			//初期化する
+			m_input = 0;
+		}
+
+		//メニューが開かれていなくてアイテムボタンが押されたらアイテムを使用する
+		if (Input::GetInstance().IsTriggered("X") && !own->GetMenu())
+		{
+			ChangeState(StateKind::Item);
+			return;
+		}
+
+		//メニューが開かれていなくてシールドを装備していた場合ガードボタンを押したらStateをガードにする
+		if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield && !own->GetMenu())
+		{
+			ChangeState(StateKind::Guard);
 			return;
 		}
 	}
+	//休息中だった場合強制的にIdle状態にする
+	else if(own->GetRest())
+	{
+		ChangeState(StateKind::Idle);
+		return;
+	}
+	//スタミナ切れだった場合
+	else if (own->GetStaminaBreak())
+	{
+		//左スティックが入力されていなかったらStateをIdleにする
+		if (Input::GetInstance().GetInputStick(false).first == 0.0f &&
+			Input::GetInstance().GetInputStick(false).second == 0.0f)
+		{
+			if (m_noInputFrame == 2)
+			{
+				ChangeState(StateKind::Idle);
+				return;
+			}
+
+			m_noInputFrame++;
+		}
+		else
+		{
+			m_noInputFrame = 0;
+		}
+	}
+
 	
-	//ダッシュボタンが押されたらStateをダッシュにする
-	if (Input::GetInstance().IsPushed("Input_Dash"))
-	{
-		m_input++;
-		if (m_input >= 30)
-		{
-			ChangeState(StateKind::Dash);
-			return;
-		}
-	}
-	else
-	{
-		//初期化する
-		m_input = 0;
-	}
-
-	//アイテムボタンが押されたらアイテムを使用する
-	if (Input::GetInstance().IsTriggered("X"))
-	{
-		ChangeState(StateKind::Item);
-		return;
-	}
-
-	//シールドを装備していた場合ガードボタンを押したらStateをガードにする
-	if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield)
-	{
-		ChangeState(StateKind::Guard);
-		return;
-	}
 
 	//左スティックが入力されていたら
 	if (m_noInputFrame == 0)

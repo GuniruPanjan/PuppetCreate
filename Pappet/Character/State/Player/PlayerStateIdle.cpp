@@ -51,63 +51,97 @@ void PlayerStateIdle::Update()
 	auto prevVel = own->GetRigidbody()->GetVelocity();
 	own->GetRigidbody()->SetVelocity(MyLibrary::LibVec3(0.0f, prevVel.y, 0.0f));
 
-	//左スティックが入力されていたらStateをWalkかDashにする
-	if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
-		Input::GetInstance().GetInputStick(false).second != 0.0f)
+	//休息中とスタミナがない時は動けなくする
+	if (!own->GetRest() && !own->GetStaminaBreak())
 	{
-		//ダッシュボタンが長押しされてたらダッシュ
-		if (Input::GetInstance().IsPushed("Input_Dash"))
+		//左スティックが入力されていたらStateをWalkかDashにする
+		if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
+			Input::GetInstance().GetInputStick(false).second != 0.0f)
 		{
-			ChangeState(StateKind::Dash);
+			//メニューが開かれていなくてダッシュボタンが長押しされてたらダッシュ
+			if (Input::GetInstance().IsPushed("Input_Dash") && !own->GetMenu())
+			{
+				ChangeState(StateKind::Dash);
+				return;
+			}
+			//押されていなかったらWalk
+			else
+			{
+				ChangeState(StateKind::Walk);
+				return;
+			}
+		}
+
+		//メニューが開かていなくてジャンプボタンが押されていたらStateをJumpにする
+		if (Input::GetInstance().IsTriggered("Input_Jump") && !own->GetMenu())
+		{
+			ChangeState(StateKind::Jump);
 			return;
 		}
-		//押されていなかったらWalk
-		else
+
+		//メニューが開かていなくて攻撃ボタンが押されていたらStateを攻撃にする
+		if (Input::GetInstance().IsTriggered("Input_Attack") && !own->GetMenu())
+		{
+			ChangeState(StateKind::Attack);
+			return;
+		}
+
+		//強攻撃ボタンが押されていたらStateを強攻撃にする
+		if (Input::GetInstance().GetIsPushedTriggerButton(true) || Input::GetInstance().GetIsPushedTriggerButton(true))
+		{
+			//メニューが開かていなかったら
+			if (!own->GetMenu())
+			{
+				ChangeState(StateKind::StrongAttack);
+				return;
+			}
+
+		}
+
+		//メニューが開かれていなく回避ボタンが押されたらStateを回避にする
+		if (Input::GetInstance().IsReleased("Input_Roll") && !own->GetMenu())
+		{
+			ChangeState(StateKind::Roll);
+			return;
+		}
+
+		//メニューが開かれていなくてアイテムボタンが押されたらアイテムを使用する
+		if (Input::GetInstance().IsTriggered("X") && !own->GetMenu())
+		{
+			ChangeState(StateKind::Item);
+			return;
+		}
+
+		//メニューが開かれていなくてシールドを装備していた場合ガードボタンを押したらStateをガードにする
+		if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield && !own->GetMenu())
+		{
+			ChangeState(StateKind::Guard);
+			return;
+		}
+	}
+	//スタミナ切れの時は特定のアニメーションだけできる
+	else if (!own->GetRest() && own->GetStaminaBreak())
+	{
+		//左スティックが入力されていたらStateをWalkかにする
+		if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
+			Input::GetInstance().GetInputStick(false).second != 0.0f)
 		{
 			ChangeState(StateKind::Walk);
 			return;
 		}
-	}
 
-	//ジャンプボタンが押されていたらStateをJumpにする
-	if (Input::GetInstance().IsTriggered("Input_Jump"))
-	{
-		ChangeState(StateKind::Jump);
-		return;
-	}
+		//メニューが開かれていなくてアイテムボタンが押されたらアイテムを使用する
+		if (Input::GetInstance().IsTriggered("X") && !own->GetMenu())
+		{
+			ChangeState(StateKind::Item);
+			return;
+		}
 
-	//攻撃ボタンが押されていたらStateを攻撃にする
-	if (Input::GetInstance().IsTriggered("Input_Attack"))
-	{
-		ChangeState(StateKind::Attack);
-		return;
-	}
-
-	//強攻撃ボタンが押されていたらStateを強攻撃にする
-	if (Input::GetInstance().GetIsPushedTriggerButton(true) || Input::GetInstance().GetIsPushedTriggerButton(true))
-	{
-		ChangeState(StateKind::StrongAttack);
-		return;
-	}
-
-	//回避ボタンが押されたらStateを回避にする
-	if (Input::GetInstance().IsReleased("Input_Roll"))
-	{
-		ChangeState(StateKind::Roll);
-		return;
-	}
-
-	//アイテムボタンが押されたらアイテムを使用する
-	if (Input::GetInstance().IsTriggered("X"))
-	{
-		ChangeState(StateKind::Item);
-		return;
-	}
-
-	//シールドを装備していた場合ガードボタンを押したらStateをガードにする
-	if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield)
-	{
-		ChangeState(StateKind::Guard);
-		return;
+		//メニューが開かれていなくてシールドを装備していた場合ガードボタンを押したらStateをガードにする
+		if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield && !own->GetMenu())
+		{
+			ChangeState(StateKind::Guard);
+			return;
+		}
 	}
 }

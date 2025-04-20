@@ -17,7 +17,11 @@ public:
 	virtual void Update() override;
 
 private:
+	//回避速度
 	float m_avoidanceMove;
+	//回避で移動するベクター
 	VECTOR m_rollMove;
+	//回避の方向
+	VECTOR m_rollDirection;
 };
 

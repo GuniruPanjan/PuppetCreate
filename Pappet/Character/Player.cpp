@@ -86,9 +86,9 @@ namespace
 
 	int cAnimIdx;
 
-	bool cOne = false;
-	bool cTwo = false;
 	bool cAngle = false;
+	bool cJumpOne = false;
+	bool cRollOne = false;
 
 	bool cHit = false;         //攻撃を体に受けるときの判定
 	bool cShieldHit = false;   //攻撃を盾に受けるときの判定
@@ -128,7 +128,6 @@ Player::Player() :
 	m_moveAnimShieldFrameHandIndex(0),
 	m_lockAngle(0.0f),
 	m_avoidanceNow(false),
-	m_shieldNow(false),
 	m_shieldOne(false),
 	m_deadReset(false),
 	m_message(false),
@@ -487,7 +486,7 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	if (!m_anim.s_isDead)
 	{
 		//盾の判定
-		if (m_shieldNow)
+		if (m_pState->GetState() == StateBase::StateKind::Guard)
 		{
 			if (!m_shieldOne)
 			{
@@ -605,8 +604,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			}
 		}
 
-		AllAnimation();
-
 		//防具をしていない時の処理
 		if (armor.GetBody())
 		{
@@ -619,7 +616,7 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		}
 		
 	}
-
+	//死亡してない時のアニメーション更新
 	if (!m_anim.s_isDead)
 	{
 		//アニメーションの更新
@@ -670,14 +667,23 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	}
 
 	//スタミナ回復
-	if (m_status.s_stamina < ms_maxStatus.sm_stamina && !m_animChange.sa_avoidance && !m_anim.s_attack && !m_animChange.sa_dashMove && !m_animChange.sa_strengthAttack && !m_shieldNow)
+	if (m_pState->GetState() != StateBase::StateKind::Attack && m_pState->GetState() != StateBase::StateKind::Damage && m_pState->GetState() != StateBase::StateKind::Dash &&
+		m_pState->GetState() != StateBase::StateKind::Guard && m_pState->GetState() != StateBase::StateKind::Jump && m_pState->GetState() != StateBase::StateKind::Roll &&
+		m_pState->GetState() != StateBase::StateKind::StrongAttack && m_pState->GetState() != StateBase::StateKind::Damage && m_pState->GetState() != StateBase::StateKind::Item)
 	{
-		m_status.s_stamina += 0.5f;
+		//スタミナの最大値未満だと回復する
+		if (m_status.s_stamina < ms_maxStatus.sm_stamina)
+		{
+			m_status.s_stamina += 0.5f;
+		}
 	}
-	//盾を構えた状態だと回復が遅くなる
-	else if (m_shieldNow && m_status.s_stamina < ms_maxStatus.sm_stamina)
+	//盾を構えた状態とアイテム使用状態は回復が遅くなる
+	else if (m_pState->GetState() == StateBase::StateKind::Guard || m_pState->GetState() == StateBase::StateKind::Item)
 	{
-		m_status.s_stamina += 0.2f;
+		if (m_status.s_stamina < ms_maxStatus.sm_stamina)
+		{
+			m_status.s_stamina += 0.2f;
+		}
 	}
 
 	//スタミナ切れ
@@ -752,9 +758,39 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	}
 
 	//走った時のスタミナ消費
-	if (m_animChange.sa_dashMove)
+	if (m_pState->GetState() == StateBase::StateKind::Dash)
 	{
 		m_status.s_stamina -= 0.1f;
+	}
+	//ジャンプした時のスタミナ消費
+	if (rigidbody->GetJump())
+	{
+		//一回だけ実行
+		if (!cJumpOne)
+		{
+			m_status.s_stamina -= 20.0f;
+
+			cJumpOne = true;
+		}
+	}
+	else
+	{
+		cJumpOne = false;
+	}
+	//回避によるスタミナ消費
+	if (m_pState->GetState() == StateBase::StateKind::Roll)
+	{
+		//一回だけ実行
+		if (!cRollOne)
+		{
+			m_status.s_stamina -= 20.0f;
+
+			cRollOne = true;
+		}
+	}
+	else
+	{
+		cRollOne = false;
 	}
 
 	//攻撃力格納
@@ -826,11 +862,11 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	//ジャンプ攻撃をした判定
 	if (m_jumpAttack)
 	{
-		m_pLigAttack->SetAttack((m_attackDamage) * 1.5);
+		m_pLigAttack->SetAttack((m_attackDamage) * 1.8);
 		//攻撃判定発生フレーム
 		if (m_nowFrame == 15.0f)
 		{
-			m_status.s_stamina -= 35.0f;
+			m_status.s_stamina -= 50.0f;
 			m_pLigAttack->Init(m_pPhysics);
 		}
 		else if (m_nowFrame >= 20.0f)
@@ -1017,51 +1053,6 @@ void Player::Action(VECTOR restpos, Tool& tool, Shield& shield, SEManager& se, b
 			m_lockonTarget = false;
 			cRstickButton = false;
 		}
-	}
-
-	//行動中は防御できない
-	if (!m_anim.s_attack && !m_animChange.sa_avoidance && !m_animChange.sa_recovery && !shield.GetFist() && !m_staminaBreak)
-	{
-		//Lボタンで防御
-		if (m_xpad.Buttons[8] == 1)
-		{
-			m_shieldNow = true;
-
-			if (!m_animChange.sa_shieldIdle)
-			{
-				m_animChange.sa_enterShield = true;
-			}
-			
-			//盾の構えが終了したとき
-			if (m_animChange.sa_enterShield && m_isAnimationFinish)
-			{
-				m_animChange.sa_enterShield = false;
-				m_animChange.sa_shieldIdle = true;
-			}
-		}
-		else
-		{
-			//Lボタンを離した瞬間
-			if (m_animChange.sa_enterShield || m_animChange.sa_shieldIdle)
-			{
-				m_animChange.sa_enterShield = false;
-				m_animChange.sa_shieldIdle = false;
-			}
-
-			m_shieldNow = false;
-
-			FrameEndAnim(cAnimIdx, cOne, cTwo, m_moveAnimShieldFrameIndex);
-			
-		}
-	}
-	else
-	{
-		m_animChange.sa_enterShield = false;
-		m_animChange.sa_shieldIdle = false;
-		m_shieldNow = false;
-
-		FrameEndAnim(cAnimIdx, cOne, cTwo, m_moveAnimShieldFrameIndex);
-
 	}
 
 	//回復

@@ -59,82 +59,126 @@ void PlayerStateTaking::Update()
 	//アニメーションが終了したら
 	if (m_animEnd)
 	{
-		//左スティックが入力されていたらStateをWalkにする
-		if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
-			Input::GetInstance().GetInputStick(false).second != 0.0f)
+		//スタミナ切れじゃなかった場合
+		if (!own->GetStaminaBreak())
 		{
-			//ダッシュボタンが押されたらStateをダッシュにする
-			if (Input::GetInstance().IsPushed("Input_Dash"))
+			//左スティックが入力されていたらStateをWalkにする
+			if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
+				Input::GetInstance().GetInputStick(false).second != 0.0f)
 			{
-				ChangeState(StateKind::Dash);
+				//ダッシュボタンが押されたらStateをダッシュにする
+				if (Input::GetInstance().IsPushed("Input_Dash"))
+				{
+					ChangeState(StateKind::Dash);
+					m_animEnd = false;
+					return;
+				}
+				//押されていなかったらwalkにする
+				else
+				{
+					ChangeState(StateKind::Walk);
+					m_animEnd = false;
+					return;
+				}
+
+			}
+
+			//左スティックが入力されてなかったらStateをIdleにする
+			if (Input::GetInstance().GetInputStick(false).first == 0.0f ||
+				Input::GetInstance().GetInputStick(false).second == 0.0f)
+			{
+				ChangeState(StateKind::Idle);
 				m_animEnd = false;
 				return;
 			}
-			//押されていなかったらwalkにする
-			else
+
+			//ジャンプボタンが押されていたらStateをJumpにする
+			if (Input::GetInstance().IsTriggered("Input_Jump"))
+			{
+				ChangeState(StateKind::Jump);
+				m_animEnd = false;
+				return;
+			}
+
+			//攻撃ボタンが押されていたらStateを攻撃にする
+			if (Input::GetInstance().IsTriggered("Input_Attack"))
+			{
+				ChangeState(StateKind::Attack);
+				m_animEnd = false;
+				return;
+			}
+
+			//強攻撃ボタンが押されていたらStateを強攻撃にする
+			if (Input::GetInstance().GetIsPushedTriggerButton(true) || Input::GetInstance().GetIsPushedTriggerButton(true))
+			{
+				ChangeState(StateKind::StrongAttack);
+				m_animEnd = false;
+				return;
+			}
+
+			//回避ボタンが押されたらStateを回避にする
+			if (Input::GetInstance().IsTriggered("Input_Roll"))
+			{
+				ChangeState(StateKind::Roll);
+				m_animEnd = false;
+				return;
+			}
+
+			//アイテムボタンが押されたらアイテムを使用する
+			if (Input::GetInstance().IsTriggered("X"))
+			{
+				ChangeState(StateKind::Item);
+				m_animEnd = false;
+				return;
+			}
+
+			//シールドを装備していた場合ガードボタンを押したらStateをガードにする
+			if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield)
+			{
+				ChangeState(StateKind::Guard);
+				m_animEnd = false;
+				return;
+			}
+		}
+		//スタミナ切れだった場合
+		else
+		{
+			//左スティックが入力されていたらStateをWalkにする
+			if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
+				Input::GetInstance().GetInputStick(false).second != 0.0f)
 			{
 				ChangeState(StateKind::Walk);
 				m_animEnd = false;
 				return;
+
 			}
 
+			//左スティックが入力されてなかったらStateをIdleにする
+			if (Input::GetInstance().GetInputStick(false).first == 0.0f ||
+				Input::GetInstance().GetInputStick(false).second == 0.0f)
+			{
+				ChangeState(StateKind::Idle);
+				m_animEnd = false;
+				return;
+			}
+
+			//アイテムボタンが押されたらアイテムを使用する
+			if (Input::GetInstance().IsTriggered("X"))
+			{
+				ChangeState(StateKind::Item);
+				m_animEnd = false;
+				return;
+			}
+
+			//シールドを装備していた場合ガードボタンを押したらStateをガードにする
+			if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield)
+			{
+				ChangeState(StateKind::Guard);
+				m_animEnd = false;
+				return;
+			}
 		}
 
-		//左スティックが入力されてなかったらStateをIdleにする
-		if (Input::GetInstance().GetInputStick(false).first == 0.0f ||
-			Input::GetInstance().GetInputStick(false).second == 0.0f)
-		{
-			ChangeState(StateKind::Idle);
-			m_animEnd = false;
-			return;
-		}
-
-		//ジャンプボタンが押されていたらStateをJumpにする
-		if (Input::GetInstance().IsTriggered("Input_Jump"))
-		{
-			ChangeState(StateKind::Jump);
-			m_animEnd = false;
-			return;
-		}
-
-		//攻撃ボタンが押されていたらStateを攻撃にする
-		if (Input::GetInstance().IsTriggered("Input_Attack"))
-		{
-			ChangeState(StateKind::Attack);
-			m_animEnd = false;
-			return;
-		}
-
-		//強攻撃ボタンが押されていたらStateを強攻撃にする
-		if (Input::GetInstance().GetIsPushedTriggerButton(true) || Input::GetInstance().GetIsPushedTriggerButton(true))
-		{
-			ChangeState(StateKind::StrongAttack);
-			m_animEnd = false;
-			return;
-		}
-
-		//回避ボタンが押されたらStateを回避にする
-		if (Input::GetInstance().IsTriggered("Input_Roll"))
-		{
-			ChangeState(StateKind::Roll);
-			m_animEnd = false;
-			return;
-		}
-
-		//アイテムボタンが押されたらアイテムを使用する
-		if (Input::GetInstance().IsTriggered("X"))
-		{
-			ChangeState(StateKind::Item);
-			m_animEnd = false;
-			return;
-		}
-
-		//シールドを装備していた場合ガードボタンを押したらStateをガードにする
-		if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield)
-		{
-			ChangeState(StateKind::Guard);
-			m_animEnd = false;
-			return;
-		}
+		
 	}
 }

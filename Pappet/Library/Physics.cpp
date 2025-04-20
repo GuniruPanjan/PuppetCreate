@@ -1210,6 +1210,9 @@ void MyLibrary::Physics::FixJumpNextPosition(const Rigidbody& primaryRigid, Rigi
 	auto secondaryPos1 = MyLibrary::LibVec3(secondaryCenter.x, secondaryCenter.y + secondary->m_len, secondaryCenter.z);
 	auto secondaryTopVec = secondaryPos1 - secondaryCenter;
 
+	//プレイヤーの現在の速度を取得
+	auto velocity = secondaryRigid.GetVelocity();
+
 	// それぞれのカプセルの線分上の最近接点を計算
 	LibVec3 nearPosOnALine, nearPosOnBLine;
 
@@ -1228,27 +1231,53 @@ void MyLibrary::Physics::FixJumpNextPosition(const Rigidbody& primaryRigid, Rigi
 	nearPosOnALine = primaryTopVec * s + primaryCenter;
 	nearPosOnBLine = secondaryTopVec * t + secondaryCenter;
 
-	// カプセルAのカプセルBとの最近接点からカプセルBのカプセルAとの最近接点に向かうベクトルを取得
-	auto nearPosToNearPos = nearPosOnBLine - nearPosOnALine;
+	//ジャンプ上昇中だった場合
+	if (velocity.y >= 0.0f)
+	{
+		// カプセルAのカプセルBとの最近接点からカプセルBのカプセルAとの最近接点に向かうベクトルを取得
+		auto nearPosToNearPos = nearPosOnBLine - nearPosOnALine;
 
-	// 正規化して方向ベクトルにする
-	nearPosToNearPos = nearPosToNearPos.Normalize();
+		// 正規化して方向ベクトルにする
+		nearPosToNearPos = nearPosToNearPos.Normalize();
 
-	// スライド方向を計算（Y成分を無視して水平方向にスライド）
-	LibVec3 slideDirection = nearPosToNearPos;
-	slideDirection.y = 0.0f; // 水平方向のみスライド
+		// スライド方向を計算（Y成分を無視して水平方向にスライド）
+		LibVec3 slideDirection = nearPosToNearPos;
+		slideDirection.y = 0.0f; // 水平方向のみスライド
 
-	//スライド距離を調整する
-	float slideDistance = 3.0f;
+		//スライド距離を調整する
+		float slideDistance = 3.0f;
 
-	// スライド移動後の位置を計算
-	auto fixedPos = secondaryCenter + slideDirection * slideDistance;
+		// スライド移動後の位置を計算
+		auto fixedPos = secondaryCenter + slideDirection * slideDistance;
 
-	// Y座標はジャンプ中の挙動を維持
-	fixedPos.y = secondaryRigid.GetNextPos().y;
+		// Y座標はジャンプ中の挙動を維持
+		fixedPos.y = secondaryRigid.GetNextPos().y;
 
-	// 修正座標を設定
-	secondaryRigid.SetNextPos(fixedPos);
+		// 修正座標を設定
+		secondaryRigid.SetNextPos(fixedPos);
+	}
+	//下降中だった場合
+	else
+	{
+		// エネミーの位置からプレイヤーをスライドさせる方向を計算
+		auto slideDirection = (primaryCenter - secondaryCenter).Normalize();
+		slideDirection.y = 0.0f; // 水平方向のみスライド
+
+		// スライド方向を設定
+		LibVec3 slideVector = slideDirection;
+
+		// 新しい位置を計算
+		auto newPlayerPos = secondaryCenter + slideVector;
+
+		// Y座標はジャンプ中の挙動を維持
+		newPlayerPos.y = primaryCenter.y;
+
+		// プレイヤーの次の位置を更新
+		secondaryRigid.SetNextPos(newPlayerPos);
+
+		// ジャンプ中の速度を維持
+		secondaryRigid.SetVelocity(velocity);
+	}
 }
 
 /// <summary>
