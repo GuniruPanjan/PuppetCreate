@@ -28,7 +28,7 @@ void Armor::Init()
 		m_common.sa_defense = 30.0f;
 
 		//ƒ‚ƒfƒ‹ƒpƒX‚ğ‘‚­
-		m_path = "Data/Armor/CommonArmor.mv1";
+		m_path = "Data/Armor/CommonArmorModel.mv1";
 	}
 }
 
