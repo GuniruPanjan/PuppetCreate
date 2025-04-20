@@ -411,7 +411,7 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	if (weapon.GetFist())
 	{
 		m_attackLig1 = MV1SearchFrame(m_modelHandle, "mixamorig:RightForeArm");
-		m_attackLig2 = MV1SearchFrame(m_modelHandle, "mixamorig:RightHandThumb4_end_end_end");
+		m_attackLig2 = MV1SearchFrame(m_modelHandle, "mixamorig:RightHandThumb4");
 
 		m_attackLigPos1 = MV1GetFramePosition(m_modelHandle, m_attackLig1);
 		m_attackLigPos2 = MV1GetFramePosition(m_modelHandle, m_attackLig2);
@@ -1641,16 +1641,13 @@ void Player::ArmorChange(int one, std::string path)
 		//メモリ解放
 		MV1DeleteModel(m_modelHandle);
 		//モデル読み込み
-		m_modelHandle = MV1LoadModel(path.c_str());
+		m_modelHandle = handle.GetModelHandle(path);
 
 		//モデルのサイズ設定
 		MV1SetScale(m_modelHandle, VGet(cModelSizeScale, cModelSizeScale, cModelSizeScale));
 
 		//待機アニメーション設定
-		m_nowAnimIdx = m_animIdx["Idle"];
-
-		ChangeAnim(m_nowAnimIdx, m_animOne[20], m_animOne);
-
+		m_pState->ChangeState(StateBase::StateKind::Idle);
 
 		m_armorOne[one] = true;
 
