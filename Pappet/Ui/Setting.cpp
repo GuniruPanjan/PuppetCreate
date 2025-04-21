@@ -384,8 +384,8 @@ void Setting::Init()
 	m_bgmColor = 0xffffff;
 	m_returnColor = 0xffffff;
 
-	m_equipment = MyLoadGraph("Data/UI/装備画面UI.png", 1, 1);
-	m_itemBox = MyLoadGraph("Data/UI/アイテム画面UI.png", 1, 1);
+	m_equipment = MyLoadGraph("Data/UI/新装備画面UI.png", 1, 1);
+	//m_itemBox = MyLoadGraph("Data/UI/アイテム画面UI.png", 1, 1);
 	m_selectEquipment = MyLoadGraph("Data/UI/装備選択画面UI.png", 1, 1);
 	m_rest = MyLoadGraph("Data/UI/四角の白い長方形の囲い.png", 1, 1);
 	m_selectUi = MyLoadGraph("Data/UI/選択UI.png", 1, 1);
@@ -697,28 +697,28 @@ void Setting::MenuUpdate(Player& player, SEManager& se)
 /// <summary>
 /// ステータス画面を変える更新処理
 /// </summary>
-void Setting::MenuChange()
-{
-	//パッド入力所得
-	GetJoypadXInputState(DX_INPUT_KEY_PAD1, &m_xpad);
-
-	//Rボタンが押されたら
-	if (m_xpad.Buttons[9] == 1)
-	{
-		//装備画面から戻る
-		m_equipmentMenu = false;
-		//アイテム画面に移る
-		m_itemMenu = true;
-	}
-	//Lボタンが押されたら
-	else if (m_xpad.Buttons[8] == 1)
-	{
-		//アイテム画面から戻る
-		m_itemMenu = false;
-		//装備画面に移る
-		m_equipmentMenu = true;
-	}
-}
+//void Setting::MenuChange()
+//{
+//	//パッド入力所得
+//	GetJoypadXInputState(DX_INPUT_KEY_PAD1, &m_xpad);
+//
+//	//Rボタンが押されたら
+//	if (m_xpad.Buttons[9] == 1)
+//	{
+//		//装備画面から戻る
+//		m_equipmentMenu = false;
+//		//アイテム画面に移る
+//		m_itemMenu = true;
+//	}
+//	//Lボタンが押されたら
+//	else if (m_xpad.Buttons[8] == 1)
+//	{
+//		//アイテム画面から戻る
+//		m_itemMenu = false;
+//		//装備画面に移る
+//		m_equipmentMenu = true;
+//	}
+//}
 
 /// <summary>
 /// 装備画面更新処理
@@ -1499,37 +1499,37 @@ void Setting::MenuBackDraw()
 /// <summary>
 /// メニューを変更する所の描画処理
 /// </summary>
-void Setting::MenuChangeDraw()
-{
-	// アルファ値をいじる
-	if (!m_blend)
-	{
-		if (cBlenda < cBlendAlphaMax)
-		{
-			cBlenda++;
-		}
-		else
-		{
-			m_blend = true;
-		}
-	}
-	else if (m_blend)
-	{
-		if (cBlenda > cBlendAlphaMin)
-		{
-			cBlenda--;
-		}
-		else
-		{
-			m_blend = false;
-		}
-	}
-
-
-	SetDrawBlendMode(DX_BLENDMODE_ALPHA, cBlenda);
-	DrawBox(m_change.oneX, m_change.oneY, m_change.secondX, m_change.secondY, cMenuBoxColor, true);
-	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-}
+//void Setting::MenuChangeDraw()
+//{
+//	// アルファ値をいじる
+//	if (!m_blend)
+//	{
+//		if (cBlenda < cBlendAlphaMax)
+//		{
+//			cBlenda++;
+//		}
+//		else
+//		{
+//			m_blend = true;
+//		}
+//	}
+//	else if (m_blend)
+//	{
+//		if (cBlenda > cBlendAlphaMin)
+//		{
+//			cBlenda--;
+//		}
+//		else
+//		{
+//			m_blend = false;
+//		}
+//	}
+//
+//
+//	SetDrawBlendMode(DX_BLENDMODE_ALPHA, cBlenda);
+//	DrawBox(m_change.oneX, m_change.oneY, m_change.secondX, m_change.secondY, cMenuBoxColor, true);
+//	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+//}
 
 /// <summary>
 /// 装備画面
@@ -1776,10 +1776,10 @@ void Setting::LevelUpDraw(Player& player, CoreManager& core)
 /// <summary>
 /// アイテム画面
 /// </summary>
-void Setting::ItemBoxDraw()
-{
-	DrawGraph(0, 0, m_itemBox, true);
-}
+//void Setting::ItemBoxDraw()
+//{
+//	DrawGraph(0, 0, m_itemBox, true);
+//}
 
 /// <summary>
 /// 装備選択画面
@@ -2050,7 +2050,7 @@ void Setting::End()
 	DeleteGraph(m_back);
 	DeleteGraph(m_white);
 	DeleteGraph(m_equipment);
-	DeleteGraph(m_itemBox);
+	//DeleteGraph(m_itemBox);
 	DeleteGraph(m_selectEquipment);
 	DeleteGraph(m_rest);
 	DeleteGraph(m_selectUi);

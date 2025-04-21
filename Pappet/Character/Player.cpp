@@ -488,7 +488,7 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	if (!m_anim.s_isDead)
 	{
 		//盾の判定
-		if (m_pState->GetState() == StateBase::StateKind::Guard)
+		if (m_pState->GetState() == StateBase::StateKind::Guard || m_animChange.sa_imapact)
 		{
 			if (!m_shieldOne)
 			{
@@ -520,6 +520,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		//ダメージを食らう処理
 		if (cHit && !m_animChange.sa_imapact)
 		{
+			//ヒットアニメーションにする
+			m_anim.s_hit = true;
+
 			//ダメージを受けるアニメーション
 			m_pState->ChangeState(StateBase::StateKind::Damage);
 
@@ -540,6 +543,12 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		//盾受けしたときの処理
 		else if (!cShieldHit && m_animChange.sa_imapact)
 		{
+			//盾受けアニメーションにする
+			m_anim.s_hit = false;
+
+			//ダメージを受けるアニメーション
+			m_pState->ChangeState(StateBase::StateKind::Damage);
+
 			for (auto damage : enemy.GetEnemyDamage())
 			{
 				if (damage > 0 && shield.GetUgly())
@@ -1554,7 +1563,9 @@ void Player::Draw(Armor& armor, int font)
 	//描画
 	MV1DrawModel(m_modelHandle);
 
-	DrawFormatString(200, 300, 0xffffff, "frame : %f", m_nowFrame);
+	DrawFormatString(200, 300, 0xffffff, "velocityX : %f", rigidbody->GetVelocity().x);
+	DrawFormatString(200, 400, 0xffffff, "velocityY : %f", rigidbody->GetVelocity().y);
+	DrawFormatString(200, 500, 0xffffff, "velocityZ : %f", rigidbody->GetVelocity().z);
 
 }
 

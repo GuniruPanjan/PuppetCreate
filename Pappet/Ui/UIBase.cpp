@@ -11,7 +11,7 @@ UIBase::UIBase() :
 	m_eqSword(0),
 	m_eqShield(0),
 	m_equipment(0),
-	m_itemBox(0),
+	//m_itemBox(0),
 	m_selectEquipment(0),
 	m_blackSword(0),
 	m_fist(0),
@@ -65,7 +65,7 @@ UIBase::~UIBase()
 	DeleteGraph(m_eqSword);
 	DeleteGraph(m_eqShield);
 	DeleteGraph(m_equipment);
-	DeleteGraph(m_itemBox);
+	//DeleteGraph(m_itemBox);
 	DeleteGraph(m_selectEquipment);
 	DeleteGraph(m_blackSword);
 	DeleteGraph(m_fist);

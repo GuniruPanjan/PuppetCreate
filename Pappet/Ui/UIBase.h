@@ -39,7 +39,7 @@ protected:
 
 	//UI‰æ–Ê
 	int m_equipment;      //‘•”õ‰æ–ÊŠi”[•Ï”
-	int m_itemBox;        //ƒAƒCƒeƒ€‰æ–ÊŠi”[•Ï”
+	//int m_itemBox;        //ƒAƒCƒeƒ€‰æ–ÊŠi”[•Ï”
 	int m_selectEquipment;//‘•”õ‘I‘ğ‰æ–ÊŠi”[•Ï”
 	int m_rest;           //‹x‘§‘I‘ğ‰æ–ÊŠi”[•Ï”
 	int m_levelUp;        //ƒŒƒxƒ‹ƒAƒbƒv‰æ–ÊŠi”[•Ï”

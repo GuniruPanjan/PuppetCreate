@@ -76,7 +76,7 @@ public:
 	/// <summary>
 	/// ステータス画面を変える更新処理
 	/// </summary>
-	void MenuChange();
+	//void MenuChange();
 
 	/// <summary>
 	/// 装備の更新処理
@@ -130,7 +130,7 @@ public:
 	/// <summary>
 	/// ステータス画面を変える描画処理
 	/// </summary>
-	void MenuChangeDraw();
+	//void MenuChangeDraw();
 
 	/// <summary>
 	/// 装備の描画処理
@@ -150,7 +150,7 @@ public:
 	/// <summary>
 	/// アイテムボックス描画処理
 	/// </summary>
-	void ItemBoxDraw();
+	//void ItemBoxDraw();
 
 	/// <summary>
 	/// 装備選択画面描画処理

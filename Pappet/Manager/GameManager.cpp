@@ -410,14 +410,14 @@ void GameManager::Update()
 			}
 
 			//装備画面とアイテム画面の変更更新
-			if (m_pSetting->GetEquipment() || m_pSetting->GetItem())
-			{
-				if (!m_pSetting->GetDecision())
-				{
-					m_pSetting->MenuChange();
-				}
+			//if (m_pSetting->GetEquipment() || m_pSetting->GetItem())
+			//{
+			//	if (!m_pSetting->GetDecision())
+			//	{
+			//		m_pSetting->MenuChange();
+			//	}
 
-			}
+			//}
 
 			//死亡した場合
 			if (m_pUi->GetReset() && m_pFade->GetOut())
@@ -652,10 +652,10 @@ void GameManager::Draw()
 			m_pUi->EquipmentDraw(*m_pWeapon, *m_pShield, *m_pArmor);
 		}
 		//アイテム画面
-		else if (m_pSetting->GetItem() && !m_pSetting->GetDecision())
-		{
-			m_pSetting->ItemBoxDraw();
-		}
+		//else if (m_pSetting->GetItem() && !m_pSetting->GetDecision())
+		//{
+		//	m_pSetting->ItemBoxDraw();
+		//}
 		//装備選択画面描画
 		else if (m_pSetting->GetDecision())
 		{
@@ -664,13 +664,13 @@ void GameManager::Draw()
 		}
 
 		//アイテム画面と装備画面の変更描画
-		if (m_pSetting->GetEquipment() || m_pSetting->GetItem())
-		{
-			if (!m_pSetting->GetDecision())
-			{
-				m_pSetting->MenuChangeDraw();
-			}
-		}
+		//if (m_pSetting->GetEquipment() || m_pSetting->GetItem())
+		//{
+		//	if (!m_pSetting->GetDecision())
+		//	{
+		//		m_pSetting->MenuChangeDraw();
+		//	}
+		//}
 
 		//休息画面描画
 		if (m_pPlayer->GetRest())

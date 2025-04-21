@@ -20,6 +20,7 @@ namespace
 
 	//一回だけ行う
 	bool cOne = false;
+	bool cIdle = false;
 	bool cFrame = true;
 }
 
@@ -38,6 +39,7 @@ PlayerStateGuard::PlayerStateGuard(std::shared_ptr<CharacterBase> chara) :
 	chara->NotInitAnim(true);
 
 	cOne = false;
+	cIdle = false;
 	cFrame = true;
 }
 
@@ -76,19 +78,17 @@ void PlayerStateGuard::Update()
 			Input::GetInstance().GetInputStick(false).second == 0.0f)
 		{
 			//シールドの構え始めが終わったら
-			if (own->GetEndAnim())
+			if (own->GetEndAnim() && !cIdle)
 			{
-				int a = 1;
+				cOne = true;
 
-				//一回だけ行う
-				if (!cOne)
-				{
-					own->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldIdle"), true);
-					own->NotInitAnim(false);
-
-					cOne = true;
-				}
+				cIdle = true;
 			}
+		}
+		else if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
+			Input::GetInstance().GetInputStick(false).second != 0.0f)
+		{
+			cOne = true;
 		}
 
 
@@ -207,7 +207,6 @@ void PlayerStateGuard::Update()
 		if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
 			Input::GetInstance().GetInputStick(false).second != 0.0f)
 		{
-
 			//ダッシュボタンが長押しされてたらダッシュ
 			if (Input::GetInstance().IsPushed("Input_Dash"))
 			{
@@ -277,7 +276,13 @@ void PlayerStateGuard::Update()
 
 			m_run = false;
 
-			own->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", "ShieldIdle"), true, cWalkAnimSpeed, false);
+			if (cOne)
+			{
+				own->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", "ShieldIdle"), true, cWalkAnimSpeed, false);
+				own->NotInitAnim(false);
+
+				cOne = false;
+			}
 
 			//移動速度を0にする
 			MyLibrary::LibVec3 prevVelocity = own->GetRigidbody()->GetVelocity();
