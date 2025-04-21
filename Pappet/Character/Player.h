@@ -91,6 +91,8 @@ public:
 
 	//攻撃関係
 	int SetAttackNumber(int set) { return m_attackNumber = set; }      //今の攻撃段階を決める
+	bool SetAttackInit(int set) { return m_attackInit = set; }         //攻撃判定を初期化する
+	bool SetAttackEnd(int set) { return m_attackEnd = set; }           //攻撃判定を終了する
 	bool SetStrongAttack(bool set) { return m_attackStrong = set; }    //強攻撃をしたか決める
 	bool SetJumpAttack(bool set) { return m_jumpAttack = set; }        //ジャンプ攻撃をしたか決める
 
@@ -227,6 +229,8 @@ private:
 	int m_moveAnimShieldFrameIndex;     //盾を構えるときのアニメーションのフレーム取得
 	int m_moveAnimShieldFrameHandIndex;
 	int m_notRoll;                      //ローリングできないようにする
+	bool m_attackInit;                  //攻撃判定初期化
+	bool m_attackEnd;                   //攻撃判定終了
 
 	float m_start;                      //スタートタイムを設定する
 	float m_reset;                      //リセットタイムを設定する

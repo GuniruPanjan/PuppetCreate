@@ -80,6 +80,8 @@ public:
 	//終了処理
 	void End();
 
+	//エフェクトを再生させながらポジションを更新する
+	void UpdateEffectPosition(std::string name, VECTOR pos);
 	//エフェクトを生成する
 	void EffectCreate(std::string name, VECTOR pos);
 	//エフェクトを削除する

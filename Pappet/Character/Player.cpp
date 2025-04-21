@@ -148,7 +148,9 @@ Player::Player() :
 	m_reset(0.0f),
 	m_loop(false),
 	m_attackStrong(false),
-	m_jumpAttack(false)
+	m_jumpAttack(false),
+	m_attackInit(false),
+	m_attackEnd(false)
 {
 
 	//カプセル型
@@ -529,7 +531,7 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 				}
 			}
 			//Hitエフェクト
-			cEffect.EffectCreate("Hit", VGet(rigidbody->GetPos().x, rigidbody->GetPos().y + 20.0f, rigidbody->GetPos().z));
+			cEffect.EffectCreate("PlayerHit", VGet(rigidbody->GetPos().x, rigidbody->GetPos().y + 20.0f, rigidbody->GetPos().z));
 			//HitSe再生
 			PlaySoundMem(se.GetPlayerHitSE(), DX_PLAYTYPE_BACK, true);
 
@@ -802,18 +804,32 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	{
 		m_pLigAttack->SetAttack(m_attackDamage);
 
-		if (m_nowFrame == 25.0f)
+		//エフェクトを再生する
+		if (m_nowFrame >= 25.0f && m_nowFrame <= 35.0f)
 		{
+			//切っ先にエフェクトをつける
+			cEffect.UpdateEffectPosition("PlayerAttack", m_attackLigPos2);
+		}
+
+
+		if (m_attackInit)
+		{
+			cEffect.EffectCreate("PlayerAttack", m_attackLigPos2);
+
 			//攻撃SE再生
 			PlaySoundMem(se.GetAttackSE(), DX_PLAYTYPE_BACK, true);
 
 			m_status.s_stamina -= 25.0f;
 			m_pLigAttack->Init(m_pPhysics);
+
+			m_attackInit = false;
 		}
-		else if (m_nowFrame >= 35.0f && m_nowFrame < 40.0f)
+		else if (m_attackEnd)
 		{
 			//判定をリセット
 			m_pLigAttack->CollisionEnd();
+
+			m_attackEnd = false;
 		}
 	}
 	//攻撃2段階目
@@ -821,19 +837,34 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	{
 		m_pLigAttack->SetAttack((m_attackDamage) * 1.1);
 
-		//攻撃判定発生フレーム
-		if (m_nowFrame == 55.0f)
+		//エフェクトを再生する
+		if (m_nowFrame >= 55.0f && m_nowFrame <= 65.0f)
 		{
+			//切っ先にエフェクトをつける
+			cEffect.UpdateEffectPosition("PlayerAttack", m_attackLigPos2);
+
+		}
+
+		//攻撃判定発生フレーム
+		if (m_attackInit)
+		{
+			cEffect.EffectCreate("PlayerAttack", m_attackLigPos2);
+
+
 			//攻撃SE再生
 			PlaySoundMem(se.GetAttackSE(), DX_PLAYTYPE_BACK, true);
 
 			m_status.s_stamina -= 25.0f;
 			m_pLigAttack->Init(m_pPhysics);
+
+			m_attackInit = false;
 		}
-		else if (m_nowFrame >= 65.0f && m_nowFrame < 70.0f)
+		else if (m_attackEnd)
 		{
 			//攻撃判定リセット
 			m_pLigAttack->CollisionEnd();
+
+			m_attackEnd = false;
 
 		}
 	}
@@ -842,19 +873,33 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	{
 		m_pLigAttack->SetAttack((m_attackDamage) * 1.2);
 
-		//攻撃判定発生フレーム
-		if (m_nowFrame == 85.0f)
+		//エフェクトを再生する
+		if (m_nowFrame >= 85.0f && m_nowFrame <= 95.0f)
 		{
+			//切っ先にエフェクトをつける
+			cEffect.UpdateEffectPosition("PlayerAttack", m_attackLigPos2);
+
+		}
+
+		//攻撃判定発生フレーム
+		if (m_attackInit)
+		{
+			cEffect.EffectCreate("PlayerAttack", m_attackLigPos2);
+
 			//攻撃SE再生
 			PlaySoundMem(se.GetAttackSE(), DX_PLAYTYPE_BACK, true);
 
 			m_status.s_stamina -= 25.0f;
 			m_pLigAttack->Init(m_pPhysics);
+
+			m_attackInit = false;
 		}
-		else if (m_nowFrame >= 95.0f && m_nowFrame < 110.0f)
+		else if (m_attackEnd)
 		{
 			//攻撃判定リセット
 			m_pLigAttack->CollisionEnd();
+
+			m_attackEnd = false;
 		}
 	}
 
@@ -1508,6 +1553,9 @@ void Player::Draw(Armor& armor, int font)
 	MV1SetRotationXYZ(m_modelHandle, VGet(0.0f, m_angle, 0.0f));
 	//描画
 	MV1DrawModel(m_modelHandle);
+
+	DrawFormatString(200, 300, 0xffffff, "frame : %f", m_nowFrame);
+
 }
 
 void Player::End()

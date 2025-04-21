@@ -17,6 +17,12 @@ namespace
 	constexpr float cAttackMove3 = 0.2f;
 	//攻撃速度
 	constexpr float cAttackSpeed = 1.0f;
+
+	//追加攻撃可能にする
+	bool cAttack = false;
+
+	//判定初期化
+	bool cOne = false;
 }
 
 /// <summary>
@@ -93,11 +99,41 @@ void PlayerStateAttack::Update()
 					m_attackNumber = 1;
 				}
 			}
+			//攻撃判定
+			if (own->GetFrame() == 25.0f)
+			{
+				if (!cOne)
+				{
+					own->SetAttackInit(true);
+
+					cOne = true;
+				}
+			}
+			if (own->GetFrame() == 35.0f)
+			{
+				if (cOne)
+				{
+					own->SetAttackEnd(true);
+
+					cOne = false;
+				}
+			}
+
 
 			//攻撃による移動速度設定
 			if (own->GetFrame() <= 25.0f) m_move = 0.0f;
 			if (own->GetFrame() >= 25.0f && own->GetFrame() < 35.0f) m_move = cAttackMove1;
-			if (own->GetFrame() >= 35.0f && own->GetFrame() < 40.0f) m_move = cAttackMove2;
+			if (own->GetFrame() >= 35.0f && own->GetFrame() < 40.0f)
+			{
+				//追加攻撃入力を受け付けてなかったら
+				if (m_attackNumber != 1)
+				{
+					//アニメーションスピードを変える
+					own->SetAnimSpeed(0.3f);
+				}
+
+				m_move = cAttackMove2;
+			}
 			if (own->GetFrame() == 40.0f) m_move = 0.0f;
 
 			//攻撃一段階目終了
@@ -115,25 +151,76 @@ void PlayerStateAttack::Update()
 			if (own->GetFrame() == 40.0f) m_input = true;
 			if (own->GetFrame() == 45.0f) m_input = false;
 
+			if (own->GetFrame() >= 40.0f && own->GetFrame() <= 50.0f)
+			{
+				//アニメーションスピードを変える
+				own->SetAnimSpeed(cAttackSpeed);
+			}
+
 			//攻撃入力時間
 			if (own->GetFrame() >= 50.0f)
 			{
 				//スタミナがある状態でRを入力すると次の攻撃につながる
 				if (Input::GetInstance().IsTriggered("Input_Attack") && !own->GetStaminaBreak())
 				{
-					m_attackNumber = 2;
+					cAttack = true;
 				}
+			}
+			//攻撃判定
+			if (own->GetFrame() >= 55.0f && own->GetFrame() <= 60.0f)
+			{
+				if (!cOne)
+				{
+					own->SetAttackInit(true);
+
+					cOne = true;
+				}
+
+			}
+
+			if (own->GetFrame() >= 65.0f && own->GetFrame() <= 70.0f)
+			{
+				if (cOne)
+				{
+					own->SetAttackEnd(true);
+
+					cOne = false;
+				}
+
 			}
 
 			//攻撃による移動速度設定
 			if (own->GetFrame() <= 55.0F) m_move = 0.0f;
 			if (own->GetFrame() >= 55.0f && own->GetFrame() <= 65.0f) m_move = cAttackMove1;
-			if (own->GetFrame() >= 65.0f && own->GetFrame() <= 70.0f) m_move = cAttackMove3;
+			if (own->GetFrame() >= 65.0f && own->GetFrame() <= 70.0f)
+			{
+				//追加攻撃入力を受け付けてなかったら
+				if (!cAttack)
+				{
+					//アニメーションスピードを変える
+					own->SetAnimSpeed(0.3f);
+				}
+
+				m_move = cAttackMove3;
+			}
 			if (own->GetFrame() == 70.0f) m_move = 0.0f;
 
 			//攻撃二段回目終了
-			if (own->GetFrame() >= 68.0f && m_attackNumber != 2)
+			if (own->GetFrame() >= 68.0f && cAttack)
 			{
+				//一回だけ実行
+				if (cAttack)
+				{
+					m_attackNumber = 2;
+
+					cAttack = false;
+				}
+			}
+			//攻撃終了
+			else if (own->GetFrame() >= 68.0f && m_attackNumber != 2)
+			{
+				
+
 				m_endAnim = true;
 			}
 		}
@@ -142,8 +229,35 @@ void PlayerStateAttack::Update()
 		{
 			own->SetAttackNumber(3);
 
+			if (own->GetFrame() >= 70.0f && own->GetFrame() <= 80.0f)
+			{
+				//アニメーションスピードを変える
+				own->SetAnimSpeed(cAttackSpeed);
+			}
+			//攻撃判定
+			if (own->GetFrame() >= 85.0f && own->GetFrame() <= 90.0f)
+			{
+				int a = 1;
+
+				if (!cOne)
+				{
+					own->SetAttackInit(true);
+
+					cOne = true;
+				}
+			}
+			if (own->GetFrame() >= 95.0f && own->GetFrame() <= 100.0f)
+			{
+				if (cOne)
+				{
+					own->SetAttackEnd(true);
+
+					cOne = false;
+				}
+			}
+
 			//入力受付時間
-			if (own->GetFrame() == 70.0f) m_input = true;
+			if (own->GetFrame() == 71.0f) m_input = true;
 			if (own->GetFrame() == 75.0f) m_input = false;
 
 			//攻撃による移動速度設定

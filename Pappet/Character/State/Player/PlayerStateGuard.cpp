@@ -78,6 +78,8 @@ void PlayerStateGuard::Update()
 			//シールドの構え始めが終わったら
 			if (own->GetEndAnim())
 			{
+				int a = 1;
+
 				//一回だけ行う
 				if (!cOne)
 				{

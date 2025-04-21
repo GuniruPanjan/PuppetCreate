@@ -38,6 +38,10 @@ void EffectManager::Init()
 	EffectLoad("Hit", "Data/Effect/HitEffect.efkefc", 30, 15.0f);
 	//休息エフェクト
 	EffectLoad("RestLuminescence", "Data/Effect/Thunder.efkefc", 80, 20.0f);
+	//PlayerのHitエフェクト
+	EffectLoad("PlayerHit", "Data/Effect/PlayerHitEffect.efkefc", 30, 15.0f);
+	//Playerの弱攻撃エフェクト
+	EffectLoad("PlayerAttack", "Data/Effect/PlayerDestinationEffect.efkefc", 30, 2.0f);
 }
 
 /// <summary>
@@ -119,6 +123,28 @@ void EffectManager::End()
 	for (auto& effect : m_effect)
 	{
 		DeleteEffekseerEffect(effect.second->emitterHandle);
+	}
+}
+
+/// <summary>
+/// エフェクトの位置を更新
+/// </summary>
+/// <param name="name"></param>
+/// <param name="pos"></param>
+void EffectManager::UpdateEffectPosition(std::string name, VECTOR pos)
+{
+	auto it = m_effect.find(name);
+	if (it != m_effect.end())
+	{		
+		for (auto& effect : it->second->effects)
+		{
+			effect.x = pos.x;
+			effect.y = pos.y;
+			effect.z = pos.z;
+
+			// Effekseerのエフェクト位置を更新
+			SetPosPlayingEffekseer3DEffect(effect.handle, effect.x, effect.y, effect.z);
+		}
 	}
 }
 

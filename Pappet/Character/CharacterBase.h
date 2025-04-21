@@ -98,6 +98,8 @@ public:
 
 	//スピードを設定する
 	int SetSpeed(int set) { return m_status.s_speed = set; }
+	//アニメーションタイムを設定する
+	float SetAnimSpeed(float set) { return m_animTime = set; }
 
 	//ジャンプ関係
 	bool GetJumpCan() { return m_jumpCan; }                            //ジャンプ攻撃を可能にする
