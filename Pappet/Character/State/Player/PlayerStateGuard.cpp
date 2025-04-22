@@ -96,7 +96,14 @@ void PlayerStateGuard::Update()
 		if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
 			Input::GetInstance().GetInputStick(false).second != 0.0f)
 		{
-			own->FrameStateChangeAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
+			//ターゲットしてる状態の時
+			if (m_targetState)
+			{
+				if (m_dir == eDir::Forward || m_dir == eDir::Back)
+				{
+					own->FrameStateChangeAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
+				}
+			}
 		}
 		//盾を構えた状態で止まった場合リグによるアニメーション分離をやめる
 		else if (Input::GetInstance().GetInputStick(false).first == 0.0f &&
@@ -224,6 +231,17 @@ void PlayerStateGuard::Update()
 			}
 
 			//アニメーションを変更する
+			if (m_dir == eDir::Right || m_dir == eDir::BackRight || m_dir == eDir::ForwardRight)
+			{
+				//リグアニメーション分離をやめる
+				own->FrameEndStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
+			}
+			if (m_dir == eDir::Left || m_dir == eDir::BackLeft || m_dir == eDir::ForwardLeft)
+			{
+				//リグアニメーション分離をやめる
+				own->FrameEndStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
+			}
+
 			auto animName = GetGuardAnim(m_dir);
 			own->ChangeStateAnim(CsvLoad::GetInstance().GetAnimData("Player", animName), false, cWalkAnimSpeed, m_revese);
 
@@ -316,13 +334,13 @@ std::string PlayerStateGuard::GetGuardAnim(eDir dir)
 				//逆再生するかどうか
 				m_revese = false;
 			}
-			else if (dir == eDir::Right || dir == eDir::BackRight || dir == eDir::ForwardRight)
+			if (dir == eDir::Right || dir == eDir::BackRight || dir == eDir::ForwardRight)
 			{
 				return std::string("ShieldSideWalk");
 				//逆再生するかどうか
 				m_revese = true;
 			}
-			else if (dir == eDir::Left || dir == eDir::BackLeft || dir == eDir::ForwardLeft)
+			if (dir == eDir::Left || dir == eDir::BackLeft || dir == eDir::ForwardLeft)
 			{
 				return std::string("ShieldSideWalk");
 				//逆再生するかどうか

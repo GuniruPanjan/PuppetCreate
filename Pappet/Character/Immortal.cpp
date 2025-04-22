@@ -427,6 +427,8 @@ void Immortal::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 			{
 				//攻撃の切っ先にエフェクトをつける
 				cEffect.UpdateEffectPosition("EnemyAttack", VGet(attackRightHandPos2.x, attackRightHandPos2.y, attackRightHandPos2.z));
+				cEffect.UpdateEffectRotation("EnemyAttack", VGet(0.0f, m_angle - (DX_PI_F / 2.0f), 0.0f));
+
 			}
 
 

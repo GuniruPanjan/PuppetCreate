@@ -40,12 +40,6 @@ public:
 		bool s_attack;        //キャラが攻撃したかの判定
 	};
 
-	//エフェクト関係の構造体
-	struct EffectAction
-	{
-		bool s_heel;          //回復
-	};
-
 public:
 	CharacterBase(Priority priority, ObjectTag tag);
 	virtual ~CharacterBase();
@@ -125,8 +119,6 @@ protected:
 	Status m_status;
 	//アニメーション
 	AnimationChange m_anim;
-	//エフェクト
-	EffectAction m_effect;
 
 	//アニメーション関係
 	std::map<std::string, int> m_animIdx;

@@ -46,7 +46,7 @@ namespace
 /// コンストラクタ
 /// </summary>
 GameManager::GameManager() :
-	m_nowMap(eMapName::TutorialMap),
+	m_nowMap(eMapName::FirstMap),
 	m_load(0),
 	m_loadNow1(-1),
 	m_loadNow2(-1),
@@ -92,7 +92,7 @@ void GameManager::Init()
 	//0が休息マップデータ
 	//1がHARIBOのマップデータ
 	//6がチュートリアルマップデータ
-	m_pMap->DataInit(6);
+	m_pMap->DataInit(1);
 
 	m_pPhysics = std::make_shared<MyLibrary::Physics>(m_pMap->GetCollisionMap());
 
@@ -409,16 +409,6 @@ void GameManager::Update()
 				m_pSetting->SetReturn(true);
 			}
 
-			//装備画面とアイテム画面の変更更新
-			//if (m_pSetting->GetEquipment() || m_pSetting->GetItem())
-			//{
-			//	if (!m_pSetting->GetDecision())
-			//	{
-			//		m_pSetting->MenuChange();
-			//	}
-
-			//}
-
 			//死亡した場合
 			if (m_pUi->GetReset() && m_pFade->GetOut())
 			{
@@ -652,26 +642,12 @@ void GameManager::Draw()
 			m_pSetting->EquipmentDraw(*m_pPlayer);
 			m_pUi->EquipmentDraw(*m_pWeapon, *m_pShield, *m_pArmor);
 		}
-		//アイテム画面
-		//else if (m_pSetting->GetItem() && !m_pSetting->GetDecision())
-		//{
-		//	m_pSetting->ItemBoxDraw();
-		//}
 		//装備選択画面描画
 		else if (m_pSetting->GetDecision())
 		{
 			m_pSetting->EquipmentDecisionDraw(*m_pItem);
 			EquipmentDraw();
 		}
-
-		//アイテム画面と装備画面の変更描画
-		//if (m_pSetting->GetEquipment() || m_pSetting->GetItem())
-		//{
-		//	if (!m_pSetting->GetDecision())
-		//	{
-		//		m_pSetting->MenuChangeDraw();
-		//	}
-		//}
 
 		//休息画面描画
 		if (m_pPlayer->GetRest())

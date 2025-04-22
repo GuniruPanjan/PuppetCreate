@@ -64,6 +64,7 @@ private:
 	VECTOR m_cameraPos;    //カメラポジション
 	VECTOR m_cameraTarget;     //カメラのターゲットポジション
 	VECTOR m_cameraTargetGraves;    //カメラのターゲットを墓に向ける
+	VECTOR m_cameraTargetFire;      //カメラのターゲットを火に向ける
 
 	//モデル用変数
 	int m_playerHandle;          //プレイヤーのモデル格納変数

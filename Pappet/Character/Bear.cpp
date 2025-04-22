@@ -10,11 +10,11 @@ namespace
 	//モデルパス
 	constexpr const char* cModelPath = "Data/Enemy/BearModel.mv1";
 	//モデルのサイズの拡大率
-	constexpr float cModelSize = 0.7f;
+	constexpr float cModelSize = 0.66f;
 	//モデルの長さ
-	constexpr float cCapsuleLen = 40.0f;
+	constexpr float cCapsuleLen = 50.0f;
 	//モデルの半径
-	constexpr float cCapsuleRadius = 25.0f;
+	constexpr float cCapsuleRadius = 23.0f;
 	//モデルの座標を合わせる
 	constexpr float cModelPosY = 24.0f;
 	//死亡終了
@@ -590,7 +590,7 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 			if (m_nowFrame >= cAttackFrame1 && m_nowFrame <= cAttackFrame3)
 			{
 				cEffect.UpdateEffectPosition("BearAttack", pos);
-				cEffect.UpdateEffectRotation("BearAttack", VGet(m_angle / 2.0f, 0.0f, 0.0f));
+				cEffect.UpdateEffectRotation("BearAttack", VGet(0.0f, m_angle - (DX_PI_F / 2.0f), 0.0f));
 			}
 
 		}

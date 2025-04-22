@@ -19,18 +19,26 @@ namespace
 	float cCameraTargetGravesx = -200.0f;
 	float cCameraTargetGravesy = 115.0f;
 	float cCameraTargetGravesz = 500.0f;
+	//火へのターゲット変数
+	constexpr float cCameraTargetFirex = -200.0f;
+	constexpr float cCameraTargetFirey = 115.0f;
+	constexpr float cCameraTargetFirez = -300.0f;
 
 	const float cDuration = 1.0f;   //イージングにかかる時間
 
-	float cCameraPosx = -200.0f;
-	float cCameraPosy = 500.0f;
-	float cCameraPosz = -400.0f;
+	constexpr float cCameraPosx = -200.0f;
+	constexpr float cCameraPosy = 500.0f;
+	constexpr float cCameraPosz = -400.0f;
 
-	constexpr int cFontSize = 35;
+	constexpr float cCameraPosX1 = -200.0f;
+	constexpr float cCameraPosY1 = 80.0f;
+	constexpr float cCameraPosZ1 = -50.0f;
+
 	constexpr float cDeltaTime = 0.016f;
 
+	constexpr int cFontSize = 35;
+
 	bool cCameraTrun = false;
-	bool cCameraEasing = false;
 
 	int cHandY = 600;
 
@@ -111,6 +119,7 @@ SceneTitle::SceneTitle() :
 	m_pos(VGet(0.0f, 0.0f, 0.0f)),
 	m_cameraTarget(VGet(0.0f, 0.0f, 0.0f)),
 	m_cameraTargetGraves(VGet(0.0f,0.0f,0.0f)),
+	m_cameraTargetFire(VGet(0.0f,0.0f,0.0f)),
 	m_xpad()
 {
 	for (int i = 0; i < 3; i++)
@@ -175,6 +184,8 @@ void SceneTitle::Init()
 
 	cSelectDecision = 0;
 
+	m_pFont->FontInit(cFontSize);
+
 	//アニメーションアタッチ
 	m_animation = MV1AttachAnim(m_playerHandle, 1, m_anim, TRUE);
 
@@ -202,11 +213,10 @@ void SceneTitle::Init()
 	m_cameraTarget = VGet(cCameraTargetx, cCameraTargety, cCameraTargetz);
 	//カメラターゲットを墓に向ける
 	m_cameraTargetGraves = VGet(cCameraTargetGravesx, cCameraTargetGravesy, cCameraTargetGravesz);
+	//カメラターゲットを火に向ける
+	m_cameraTargetFire = VGet(cCameraTargetFirex, cCameraTargetFirey, cCameraTargetFirez);
 	//フェードアウトイン初期化
 	m_pFade->Init();
-
-	//フォント初期化
-	m_pFont->FontInit(cFontSize);
 
 	//設定関係
 	m_pSetting->Init();
@@ -233,7 +243,6 @@ void SceneTitle::Init()
 	m_one = false;
 	m_blend = false;
 	m_decisionButton = false;
-	cCameraEasing = false;
 }
 
 /// <summary>
@@ -407,29 +416,22 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 		}
 
 
-		//設定を選択している時のターゲット位置とカメラ位置
-		if (pselect->NowSelect == 8)
+		//Endを選択している時のターゲット位置とカメラ位置
+		if (pselect->NowSelect == 9)
 		{
-			//イージング可能にする
-			cCameraEasing = true;
-
+			//カメラのターゲットを器に向ける
+			UpdateCameraPositionAndTarget(cDeltaTime, m_cameraPos, VGet(cCameraPosX1, cCameraPosY1, cCameraPosZ1), m_cameraTarget, m_cameraTargetFire);
+		}
+		//設定を選択している時のターゲット位置とカメラ位置
+		else if (pselect->NowSelect == 8)
+		{
 			//カメラのターゲットを墓に向ける
 			UpdateCameraPositionAndTarget(cDeltaTime, m_cameraPos, VGet(cCameraPosx, cCameraPosy, cCameraPosz), m_cameraTarget, m_cameraTargetGraves);
 		}
 		else
 		{
-			//イージングが可能になったらできるようにする
-			if (cCameraEasing)
-			{
-				//プレイヤーにターゲットを向ける
-				UpdateCameraPositionAndTarget(cDeltaTime, m_cameraPos, VGet(-80.0f, 35.0f, 80.0f), m_cameraTargetGraves, m_cameraTarget);
-
-				if (m_time >= cDuration)
-				{
-					//イージングを終了する
-					cCameraEasing = false;
-				}
-			}
+			//プレイヤーにターゲットを向ける
+			UpdateCameraPositionAndTarget(cDeltaTime, m_cameraPos, VGet(-80.0f, 35.0f, 80.0f), m_cameraTargetGraves, m_cameraTarget);
 		}
 
 		SetCameraPositionAndTarget_UpVecY(m_cameraPos, m_cameraTarget);

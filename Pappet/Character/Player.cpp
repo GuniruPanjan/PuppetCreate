@@ -188,9 +188,6 @@ Player::Player() :
 	//キャラクター名を設定
 	m_characterName = "Player";
 
-	//エフェクトの初期化
-	m_effect.s_heel = false;
-
 	//モデル読み込み
 	m_modelHandle = handle.GetModelHandle(cPath);
 
@@ -563,8 +560,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 
 			cShieldHit = true;
 		}
-
-		EffectAction();
 
 		//メニューを開いている間はアクションできない
 		if (!m_menuOpen)
@@ -1017,6 +1012,24 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		}
 	}
 
+	//回復
+	if (m_pState->GetState() == StateBase::StateKind::Item && tool.GetHeel().sa_number > 0)
+	{
+		//一回実行
+		if (!m_animChange.sa_recovery)
+		{
+			tool.SetHeel(1);
+
+			//回復エフェクト
+			cEffect.EffectCreate("Heel", m_collisionPos.ConversionToVECTOR());
+
+			//回復SE再生
+			PlaySoundMem(se.GetHeelSE(), DX_PLAYTYPE_BACK, true);
+
+			m_animChange.sa_recovery = true;
+		}
+	}
+
 	//回復する
 	if (!m_isAnimationFinish && m_animChange.sa_recovery)
 	{
@@ -1159,23 +1172,6 @@ void Player::Action(VECTOR restpos, Tool& tool, Shield& shield, SEManager& se, b
 			cRstickButton = false;
 		}
 	}
-
-	//回復
-	//Xボタンが押されたら
-	if (m_xpad.Buttons[14] == 1 && !m_anim.s_attack && tool.GetHeel().sa_number > 0)
-	{
-		//一回実行
-		if (!m_animChange.sa_recovery)
-		{
-			tool.SetHeel(1);
-
-			//回復SE再生
-			PlaySoundMem(se.GetHeelSE(), DX_PLAYTYPE_BACK, true);
-
-			m_effect.s_heel = true;
-			m_animChange.sa_recovery = true;
-		}
-	}
 	
 	//休息
 	//休息できたら
@@ -1273,25 +1269,10 @@ void Player::Action(VECTOR restpos, Tool& tool, Shield& shield, SEManager& se, b
 		}
 	}
 
-
 	//メニューを開く
 	if (m_xpad.Buttons[4] == 1)
 	{
 		m_menuOpen = true;
-	}
-}
-
-/// <summary>
-/// エフェクト関係
-/// </summary>
-void Player::EffectAction()
-{
-	//回復エフェクト
-	if (m_effect.s_heel)
-	{
-		cEffect.EffectCreate("Heel", m_collisionPos.ConversionToVECTOR());
-
-		m_effect.s_heel = false;
 	}
 }
 

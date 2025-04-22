@@ -56,7 +56,6 @@ public:
 	void Finalize();
 	void Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& enemy, CoreManager& core, VECTOR restpos, Tool& tool, SEManager& se, bool boss, bool dead, std::shared_ptr<MyLibrary::Physics> physics);
 	void Action(VECTOR restpos, Tool& tool, Shield& shield, SEManager& se, bool boss, bool dead);
-	void EffectAction();
 	void WarpMap();
 	void Draw(Armor& armor, int font);
 	void End();

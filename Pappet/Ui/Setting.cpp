@@ -392,6 +392,15 @@ void Setting::Init()
 	m_levelUp = MyLoadGraph("Data/UI/レベルステータスUI.png", 1, 1);
 	m_menu = MyLoadGraph("Data/UI/MenuUI.png", 1, 1);
 
+	m_settingHandle = MyLoadGraph("Data/UI/Setting.png", 1, 1);
+	m_brightnessHandle = MyLoadGraph("Data/UI/Setting.png", 2, 2);
+	m_bgmHandle = MyLoadGraph("Data/UI/BGM.png", 2, 2);
+	m_seHandle = MyLoadGraph("Data/UI/SE.png", 2, 2);
+	m_cameraHandle = MyLoadGraph("Data/UI/Camera.png", 2, 2);
+	m_returnHandle = MyLoadGraph("Data/UI/Camera.png", 2, 2);
+	m_edgeHandle = MyLoadGraph("Data/UI/Edge.png", 2, 2);
+	m_lineHandle = MyLoadGraph("Data/UI/Edge.png", 2, 2);
+
 	m_pFont->FontInit(50);
 	m_pSmallFont->FontInit(30);
 	m_pBigFont->FontInit(80);
@@ -2055,6 +2064,15 @@ void Setting::End()
 	DeleteGraph(m_rest);
 	DeleteGraph(m_selectUi);
 	DeleteGraph(m_levelUp);
+	DeleteGraph(m_settingHandle);
+	DeleteGraph(m_brightnessHandle);
+	DeleteGraph(m_bgmHandle);
+	DeleteGraph(m_seHandle);
+	DeleteGraph(m_cameraHandle);
+	DeleteGraph(m_returnHandle);
+	DeleteGraph(m_edgeHandle);
+	DeleteGraph(m_barHandle);
+	DeleteGraph(m_lineHandle);
 }
 
 //設定関数

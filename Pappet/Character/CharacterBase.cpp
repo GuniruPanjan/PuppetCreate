@@ -10,7 +10,6 @@ CharacterBase::CharacterBase(Priority priority, ObjectTag tag) :
 	Collidable(priority, tag),
 	m_characterName(),
 	m_anim(),
-	m_effect(),
 	m_modelHandle(-1),
 	m_modelPos(),
 	m_collisionPos(),

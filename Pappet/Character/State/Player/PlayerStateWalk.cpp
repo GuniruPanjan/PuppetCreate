@@ -308,14 +308,14 @@ std::string PlayerStateWalk::GetWalkAnim(eDir dir)
 			else if (dir == eDir::Right || dir == eDir::ForwardRight || dir == eDir::BackRight)
 			{
 				//ãtçƒê∂Ç∑ÇÈÇ©Ç«Ç§Ç©
-				m_revese = true;
-				return std::string("ShieldSideWalk");
+				m_revese = false;
+				return std::string("WeaponSideWalk");
 			}
 			else if (dir == eDir::Left || dir == eDir::ForwardLeft || dir == eDir::BackLeft)
 			{
 				//ãtçƒê∂Ç∑ÇÈÇ©Ç«Ç§Ç©
-				m_revese = false;
-				return std::string("ShieldSideWalk");
+				m_revese = true;
+				return std::string("WeaponSideWalk");
 			}
 			else if (dir == eDir::Back)
 			{
