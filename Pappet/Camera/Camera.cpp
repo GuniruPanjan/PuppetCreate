@@ -315,6 +315,9 @@ void Camera::LockUpdate(Player& player, EnemyManager& enemy)
 	//プレイヤーの座標に求めたベクトルを足してカメラの座標とする
 	m_endPos = VAdd(pPos, posTarget);
 
+	
+	m_endPos = VAdd(pPos, posTarget);
+
 	//イージングの更新
 	if (m_easingTime < m_easingDuration)
 	{
@@ -332,6 +335,11 @@ void Camera::LockUpdate(Player& player, EnemyManager& enemy)
 	SetCameraPositionAndTarget_UpVecY(m_cameraPos, m_cameraTarget);
 }
 
+/// <summary>
+/// ボスのロックオン処理
+/// </summary>
+/// <param name="player"></param>
+/// <param name="enemy"></param>
 void Camera::LockBossUpdate(Player& player, EnemyManager& enemy)
 {
 	cTargetSize = 0;
