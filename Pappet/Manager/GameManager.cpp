@@ -425,6 +425,7 @@ void GameManager::Update()
 				//ˆê‰ñ‚¾‚¯ŽÀs
 				if (m_deadInit == true)
 				{
+					m_pUi->End();
 					m_pPlayer->GameInit(m_pPhysics, m_pMap->GetCollisionMap());
 					m_pEnemy->GameInit(m_pPhysics, this, *m_pEnemyWeapon, m_deadInit, cTutorial);
 					m_pMap->TriggerReset();

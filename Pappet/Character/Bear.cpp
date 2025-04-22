@@ -556,6 +556,8 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 		{
 			InitAttackLigUpdate(attackRightHandPos1, attackRightHandPos2);
 
+			VECTOR pos = VGet(attackRightHandPos2.x, attackRightHandPos2.y, attackRightHandPos2.z);
+
 			//攻撃の初期化
 			if (m_nowFrame == cAttackFrame1)
 			{
@@ -567,6 +569,9 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 			//アニメーションフレーム中に攻撃判定を出す
 			if (m_nowFrame == cAttackFrame2)
 			{
+				//エフェクトを作る
+				cEffect.EffectCreate("BearAttack", pos);
+
 				//攻撃SE再生
 				PlaySoundMem(se.GetBossAttackSE1(), DX_PLAYTYPE_BACK, true);
 
@@ -579,6 +584,13 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 				//判定をリセット
 				m_pAttack->CollisionEnd();
 				m_pLigAttack->CollisionEnd();
+			}
+
+			//エフェクトを再生する
+			if (m_nowFrame >= cAttackFrame1 && m_nowFrame <= cAttackFrame3)
+			{
+				cEffect.UpdateEffectPosition("BearAttack", pos);
+				cEffect.UpdateEffectRotation("BearAttack", VGet(m_angle / 2.0f, 0.0f, 0.0f));
 			}
 
 		}
@@ -595,14 +607,45 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 				InitAttackDamage(m_status.s_attack1);
 			}
 
+			VECTOR pos = VGet(0.0f, 0.0f, 0.0f);
+
+			if (m_nowFrame >= cAngleFrame && m_nowFrame <= cAttackFrame6)
+			{
+				pos = VGet(attackLeftHandPos1.x, attackLeftHandPos1.y, attackLeftHandPos1.z);
+			}
+			else if (m_nowFrame >= cAttackFrame6 && m_nowFrame <= cAttackFrame5)
+			{
+				pos = VGet(attackLeftHandPos2.x, attackLeftHandPos2.y, attackLeftHandPos2.z);
+			}
+
+			else if (m_nowFrame == cAttackFrame1)
+			{
+				//エフェクトをつくる
+				cEffect.EffectCreate("BearWind", pos);
+			}
+			else if (m_nowFrame == cAttackFrame3)
+			{
+				//エフェクトをつくる
+				cEffect.EffectCreate("BearWind", pos);
+
+			}
+			else if (m_nowFrame == cAttackFrame6)
+			{
+				//エフェクトをつくる
+				cEffect.EffectCreate("BearWind", pos);
+			}
 			//攻撃発生まではプレイヤーを向く
 			if (m_nowFrame > cAngleFrame && m_nowFrame < cAttackFrame4)
 			{
+
 				AngleUpdate(playerPos);
 			}
 			//アニメーションフレーム宙に攻撃判定を出す
 			else if (m_nowFrame == cAttackFrame4)
 			{
+				//エフェクトをつくる
+				cEffect.EffectCreate("BearWind", pos);
+
 				//攻撃SE再生
 				PlaySoundMem(se.GetBossAttackSE2(), DX_PLAYTYPE_BACK, true);
 
@@ -614,6 +657,12 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 				//判定をリセット
 				m_pAttack->CollisionEnd();
 				m_pLigAttack->CollisionEnd();
+			}
+
+			//エフェクトを再生する
+			if (m_nowFrame >= cAttackFrame4 && m_nowFrame <= cAttackFrame5)
+			{
+				cEffect.UpdateEffectPosition("BearWind", pos);
 			}
 		}
 		//ランダムで2が出たら
@@ -649,6 +698,8 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 			//アニメーションフレーム中に攻撃判定を出す
 			if (m_nowFrame == cAttackFrame7)
 			{
+				cEffect.EffectCreate("ShockWave", VGet(rigidbody->GetPos().x, rigidbody->GetPos().y - 25.0f, rigidbody->GetPos().z));
+
 				InitAttackUpdate(m_status.s_attack2);
 			}
 			else if (m_nowFrame >= cAttackFrame8)

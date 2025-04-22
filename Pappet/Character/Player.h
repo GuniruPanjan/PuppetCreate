@@ -58,9 +58,6 @@ public:
 	void Action(VECTOR restpos, Tool& tool, Shield& shield, SEManager& se, bool boss, bool dead);
 	void EffectAction();
 	void WarpMap();
-	void NotWeaponAnimation();
-	void AllAnimation();
-	void WeaponAnimation(Shield& shield);
 	void Draw(Armor& armor, int font);
 	void End();
 

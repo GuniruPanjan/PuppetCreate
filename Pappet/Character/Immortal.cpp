@@ -422,6 +422,14 @@ void Immortal::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 		{
 			InitAttackLigUpdate(attackRightHandPos1, attackRightHandPos2);
 
+			//エフェクトを再生する
+			if (m_nowFrame >= cAttackHitFrame && m_nowFrame <= cAttackEndFrame)
+			{
+				//攻撃の切っ先にエフェクトをつける
+				cEffect.UpdateEffectPosition("EnemyAttack", VGet(attackRightHandPos2.x, attackRightHandPos2.y, attackRightHandPos2.z));
+			}
+
+
 			if (m_nowFrame == cAttackStartFrame)
 			{
 				InitLigAttack(attackRightHandPos1, attackRightHandPos2, cAttackRadius);
@@ -430,6 +438,9 @@ void Immortal::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 			//アニメーションフレーム中に攻撃判定を出す
 			if (m_nowFrame == cAttackHitFrame)
 			{
+				//エフェクトを作る
+				cEffect.EffectCreate("EnemyAttack", VGet(attackRightHandPos2.x, attackRightHandPos2.y, attackRightHandPos2.z));
+
 				//攻撃SE再生
 				PlaySoundMem(se.GetAttackSE(), DX_PLAYTYPE_BACK, true);
 

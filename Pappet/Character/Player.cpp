@@ -55,7 +55,7 @@ namespace
 	//攻撃の判定範囲
 	constexpr float cPartAttackRadius = 16.0f;
 	//強攻撃の攻撃範囲
-	constexpr float cStrengthAttackRadius = 100.0f;
+	constexpr float cStrengthAttackRadius = 60.0f;
 	//盾の幅
 	constexpr float cShieldWidth = 40.0f;
 	//盾の横
@@ -73,7 +73,7 @@ namespace
 	//敵からのダメージ取得
 	float cDamage = 0.0f;
 	//人形のモデルパス
-	constexpr const char* cPath = "Data/Player/PuppetModel.mv1";
+	constexpr const char* cPath = "Data/Player/PlayerModelPuppet.mv1";
 	//装備を一回だけ初期化する
 	bool cEquipmentOne = false;
 	//光の中に入る時のポジション設定
@@ -716,7 +716,7 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	MyLibrary::LibVec3 ligAttackPos2 = MyLibrary::LibVec3(m_attackLigPos2.x, m_attackLigPos2.y, m_attackLigPos2.z);
 	MyLibrary::LibVec3 LegLigAttackPos1 = MyLibrary::LibVec3(m_attackLegLigPos1.x, m_attackLegLigPos1.y, m_attackLegLigPos1.z);
 	MyLibrary::LibVec3 LegLigAttackPos2 = MyLibrary::LibVec3(m_attackLegLigPos2.x, m_attackLegLigPos2.y, m_attackLegLigPos2.z);
-	MyLibrary::LibVec3 StrengthAttackPos = MyLibrary::LibVec3(rigidbody->GetPos().x, rigidbody->GetPos().y, rigidbody->GetPos().z);
+	MyLibrary::LibVec3 StrengthAttackPos = MyLibrary::LibVec3(m_attackLigPos2.x, m_attackLigPos2.y, m_attackLigPos2.z);
 	m_shieldPos = MyLibrary::LibVec3(rigidbody->GetPos().x + sinf(m_angle) * -15.0f, rigidbody->GetPos().y + 25.0f, rigidbody->GetPos().z - cosf(m_angle) * 15.0f);
 
 	//sinでX軸のwidthのサイズを出す
@@ -813,14 +813,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	{
 		m_pLigAttack->SetAttack(m_attackDamage);
 
-		//エフェクトを再生する
-		if (m_nowFrame >= 25.0f && m_nowFrame <= 35.0f)
-		{
-			//切っ先にエフェクトをつける
-			cEffect.UpdateEffectPosition("PlayerAttack", m_attackLigPos2);
-		}
-
-
 		if (m_attackInit)
 		{
 			cEffect.EffectCreate("PlayerAttack", m_attackLigPos2);
@@ -840,19 +832,20 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 
 			m_attackEnd = false;
 		}
+
+		//エフェクトを再生する
+		if (m_nowFrame >= 25.0f && m_nowFrame <= 35.0f)
+		{
+			//切っ先にエフェクトをつける
+			cEffect.UpdateEffectPosition("PlayerAttack", m_attackLigPos2);
+			cEffect.UpdateEffectRotation("PlayerAttack", VGet(0.0f, m_angle - (DX_PI_F / 2.0f), 0.0f));
+
+		}
 	}
 	//攻撃2段階目
 	else if(m_attackNumber == 2)
 	{
 		m_pLigAttack->SetAttack((m_attackDamage) * 1.1);
-
-		//エフェクトを再生する
-		if (m_nowFrame >= 55.0f && m_nowFrame <= 65.0f)
-		{
-			//切っ先にエフェクトをつける
-			cEffect.UpdateEffectPosition("PlayerAttack", m_attackLigPos2);
-
-		}
 
 		//攻撃判定発生フレーム
 		if (m_attackInit)
@@ -874,6 +867,14 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			m_pLigAttack->CollisionEnd();
 
 			m_attackEnd = false;
+		}
+
+		//エフェクトを再生する
+		if (m_nowFrame >= 55.0f && m_nowFrame <= 65.0f)
+		{
+			//切っ先にエフェクトをつける
+			cEffect.UpdateEffectPosition("PlayerAttack", m_attackLigPos2);
+			cEffect.UpdateEffectRotation("PlayerAttack", VGet(0.0f, m_angle - (DX_PI_F / 2.0f), 0.0f));
 
 		}
 	}
@@ -882,14 +883,6 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	{
 		m_pLigAttack->SetAttack((m_attackDamage) * 1.2);
 
-		//エフェクトを再生する
-		if (m_nowFrame >= 85.0f && m_nowFrame <= 95.0f)
-		{
-			//切っ先にエフェクトをつける
-			cEffect.UpdateEffectPosition("PlayerAttack", m_attackLigPos2);
-
-		}
-
 		//攻撃判定発生フレーム
 		if (m_attackInit)
 		{
@@ -910,6 +903,15 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 
 			m_attackEnd = false;
 		}
+
+		//エフェクトを再生する
+		if (m_nowFrame >= 85.0f && m_nowFrame <= 95.0f)
+		{
+			//切っ先にエフェクトをつける
+			cEffect.UpdateEffectPosition("PlayerAttack", m_attackLigPos2);
+			cEffect.UpdateEffectRotation("PlayerAttack", VGet(0.0f, m_angle - (DX_PI_F / 2.0f), 0.0f));
+
+		}
 	}
 
 
@@ -917,9 +919,13 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	if (m_jumpAttack)
 	{
 		m_pLigAttack->SetAttack((m_attackDamage) * 1.8);
+
 		//攻撃判定発生フレーム
 		if (m_nowFrame == 15.0f)
 		{
+			//エフェクトを作る
+			cEffect.EffectCreate("PlayerAttack", m_attackLigPos2);
+
 			m_status.s_stamina -= 50.0f;
 			m_pLigAttack->Init(m_pPhysics);
 		}
@@ -927,6 +933,14 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		{
 			//攻撃判定リセット
 			m_pLigAttack->CollisionEnd();
+		}
+
+		//エフェクトを再生する
+		if (m_nowFrame >= 15.0f && m_nowFrame <= 20.0f)
+		{
+			//切っ先にエフェクトをつける
+			cEffect.UpdateEffectPosition("PlayerAttack", m_attackLigPos2);
+			cEffect.UpdateEffectRotation("PlayerAttack", VGet(0.0f, m_angle - (DX_PI_F / 2.0f), 0.0f));
 		}
 	}
 	//強い攻撃をした判定
@@ -936,9 +950,13 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		if (m_fist)
 		{
 			m_pLigLegAttack->SetAttack((m_attackDamage) * 1.5);
+
 			//攻撃判定発生フレーム
 			if (m_nowFrame == 35.0f)
 			{
+				//エフェクトを作る
+				cEffect.EffectCreate("PlayerShockWave", m_attackLegLigPos2);
+
 				m_status.s_stamina -= 40.0f;
 				m_pLigLegAttack->Init(m_pPhysics);
 			}
@@ -947,21 +965,54 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 				//攻撃判定リセット
 				m_pLigLegAttack->CollisionEnd();
 			}
+
+			//エフェクトを再生する
+			if (m_nowFrame >= 35.0f && m_nowFrame <= 45.0f)
+			{
+				cEffect.UpdateEffectPosition("PlayerShockWave", m_attackLegLigPos2);
+				cEffect.UpdateEffectRotation("PlayerShockWave", VGet(0.0f, m_angle, 0.0f));
+			}
+
 		}
 		//装備が剣などの種類だった時
 		else if (m_sword)
 		{
-			m_pLigAttack->SetAttack((m_attackDamage) * 1.8);
+			m_pLigAttack->SetAttack((m_attackDamage) * 1.8f);
+			m_pStrengthAttack->SetAttack((m_attackDamage) * 1.8f);
+
+			//エフェクトを再生する
+			if (m_nowFrame >= 15.0f && m_nowFrame <= 60.0f)
+			{
+				//切っ先にエフェクトをつける
+				cEffect.UpdateEffectPosition("PlayerStrong", m_attackLigPos2);
+				cEffect.UpdateEffectPosition("PlayerStrongBig", m_attackLigPos2);
+			}
+
+			if (m_nowFrame == 15.0f)
+			{
+				//エフェクトを作る
+				cEffect.EffectCreate("PlayerStrong", m_attackLigPos2);
+			}
+
 			//攻撃判定発生フレーム
 			if (m_nowFrame == 45.0f)
 			{
-				m_status.s_stamina -= 50.0f;
+				m_status.s_stamina -= 120.0f;
 				m_pLigAttack->Init(m_pPhysics);
+			}
+			if (m_nowFrame == 55.0f)
+			{
+				//エフェクトを作る
+				cEffect.EffectCreate("PlayerStrongBig", m_attackLigPos2);
+				cEffect.EffectCreate("ShockWave", m_attackLigPos2);
+
+				m_pStrengthAttack->Init(m_pPhysics);
 			}
 			else if (m_nowFrame >= 60.0f)
 			{
 				//攻撃判定リセット
 				m_pLigAttack->CollisionEnd();
+				m_pStrengthAttack->CollisionEnd();
 			}
 		}
 	}
@@ -1262,249 +1313,6 @@ void Player::WarpMap()
 }
 
 /// <summary>
-/// 武器を持ってないときのアニメーション
-/// </summary>
-void Player::NotWeaponAnimation()
-{
-	////攻撃が当たってない時
-	////ボス部屋に入っていない時
-	//if (!m_anim.s_hit && !m_animChange.sa_bossEnter && !m_animChange.sa_imapact)
-	//{
-	//	//走り
-	//	if (m_animChange.sa_dashMove && m_anim.s_moveflag)
-	//	{
-	//		m_nowAnimIdx = m_animIdx["Run"];
-	//		ChangeAnim(m_nowAnimIdx, m_animOne[1], m_animOne);
-	//		NotInitAnim(false);
-
-	//	}
-	//	//歩き
-	//	else if (m_anim.s_moveflag)
-	//	{
-	//		//ターゲットしているとき
-	//		if (!m_lockonTarget)
-	//		{
-	//			m_nowAnimIdx = m_animIdx["Walk"];
-	//			ChangeAnim(m_nowAnimIdx, m_animOne[2], m_animOne);
-	//			NotInitAnim(false);
-
-	//		}
-	//		//ターゲットしているとき
-	//		else if (m_lockonTarget)
-	//		{
-	//			//左歩き
-	//			if (cAnX < -500)
-	//			{
-	//				m_nowAnimIdx = m_animIdx["LeftWalk"];
-	//				ChangeAnim(m_nowAnimIdx, m_animOne[3], m_animOne);
-	//				NotInitAnim(false);
-
-	//			}
-	//			//右歩き
-	//			else if (cAnX > 500)
-	//			{
-	//				m_nowAnimIdx = m_animIdx["RightWalk"];
-	//				ChangeAnim(m_nowAnimIdx, m_animOne[4], m_animOne);
-	//				NotInitAnim(false);
-
-	//			}
-	//			//後ろ歩きor歩き
-	//			if (cAnX < 500 && cAnX > -500)
-	//			{
-	//				m_nowAnimIdx = m_animIdx["Walk"];
-	//				ChangeAnim(m_nowAnimIdx, m_animOne[2], m_animOne, cAnimWalkTime, m_animReverse, cAnimWalkReverseTimeInit);
-	//				NotInitAnim(false);
-
-	//			}
-	//		}
-	//		
-	//	}
-	//}
-}
-
-/// <summary>
-/// 全ての状態の時に行うアニメーション関数
-/// </summary>
-void Player::AllAnimation()
-{
-	////プレイヤーが生きているときだけ
-	//if (!m_anim.s_isDead)
-	//{
-	//	//攻撃が当たった時
-	//	//ボス部屋に入った時
-	//	if (m_anim.s_hit && !m_animChange.sa_bossEnter && !m_animChange.sa_imapact)
-	//	{
-	//		m_nowAnimIdx = m_animIdx["Hit"];
-	//		ChangeAnim(m_nowAnimIdx, m_animOne[5], m_animOne);
-	//		NotInitAnim(false);
-
-	//	}
-	//	//攻撃が当たってないとき
-	//	//ボス部屋に入った時
-	//	else if (!m_anim.s_hit && !m_animChange.sa_bossEnter && !m_animChange.sa_imapact)
-	//	{
-	//		//動いてない時
-	//		if (!m_anim.s_moveflag && !m_animChange.sa_avoidance && !m_anim.s_attack && !m_animChange.sa_recovery && 
-	//			!m_shieldNow && !m_animChange.sa_taking && !m_animChange.sa_strengthAttack)
-	//		{
-	//			m_nowAnimIdx = m_animIdx["Idle"];
-	//			ChangeAnim(m_nowAnimIdx, m_animOne[6], m_animOne);
-	//			NotInitAnim(false);
-
-	//		}
-	//		//回避
-	//		else if (m_animChange.sa_avoidance)
-	//		{
-	//			m_nowAnimIdx = m_animIdx["Roll"];
-	//			ChangeAnim(m_nowAnimIdx, m_animOne[7], m_animOne, 0.8f);
-	//			NotInitAnim(true);
-	//		}
-	//		//攻撃
-	//		else if (m_anim.s_attack && !m_animChange.sa_avoidance && !m_animChange.sa_recovery)
-	//		{
-	//			m_nowAnimIdx = m_animIdx["Attack1"];
-	//			ChangeAnim(m_nowAnimIdx, m_animOne[8], m_animOne, 1.0f);
-	//			NotInitAnim(false);
-	//		}
-	//		//強攻撃
-	//		else if (m_animChange.sa_strengthAttack && !m_animChange.sa_avoidance && !m_animChange.sa_recovery)
-	//		{
-	//			m_nowAnimIdx = m_animIdx["Attack2"];
-	//			ChangeAnim(m_nowAnimIdx, m_animOne[9], m_animOne, 0.5f);
-	//			NotInitAnim(false);
-	//		}
-	//		//回復
-	//		else if (m_animChange.sa_recovery)
-	//		{
-	//			m_nowAnimIdx = m_animIdx["Recovery"];
-	//			ChangeAnim(m_nowAnimIdx, m_animOne[10], m_animOne);
-	//			NotInitAnim(false);
-
-	//		}
-	//		//アイテムを取得するとき
-	//		else if (m_animChange.sa_taking)
-	//		{
-	//			m_nowAnimIdx = m_animIdx["Taking"];
-	//			ChangeAnim(m_nowAnimIdx, m_animOne[11], m_animOne);
-	//			NotInitAnim(false);
-
-	//		}
-	//		//ギミックを作動させるとき
-	//		else if (m_animChange.sa_touch)
-	//		{
-	//			m_nowAnimIdx = m_animIdx["Touch"];
-	//			ChangeAnim(m_nowAnimIdx, m_animOne[12], m_animOne);
-	//			NotInitAnim(false);
-	//		}
-	//	}
-	//	//ボス部屋入り口に入るとき
-	//	else if (m_animChange.sa_bossEnter && !m_anim.s_hit && !m_animChange.sa_imapact)
-	//	{
-	//		m_nowAnimIdx = m_animIdx["BossEnter"];
-	//		ChangeAnim(m_nowAnimIdx, m_animOne[13], m_animOne);
-	//		NotInitAnim(true);
-	//	}
-	//}
-}
-
-/// <summary>
-/// 武器を持ってる状態の時に行うアニメーション
-/// </summary>
-void Player::WeaponAnimation(Shield& shield)
-{
-	////プレイヤーが生きている時だけ
-	//if (!m_anim.s_isDead)
-	//{
-	//	//盾受けしたとき
-	//	if (m_animChange.sa_imapact)
-	//	{
-	//		m_nowAnimIdx = m_animIdx["ShieldImpact"];
-	//		ChangeAnim(m_nowAnimIdx, m_animOne[14], m_animOne);
-	//		NotInitAnim(true);
-	//	}
-	//	//攻撃が当たってない時盾受けしていないとき
-	//	else if (!m_anim.s_hit && !m_animChange.sa_imapact)
-	//	{
-	//		//走り
-	//		if (m_animChange.sa_dashMove && m_anim.s_moveflag)
-	//		{
-	//			m_nowAnimIdx = m_animIdx["ShieldRun"];
-	//			ChangeAnim(m_nowAnimIdx, m_animOne[15], m_animOne);
-	//			NotInitAnim(false);
-	//		}
-	//		//歩き
-	//		else if (m_anim.s_moveflag)
-	//		{
-	//			//ターゲットしていないとき
-	//			if (!m_lockonTarget)
-	//			{
-	//				m_nowAnimIdx = m_animIdx["ShieldWalk"];
-	//				ChangeAnim(m_nowAnimIdx, m_animOne[16], m_animOne);
-	//				NotInitAnim(false);
-	//			}
-	//			//ターゲットしているとき
-	//			else if (m_lockonTarget)
-	//			{
-	//				//左右歩き
-	//				if (cAnX < -500 || cAnX > 500)
-	//				{
-	//					m_nowAnimIdx = m_animIdx["ShieldSideWalk"];
-	//					ChangeAnim(m_nowAnimIdx, m_animOne[17], m_animOne, cAnimWalkTime, m_animReverse);
-	//					NotInitAnim(false);
-
-	//				}
-	//				//後ろ歩きor歩き
-	//				else if (cAnX < 500 && cAnX > -500)
-	//				{
-	//					m_nowAnimIdx = m_animIdx["ShieldWalk"];
-	//					ChangeAnim(m_nowAnimIdx, m_animOne[16], m_animOne, cAnimWalkTime, m_animReverse, cAnimWalkReverseTimeInit);
-	//					NotInitAnim(false);
-
-	//				}
-	//			}
-	//		}
-	//		//盾があるとき
-	//		if (!shield.GetFist())
-	//		{
-	//			//防御開始と防御終了
-	//			if (m_animChange.sa_enterShield)
-	//			{
-	//				//キャラが動いていない時
-	//				if (!m_anim.s_moveflag)
-	//				{
-	//					m_nowAnimIdx = m_animIdx["ShieldStart"];
-	//					ChangeAnim(m_nowAnimIdx, m_animOne[18], m_animOne, 1.0f);
-	//					NotInitAnim(true);
-	//				}
-	//				
-	//			}
-	//			//防御中
-	//			if (m_animChange.sa_shieldIdle)
-	//			{
-	//				//キャラが動いていないとき
-	//				if (!m_anim.s_moveflag)
-	//				{
-	//					FrameEndAnim(cAnimIdx, cOne, cTwo, m_moveAnimShieldFrameIndex);
-	//					m_nowAnimIdx = m_animIdx["ShieldIdle"];
-	//					ChangeAnim(m_nowAnimIdx, m_animOne[19], m_animOne);
-	//					NotInitAnim(false);
-	//				}
-	//				//キャラが動いているとき
-	//				else
-	//				{
-	//					
-	//					cAnimIdx = m_animIdx["ShieldTransition"];
-	//					FrameChangeAnim(cAnimIdx, cOne, cTwo, m_moveAnimShieldFrameIndex);
-	//				}
-	//				
-	//			}
-	//			
-	//		}
-	//	}
-	//}
-}
-
-/// <summary>
 /// 描画処理
 /// </summary>
 void Player::Draw(Armor& armor, int font)
@@ -1563,9 +1371,8 @@ void Player::Draw(Armor& armor, int font)
 	//描画
 	MV1DrawModel(m_modelHandle);
 
-	DrawFormatString(200, 300, 0xffffff, "velocityX : %f", rigidbody->GetVelocity().x);
-	DrawFormatString(200, 400, 0xffffff, "velocityY : %f", rigidbody->GetVelocity().y);
-	DrawFormatString(200, 500, 0xffffff, "velocityZ : %f", rigidbody->GetVelocity().z);
+
+	DrawFormatString(200, 500, 0xffffff, "angle : %f", m_angle);
 
 }
 

@@ -97,7 +97,7 @@ public:
 	bool GetShield() { return m_shield; }
 
 	//スピードを設定する
-	int SetSpeed(int set) { return m_status.s_speed = set; }
+	float SetSpeed(float set) { return m_status.s_speed = set; }
 	//アニメーションタイムを設定する
 	float SetAnimSpeed(float set) { return m_animTime = set; }
 
