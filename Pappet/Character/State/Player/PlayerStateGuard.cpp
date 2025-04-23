@@ -205,6 +205,59 @@ void PlayerStateGuard::Update()
 			}
 		}
 
+		//盾を構えながらジャンプできないようにする
+		//ジャンプボタンが押されていたらStateをJumpにする
+		if (Input::GetInstance().IsTriggered("Input_Jump"))
+		{
+			//リグアニメーション分離をやめる
+			own->FrameEndStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
+
+			ChangeState(StateKind::Jump);
+			return;
+		}
+		//盾を構えながら攻撃できないようにする
+		//攻撃ボタンが押されていたらStateを攻撃にする
+		else if (Input::GetInstance().IsTriggered("Input_Attack"))
+		{
+			//リグアニメーション分離をやめる
+			own->FrameEndStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
+
+			ChangeState(StateKind::Attack);
+			return;
+		}
+		//盾を構えながら攻撃できないようにする
+		//強攻撃ボタンが押されていたらStateを強攻撃にする
+		else if (Input::GetInstance().GetIsPushedTriggerButton(true) || Input::GetInstance().GetIsPushedTriggerButton(true))
+		{
+			//リグアニメーション分離をやめる
+			own->FrameEndStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
+
+			ChangeState(StateKind::StrongAttack);
+			return;
+		}
+		//盾を構えながら回避できないようにする
+		//回避ボタンが押されたらStateを回避にする
+		else if (Input::GetInstance().IsTriggered("Input_Roll"))
+		{
+			//リグアニメーション分離をやめる
+			own->FrameEndStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
+
+			ChangeState(StateKind::Roll);
+			return;
+		}
+		//盾を構えながらアイテムをつかないようにする
+		//アイテムボタンが押されたらアイテムを使用する
+		else if (Input::GetInstance().IsTriggered("X"))
+		{
+			//リグアニメーション分離をやめる
+			own->FrameEndStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
+
+			ChangeState(StateKind::Item);
+			return;
+		}
+
+
+
 		//コントローラーの左スティックの入力を取得
 		auto input = Input::GetInstance().GetInputStick(false);
 		auto dirLog = m_dir;

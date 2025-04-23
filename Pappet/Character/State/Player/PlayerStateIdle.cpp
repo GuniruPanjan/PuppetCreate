@@ -59,7 +59,7 @@ void PlayerStateIdle::Update()
 			Input::GetInstance().GetInputStick(false).second != 0.0f)
 		{
 			//メニューが開かれていなくてダッシュボタンが長押しされてたらダッシュ
-			if (Input::GetInstance().IsPushed("Input_Dash") && !own->GetMenu())
+			if (Input::GetInstance().IsPushed("Input_Dash") && !own->GetMenu() && own->GetAction())
 			{
 				ChangeState(StateKind::Dash);
 				return;
@@ -73,7 +73,7 @@ void PlayerStateIdle::Update()
 		}
 
 		//メニューが開かていなくてジャンプボタンが押されていたらStateをJumpにする
-		if (Input::GetInstance().IsTriggered("Input_Jump") && !own->GetMenu())
+		if (Input::GetInstance().IsTriggered("Input_Jump") && !own->GetMenu() && own->GetAction())
 		{
 			ChangeState(StateKind::Jump);
 			return;
@@ -99,7 +99,7 @@ void PlayerStateIdle::Update()
 		}
 
 		//メニューが開かれていなく回避ボタンが押されたらStateを回避にする
-		if (Input::GetInstance().IsReleased("Input_Roll") && !own->GetMenu())
+		if (Input::GetInstance().IsReleased("Input_Roll") && !own->GetMenu() && own->GetAction())
 		{
 			ChangeState(StateKind::Roll);
 			return;

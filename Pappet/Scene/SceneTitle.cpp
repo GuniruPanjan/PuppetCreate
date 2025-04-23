@@ -45,6 +45,7 @@ namespace
 	//一回だけ行う
 	bool cOne = false;
 	bool cOneLoad = false;
+	bool cEasing = false;
 
 	//ロード画面ランダム
 	int cLoad = 0;
@@ -243,6 +244,7 @@ void SceneTitle::Init()
 	m_one = false;
 	m_blend = false;
 	m_decisionButton = false;
+	cEasing = false;
 }
 
 /// <summary>
@@ -419,19 +421,29 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 		//Endを選択している時のターゲット位置とカメラ位置
 		if (pselect->NowSelect == 9)
 		{
+			//イージングを可能にする
+			cEasing = true;
+
 			//カメラのターゲットを器に向ける
 			UpdateCameraPositionAndTarget(cDeltaTime, m_cameraPos, VGet(cCameraPosX1, cCameraPosY1, cCameraPosZ1), m_cameraTarget, m_cameraTargetFire);
 		}
 		//設定を選択している時のターゲット位置とカメラ位置
 		else if (pselect->NowSelect == 8)
 		{
+			//イージングを可能にする
+			cEasing = true;
+
 			//カメラのターゲットを墓に向ける
 			UpdateCameraPositionAndTarget(cDeltaTime, m_cameraPos, VGet(cCameraPosx, cCameraPosy, cCameraPosz), m_cameraTarget, m_cameraTargetGraves);
 		}
 		else
 		{
-			//プレイヤーにターゲットを向ける
-			UpdateCameraPositionAndTarget(cDeltaTime, m_cameraPos, VGet(-80.0f, 35.0f, 80.0f), m_cameraTargetGraves, m_cameraTarget);
+			//イージングする
+			if (cEasing)
+			{
+				//プレイヤーにターゲットを向ける
+				UpdateCameraPositionAndTarget(cDeltaTime, m_cameraPos, VGet(-80.0f, 35.0f, 80.0f), m_cameraTargetGraves, m_cameraTarget);
+			}	
 		}
 
 		SetCameraPositionAndTarget_UpVecY(m_cameraPos, m_cameraTarget);

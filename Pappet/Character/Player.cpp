@@ -13,6 +13,7 @@
 
 #include "State/Player/PlayerStateIdle.h"
 #include "State/Player/PlayerStateTaking.h"
+#include "Input/Input.h"
 
 #include <cassert>
 
@@ -150,7 +151,8 @@ Player::Player() :
 	m_attackStrong(false),
 	m_jumpAttack(false),
 	m_attackInit(false),
-	m_attackEnd(false)
+	m_attackEnd(false),
+	m_action(true)
 {
 
 	//カプセル型
@@ -383,8 +385,22 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 	//死んでないときのステートの更新
 	if (!m_anim.s_isDead)
 	{
-		//ステートの更新
-		m_pState->Update();
+		//アクションできなくする
+		if (m_action)
+		{
+			//ステートの更新
+			m_pState->Update();
+		}
+		//アクションできるようにする
+		else if (!m_action)
+		{
+			//回避おしたらアクションできるようにする
+			if (Input::GetInstance().IsReleased("Input_Roll"))
+			{
+				m_action = true;
+			}
+		}
+		
 	}
 
 	if (m_pState->GetState() == StateBase::StateKind::Jump)
@@ -1351,10 +1367,6 @@ void Player::Draw(Armor& armor, int font)
 	MV1SetRotationXYZ(m_modelHandle, VGet(0.0f, m_angle, 0.0f));
 	//描画
 	MV1DrawModel(m_modelHandle);
-
-
-	DrawFormatString(200, 500, 0xffffff, "angle : %f", m_angle);
-
 }
 
 void Player::End()

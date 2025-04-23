@@ -70,8 +70,12 @@ public:
 	//レベル関係のステータス
 	void ChangeStatus();
 
-	//フレームを取得
+	//ガード状態フレームを取得
 	int GetShieldFrame() { return m_moveAnimShieldFrameIndex; }
+	
+	//アクションできるか決定
+	bool GetAction() { return m_action; }
+	bool SetAction(bool set) { return m_action = set; }
 
 	//プレイヤーが生きているかを取得
 	const bool IsGetPlayerDead() const { return m_anim.s_isDead; }
@@ -227,6 +231,7 @@ private:
 	int m_notRoll;                      //ローリングできないようにする
 	bool m_attackInit;                  //攻撃判定初期化
 	bool m_attackEnd;                   //攻撃判定終了
+	bool m_action;                      //UIから終了する状態遷移用の判定変数
 
 	float m_start;                      //スタートタイムを設定する
 	float m_reset;                      //リセットタイムを設定する

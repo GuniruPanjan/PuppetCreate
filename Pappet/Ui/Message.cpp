@@ -133,6 +133,8 @@ void Message::Update(Player& player)
 			m_draw = false;
 
 			player.SetMessageRead(false);
+			//ƒ[ƒŠƒ“ƒO‚Å‚«‚È‚¢‚æ‚¤‚É‚·‚é
+			player.SetAction(false);
 		}
 	}
 }

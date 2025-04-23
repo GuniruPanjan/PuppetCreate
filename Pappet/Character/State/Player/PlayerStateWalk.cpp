@@ -98,7 +98,7 @@ void PlayerStateWalk::Update()
 		}
 
 		//メニューが開かれていなくてジャンプボタンが押されていたらStateをJumpにする
-		if (Input::GetInstance().IsTriggered("Input_Jump") && !own->GetMenu())
+		if (Input::GetInstance().IsTriggered("Input_Jump") && !own->GetMenu() && own->GetAction())
 		{
 			ChangeState(StateKind::Jump);
 			return;
@@ -127,7 +127,7 @@ void PlayerStateWalk::Update()
 		if (m_input < 30)
 		{
 			//メニューが開かれていなくて回避ボタンが押されたらStateを回避にする
-			if (Input::GetInstance().IsReleased("Input_Roll") && !own->GetMenu())
+			if (Input::GetInstance().IsReleased("Input_Roll") && !own->GetMenu() && own->GetAction())
 			{
 				ChangeState(StateKind::Roll);
 				return;
@@ -135,7 +135,7 @@ void PlayerStateWalk::Update()
 		}
 
 		//メニューが開かれていなくてダッシュボタンが押されたらStateをダッシュにする
-		if (Input::GetInstance().IsPushed("Input_Dash") && !own->GetMenu())
+		if (Input::GetInstance().IsPushed("Input_Dash") && !own->GetMenu() && own->GetAction())
 		{
 			m_input++;
 			if (m_input >= 30)

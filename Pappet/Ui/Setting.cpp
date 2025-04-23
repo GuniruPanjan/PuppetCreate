@@ -669,7 +669,8 @@ void Setting::MenuUpdate(Player& player, SEManager& se)
 			{
 				m_returnMenu = false;
 
-				player.SetRoll(0);
+				//ジャンプできないようにする
+				player.SetAction(false);
 			}
 			//タイトルに戻る
 			if (selectDecision == cMenuSelectDecisionTitle)
@@ -692,7 +693,8 @@ void Setting::MenuUpdate(Player& player, SEManager& se)
 			//リセット
 			cWaitTime = 0;
 
-			player.SetRoll(0);
+			//ローリングできないようにする
+			player.SetAction(false);
 
 		}
 	}
@@ -702,32 +704,6 @@ void Setting::MenuUpdate(Player& player, SEManager& se)
 	}
 
 }
-
-/// <summary>
-/// ステータス画面を変える更新処理
-/// </summary>
-//void Setting::MenuChange()
-//{
-//	//パッド入力所得
-//	GetJoypadXInputState(DX_INPUT_KEY_PAD1, &m_xpad);
-//
-//	//Rボタンが押されたら
-//	if (m_xpad.Buttons[9] == 1)
-//	{
-//		//装備画面から戻る
-//		m_equipmentMenu = false;
-//		//アイテム画面に移る
-//		m_itemMenu = true;
-//	}
-//	//Lボタンが押されたら
-//	else if (m_xpad.Buttons[8] == 1)
-//	{
-//		//アイテム画面から戻る
-//		m_itemMenu = false;
-//		//装備画面に移る
-//		m_equipmentMenu = true;
-//	}
-//}
 
 /// <summary>
 /// 装備画面更新処理
@@ -880,7 +856,8 @@ void Setting::RestUpdate(Player& player, CoreManager& core, bool rest, SEManager
 				{
 					player.SetNotRest(false);
 
-					player.SetRoll(0);
+					//ジャンプできないようにする
+					player.SetAction(false);
 				}
 
 				//リセット
@@ -891,8 +868,8 @@ void Setting::RestUpdate(Player& player, CoreManager& core, bool rest, SEManager
 			if (m_xpad.Buttons[13] == 1)
 			{
 				PlaySoundMem(se.GetButtonSE(), DX_PLAYTYPE_BACK, true);
-
-				player.SetRoll(0);
+				//ローリングできないようにする
+				player.SetAction(false);
 				player.SetNotRest(false);
 			}
 		}
@@ -952,7 +929,8 @@ void Setting::RestUpdate(Player& player, CoreManager& core, bool rest, SEManager
 				{
 					player.SetNotRest(false);
 
-					player.SetRoll(0);
+					//ジャンプできないようにする
+					player.SetAction(false);
 				}
 
 				//リセット
@@ -964,7 +942,8 @@ void Setting::RestUpdate(Player& player, CoreManager& core, bool rest, SEManager
 			{
 				PlaySoundMem(se.GetButtonSE(), DX_PLAYTYPE_BACK, true);
 
-				player.SetRoll(0);
+				//ローリングできないようにする
+				player.SetAction(false);
 				player.SetNotRest(false);
 			}
 
@@ -1504,41 +1483,6 @@ void Setting::MenuBackDraw()
 	DrawGraph(0, 0, m_black, false);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
-
-/// <summary>
-/// メニューを変更する所の描画処理
-/// </summary>
-//void Setting::MenuChangeDraw()
-//{
-//	// アルファ値をいじる
-//	if (!m_blend)
-//	{
-//		if (cBlenda < cBlendAlphaMax)
-//		{
-//			cBlenda++;
-//		}
-//		else
-//		{
-//			m_blend = true;
-//		}
-//	}
-//	else if (m_blend)
-//	{
-//		if (cBlenda > cBlendAlphaMin)
-//		{
-//			cBlenda--;
-//		}
-//		else
-//		{
-//			m_blend = false;
-//		}
-//	}
-//
-//
-//	SetDrawBlendMode(DX_BLENDMODE_ALPHA, cBlenda);
-//	DrawBox(m_change.oneX, m_change.oneY, m_change.secondX, m_change.secondY, cMenuBoxColor, true);
-//	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-//}
 
 /// <summary>
 /// 装備画面
