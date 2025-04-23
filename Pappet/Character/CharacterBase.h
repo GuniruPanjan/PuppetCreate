@@ -98,6 +98,10 @@ public:
 	//ジャンプ関係
 	bool GetJumpCan() { return m_jumpCan; }                            //ジャンプ攻撃を可能にする
 
+	//ガード関係
+	bool GetGuard() { return m_guardTransition; }                      //現在のリグ状態を確保する
+	bool SetGuard(bool set) { return m_guardTransition = set; }        //リグ状態を獲得する
+
 
 	//物理データを取得
 	std::shared_ptr<MyLibrary::Rigidbody> GetRigidbody() { return rigidbody; }
@@ -156,6 +160,7 @@ protected:
 	int m_maxHeel;            //HPの最大回復量
 	float m_cameraAngle;      //カメラ情報
 	bool m_jumpCan;           //ジャンプ攻撃可能にする
+	bool m_guardTransition;   //リグがガード状態になっているかを判定する
 
 	//Stateパターン
 	std::shared_ptr<StateBase> m_pState;      

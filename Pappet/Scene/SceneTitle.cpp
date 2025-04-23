@@ -361,11 +361,6 @@ std::shared_ptr<SceneBase> SceneTitle::Update()
 						SetEnd(true);
 					}
 				}
-				//Bƒ{ƒ^ƒ“‚ð‰Ÿ‚µ‚½‚ç
-				else if (m_xpad.Buttons[13] == 1 && !m_decisionButton)
-				{
-					SetEnd(true);
-				}
 			}
 			else if (m_pSetting->GetSettingScene() == false)
 			{

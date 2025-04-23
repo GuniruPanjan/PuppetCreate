@@ -43,7 +43,8 @@ CharacterBase::CharacterBase(Priority priority, ObjectTag tag) :
 	m_pState(),
 	m_capsuleY(0.0f),
 	m_capsuleRadius(0.0f),
-	m_jumpCan(false)
+	m_jumpCan(false),
+	m_guardTransition(false)
 {
 	for (int i = 0; i < ANIMATION_MAX; i++)
 	{

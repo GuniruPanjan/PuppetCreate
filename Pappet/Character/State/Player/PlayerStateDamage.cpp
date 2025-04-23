@@ -4,6 +4,12 @@
 #include "Input/Input.h"
 #include "Character/Player.h"
 
+
+namespace
+{
+	bool cFrame = false;
+}
+
 /// <summary>
 /// コンストラクタ
 /// </summary>
@@ -12,6 +18,9 @@ PlayerStateDamage::PlayerStateDamage(std::shared_ptr<CharacterBase> chara) :
 	StateBase(chara)
 {
 	m_equipmentShield = chara->GetShield();
+
+	//リグが分離された状態できたら
+	cFrame = chara->GetGuard();
 
 	//最初にヒット状態を入れる
 	m_hit = chara->GetHit();
@@ -51,6 +60,9 @@ void PlayerStateDamage::Update()
 	//持っているキャラクターベースクラスをプレイヤークラスにキャストする(ダウンキャスト)
 	auto own = std::dynamic_pointer_cast<Player>(m_pChara.lock());
 
+	//リグ分離終了
+	own->FrameEndStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
+
 	//フレーム回避終了
 	own->SetAvoidance(false);
 
@@ -68,6 +80,17 @@ void PlayerStateDamage::Update()
 		//スタミナ切れじゃなかった場合
 		if (!own->GetStaminaBreak())
 		{
+			//シールドを装備していた場合ガードボタンを押したらStateをガードにする
+			if (m_equipmentShield)
+			{
+				//ガードボタンを押したときか押し続けていた場合
+				if (Input::GetInstance().IsTriggered("Input_Shield") || Input::GetInstance().IsPushed("Input_Shield"))
+				{
+					ChangeState(StateKind::Guard);
+					return;
+				}
+			}
+
 			//左スティックが入力されていたらStateをWalkにする
 			if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
 				Input::GetInstance().GetInputStick(false).second != 0.0f)
@@ -129,17 +152,21 @@ void PlayerStateDamage::Update()
 				ChangeState(StateKind::Item);
 				return;
 			}
-
-			//シールドを装備していた場合ガードボタンを押したらStateをガードにする
-			if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield)
-			{
-				ChangeState(StateKind::Guard);
-				return;
-			}
 		}
 		//スタミナ切れだった場合
 		else
 		{
+			//シールドを装備していた場合ガードボタンを押したらStateをガードにする
+			if (m_equipmentShield)
+			{
+				//ガードボタンを押したときか押し続けていた場合
+				if (Input::GetInstance().IsTriggered("Input_Shield") || Input::GetInstance().IsPushed("Input_Shield"))
+				{
+					ChangeState(StateKind::Guard);
+					return;
+				}
+			}
+
 			//左スティックが入力されていたらStateをWalkにする
 			if (Input::GetInstance().GetInputStick(false).first != 0.0f ||
 				Input::GetInstance().GetInputStick(false).second != 0.0f)
@@ -161,13 +188,6 @@ void PlayerStateDamage::Update()
 			if (Input::GetInstance().IsTriggered("X"))
 			{
 				ChangeState(StateKind::Item);
-				return;
-			}
-
-			//シールドを装備していた場合ガードボタンを押したらStateをガードにする
-			if (Input::GetInstance().IsTriggered("Input_Shield") && m_equipmentShield)
-			{
-				ChangeState(StateKind::Guard);
 				return;
 			}
 		}
