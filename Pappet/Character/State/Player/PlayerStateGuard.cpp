@@ -105,6 +105,12 @@ void PlayerStateGuard::Update()
 					own->SetGuard(cFrame);
 				}
 			}
+			//ターゲットしていない時
+			else
+			{
+				own->FrameStateChangeAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
+				own->SetGuard(cFrame);
+			}
 		}
 		//盾を構えた状態で止まった場合リグによるアニメーション分離をやめる
 		else if (Input::GetInstance().GetInputStick(false).first == 0.0f &&
@@ -295,15 +301,23 @@ void PlayerStateGuard::Update()
 			//アニメーションを変更する
 			if (m_dir == eDir::Right || m_dir == eDir::BackRight || m_dir == eDir::ForwardRight)
 			{
-				//リグアニメーション分離をやめる
-				own->FrameEndStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
-				own->SetGuard(cFrame);
+				//ターゲットしている時は
+				if (m_targetState)
+				{
+					//リグアニメーション分離をやめる
+					own->FrameEndStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
+					own->SetGuard(cFrame);
+				}
 			}
 			if (m_dir == eDir::Left || m_dir == eDir::BackLeft || m_dir == eDir::ForwardLeft)
 			{
-				//リグアニメーション分離をやめる
-				own->FrameEndStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
-				own->SetGuard(cFrame);
+				//ターゲットしている時は
+				if (m_targetState)
+				{
+					//リグアニメーション分離をやめる
+					own->FrameEndStateAnim(CsvLoad::GetInstance().GetAnimData(own->GetCharacterName(), "ShieldTransition"), own->GetShieldFrame(), cFrame);
+					own->SetGuard(cFrame);
+				}
 			}
 
 			auto animName = GetGuardAnim(m_dir);

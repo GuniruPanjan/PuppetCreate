@@ -65,6 +65,7 @@ protected:
 	int m_edgeHandle;           //’[‚Ì‰æ‘œŠi”[•Ï”
 	int m_barHandle;            //ƒo[‚Ì‰æ‘œŠi”[•Ï”
 	int m_lineHandle;           //ƒ‰ƒCƒ“‚Ì‰æ‘œŠi”[•Ï”
+	int m_arrowHandle;          //‘I‘ğ‚Ì‰æ‘œŠi”[•Ï”
 
 	//ƒAƒCƒeƒ€‚Ì‰æ‘œ
 	int m_blackSword;     //•‚¢Œ•‚Ì‰æ‘œŠi”[•Ï”

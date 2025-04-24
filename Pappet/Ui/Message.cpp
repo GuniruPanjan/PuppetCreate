@@ -9,6 +9,9 @@ namespace
 	//シングルトン
 	auto& cEffect = EffectManager::GetInstance();
 
+	//メッセージの半径
+	constexpr float cRadius = 50.0f;
+
 	//定数の定義
 	const int cEffectTimeThreshold = 50;
 	const int cBackgroundX = 130;
@@ -71,9 +74,15 @@ Message::Message() :
 	m_two(0),
 	m_three(0),
 	m_draw(false),
-	m_can(false)
+	m_can(false),
+	m_stop(false)
 {
 	m_pFont = std::make_shared<Font>();
+
+	for (int i = 0; i < 6; i++)
+	{
+		m_tutorial[i] = false;
+	}
 }
 
 Message::~Message()
@@ -99,7 +108,7 @@ void Message::Init(float posX, float posY, float posZ, int official, int one, in
 	m_lbButton = MyLoadGraph("Data/UI/LBButton.png", 2, 2);
 	m_startButton = MyLoadGraph("Data/UI/START.png", 2, 2);
 
-	m_pMessage = std::make_shared<MessageObject>(50.0f);
+	m_pMessage = std::make_shared<MessageObject>(cRadius);
 
 	m_centerPos = MyLibrary::LibVec3(posX, posY, posZ);
 
@@ -125,6 +134,12 @@ void Message::Update(Player& player)
 	{
 		m_draw = true;
 	}
+	//メッセージを読めなくする
+	else if(!m_pMessage->GetIsStay())
+	{
+		m_draw = false;
+	}
+
 	if (m_draw)
 	{
 		//Bボタンを押すと戻る
@@ -284,6 +299,171 @@ void Message::DrawString()
 
 		
 	}
+}
+
+/// <summary>
+/// チュートリアル描画
+/// </summary>
+void Message::DrawTutorial(Player& player)
+{
+	//プレイヤーが一定の場所にいくとチュートリアルを表示する
+	//移動チュートリアル
+	if (player.GetPos().x >= -1800.0f && !m_tutorial[0] && m_official == 2)
+	{
+		//背景描画
+		DrawGraph(cBackgroundX, cBackgroundY, m_messageUI, false);
+
+		//左スティック描画
+		DrawGraph(cLStickX, cLStickY, m_lStick, true);
+		DrawStringToHandle(cDrawStringX1, cDrawStringY7, "Lスティック　：　移動", cTextColor, m_pFont->GetHandle());
+
+		//Bボタン描画
+		DrawGraph(cAButtonX, cAButtonY, m_bButton, true);
+		DrawStringToHandle(cDrawStringX1, cDrawStringY3, "Bボタン単押し　：　回避", cTextColor, m_pFont->GetHandle());
+		DrawStringToHandle(cDrawStringX1, cDrawStringY4, "Bボタン長押し　：　走る", cTextColor, m_pFont->GetHandle());
+
+		//スタミナ描画
+		DrawGraph(cStaminaBarX, cStaminaBarY, m_staminaBar, true);
+		DrawStringToHandle(cDrawStringX4, cDrawStringY8, "回避と走る行動にはスタミナを消費する", cTextColor, m_pFont->GetHandle());
+
+		m_stop = true;
+
+		//Bボタンを押すと戻る
+		if (m_xpad.Buttons[13] == 1)
+		{
+			m_tutorial[0] = true;
+			m_stop = false;
+			//ローリングできないようにする
+			player.SetAction(false);
+		}
+	}
+	else if (player.GetPos().x >= -1500.0f && !m_tutorial[1] && m_official == 3)
+	{
+		//背景描画
+		DrawGraph(cBackgroundX, cBackgroundY, m_messageUI, false);
+
+		//右スティック描画
+		DrawGraph(cRStickX, cRStickY, m_rStick, true);
+		DrawStringToHandle(cDrawStringX1, cDrawStringY2, "Rスティック　：　カメラ移動", cTextColor, m_pFont->GetHandle());
+		DrawStringToHandle(cDrawStringX1, cDrawStringY9, "Rスティック押し込み　：　ターゲット集中", cTextColor, m_pFont->GetHandle());
+
+		DrawStringToHandle(cDrawStringX5, cDrawStringY8, "ターゲット集中の間にRスティックを動かすと\n　　　　　　　ターゲット変更", cTextColor, m_pFont->GetHandle());
+
+		m_stop = true;
+
+		//Bボタンを押すと戻る
+		if (m_xpad.Buttons[13] == 1)
+		{
+			m_tutorial[1] = true;
+			m_stop = false;
+			//ローリングできないようにする
+			player.SetAction(false);
+		}
+	}
+	else if (player.GetPos().x >= -1200.0f && !m_tutorial[2] && m_official == 4)
+	{
+		//背景描画
+		DrawGraph(cBackgroundX, cBackgroundY, m_messageUI, false);
+
+		//RBボタン描画
+		DrawGraph(cRBButtonX, cRBButtonY, m_rbButton, true);
+		DrawStringToHandle(cDrawStringX6, cDrawStringY10, "RBボタン　：　攻撃", cTextColor, m_pFont->GetHandle());
+		DrawStringToHandle(cDrawStringX2, cDrawStringY11, "攻撃中にもう一度攻撃を押すと\n　　最大３回コンボできる", cTextColor, m_pFont->GetHandle());
+
+		//RTボタン描画
+		DrawGraph(cRTButtonX, cRTButtonY, m_rtButton, true);
+		DrawStringToHandle(cDrawStringX6, cDrawStringY4, "RTボタン　：　強攻撃", cTextColor, m_pFont->GetHandle());
+
+		//スタミナ描画
+		DrawGraph(cStaminaBarX, cStaminaBarY, m_staminaBar, true);
+		DrawStringToHandle(cDrawStringX1, cDrawStringY8, "攻撃行動ではスタミナを消費する", cTextColor, m_pFont->GetHandle());
+
+		m_stop = true;
+
+		//Bボタンを押すと戻る
+		if (m_xpad.Buttons[13] == 1)
+		{
+			m_tutorial[2] = true;
+			m_stop = false;
+			//ローリングできないようにする
+			player.SetAction(false);
+		}
+	}
+	else if (player.GetPos().x >= -900.0f && !m_tutorial[3] && m_official == 5)
+	{
+		//背景描画
+		DrawGraph(cBackgroundX, cBackgroundY, m_messageUI, false);
+
+		//Yボタン描画
+		DrawGraph(cYButtonX, cYButtonY, m_yButton, true);
+		DrawStringToHandle(cDrawStringX1, cDrawStringY10, "マップで光る物はアイテムとして入手できる", cTextColor, m_pFont->GetHandle());
+		DrawStringToHandle(cDrawStringX6, cDrawStringY12, "Yボタン　：　アイテム入手", cTextColor, m_pFont->GetHandle());
+
+		//STARTボタン描画
+		DrawGraph(cStartButtonX, cStartButtonY, m_startButton, true);
+		DrawStringToHandle(cDrawStringX2, cDrawStringY13, "STARTボタン　：　メニューを開く", cTextColor, m_pFont->GetHandle());
+		DrawStringToHandle(cDrawStringX1, cDrawStringY14, "メニューでは装備の変更やタイトルに戻れる", cTextColor, m_pFont->GetHandle());
+
+		m_stop = true;
+
+		//Bボタンを押すと戻る
+		if (m_xpad.Buttons[13] == 1)
+		{
+			m_tutorial[3] = true;
+			m_stop = false;
+			//ローリングできないようにする
+			player.SetAction(false);
+		}
+	}
+	else if (player.GetPos().x >= -600.0f && !m_tutorial[4] && m_official == 6)
+	{
+		//背景描画
+		DrawGraph(cBackgroundX, cBackgroundY, m_messageUI, false);
+
+		//LBボタン描画
+		DrawGraph(cLBButtonX, cLBButtonY, m_lbButton, true);
+		DrawStringToHandle(cDrawStringX1, cDrawStringY1, "盾を装備しているときは\n敵の攻撃を防ぐことができる", cTextColor, m_pFont->GetHandle());
+		DrawStringToHandle(cDrawStringX6, cDrawStringY15, "LBボタン　：　ガード", cTextColor, m_pFont->GetHandle());
+
+		//スタミナ描画
+		DrawGraph(cStaminaBarX, cStaminaBarY, m_staminaBar, true);
+		DrawStringToHandle(cDrawStringX1, cDrawStringY5, "防御行動ではスタミナを消費する\n防御中はスタミナの回復が遅くなる", cTextColor, m_pFont->GetHandle());
+		m_stop = true;
+
+		//Bボタンを押すと戻る
+		if (m_xpad.Buttons[13] == 1)
+		{
+			m_tutorial[4] = true;
+			m_stop = false;
+			//ローリングできないようにする
+			player.SetAction(false);
+		}
+	}
+	else if (player.GetPos().x >= -300.0f && !m_tutorial[5] && m_official == 7)
+	{
+		//背景描画
+		DrawGraph(cBackgroundX, cBackgroundY, m_messageUI, false);
+
+		//Yボタン描画
+		DrawGraph(cXButtonX, cXButtonY, m_yButton, true);
+		DrawStringToHandle(cDrawStringX1, cDrawStringY1, "　　棺桶のようなオブジェクトは\n　　　　　　　休息が可能、\n休息をするとリスポーン地点を固定する", cTextColor, m_pFont->GetHandle());
+		DrawStringToHandle(cDrawStringX6, cDrawStringY15, "Yボタン　：　休息", cTextColor, m_pFont->GetHandle());
+
+		//アイテム描画
+		DrawGraph(cItemX, cItemY, m_xButton, true);
+		DrawStringToHandle(cDrawStringX6, cDrawStringY16, "Xボタン　：　アイテム使用", cTextColor, m_pFont->GetHandle());
+		DrawStringToHandle(cDrawStringX6, cDrawStringY8, "アイテムは使用すると消費する", cTextColor, m_pFont->GetHandle());
+		m_stop = true;
+
+		//Bボタンを押すと戻る
+		if (m_xpad.Buttons[13] == 1)
+		{
+			m_tutorial[5] = true;
+			m_stop = false;
+			//ローリングできないようにする
+			player.SetAction(false);
+		}
+		}
 }
 
 void Message::End()

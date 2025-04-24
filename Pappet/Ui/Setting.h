@@ -276,7 +276,7 @@ private:
 
 	void SettingChange(int& setting, int& cSetting, int one, int two, int three, int four, int five, int six, int seven, int eight, int nine, int ten);
 	void CameraChange(float& setting, float& cSetting, float one, float two, float three, float four, float five, float six, float seven, float eight, float nine, float ten);
-	void SettingBarChange(int Decision, float& bar, float& cBar);
+	void SettingBarChange(int Decision, float& bar, float& cBar, int& lineX);
 	void SettingBarDraw(float bar, int x, int y);
 
 	void WeaponUpdate(std::list<std::string> list, Weapon& weapon, int right);
@@ -304,12 +304,13 @@ private:
 	int m_button;             //押した時間を得る
 	int m_thumb;              //押した時間を得る
 	int m_waitTime;           //入力を待つための時間
-	int m_brightnessColor;    //明るさの色
-	int m_bgmColor;           //音量の色
-	int m_seColor;            //SEの色
-	int m_cameraColor;        //カメラの色
-	int m_returnColor;        //戻るの色
+	int m_arrowX;             //X座標
+	int m_arrowY;             //Y座標
 	int m_menuColor[5];       //メニューの色
+	int m_brightLineX;        //明るさラインのX座標
+	int m_volumeLineX;        //音量のラインのX座標
+	int m_seLineX;            //SEのラインのX座標
+	int m_cameraLineX;        //カメラのラインのX座標
 	int m_core;               //表記用にコアを取得する
 	int m_right;              //右装備の選んでるところを格納する変数
 	int m_left;               //左装備の選んでるところを格納する変数

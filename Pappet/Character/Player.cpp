@@ -532,7 +532,7 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 				m_shieldOne = true;
 			}
 
-			//結構適当にしたけどこれでいいと思う
+			//盾でガードできる敵
 			if (m_pShieldSearch->GetIsStay())
 			{
 				//盾の当たり判定
@@ -1306,6 +1306,11 @@ void Player::Action(VECTOR restpos, Tool& tool, Shield& shield, SEManager& se, b
 			m_read = true;
 		}
 	}
+	//メッセージを読めなくする
+	else
+	{
+		m_read = false;
+	}
 
 	//メニューを開く
 	if (m_xpad.Buttons[4] == 1)
@@ -1355,7 +1360,7 @@ void Player::Draw(Armor& armor, int font)
 	DrawFormatString(1000, 550, 0xffffff, "taking : %d", m_animChange.sa_taking);
 	DrawFormatString(1000, 650, 0xffffff, "touch : %d", m_animChange.sa_touch);
 #endif
-#if false
+#if true
 	DrawFormatString(1000, 150, 0xffffff, "posx : %f", rigidbody->GetPos().x);   //15   -700
 	DrawFormatString(1000, 200, 0xffffff, "posy : %f", rigidbody->GetPos().y);   //12   
 	DrawFormatString(1000, 250, 0xffffff, "posz : %f", rigidbody->GetPos().z);   //0    370
@@ -1506,6 +1511,7 @@ void Player::OnTriggerEnter(const std::shared_ptr<Collidable>& collidable)
 	printfDx(message.c_str());
 #endif
 }
+
 
 /// <summary>
 /// 防具を変える

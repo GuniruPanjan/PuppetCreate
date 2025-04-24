@@ -290,10 +290,16 @@ void GameManager::Update()
 
 			m_pItem->Update(m_pPhysics, this, m_pPlayer->GetTaking());
 			m_pMessage->Update(m_pPhysics, this, *m_pPlayer);
-			m_pEnemy->Update(m_pPhysics, this, *m_pCore, m_pPlayer->GetPos(), m_pCamera->GetDirection(), m_pPlayer->GetShieldPos(), !m_pPlayer->IsGetPlayerDead(), *m_pSe, *m_pEnemyWeapon, cTutorial);
 
-			m_pPlayer->Update(*m_pWeapon, *m_pShield, *m_pArmor, *m_pEnemy, *m_pCore, m_pMap->GetRestPos(), *m_pTool, *m_pSe, m_pMap->GetBossRoom(), m_pEnemy->GetBossDead(GetThisMapName()), m_pPhysics);
+			//チュートリアル中は動きを止める
+			if (!m_pMessage->GetStop())
+			{
+				m_pEnemy->Update(m_pPhysics, this, *m_pCore, m_pPlayer->GetPos(), m_pCamera->GetDirection(), m_pPlayer->GetShieldPos(), !m_pPlayer->IsGetPlayerDead(), *m_pSe, *m_pEnemyWeapon, cTutorial);
 
+				m_pPlayer->Update(*m_pWeapon, *m_pShield, *m_pArmor, *m_pEnemy, *m_pCore, m_pMap->GetRestPos(), *m_pTool, *m_pSe, m_pMap->GetBossRoom(), m_pEnemy->GetBossDead(GetThisMapName()), m_pPhysics);
+
+			}
+			
 			m_pMap->JudgeUpdate();
 
 			//プレイヤーのボス部屋に入り口判定
@@ -508,8 +514,13 @@ void GameManager::Update()
 
 			cOne = false;
 
-			//物理更新
-			m_pPhysics->Update();
+			//チュートリアル中は動きを止める
+			if (!m_pMessage->GetStop())
+			{
+				//物理更新
+				m_pPhysics->Update();
+			}
+			
 		}
 		//ワープしたとき
 		else if (m_pPlayer->GetWarp() || cClearTutorial || m_pSetting->GetRestWarp())
@@ -667,7 +678,12 @@ void GameManager::Draw()
 
 		m_pMessage->DrawString();
 		m_pMessage->Draw();
-		
+
+		//チュートリアルマップだった場合
+		if (m_nowMap == eMapName::TutorialMap)
+		{
+			m_pMessage->Tutorial(*m_pPlayer);
+		}
 
 		//フェードアウトイン描画
 		m_pFade->Draw();

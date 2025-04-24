@@ -57,7 +57,8 @@ UIBase::UIBase() :
 	m_returnHandle(-1),
 	m_edgeHandle(-1),
 	m_barHandle(-1),
-	m_lineHandle(-1)
+	m_lineHandle(-1),
+	m_arrowHandle(-1)
 {
 	
 }
@@ -106,6 +107,7 @@ UIBase::~UIBase()
 	DeleteGraph(m_edgeHandle);
 	DeleteGraph(m_barHandle);
 	DeleteGraph(m_lineHandle);
+	DeleteGraph(m_arrowHandle);
 }
 
 /// <summary>

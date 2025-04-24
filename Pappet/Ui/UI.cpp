@@ -305,6 +305,14 @@ void UI::Draw(Player& player, EnemyManager& enemy, Setting& eq, MapManager& map,
 
 		player.SetRoll(0);
 	}
+	//チュートリアル画面を閉じる
+	if (message.GetStop())
+	{
+		DrawGraph(cActionUiX, cActionUiY, m_actionUI, true);
+		DrawGraph(cActionUiX + cActionUiXOffset, cButtonY, m_bButton, true);
+
+		DrawStringToHandle(cOkTextX, cOkTextY, "O K", cTextColor, m_pFont->GetHandle());
+	}
 
 	//コア数描画
 	DrawFormatStringToHandle(cPlayerCoreX, cPlayerCoreY, cTextColor, m_pFont->GetHandle(), "%d", player.GetStatus().s_core);

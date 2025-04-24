@@ -105,6 +105,14 @@ void MessageManager::DrawString()
 	}
 }
 
+void MessageManager::Tutorial(Player& player)
+{
+	for (auto& up : m_pMessage)
+	{
+		up->DrawTutorial(player);
+	}
+}
+
 void MessageManager::End()
 {
 	for (auto& up : m_pMessage)
@@ -127,6 +135,22 @@ bool MessageManager::GetDraw()
 		
 	}
 
+	return false;
+}
+
+bool MessageManager::GetStop()
+{
+	if (cMessage)
+	{
+		for (auto& up : m_pMessage)
+		{
+			if (up->GetStop())
+			{
+				return up->GetStop();
+			}
+		}
+
+	}
 	return false;
 }
 

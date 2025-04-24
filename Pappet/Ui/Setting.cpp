@@ -36,21 +36,25 @@ namespace
 	//暗さ
 	int cBrightnessBlack = 0;
 	float cBrightnessBar = 0.5f;
+	int cBrightLine = 800;
 	//明るさ
 	int cBrightnessWhite = 0;
 	//音量
 	int cVolume = 125;
 	float cVolumeBar = 0.6f;
+	int cVolumeLine = 900;
 	//SE音量
 	int cSe = 150;
 	float cSeBar = 0.7f;
+	int cSeLine = 1000;
 	//カメラの感度
 	float cCamera = 2.0f;
-	float cCameraBar = 0.1f;
+	float cCameraBar = 0.0f;
+	int cCameraLine = 400;
 
 	// バーの描画
-	constexpr int cBarWidth = 600; //バーの幅
-	constexpr int cBarHeight = 20; //バーの高さ
+	constexpr int cBarWidth = 900; //バーの幅
+	constexpr int cBarHeight = 50; //バーの高さ
 
 	//変更する変数
 	constexpr int cEquipmentOneX = 630;
@@ -139,18 +143,42 @@ namespace
 	constexpr int cBlendAlpha = 150;
 	constexpr int cSelectColor = 0xffff00;
 	constexpr int cDefaultColor = 0xffffff;
-	constexpr int cSelectX = 100;
-	constexpr int cSelectY1 = 50;
-	constexpr int cSelectY2 = 180;
-	constexpr int cSelectY3 = 360;
-	constexpr int cSelectY4 = 540;
-	constexpr int cSelectY5 = 720;
-	constexpr int cSelectY6 = 900;
+	constexpr int cSelectX = 50;
+	constexpr int cSelectY1 = -100;
+	constexpr int cSelectY2 = 100;
+	constexpr int cSelectY3 = 280;
+	constexpr int cSelectY4 = 460;
+	constexpr int cSelectY5 = 640;
+	constexpr int cSelectY6 = 820;
 	constexpr int cBarX = 500;
-	constexpr int cBarY1 = 200;
-	constexpr int cBarY2 = 380;
-	constexpr int cBarY3 = 560;
-	constexpr int cBarY4 = 740;
+	constexpr int cColorBarX = 500;
+	constexpr int cBarY1 = -60;
+	constexpr int cBarY2 = 120;
+	constexpr int cBarY3 = 300;
+	constexpr int cBarY4 = 480;
+	constexpr int cColorBarY1 = 185;
+	constexpr int cColorBarY2 = 365;
+	constexpr int cColorBarY3 = 545;
+	constexpr int cColorBarY4 = 725;
+	constexpr int cEdgeX1 = 400;
+	constexpr int cEdgeX2 = 1300;
+	constexpr int cEdgeY1 = 130;
+	constexpr int cEdgeY2 = 310;
+	constexpr int cEdgeY3 = 490;
+	constexpr int cEdgeY4 = 670;
+	constexpr int cLineX1 = 550;
+	constexpr int cLineX2 = 630;
+	constexpr int cLineX3 = 710;
+	constexpr int cLineX4 = 800;
+	constexpr int cLineX5 = 900;
+	constexpr int cLineX6 = 1000;
+	constexpr int cLineX7 = 1100;
+	constexpr int cLineX8 = 1200;
+	constexpr int cArrowY1 = 130;
+	constexpr int cArrowY2 = 310;
+	constexpr int cArrowY3 = 490;
+	constexpr int cArrowY4 = 670;
+	constexpr int cArrowY5 = 850;
 
 	constexpr int cBlendAlphaMax = 100;
 	constexpr int cBlendAlphaMin = 10;
@@ -279,11 +307,8 @@ Setting::Setting() :
 	m_button(0),
 	m_thumb(0),
 	m_waitTime(0),
-	m_brightnessColor(0),
-	m_bgmColor(0),
-	m_seColor(0),
-	m_cameraColor(0),
-	m_returnColor(0),
+	m_arrowX(0),
+	m_arrowY(0),
 	m_right(0),
 	m_left(0),
 	m_armor(0),
@@ -314,6 +339,10 @@ Setting::Setting() :
 	m_reset(false),
 	m_change(),
 	m_core(0),
+	m_brightLineX(0),
+	m_volumeLineX(0),
+	m_seLineX(0),
+	m_cameraLineX(0),
 	m_equipmentColorPos(),
 	m_selectObject(),
 	ms_levelUP(),
@@ -327,9 +356,13 @@ Setting::Setting() :
 	}
 
 	m_brightBar = cBrightnessBar;
+	m_brightLineX = cBrightLine;
 	m_volumeBar = cVolumeBar;
+	m_volumeLineX = cVolumeLine;
 	m_seBar = cSeBar;
+	m_seLineX = cSeLine;
 	m_cameraBar = cCameraBar;
+	m_cameraLineX = cCameraLine;
 
 	m_pFont = std::make_shared<Font>();
 	m_pSmallFont = std::make_shared<Font>();
@@ -345,6 +378,7 @@ Setting::~Setting()
 	DeleteGraph(m_black);
 	DeleteGraph(m_back);
 	DeleteGraph(m_white);
+	DeleteGraph(m_arrowHandle);
 }
 
 /// <summary>
@@ -380,10 +414,6 @@ void Setting::Init()
 	m_titleMenu = false;
 	m_menuDecision = false;
 
-	m_brightnessColor = 0xffffff;
-	m_bgmColor = 0xffffff;
-	m_returnColor = 0xffffff;
-
 	m_equipment = MyLoadGraph("Data/UI/新装備画面UI.png", 1, 1);
 	//m_itemBox = MyLoadGraph("Data/UI/アイテム画面UI.png", 1, 1);
 	m_selectEquipment = MyLoadGraph("Data/UI/装備選択画面UI.png", 1, 1);
@@ -393,13 +423,15 @@ void Setting::Init()
 	m_menu = MyLoadGraph("Data/UI/MenuUI.png", 1, 1);
 
 	m_settingHandle = MyLoadGraph("Data/UI/Setting.png", 1, 1);
-	m_brightnessHandle = MyLoadGraph("Data/UI/Setting.png", 2, 2);
-	m_bgmHandle = MyLoadGraph("Data/UI/BGM.png", 2, 2);
-	m_seHandle = MyLoadGraph("Data/UI/SE.png", 2, 2);
-	m_cameraHandle = MyLoadGraph("Data/UI/Camera.png", 2, 2);
-	m_returnHandle = MyLoadGraph("Data/UI/Camera.png", 2, 2);
+	m_brightnessHandle = MyLoadGraph("Data/UI/brightness.png", 1, 1);
+	m_bgmHandle = MyLoadGraph("Data/UI/BGM.png", 1, 1);
+	m_seHandle = MyLoadGraph("Data/UI/SE.png", 1, 1);
+	m_cameraHandle = MyLoadGraph("Data/UI/Camera.png", 1, 1);
+	m_returnHandle = MyLoadGraph("Data/UI/Return.png", 1, 1);
 	m_edgeHandle = MyLoadGraph("Data/UI/Edge.png", 2, 2);
-	m_lineHandle = MyLoadGraph("Data/UI/Edge.png", 2, 2);
+	m_barHandle = MyLoadGraph("Data/UI/SettingBar.png", 2, 2);
+	m_lineHandle = MyLoadGraph("Data/UI/Guideline.png", 2, 2);
+	m_arrowHandle = MyLoadGraph("Data/UI/Select.png", 3, 3);
 
 	m_pFont->FontInit(50);
 	m_pSmallFont->FontInit(30);
@@ -1296,87 +1328,100 @@ void Setting::Draw()
 	//選択中の色を変える
 	if (m_brightness == false && m_volume == false && m_se == false && m_camera == false)
 	{
+		m_arrowX = 0;
+
 		if (m_pSelect->NowSelect == m_pSelect->Six)
 		{
-			m_brightnessColor = cSelectColor;
-			m_bgmColor = cDefaultColor;
-			m_seColor = cDefaultColor;
-			m_cameraColor = cDefaultColor;
-			m_returnColor = cDefaultColor;
+			m_arrowY = cArrowY1;
 		}
 		else if (m_pSelect->NowSelect == m_pSelect->Seven)
 		{
-			m_brightnessColor = cDefaultColor;
-			m_bgmColor = cSelectColor;
-			m_seColor = cDefaultColor;
-			m_cameraColor = cDefaultColor;
-			m_returnColor = cDefaultColor;
+			m_arrowY = cArrowY2;
+
 		}
 		else if (m_pSelect->NowSelect == m_pSelect->Eight)
 		{
-			m_brightnessColor = cDefaultColor;
-			m_bgmColor = cDefaultColor;
-			m_seColor = cSelectColor;
-			m_cameraColor = cDefaultColor;
-			m_returnColor = cDefaultColor;
+			m_arrowY = cArrowY3;
+
 		}
 		else if (m_pSelect->NowSelect == m_pSelect->Nine)
 		{
-			m_brightnessColor = cDefaultColor;
-			m_bgmColor = cDefaultColor;
-			m_seColor = cDefaultColor;
-			m_cameraColor = cSelectColor;
-			m_returnColor = cDefaultColor;
+			m_arrowY = cArrowY4;
+
 		}
 		else if (m_pSelect->NowSelect == m_pSelect->Ten)
 		{
-			m_brightnessColor = cDefaultColor;
-			m_bgmColor = cDefaultColor;
-			m_seColor = cDefaultColor;
-			m_cameraColor = cDefaultColor;
-			m_returnColor = cSelectColor;
+			m_arrowY = cArrowY5;
+
 		}
 	}
 	//明るさを選択
 	if (m_brightness == true)
 	{
-		SettingBarChange(m_pSelect->NowSelect, m_brightBar, cBrightnessBar);
-
+		SettingBarChange(m_pSelect->NowSelect, m_brightBar, cBrightnessBar, cBrightLine);
+		m_brightLineX = cBrightLine;
 	}
 
 	//音量を選択
 	if (m_volume == true)
 	{
-		SettingBarChange(m_pSelect->NowSelect, m_volumeBar, cVolumeBar);
-
+		SettingBarChange(m_pSelect->NowSelect, m_volumeBar, cVolumeBar, cVolumeLine);
+		m_volumeLineX = cVolumeLine;
 	}
 
 	//SEを選択
 	if (m_se == true)
 	{
-		SettingBarChange(m_pSelect->NowSelect, m_seBar, cSeBar);
-
+		SettingBarChange(m_pSelect->NowSelect, m_seBar, cSeBar, cSeLine);
+		m_seLineX = cSeLine;
 	}
 
 	//カメラ感度を選択
 	if (m_camera == true)
 	{
-		SettingBarChange(m_pSelect->NowSelect, m_cameraBar, cCameraBar);
-
+		SettingBarChange(m_pSelect->NowSelect, m_cameraBar, cCameraBar, cCameraLine);
+		m_cameraLineX = cCameraLine;
 	}
 
-	DrawStringToHandle(cSelectX, cSelectY1, "設定", cDefaultColor, m_pBigFont->GetHandle());
+	//画像に差し替える
 
-	DrawStringToHandle(cSelectX, cSelectY2, "明るさ設定", m_brightnessColor, m_pFont->GetHandle());
-	DrawStringToHandle(cSelectX, cSelectY3, "BGM設定", m_bgmColor, m_pFont->GetHandle());
-	DrawStringToHandle(cSelectX, cSelectY4, "SE設定", m_seColor, m_pFont->GetHandle());
-	DrawStringToHandle(cSelectX, cSelectY5, "カメラ感度", m_cameraColor, m_pFont->GetHandle());
-	DrawStringToHandle(cSelectX, cSelectY6, "戻る", m_returnColor, m_pFont->GetHandle());
 
-	SettingBarDraw(m_brightBar, cBarX, cBarY1);
-	SettingBarDraw(m_volumeBar, cBarX, cBarY2);
-	SettingBarDraw(m_seBar, cBarX, cBarY3);
-	SettingBarDraw(m_cameraBar, cBarX, cBarY4);
+	DrawGraph(cSelectX, cSelectY1, m_settingHandle, true);
+
+
+	DrawGraph(cSelectX, cSelectY2, m_brightnessHandle, true);
+	DrawGraph(cSelectX, cSelectY3, m_bgmHandle, true);
+	DrawGraph(cSelectX, cSelectY4, m_seHandle, true);
+	DrawGraph(cSelectX, cSelectY5, m_cameraHandle, true);
+	DrawGraph(cSelectX, cSelectY6, m_returnHandle, true);
+
+
+	//バー一つ
+	DrawGraph(cBarX, cBarY1, m_barHandle, true);
+	SettingBarDraw(m_brightBar, cColorBarX, cColorBarY1);
+	DrawGraph(cEdgeX1, cEdgeY1, m_edgeHandle, true);
+	DrawGraph(cEdgeX2, cEdgeY1, m_edgeHandle, true);
+	DrawGraph(m_brightLineX, cEdgeY1, m_lineHandle, true);
+
+	DrawGraph(cBarX, cBarY2, m_barHandle, true);
+	SettingBarDraw(m_volumeBar, cColorBarX, cColorBarY2);
+	DrawGraph(cEdgeX1, cEdgeY2, m_edgeHandle, true);
+	DrawGraph(cEdgeX2, cEdgeY2, m_edgeHandle, true);
+	DrawGraph(m_volumeLineX, cEdgeY2, m_lineHandle, true);
+
+	DrawGraph(cBarX, cBarY3, m_barHandle, true);
+	SettingBarDraw(m_seBar, cColorBarX, cColorBarY3);
+	DrawGraph(cEdgeX1, cEdgeY3, m_edgeHandle, true);
+	DrawGraph(cEdgeX2, cEdgeY3, m_edgeHandle, true);
+	DrawGraph(m_seLineX, cEdgeY3, m_lineHandle, true);
+
+	DrawGraph(cBarX, cBarY4, m_barHandle, true);
+	SettingBarDraw(m_cameraBar, cColorBarX, cColorBarY4);
+	DrawGraph(cEdgeX1, cEdgeY4, m_edgeHandle, true);
+	DrawGraph(cEdgeX2, cEdgeY4, m_edgeHandle, true);
+	DrawGraph(m_cameraLineX, cEdgeY4, m_lineHandle, true);
+
+	DrawGraph(m_arrowX, m_arrowY, m_arrowHandle, true);
 	
 	m_pSelect->Draw();
 }
@@ -2017,6 +2062,7 @@ void Setting::End()
 	DeleteGraph(m_edgeHandle);
 	DeleteGraph(m_barHandle);
 	DeleteGraph(m_lineHandle);
+	DeleteGraph(m_arrowHandle);
 }
 
 //設定関数
@@ -2130,68 +2176,76 @@ void Setting::CameraChange(float& setting, float& cSetting, float one, float two
 }
 
 //設定のバーの描画処理
-void Setting::SettingBarChange(int Decision, float& bar, float& cBar)
+void Setting::SettingBarChange(int Decision, float& bar, float& cBar, int& lineX)
 {
 	if (select)
 	{
 		if (Decision == 0)
 		{
-			bar = 0.1f;
-			cBar = 0.1f;
+			bar = 0.0f;
+			cBar = 0.0f;
+			lineX = cEdgeX1;
 		}
 		else if (Decision == 1)
 		{
 			bar = 0.2f;
 			cBar = 0.2f;
-
+			lineX = cLineX1;
 		}
 		else if (Decision == 2)
 		{
 			bar = 0.3f;
 			cBar = 0.3f;
+			lineX = cLineX2;
 
 		}
 		else if (Decision == 3)
 		{
 			bar = 0.4f;
 			cBar = 0.4f;
+			lineX = cLineX3;
 
 		}
 		else if (Decision == 4)
 		{
 			bar = 0.5f;
 			cBar = 0.5f;
+			lineX = cLineX4;
 
 		}
 		else if (Decision == 5)
 		{
 			bar = 0.6f;
 			cBar = 0.6f;
+			lineX = cLineX5;
 
 		}
 		else if (Decision == 6)
 		{
 			bar = 0.7f;
 			cBar = 0.7f;
+			lineX = cLineX6;
 
 		}
 		else if (Decision == 7)
 		{
 			bar = 0.8f;
 			cBar = 0.8f;
+			lineX = cLineX7;
 
 		}
 		else if (Decision == 8)
 		{
 			bar = 0.9f;
 			cBar = 0.9f;
+			lineX = cLineX8;
 
 		}
 		else if (Decision == 9)
 		{
 			bar = 1.0f;
 			cBar = 1.0f;
-
+			lineX = cEdgeX2;
 		}
 	}
 
@@ -2201,7 +2255,6 @@ void Setting::SettingBarChange(int Decision, float& bar, float& cBar)
 void Setting::SettingBarDraw(float bar, int x, int y)
 {
 	DrawBox(x, y, x + static_cast<int>(cBarWidth * bar), y + cBarHeight, 0x00ff00, TRUE); // プログレスバー
-	DrawBox(x, y, x + cBarWidth, y + cBarHeight, 0xffffff, false);
 }
 
 void Setting::WeaponUpdate(std::list<std::string> list, Weapon& weapon, int right)

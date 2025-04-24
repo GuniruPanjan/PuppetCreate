@@ -43,6 +43,11 @@ public:
 	void DrawString();
 
 	/// <summary>
+	/// チュートリアル描画
+	/// </summary>
+	void DrawTutorial(Player& player);
+
+	/// <summary>
 	/// 終了処理
 	/// </summary>
 	void End();
@@ -59,6 +64,9 @@ public:
 
 	//メッセージを表示できるかの判断
 	bool GetDraw() { return m_draw; }
+
+	//チュートリアル中は止める
+	bool GetStop() { return m_stop; }
 
 	//ボタン取得
 	int GetLB() { return m_lbButton; }
@@ -80,5 +88,8 @@ private:
 
 	bool m_draw;           //メッセージを表示する
 	bool m_can;            //描画処理を実行できるか
+
+	bool m_tutorial[6];    //チュートリアル数
+	bool m_stop;           //チュートリアル中は止まるようにする
 };
 

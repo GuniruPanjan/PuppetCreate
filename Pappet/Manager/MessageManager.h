@@ -46,6 +46,8 @@ public:
 	void Draw();
 	//文字描画処理
 	void DrawString();
+	//チュートリアル
+	void Tutorial(Player& player);
 
 	//終了処理
 	void End();
@@ -54,6 +56,8 @@ public:
 	bool GetMessagePick() { return m_messagePick; }
 	//メッセージを表示中か返す
 	bool GetDraw();
+	//止まっているかを返す
+	bool GetStop();
 
 	//ボタンを取得する
 	int GetLB();
