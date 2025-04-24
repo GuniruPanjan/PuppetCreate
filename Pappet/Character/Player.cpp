@@ -49,8 +49,6 @@ namespace
 	float cAttackMove = 0.0f;
 	//攻撃での追加攻撃時間
 	int cAddAttackTime = 0;
-	//行動での移動距離
-	float cMove = 0.0f;
 	//拳の攻撃範囲
 	constexpr float cFistAttackRadius = 25.0f;
 	//攻撃の判定範囲
@@ -93,6 +91,9 @@ namespace
 
 	bool cHit = false;         //攻撃を体に受けるときの判定
 	bool cShieldHit = false;   //攻撃を盾に受けるときの判定
+
+	//無理やり重力を与える範囲
+	constexpr float cGravity = 20.0f;
 }
 
 Player::Player() :
@@ -283,9 +284,6 @@ void Player::Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* mana
 	//HPの最大回復量
 	m_maxHeel = 80;
 
-	//移動距離
-	cMove = 0.5f;
-
 	m_staminaBreak = false;
 
 	//攻撃で死んだ時ヒット判定を消す
@@ -358,6 +356,30 @@ void Player::Finalize()
 
 void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& enemy, CoreManager& core, VECTOR restpos, Tool& tool, SEManager& se, bool boss, bool dead, std::shared_ptr<MyLibrary::Physics> physics)
 {
+	//無理やり修正
+	//マップが休息地点だったら
+	if (m_mapNow == 0)
+	{
+		//ジャンプしていない場合
+		if (rigidbody->GetPos().y < cGravity)
+		{
+			//重力をなかったことにする
+			rigidbody->SetUseGravity(false);
+		}
+		else
+		{
+			//重力を与える
+			rigidbody->SetUseGravity(true);
+		}
+		
+	}
+	else
+	{
+		//重力を与える
+		rigidbody->SetUseGravity(true);
+	}
+
+
 	//ターゲットを代入する
 	m_pState->SetTarget(m_lockonTarget);
 	//ロックオン時アングルを変える

@@ -67,6 +67,7 @@ GameManager::GameManager() :
 	m_pMap = std::make_shared<MapManager>();
 	m_pSe = std::make_shared<SEManager>();
 	m_pFont = std::make_shared<Font>();
+
 }
 
 /// <summary>

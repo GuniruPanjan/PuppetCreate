@@ -1117,6 +1117,41 @@ void MyLibrary::Physics::FixNextPosition(const Rigidbody& primaryRigid, Rigidbod
 		auto secondaryPos1 = MyLibrary::LibVec3(secondaryCenter.x, secondaryCenter.y + secondary->m_len, secondaryCenter.z);
 		auto secondaryTopVec = secondaryPos1 - secondaryCenter;
 
+
+		// PlayerがEnemyの上にいる場合
+		if (secondaryCenter.y > primaryCenter.y + primary->m_len)
+		{
+			// Playerが静止している場合も考慮
+			auto velocity = secondaryRigid.GetVelocity();
+			if (velocity.Length() < 0.01f)
+			{
+				// Enemyの中心からPlayerへのベクトルを計算
+				auto slideDirection = (secondaryCenter - primaryCenter).Normalize();
+				slideDirection.y = 0.0f; // 水平方向のみスライド
+
+				// スライド距離を計算 (カプセルの半径 + 余裕距離)
+				float slideDistance = primary->m_radius + secondary->m_radius + 0.2f;
+
+				// 修正後の位置を計算
+				auto fixedPos = secondaryCenter + slideDirection * slideDistance;
+
+				// Y座標はEnemyの上端に設定
+				fixedPos.y = primaryCenter.y + primary->m_len + secondary->m_radius;
+
+				// 修正座標を設定
+				secondaryRigid.SetNextPos(fixedPos);
+
+				// 再度チェックして、まだEnemyの上にいる場合はさらにスライド
+				if (fixedPos.y <= primaryCenter.y + primary->m_len + secondary->m_radius)
+				{
+					auto furtherSlide = slideDirection * slideDistance;
+					fixedPos += furtherSlide;
+					secondaryRigid.SetNextPos(fixedPos);
+				}
+				return;
+			}
+		}
+
 		//それぞれのカプセルの線分上の最近接点を計算
 		//結果格納用変数
 		LibVec3 nearPosOnALine, nearPosOnBLine;
