@@ -1385,6 +1385,9 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 
 				InitLigAttack(attackLeftKickPos1, attackLeftKickPos2, cAttackRadiusKick);
 				InitAttackDamage(m_status.s_attack);
+
+				//嵐SEを流す
+				PlaySoundMem(se.GetStormSE(), DX_PLAYTYPE_BACK, true);
 			}
 			else if (m_nowFrame == cAttackFrame2)
 			{
@@ -1467,6 +1470,9 @@ void Assassin::BossAction(MyLibrary::LibVec3 playerPos, bool isChase, SEManager&
 			{
 				//エフェクトを作る
 				cEffect.EffectCreate("BossWind", VGet(attackRightKickPos2.x, attackRightKickPos2.y, attackRightKickPos2.z));
+
+				//嵐SEを流す
+				PlaySoundMem(se.GetStormSE(), DX_PLAYTYPE_BACK, true);
 			}
 
 			// アニメーションフレーム中に攻撃判定を出す

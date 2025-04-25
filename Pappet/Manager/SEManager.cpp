@@ -20,7 +20,11 @@ SEManager::SEManager():
 	m_knifeSE(0),
 	m_loserSE(0),
 	m_victorySE(0),
-	m_volumePal(0)
+	m_volumePal(0),
+	m_guardSE(0),
+	m_impactSE(0),
+	m_stormSE(0),
+	m_jumpSE(0)
 {
 	for (int i = 0; i < 3; i++)
 	{
@@ -49,6 +53,12 @@ SEManager::~SEManager()
 	DeleteSoundMem(m_bossAttackSE[2]);
 	DeleteSoundMem(m_bossWalkSE);
 	DeleteSoundMem(m_diedSE);
+	DeleteSoundMem(m_victorySE);
+	DeleteSoundMem(m_loserSE);
+	DeleteSoundMem(m_guardSE);
+	DeleteSoundMem(m_impactSE);
+	DeleteSoundMem(m_stormSE);
+	DeleteSoundMem(m_jumpSE);
 }
 
 /// <summary>
@@ -79,7 +89,10 @@ void SEManager::CharaInit()
 	m_itemGetSE = LoadSoundMem("Data/SE/GetItemSE.mp3");
 	m_kickSE = LoadSoundMem("Data/SE/KickSE.mp3");
 	m_knifeSE = LoadSoundMem("Data/SE/KnifeSE.mp3");
-
+	m_guardSE = LoadSoundMem("Data/SE/GuardSE.mp3");
+	m_impactSE = LoadSoundMem("Data/SE/ImpactSE.mp3");
+	m_stormSE = LoadSoundMem("Data/SE/StormSE.mp3");
+	m_jumpSE = LoadSoundMem("Data/SE/JumpSE.mp3");
 	
 }
 
@@ -124,6 +137,11 @@ void SEManager::Update(int volume)
 	ChangeVolumeSoundMem(m_volumePal, m_diedSE);
 	ChangeVolumeSoundMem(m_volumePal, m_victorySE);
 	ChangeVolumeSoundMem(m_volumePal, m_loserSE);
+	ChangeVolumeSoundMem(m_volumePal, m_guardSE);
+	ChangeVolumeSoundMem(m_volumePal, m_impactSE);
+	ChangeVolumeSoundMem(m_volumePal, m_stormSE);
+	ChangeVolumeSoundMem(m_volumePal, m_jumpSE);
+
 }
 
 /// <summary>
@@ -151,4 +169,8 @@ void SEManager::End()
 	DeleteSoundMem(m_diedSE);
 	DeleteSoundMem(m_victorySE);
 	DeleteSoundMem(m_loserSE);
+	DeleteSoundMem(m_guardSE);
+	DeleteSoundMem(m_impactSE);
+	DeleteSoundMem(m_stormSE);
+	DeleteSoundMem(m_jumpSE);
 }

@@ -43,6 +43,10 @@ public:
 	int GetDiedSE() { return m_diedSE; }                  //死んだ時のSEをとる
 	int GetLoserSE() { return m_loserSE; }                //負けた時のSEをとる
 	int GetVictorySE() { return m_victorySE; }            //勝った時のSEをとる
+	int GetGuardSE() { return m_guardSE; }                //ガードした時のSEを取る
+	int GetImpactSE() { return m_impactSE; }              //衝撃を出した時のSEを取る
+	int GetStormSE() { return m_stormSE; }                //嵐のSEを取る
+	int GetJumpSE() { return m_jumpSE; }                  //ジャンプして着地した時のSEを取る
 
 private:
 	//SE関係
@@ -64,5 +68,9 @@ private:
 	int m_loserSE;          //負けた時のSE
 	int m_victorySE;        //勝った時のSE
 	int m_volumePal;        //音量
+	int m_guardSE;          //ガードした時のSE
+	int m_impactSE;         //衝撃のSE
+	int m_stormSE;          //嵐のSE
+	int m_jumpSE;           //ジャンプして着地した時のSE
 };
 

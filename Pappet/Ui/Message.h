@@ -89,7 +89,7 @@ private:
 	bool m_draw;           //メッセージを表示する
 	bool m_can;            //描画処理を実行できるか
 
-	bool m_tutorial[6];    //チュートリアル数
+	bool m_tutorial[7];    //チュートリアル数
 	bool m_stop;           //チュートリアル中は止まるようにする
 };
 

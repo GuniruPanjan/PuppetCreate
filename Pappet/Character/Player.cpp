@@ -596,6 +596,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 				}
 			}
 
+			//GuardSe再生
+			PlaySoundMem(se.GetGuardSE(), DX_PLAYTYPE_BACK, true);
+
 			cShieldHit = true;
 		}
 
@@ -1025,6 +1028,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			{
 				//エフェクトを作る
 				cEffect.EffectCreate("PlayerStrong", m_attackLigPos2);
+
+				//嵐SEを流す
+				PlaySoundMem(se.GetStormSE(), DX_PLAYTYPE_BACK, true);
 			}
 
 			//攻撃判定発生フレーム
@@ -1038,6 +1044,9 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 				//エフェクトを作る
 				cEffect.EffectCreate("PlayerStrongBig", m_attackLigPos2);
 				cEffect.EffectCreate("ShockWave", m_attackLigPos2);
+
+				//衝撃SEを流す
+				PlaySoundMem(se.GetImpactSE(), DX_PLAYTYPE_BACK, true);
 
 				m_pStrengthAttack->Init(m_pPhysics);
 			}

@@ -628,6 +628,9 @@ void Bear::Action(MyLibrary::LibVec3 playerPos, bool isChase, SEManager& se)
 				//エフェクトをつくる
 				cEffect.EffectCreate("BearWind", pos);
 
+				//嵐SEを流す
+				PlaySoundMem(se.GetStormSE(), DX_PLAYTYPE_BACK, true);
+
 			}
 			else if (m_nowFrame == cAttackFrame6)
 			{

@@ -79,7 +79,7 @@ Message::Message() :
 {
 	m_pFont = std::make_shared<Font>();
 
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 7; i++)
 	{
 		m_tutorial[i] = false;
 	}
@@ -102,6 +102,7 @@ void Message::Init(float posX, float posY, float posZ, int official, int one, in
 	m_bButton = MyLoadGraph("Data/UI/BButton.png", 1, 1);
 	m_yButton = MyLoadGraph("Data/UI/YButton.png", 1, 1);
 	m_xButton = MyLoadGraph("Data/UI/XButton.png", 1, 1);
+	m_aButton = MyLoadGraph("Data/UI/AButton.png", 1, 1);
 	m_staminaBar = MyLoadGraph("Data/UI/StaminaBar.png", 1, 2);
 	m_rbButton = MyLoadGraph("Data/UI/RBButton.png", 2, 2);
 	m_rtButton = MyLoadGraph("Data/UI/RTButton.png", 2, 2);
@@ -204,6 +205,21 @@ void Message::DrawString()
 			//スタミナ描画
 			DrawGraph(cStaminaBarX, cStaminaBarY, m_staminaBar, true);
 			DrawStringToHandle(cDrawStringX4, cDrawStringY8, "回避と走る行動にはスタミナを消費する", cTextColor, m_pFont->GetHandle());
+		}
+		//ジャンプチュートリアル
+		else if (m_official == 9)
+		{
+			//背景描画
+			DrawGraph(cBackgroundX, cBackgroundY, m_messageUI, false);
+
+			//Aボタン描画
+			DrawGraph(cAButtonX, cAButtonY, m_aButton, true);
+			DrawStringToHandle(cDrawStringX1, cDrawStringY3, "Aボタン単押し　：　ジャンプ", cTextColor, m_pFont->GetHandle());
+			DrawStringToHandle(cDrawStringX1, cDrawStringY4, "ジャンプ中は強攻撃が可能", cTextColor, m_pFont->GetHandle());
+
+			//スタミナ描画
+			DrawGraph(cStaminaBarX, cStaminaBarY, m_staminaBar, true);
+			DrawStringToHandle(cDrawStringX4, cDrawStringY8, "ジャンプ行動にはスタミナを消費する", cTextColor, m_pFont->GetHandle());
 		}
 		//カメラチュートリアル
 		else if (m_official == 3)
@@ -337,6 +353,33 @@ void Message::DrawTutorial(Player& player)
 			player.SetAction(false);
 		}
 	}
+	//ジャンプチュートリアル
+	else if (player.GetPos().x >= -1600.0f && !m_tutorial[6] && m_official == 9)
+	{
+		//背景描画
+		DrawGraph(cBackgroundX, cBackgroundY, m_messageUI, false);
+
+		//Aボタン描画
+		DrawGraph(cAButtonX, cAButtonY, m_aButton, true);
+		DrawStringToHandle(cDrawStringX1, cDrawStringY3, "Aボタン単押し　：　ジャンプ", cTextColor, m_pFont->GetHandle());
+		DrawStringToHandle(cDrawStringX1, cDrawStringY4, "ジャンプ中は強攻撃が可能", cTextColor, m_pFont->GetHandle());
+
+		//スタミナ描画
+		DrawGraph(cStaminaBarX, cStaminaBarY, m_staminaBar, true);
+		DrawStringToHandle(cDrawStringX4, cDrawStringY8, "ジャンプ行動にはスタミナを消費する", cTextColor, m_pFont->GetHandle());
+
+		m_stop = true;
+
+		//Bボタンを押すと戻る
+		if (m_xpad.Buttons[13] == 1)
+		{
+			m_tutorial[6] = true;
+			m_stop = false;
+			//ローリングできないようにする
+			player.SetAction(false);
+		}
+	}
+	//カメラチュートリアル
 	else if (player.GetPos().x >= -1500.0f && !m_tutorial[1] && m_official == 3)
 	{
 		//背景描画
@@ -360,6 +403,7 @@ void Message::DrawTutorial(Player& player)
 			player.SetAction(false);
 		}
 	}
+	//攻撃チュートリアル
 	else if (player.GetPos().x >= -1200.0f && !m_tutorial[2] && m_official == 4)
 	{
 		//背景描画
@@ -389,6 +433,7 @@ void Message::DrawTutorial(Player& player)
 			player.SetAction(false);
 		}
 	}
+	//アイテムチュートリアル
 	else if (player.GetPos().x >= -900.0f && !m_tutorial[3] && m_official == 5)
 	{
 		//背景描画
@@ -415,6 +460,7 @@ void Message::DrawTutorial(Player& player)
 			player.SetAction(false);
 		}
 	}
+	//盾チュートリアル
 	else if (player.GetPos().x >= -600.0f && !m_tutorial[4] && m_official == 6)
 	{
 		//背景描画
@@ -439,6 +485,7 @@ void Message::DrawTutorial(Player& player)
 			player.SetAction(false);
 		}
 	}
+	//休息チュートリアル
 	else if (player.GetPos().x >= -300.0f && !m_tutorial[5] && m_official == 7)
 	{
 		//背景描画
