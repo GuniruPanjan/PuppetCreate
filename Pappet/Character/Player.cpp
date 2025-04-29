@@ -1405,7 +1405,7 @@ void Player::Draw(Armor& armor, int font)
 #endif
 
 #if false
-	DrawFormatString(200, 300, 0xffffff, "pos1 : %f");
+	DrawFormatString(200, 300, 0xffffff, "アニメ : %d", m_currentAnimNo);
 #endif
 
 	MV1SetPosition(m_modelHandle, VSub(m_modelPos.ConversionToVECTOR(), VGet(0.0f, 12.0f, 0.0f)));
@@ -1542,12 +1542,12 @@ void Player::ArmorChange(int one, std::string path)
 	//一回だけ実行
 	if (!m_armorOne[one])
 	{
-		//一瞬だけ初期化する
-		m_fist = true;
-		m_sword = false;
-		m_equipment = false;
-		m_shield = false;
-
+		//アニメーションが無かった場合は通る
+		if (m_currentAnimNo != 1)
+		{
+			//待機アニメーション設定
+			m_pState->ChangeState(StateBase::StateKind::Idle);
+		}
 
 		//メモリ解放
 		MV1DeleteModel(m_modelHandle);
