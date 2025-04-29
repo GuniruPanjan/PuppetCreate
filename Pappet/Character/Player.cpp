@@ -281,6 +281,11 @@ void Player::Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* mana
 	m_pState->ChangeState(StateBase::StateKind::Idle);
 	m_pState->Init(colData);
 
+	//攻撃判定を初期化する
+	m_attackNumber = 0;
+	m_jumpAttack = false;
+	m_attackStrong = false;
+
 	//HPの最大回復量
 	m_maxHeel = 80;
 
@@ -336,6 +341,11 @@ void Player::GameInit(std::shared_ptr<MyLibrary::Physics> physics, int colData)
 	m_pState = std::make_shared<PlayerStateIdle>(std::dynamic_pointer_cast<Player>(shared_from_this()));
 	m_pState->ChangeState(StateBase::StateKind::Idle);
 	m_pState->Init(colData);
+
+	//攻撃判定を初期化する
+	m_attackNumber = 0;
+	m_jumpAttack = false;
+	m_attackStrong = false;
 
 	m_deadReset = false;
 	m_staminaBreak = false;
@@ -1369,7 +1379,7 @@ void Player::Draw(Armor& armor, int font)
 	DrawFormatString(1000, 550, 0xffffff, "taking : %d", m_animChange.sa_taking);
 	DrawFormatString(1000, 650, 0xffffff, "touch : %d", m_animChange.sa_touch);
 #endif
-#if true
+#if false
 	DrawFormatString(1000, 150, 0xffffff, "posx : %f", rigidbody->GetPos().x);   //15   -700
 	DrawFormatString(1000, 200, 0xffffff, "posy : %f", rigidbody->GetPos().y);   //12   
 	DrawFormatString(1000, 250, 0xffffff, "posz : %f", rigidbody->GetPos().z);   //0    370
@@ -1529,11 +1539,16 @@ void Player::OnTriggerEnter(const std::shared_ptr<Collidable>& collidable)
 /// <param name="path">パス</param>
 void Player::ArmorChange(int one, std::string path)
 {
-	//防具を変えた時にアニメーションのバグが発生する
-
 	//一回だけ実行
 	if (!m_armorOne[one])
 	{
+		//一瞬だけ初期化する
+		m_fist = true;
+		m_sword = false;
+		m_equipment = false;
+		m_shield = false;
+
+
 		//メモリ解放
 		MV1DeleteModel(m_modelHandle);
 		//モデル読み込み
