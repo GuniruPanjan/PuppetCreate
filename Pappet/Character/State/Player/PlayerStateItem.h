@@ -15,5 +15,8 @@ public:
 	void Init(int md) override;
 	//更新
 	virtual void Update() override;
+
+private:
+	bool m_endAnim;      //アニメーション終了フラグ
 };
 

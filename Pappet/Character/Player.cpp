@@ -82,6 +82,9 @@ namespace
 	auto& handle = HandleManager::GetInstance();
 	auto& cEffect = EffectManager::GetInstance();
 
+	constexpr float cStaminaUnder = -10.0f;       //スタミナ最低値
+	constexpr float cStaminaUnderTo = -9.0f;      //スタミナ最低値からの移動
+
 
 	int cAnimIdx;
 
@@ -610,6 +613,12 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 			PlaySoundMem(se.GetGuardSE(), DX_PLAYTYPE_BACK, true);
 
 			cShieldHit = true;
+		}
+
+		//スタミナが一定値以下になったら減らないようにする
+		if (m_status.s_stamina <= cStaminaUnder)
+		{
+			m_status.s_stamina = cStaminaUnderTo;
 		}
 
 		//メニューを開いている間はアクションできない

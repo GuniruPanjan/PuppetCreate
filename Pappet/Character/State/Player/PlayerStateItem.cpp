@@ -9,7 +9,8 @@
 /// </summary>
 /// <param name="chara"></param>
 PlayerStateItem::PlayerStateItem(std::shared_ptr<CharacterBase> chara) :
-	StateBase(chara)
+	StateBase(chara),
+	m_endAnim(false)
 {
 	m_equipmentShield = chara->GetShield();
 
@@ -50,8 +51,14 @@ void PlayerStateItem::Update()
 	auto prevVel = own->GetRigidbody()->GetVelocity();
 	own->GetRigidbody()->SetVelocity(MyLibrary::LibVec3(0.0f, prevVel.y, 0.0f));
 
+	//40フレームを超えたらアニメーション終了する
+	if (own->GetFrame() >= 40.0f)
+	{
+		m_endAnim = true;
+	}
+
 	//アニメーションが終了したら
-	if (own->GetEndAnim())
+	if (m_endAnim)
 	{
 		//スタミナ切れじゃなかった場合
 		if (!own->GetStaminaBreak())
