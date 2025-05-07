@@ -2,15 +2,15 @@
 #include "MapBase.h"
 
 /// <summary>
-/// チュートリアルマップクラス
+/// ２つ目のマップクラス
 /// </summary>
-class MapTutorial : public MapBase
+class MapSecond : public MapBase
 {
 public:
 	//コンストラクタ
-	MapTutorial();
+	MapSecond();
 	//デストラクタ
-	virtual ~MapTutorial();
+	virtual ~MapSecond();
 
 	//データの初期化
 	virtual void DataInit();

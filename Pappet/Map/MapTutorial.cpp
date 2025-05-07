@@ -124,6 +124,9 @@ namespace
 
 	// 休息地点の位置
 	const VECTOR cRestObjectPosition = VGet(-150.0f, 0.0f, 120.0f);
+
+	//第二エリアの位置
+	const MyLibrary::LibVec3 cSecondAreaPos = MyLibrary::LibVec3(-1000.0f, -1000.0f, -1000.0f);
 }
 
 MapTutorial::MapTutorial()
@@ -170,6 +173,7 @@ void MapTutorial::Init(std::shared_ptr<MyLibrary::Physics> physics)
 	m_mapBossEnterPos = MyLibrary::LibVec3(0.0f, 50.0f, 0.0f);
 	m_mapCoreCollisionePos = MyLibrary::LibVec3(0.0f, 100.0f, 0.0f);
 	m_mapBossEnterTriggerPos = MyLibrary::LibVec3(-20.0f, 50.0f, 0.0f);
+	m_mapSecondArea = cSecondAreaPos;
 
 
 	//ライト関係
@@ -184,6 +188,8 @@ void MapTutorial::Init(std::shared_ptr<MyLibrary::Physics> physics)
 	InitRect(m_width, m_hight, m_depth, m_mapBossEnterPos);
 	//コアの判定初期化
 	InitCore(cCoreRadius, m_mapCoreCollisionePos);
+	//２つ目のエリアに行くための判定
+	InitMapSecond(cCoreRadius, m_mapSecondArea);
 	//ボス部屋の判定初期化
 	InitBossEnter(cBossWidth, cBossHight, cBossDepth, m_mapBossEnterTriggerPos);
 
@@ -199,6 +205,7 @@ std::shared_ptr<MapBase> MapTutorial::Update(bool warp, bool enter, bool Dead)
 	m_pBossRoom->Update(m_mapBossRoomPos);
 	m_pRect->Update(m_mapBossEnterPos, size);
 	m_pRectTrigger->Update(m_mapBossEnterTriggerPos, triggerSize);
+	m_pMapSecond->Update(m_mapSecondArea);
 
 	//ボスが死んだとき
 	if (Dead)
@@ -282,7 +289,7 @@ std::shared_ptr<MapBase> MapTutorial::Update(bool warp, bool enter, bool Dead)
 /// </summary>
 /// <param name="warp"></param>
 /// <returns></returns>
-std::shared_ptr<MapBase> MapTutorial::WarpUpdate(bool warp, bool rest)
+std::shared_ptr<MapBase> MapTutorial::WarpUpdate(bool warp, bool secondWarp, bool rest)
 {
 	if (warp)
 	{

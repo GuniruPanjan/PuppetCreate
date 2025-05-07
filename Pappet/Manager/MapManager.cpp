@@ -2,6 +2,7 @@
 #include "Map/MapFirst.h"
 #include "Map/MapRest.h"
 #include "Map/MapTutorial.h"
+#include "Map/MapSecond.h"
 
 /// <summary>
 /// コンストラクタ
@@ -26,21 +27,28 @@ void MapManager::DataInit(int map)
 {
 	if (map == 0)
 	{
-		//最初のシーンのメモリを解放する
+		//メモリを読み込む
 		m_pMap = std::make_shared<MapRest>();
 
 		m_pMap->DataInit();
 	}
 	else if (map == 1)
 	{
-		//最初のシーンのメモリを解放する
+		//メモリを読み込む
 		m_pMap = std::make_shared<MapFirst>();
+
+		m_pMap->DataInit();
+	}
+	else if (map == 2)
+	{
+		//メモリを読み込む
+		m_pMap = std::make_shared<MapSecond>();
 
 		m_pMap->DataInit();
 	}
 	else if (map == 6)
 	{
-		//最初のシーンのメモリを解放する
+		//メモリを読み込む
 		m_pMap = std::make_shared<MapTutorial>();
 
 		m_pMap->DataInit();
@@ -69,9 +77,9 @@ void MapManager::Update(std::shared_ptr<MyLibrary::Physics> physics, bool warp, 
 /// </summary>
 /// <param name="physics"></param>
 /// <param name="warp"></param>
-void MapManager::WarpUpdate(std::shared_ptr<MyLibrary::Physics> physics, bool warp, bool title, bool rest)
+void MapManager::WarpUpdate(std::shared_ptr<MyLibrary::Physics> physics, bool warp, bool warpSecond, bool title, bool rest)
 {
-	std::shared_ptr<MapBase> pNext = m_pMap->WarpUpdate(warp, rest);
+	std::shared_ptr<MapBase> pNext = m_pMap->WarpUpdate(warp, warpSecond, rest);
 	if (pNext != m_pMap)
 	{
 		//現在のマップの終了処理

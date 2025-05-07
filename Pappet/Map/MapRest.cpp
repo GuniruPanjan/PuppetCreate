@@ -1,5 +1,6 @@
 #include "MapRest.h"
 #include "MapFirst.h"
+#include "MapSecond.h"
 #include "Manager/EffectManager.h"
 
 namespace
@@ -36,6 +37,9 @@ namespace
 	constexpr int cEffectCreateInterval = 500;
 	constexpr float cEffectCreateOffsetY = -30.0f;
 	constexpr float cEffectCreateOffsetZ = -50.0f;
+
+	//第二エリアの位置
+	const MyLibrary::LibVec3 cSecondAreaPos = MyLibrary::LibVec3(-580.0f, -1000.0f, 950.0f);
 }
 
 /// <summary>
@@ -91,6 +95,7 @@ void MapRest::Init(std::shared_ptr<MyLibrary::Physics> physics)
 	m_mapBossEnterPos = MyLibrary::LibVec3(0.0f, 1000.0f, 0.0f);
 	m_mapCoreCollisionePos = MyLibrary::LibVec3(m_mapCorePos.x, 0.0f, m_mapCorePos.z);
 	m_mapBossEnterTriggerPos = MyLibrary::LibVec3(10.0f, 1000.0f, 0.0f);
+	m_mapSecondArea = cSecondAreaPos;
 
 	//炎のエフェクト
 	cEffect.EffectLoad("Fire", "Data/Effect/MagicFire1.efkefc", cEffectLoadTime, cEffectLoadScale);
@@ -107,6 +112,8 @@ void MapRest::Init(std::shared_ptr<MyLibrary::Physics> physics)
 	InitRect(m_width, m_hight, m_depth, m_mapBossEnterPos);
 	//コアの判定初期化
 	InitCore(cCoreRadius, m_mapCoreCollisionePos);
+	//２つ目のエリアに行くための判定
+	InitMapSecond(cCoreRadius, m_mapSecondArea);
 	//ボス部屋の判定初期化
 	InitBossEnter(cBossWidth, cBossHight, cBossDepth, m_mapBossEnterTriggerPos);
 
@@ -121,6 +128,7 @@ std::shared_ptr<MapBase> MapRest::Update(bool warp, bool enter, bool Dead)
 {
 	m_pSearch->Update(m_mapRestPos);
 	m_pCore->Update(m_mapCoreCollisionePos);
+	m_pMapSecond->Update(m_mapSecondArea);
 
 	if (cEffectPlay >= cEffectCreateInterval)
 	{
@@ -141,9 +149,14 @@ std::shared_ptr<MapBase> MapRest::Update(bool warp, bool enter, bool Dead)
 /// </summary>
 /// <param name="warp"></param>
 /// <returns></returns>
-std::shared_ptr<MapBase> MapRest::WarpUpdate(bool warp, bool rest)
+std::shared_ptr<MapBase> MapRest::WarpUpdate(bool warp, bool secondWarp, bool rest)
 {
 	if (warp)
+	{
+		return std::make_shared<MapFirst>();
+	}
+	//マップ2がまだできていなためバグる
+	else if (secondWarp)
 	{
 		return std::make_shared<MapFirst>();
 	}

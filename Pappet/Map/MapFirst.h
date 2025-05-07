@@ -19,7 +19,7 @@ public:
 	//更新
 	virtual std::shared_ptr<MapBase> Update(bool warp, bool enter, bool Dead = false);
 	//ワープの更新
-	virtual std::shared_ptr<MapBase> WarpUpdate(bool warp, bool rest);
+	virtual std::shared_ptr<MapBase> WarpUpdate(bool warp, bool secondWarp, bool rest);
 	//当たったかの判定
 	virtual void JudgeUpdate();
 	//ボスが死んだら出す

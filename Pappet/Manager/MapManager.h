@@ -21,7 +21,7 @@ public:
 	//更新処理
 	void Update(std::shared_ptr<MyLibrary::Physics> physics, bool warp, bool enter, bool Dead);
 	//ワープの更新処理
-	void WarpUpdate(std::shared_ptr<MyLibrary::Physics> physics, bool warp, bool title, bool rest);
+	void WarpUpdate(std::shared_ptr<MyLibrary::Physics> physics, bool warp, bool warpSecond, bool title, bool rest);
 	//当たったかの判定処理
 	void JudgeUpdate();
 	//コアの更新
@@ -49,6 +49,9 @@ public:
 
 	//コアの当たり判定を返す
 	bool GetCore() { return m_pMap->GetCore(); }
+
+	//エリア移動の当たり判定を返す
+	bool GetMapSecond() { return m_pMap->GetMapSecond(); }
 
 	//ボス部屋に入るための判定を返す
 	bool GetBossEnter() { return m_pMap->GetBossEnter(); }

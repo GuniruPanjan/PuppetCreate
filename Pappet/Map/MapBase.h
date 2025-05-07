@@ -25,7 +25,7 @@ public:
 	//更新
 	virtual std::shared_ptr<MapBase> Update(bool warp, bool enter, bool Dead) = 0;
 	//ワープ更新
-	virtual std::shared_ptr<MapBase> WarpUpdate(bool warp, bool rest) = 0;
+	virtual std::shared_ptr<MapBase> WarpUpdate(bool warp, bool secondWarp, bool rest) = 0;
 	//当たったかの判定更新
 	virtual void JudgeUpdate() = 0;
 	//ボスが死んだら出す
@@ -56,6 +56,8 @@ public:
 	bool GetBossEnter() { return m_pRectTrigger->GetIsStay(); }
 	//マップの休息地点を返す
 	VECTOR GetRestPos() { return m_mapRestPos.ConversionToVECTOR(); }
+	//二つ目のエリアにいくための判定を返す
+	bool GetMapSecond() { return m_pMapSecond->GetIsStay(); }
 	//ステージ名を返す
 	const char* GetStageName() { return m_stageName; }
 protected:
@@ -71,6 +73,8 @@ protected:
 	void InitRect(float width, float hight, float depth, MyLibrary::LibVec3 pos);
 	//コアの当たり判定
 	void InitCore(float radius, MyLibrary::LibVec3 pos);
+	//二つ目のエリアに行くための判定
+	void InitMapSecond(float radius, MyLibrary::LibVec3 pos);
 	//ボス部屋に入るための判定
 	void InitBossEnter(float width, float hight, float depth, MyLibrary::LibVec3 pos);
 	//モデルパーツ毎に描画する時に使う関数
@@ -84,6 +88,8 @@ protected:
 	std::shared_ptr<SearchObject> m_pCore;               //コアの当たり判定
 	std::shared_ptr<RectObject> m_pRect;                 //矩形判定
 	std::shared_ptr<RectObjectTrigger> m_pRectTrigger;   //矩形のトリガー判定
+
+	std::shared_ptr<SearchObject> m_pMapSecond;          //二つ目のマップにいく判定
 
 	int m_light;                            //ライト
 
@@ -109,6 +115,7 @@ protected:
 	MyLibrary::LibVec3 m_mapBossRoomPos;              //ボス部屋入り口のポジション
 	MyLibrary::LibVec3 m_mapBossEnterPos;             //ボス部屋入り口のポジション
 	MyLibrary::LibVec3 m_mapCoreCollisionePos;        //コアのポジション
+	MyLibrary::LibVec3 m_mapSecondArea;               //二つ目のエリアへ行くためのポジション
 	MyLibrary::LibVec3 m_mapBossEnterTriggerPos;      //ボス部屋に入るためのポジション
 };
 

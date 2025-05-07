@@ -327,6 +327,9 @@
     <ClCompile Include="Character\State\Player\PlayerStateJump.cpp">
       <Filter>ソース ファイル\Character\State\Player</Filter>
     </ClCompile>
+    <ClCompile Include="Map\MapSecond.cpp">
+      <Filter>ソース ファイル\Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Icon\Icon.h">
@@ -571,6 +574,9 @@
     </ClInclude>
     <ClInclude Include="Character\State\Player\PlayerStateJump.h">
       <Filter>ヘッダー ファイル\Character\State\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\MapSecond.h">
+      <Filter>ヘッダー ファイル\Map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

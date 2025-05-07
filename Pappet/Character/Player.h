@@ -56,7 +56,7 @@ public:
 	void Finalize();
 	void Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& enemy, CoreManager& core, VECTOR restpos, Tool& tool, SEManager& se, bool boss, bool dead, std::shared_ptr<MyLibrary::Physics> physics);
 	void Action(VECTOR restpos, Tool& tool, Shield& shield, SEManager& se, bool boss, bool dead);
-	void WarpMap();
+	void WarpMap(bool Core, bool Second);
 	void Draw(Armor& armor, int font);
 	void End();
 
@@ -135,6 +135,8 @@ public:
 	//ワープ関係
 	bool SetWarp(bool set) { return m_warp = set; }
 	bool GetWarp() { return m_warp; }
+	bool SetSecondWarp(bool set) { return m_warpSecond = set; }
+	bool GetSecondWarp() { return m_warpSecond; }
 
 	//ボス部屋に入るための判定関係
 	bool SetBossStart(bool set) { return m_bossStart = set; }
@@ -205,6 +207,7 @@ private:
 	bool m_bigRest;                     //レベルが上げられる休息判定
 	bool m_lockonTarget;                //ターゲット判定
 	bool m_warp;                        //マップをワープするための判定
+	bool m_warpSecond;                  //エリア2へワープするための判定
 	bool m_bossStart;                   //ボス部屋に入るための判定
 	bool m_shieldOne;                   //盾の判定初期化
 	bool m_armorOne[10];                //防具の初期化(適当に作っておく)

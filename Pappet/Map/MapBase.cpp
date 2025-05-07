@@ -31,6 +31,7 @@ MapBase::MapBase() :
 	m_mapCorePos(VGet(0.0f,0.0f,0.0f)),
 	m_mapRestPos(),
 	m_mapBossEnterPos(),
+	m_mapSecondArea(),
 	m_mapCoreCollisionePos()
 {
 }
@@ -57,6 +58,7 @@ void MapBase::Finalize(std::shared_ptr<MyLibrary::Physics> physics)
 	m_pCore->Finalize(physics);
 	m_pRect->Finalize(physics);
 	m_pRectTrigger->Finalize(physics);
+	m_pMapSecond->Finalize(physics);
 }
 
 /// <summary>
@@ -131,6 +133,18 @@ void MapBase::InitCore(float radius, MyLibrary::LibVec3 pos)
 {
 	m_pCore = std::make_shared<SearchObject>(radius);
 	m_pCore->Init(m_pPhysics, pos, false, false, false, false, true);
+}
+
+/// <summary>
+/// 二つ目のマップに行くための判定を作成
+/// </summary>
+/// <param name="radius"></param>
+/// <param name="pos"></param>
+void MapBase::InitMapSecond(float radius, MyLibrary::LibVec3 pos)
+{
+	m_pMapSecond = std::make_shared<SearchObject>(radius);
+	m_pMapSecond->Init(m_pPhysics, pos, false, false, false, false, true);
+	
 }
 
 /// <summary>

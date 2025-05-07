@@ -224,7 +224,7 @@ void UI::Draw(Player& player, EnemyManager& enemy, Setting& eq, MapManager& map,
 	//アイテムの時は　アイテムを取る
 	//ボス部屋に入るときは　白い光の中に入る
 	//ワープするときは　転移する
-	if (player.GetItemPick() || player.GetRestTouch() || player.GetBossEnter() || map.GetCore() || player.GetMessagePick())
+	if (player.GetItemPick() || player.GetRestTouch() || player.GetBossEnter() || map.GetCore() || player.GetMessagePick() || map.GetMapSecond())
 	{
 		DrawGraph(cActionUiX, cActionUiY, m_actionUI, true);
 		DrawGraph(cActionUiX + cActionUiXOffset, cButtonY, m_yButton, true);
@@ -244,7 +244,7 @@ void UI::Draw(Player& player, EnemyManager& enemy, Setting& eq, MapManager& map,
 			DrawStringToHandle(cBossTextX, cActionTextY, "白い光の中に入る", cTextColor, m_pFont->GetHandle());
 		}
 		//ワープ
-		else if (map.GetCore())
+		else if (map.GetCore() || map.GetMapSecond())
 		{
 			DrawStringToHandle(cWarpTextX, cActionTextY, "転移する", cTextColor, m_pFont->GetHandle());
 		}
