@@ -77,6 +77,8 @@ namespace
 	bool cEquipmentOne = false;
 	//光の中に入る時のポジション設定
 	bool cEnterPos = false;
+	//ボタンを押されているか時間取得
+	int cButtonTime = 0;
 
 	//シングルトン
 	auto& handle = HandleManager::GetInstance();
@@ -84,7 +86,6 @@ namespace
 
 	constexpr float cStaminaUnder = -10.0f;       //スタミナ最低値
 	constexpr float cStaminaUnderTo = -9.0f;      //スタミナ最低値からの移動
-
 
 	int cAnimIdx;
 
@@ -96,7 +97,7 @@ namespace
 	bool cShieldHit = false;   //攻撃を盾に受けるときの判定
 
 	//無理やり重力を与える範囲
-	constexpr float cGravity = 20.0f;
+	constexpr float cGravity = 12.4f;
 }
 
 Player::Player() :
@@ -138,6 +139,7 @@ Player::Player() :
 	m_deadReset(false),
 	m_message(false),
 	m_read(false),
+	m_idle(false),
 	m_moveWeaponFrameMatrix(),
 	m_moveShieldFrameMatrix(),
 	m_rollMove(VGet(0.0f,0.0f,0.0f)),
@@ -245,18 +247,21 @@ void Player::Init(std::shared_ptr<MyLibrary::Physics> physics, GameManager* mana
 		m_updateX = 485.0f;
 		m_updateY = 12.0f;
 		m_updateZ = -800.0f;
+		
 	}
 	else if (manager->GetThisMapName() == 2)
 	{
 		m_updateX = 0.0f;
 		m_updateY = 12.0f;
 		m_updateZ = 0.0f;
+		
 	}
 	else if (manager->GetThisMapName() == 6)
 	{
 		m_updateX = -1850.0f;
 		m_updateY = 12.0f;
 		m_updateZ = 0.0f;
+		
 	}
 	
 	rigidbody->SetPos(MyLibrary::LibVec3(m_updateX, m_updateY, m_updateZ));
@@ -432,12 +437,32 @@ void Player::Update(Weapon& weapon, Shield& shield, Armor& armor, EnemyManager& 
 		{
 			//ステートの更新
 			m_pState->Update();
+
+			//初期化
+			cButtonTime = 0;
 		}
 		//アクションできるようにする
 		else if (!m_action)
 		{
 			//回避おしたらアクションできるようにする
 			if (Input::GetInstance().IsReleased("Input_Roll"))
+			{
+				m_action = true;
+			}
+			//ダッシュボタンが押されたらアクションできるようにする
+			else if (Input::GetInstance().IsPushed("Input_Dash"))
+			{
+				cButtonTime++;
+				if (cButtonTime >= 10)
+				{
+					m_action = true;
+				}
+				
+			}
+
+
+			//Aボタンが押されたらアクションできるようにする
+			if (Input::GetInstance().IsReleased("Input_Jump"))
 			{
 				m_action = true;
 			}
@@ -1407,7 +1432,7 @@ void Player::Draw(Armor& armor, int font)
 	DrawFormatString(1000, 550, 0xffffff, "taking : %d", m_animChange.sa_taking);
 	DrawFormatString(1000, 650, 0xffffff, "touch : %d", m_animChange.sa_touch);
 #endif
-#if true
+#if false
 	DrawFormatString(1000, 150, 0xffffff, "posx : %f", rigidbody->GetPos().x);   //15   -700
 	DrawFormatString(1000, 200, 0xffffff, "posy : %f", rigidbody->GetPos().y);   //12   
 	DrawFormatString(1000, 250, 0xffffff, "posz : %f", rigidbody->GetPos().z);   //0    370

@@ -12,6 +12,9 @@ namespace
 	//メッセージの半径
 	constexpr float cRadius = 50.0f;
 
+	//Bボタンの前回の状態
+	bool cPrevBButton = true;
+
 	//定数の定義
 	const int cEffectTimeThreshold = 50;
 	const int cBackgroundX = 130;
@@ -77,6 +80,8 @@ Message::Message() :
 	m_can(false),
 	m_stop(false)
 {
+	cPrevBButton = true;
+	
 	m_pFont = std::make_shared<Font>();
 
 	for (int i = 0; i < 7; i++)
@@ -143,8 +148,9 @@ void Message::Update(Player& player)
 
 	if (m_draw)
 	{
-		//Bボタンを押すと戻る
-		if (m_xpad.Buttons[13] == 1)
+
+		bool currentBButton = (m_xpad.Buttons[13] == 1);     //現在のBボタンの状態
+		if (currentBButton && !cPrevBButton)                 //前回押されていなくて、今回押された
 		{
 			m_draw = false;
 
@@ -152,6 +158,8 @@ void Message::Update(Player& player)
 			//ローリングできないようにする
 			player.SetAction(false);
 		}
+		//Bボタンの状態を記録
+		cPrevBButton = currentBButton;
 	}
 }
 
@@ -344,14 +352,16 @@ void Message::DrawTutorial(Player& player)
 
 		m_stop = true;
 
-		//Bボタンを押すと戻る
-		if (m_xpad.Buttons[13] == 1)
+		bool currentBButton = (m_xpad.Buttons[13] == 1);     //現在のBボタンの状態
+		if (currentBButton && !cPrevBButton)                 //前回押されていなくて、今回押された
 		{
 			m_tutorial[0] = true;
 			m_stop = false;
 			//ローリングできないようにする
 			player.SetAction(false);
 		}
+		//Bボタンの状態を記録
+		cPrevBButton = currentBButton;
 	}
 	//ジャンプチュートリアル
 	else if (player.GetPos().x >= -1600.0f && !m_tutorial[6] && m_official == 9)
@@ -370,14 +380,16 @@ void Message::DrawTutorial(Player& player)
 
 		m_stop = true;
 
-		//Bボタンを押すと戻る
-		if (m_xpad.Buttons[13] == 1)
+		bool currentBButton = (m_xpad.Buttons[13] == 1);     //現在のBボタンの状態
+		if (currentBButton && !cPrevBButton)                 //前回押されていなくて、今回押された
 		{
 			m_tutorial[6] = true;
 			m_stop = false;
 			//ローリングできないようにする
 			player.SetAction(false);
 		}
+		//Bボタンの状態を記録
+		cPrevBButton = currentBButton;
 	}
 	//カメラチュートリアル
 	else if (player.GetPos().x >= -1500.0f && !m_tutorial[1] && m_official == 3)
@@ -394,14 +406,16 @@ void Message::DrawTutorial(Player& player)
 
 		m_stop = true;
 
-		//Bボタンを押すと戻る
-		if (m_xpad.Buttons[13] == 1)
+		bool currentBButton = (m_xpad.Buttons[13] == 1);     //現在のBボタンの状態
+		if (currentBButton && !cPrevBButton)                 //前回押されていなくて、今回押された
 		{
 			m_tutorial[1] = true;
 			m_stop = false;
 			//ローリングできないようにする
 			player.SetAction(false);
 		}
+		//Bボタンの状態を記録
+		cPrevBButton = currentBButton;
 	}
 	//攻撃チュートリアル
 	else if (player.GetPos().x >= -1200.0f && !m_tutorial[2] && m_official == 4)
@@ -424,14 +438,16 @@ void Message::DrawTutorial(Player& player)
 
 		m_stop = true;
 
-		//Bボタンを押すと戻る
-		if (m_xpad.Buttons[13] == 1)
+		bool currentBButton = (m_xpad.Buttons[13] == 1);     //現在のBボタンの状態
+		if (currentBButton && !cPrevBButton)                 //前回押されていなくて、今回押された
 		{
 			m_tutorial[2] = true;
 			m_stop = false;
 			//ローリングできないようにする
 			player.SetAction(false);
 		}
+		//Bボタンの状態を記録
+		cPrevBButton = currentBButton;
 	}
 	//アイテムチュートリアル
 	else if (player.GetPos().x >= -900.0f && !m_tutorial[3] && m_official == 5)
@@ -451,14 +467,16 @@ void Message::DrawTutorial(Player& player)
 
 		m_stop = true;
 
-		//Bボタンを押すと戻る
-		if (m_xpad.Buttons[13] == 1)
+		bool currentBButton = (m_xpad.Buttons[13] == 1);     //現在のBボタンの状態
+		if (currentBButton && !cPrevBButton)                 //前回押されていなくて、今回押された
 		{
 			m_tutorial[3] = true;
 			m_stop = false;
 			//ローリングできないようにする
 			player.SetAction(false);
 		}
+		//Bボタンの状態を記録
+		cPrevBButton = currentBButton;
 	}
 	//盾チュートリアル
 	else if (player.GetPos().x >= -600.0f && !m_tutorial[4] && m_official == 6)
@@ -476,14 +494,16 @@ void Message::DrawTutorial(Player& player)
 		DrawStringToHandle(cDrawStringX1, cDrawStringY5, "防御行動ではスタミナを消費する\n防御中はスタミナの回復が遅くなる", cTextColor, m_pFont->GetHandle());
 		m_stop = true;
 
-		//Bボタンを押すと戻る
-		if (m_xpad.Buttons[13] == 1)
+		bool currentBButton = (m_xpad.Buttons[13] == 1);     //現在のBボタンの状態
+		if (currentBButton && !cPrevBButton)                 //前回押されていなくて、今回押された
 		{
 			m_tutorial[4] = true;
 			m_stop = false;
 			//ローリングできないようにする
 			player.SetAction(false);
 		}
+		//Bボタンの状態を記録
+		cPrevBButton = currentBButton;
 	}
 	//休息チュートリアル
 	else if (player.GetPos().x >= -300.0f && !m_tutorial[5] && m_official == 7)
@@ -502,15 +522,17 @@ void Message::DrawTutorial(Player& player)
 		DrawStringToHandle(cDrawStringX6, cDrawStringY8, "アイテムは使用すると消費する", cTextColor, m_pFont->GetHandle());
 		m_stop = true;
 
-		//Bボタンを押すと戻る
-		if (m_xpad.Buttons[13] == 1)
+		bool currentBButton = (m_xpad.Buttons[13] == 1);     //現在のBボタンの状態
+		if (currentBButton && !cPrevBButton)                 //前回押されていなくて、今回押された
 		{
 			m_tutorial[5] = true;
 			m_stop = false;
 			//ローリングできないようにする
 			player.SetAction(false);
 		}
-		}
+		//Bボタンの状態を記録
+		cPrevBButton = currentBButton;
+	}
 }
 
 void Message::End()

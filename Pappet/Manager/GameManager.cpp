@@ -46,7 +46,7 @@ namespace
 /// コンストラクタ
 /// </summary>
 GameManager::GameManager() :
-	m_nowMap(eMapName::RestMap),
+	m_nowMap(eMapName::TutorialMap),
 	m_load(0),
 	m_loadNow1(-1),
 	m_loadNow2(-1),
@@ -92,8 +92,9 @@ void GameManager::Init()
 	
 	//0が休息マップデータ
 	//1がHARIBOのマップデータ
+	//2がセカンドマップデータだがまだできていない
 	//6がチュートリアルマップデータ
-	m_pMap->DataInit(0);
+	m_pMap->DataInit(6);
 
 	m_pPhysics = std::make_shared<MyLibrary::Physics>(m_pMap->GetCollisionMap());
 
@@ -262,6 +263,7 @@ void GameManager::Update()
 		//ワープしてない時
 		if (!m_pPlayer->GetWarp() && !cClearTutorial && !m_pSetting->GetRestWarp() && !m_pPlayer->GetSecondWarp())
 		{
+
 			m_pBgm->Update(m_pSetting->GetVolume());
 
 			//一回再生
@@ -448,19 +450,19 @@ void GameManager::Update()
 			if (m_pPlayer->GetRest())
 			{
 				//レベルアップ処理をしていない場合
-				if (!m_pSetting->GetLevel())
+				if (!m_pSetting->GetLevel() && !m_pSetting->GetReset() && !cFadeIn)
 				{
 					m_pSetting->RestUpdate(*m_pPlayer, *m_pCore, m_restMap, *m_pSe);
 				}
 				//レベルアップ処理
-				if (m_pSetting->GetLevel())
+				if (m_pSetting->GetLevel() && !m_pSetting->GetReset() && !cFadeIn)
 				{
 					m_pSetting->LevelUpdate(*m_pPlayer, *m_pCore);
 					m_pPlayer->ChangeStatus();
 
 				}
 				//休息処理
-				else if (m_pSetting->GetReset())
+				if (m_pSetting->GetReset())
 				{
 					//フェードアウト可能にする
 					m_pFade->SetOut(false);
@@ -512,14 +514,14 @@ void GameManager::Update()
 				m_pSetting->Update(*m_pSe);
 			}
 
-			cOne = false;
-
 			//チュートリアル中は動きを止める
-			if (!m_pMessage->GetStop())
+			if (!m_pMessage->GetStop() && !cFadeIn)
 			{
 				//物理更新
 				m_pPhysics->Update();
 			}
+
+			cOne = false;
 			
 		}
 		//ワープしたとき

@@ -77,6 +77,9 @@ public:
 	bool GetAction() { return m_action; }
 	bool SetAction(bool set) { return m_action = set; }
 
+	//アイドル状態にする
+	bool SetIdle(bool set) { return m_idle = set; }
+
 	//プレイヤーが生きているかを取得
 	const bool IsGetPlayerDead() const { return m_anim.s_isDead; }
 
@@ -221,6 +224,7 @@ private:
 	bool m_jumpAttack;                  //ジャンプ攻撃をしたかの判定
 	bool m_avoidanceNow;                //フレーム回避中の判断
 	bool m_deadReset;                   //死亡完了した判定
+	bool m_idle;                        //アイドル状態へ強制的に移行する
 
 	//フレーム用変数
 	int m_moveAnimFrameIndex;           //アニメーションで移動しているフレームの番号を検索する変数
