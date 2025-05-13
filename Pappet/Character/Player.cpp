@@ -1341,7 +1341,7 @@ void Player::Action(VECTOR restpos, Tool& tool, Shield& shield, SEManager& se, b
 	if (m_itemPick)
 	{
 		//Yボタンを押したら
-		if (m_xpad.Buttons[15] == 1)
+		if (m_xpad.Buttons[15] == 1 && !rigidbody->GetJumpNow())
 		{
 			//一回実行とアニメーション遷移
 			if (!m_animChange.sa_taking)

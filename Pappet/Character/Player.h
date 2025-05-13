@@ -91,6 +91,7 @@ public:
 	float SetStart(float set) { return m_start = set; }
 	float SetReset(float set) { return m_reset = set; }
 	bool SetLoop(bool set) { return m_loop = set; }
+	bool GetJump() { return rigidbody->GetJumpNow(); }                //ƒWƒƒƒ“ƒvó‘Ô‚©”»’f‚·‚é
 
 	//UŒ‚ŠÖŒW
 	int SetAttackNumber(int set) { return m_attackNumber = set; }      //¡‚ÌUŒ‚’iŠK‚ğŒˆ‚ß‚é

@@ -683,7 +683,7 @@ void GameManager::Draw()
 		m_pMessage->Draw();
 
 		//チュートリアルマップだった場合
-		if (m_nowMap == eMapName::TutorialMap)
+		if (m_nowMap == eMapName::TutorialMap && !m_pPlayer->GetJump())
 		{
 			m_pMessage->Tutorial(*m_pPlayer);
 		}
